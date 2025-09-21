@@ -684,7 +684,7 @@ def delete_all_locations():
 
 if __name__ == "__main__":
     """DELETE ALL CREATED"""
-    #delete_all_fieldsets()
+    delete_all_fieldsets()
     #delete_all_fields()
     #delete_all_status_labels()
     #delete_all_categories()
@@ -695,7 +695,7 @@ if __name__ == "__main__":
     #create_categories()
     #create_locations()
     #create_all_fields()
-    create_all_fieldsets()
+    #create_all_fieldsets()
     #associate_fields_to_fieldsets()
     
    
