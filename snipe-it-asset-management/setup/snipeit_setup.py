@@ -9,7 +9,7 @@ import time
 # Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-config_path = "/opt/snipeit-sync/snipe-it-asset-management/config/settings.env"
+config_path = "/opt/snipeit-sync/snipe-it-asset-management/.env"
 load_dotenv(dotenv_path=config_path)
 
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")
