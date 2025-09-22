@@ -515,51 +515,51 @@ def associate_fields_to_fieldsets():
         if not fieldset_id:
             print(f"WARNING: Fieldset '{fs_name}' was not found on the server. Skipping association for it.")
             continue
-        
-        #existing_field_ids_in_fieldset = get_fieldset_fields(fieldset_id)
     
         print(f"Processing associations for fieldset '{fs_name}' (ID: {fieldset_id})...")
         
         for key in field_keys:
             field_def = CUSTOM_FIELDS.get(key, {})
-            field_name = field_def['name']
+            field_name = field_def.get('name')
+            
+            if not field_name:
+                print(f"  - WARNING: No field definition found for key '{key}'. Skipping.")
+                continue
+                
             field_id = all_fields_map.get(field_name)
 
             if not field_id:
                 print(f"  - WARNING: Could not find a field named '{field_name}' (key: '{key}'). Skipping.")
                 continue
             
-            """ if field_id in existing_field_ids_in_fieldset:
-                print(f"    → Field '{field_name}' already associated. Skipping.")
-                continue """
-            
             payload = {
                  "fieldset_id": fieldset_id
             }
 
-            print(f"  - Associating field '{field_name}' (ID: {field_id}) to fieldset '{fs_name}'")
+            print(f"  - Associating field '{field_name}' (ID: {field_id}) to fieldset '{fs_name}'...")
             response = make_api_request(
                 "POST",
                 f"{SNIPE_URL}/api/v1/fields/{field_id}/associate",
                 json=payload
             )
             
-    if response and response.ok:
-        print("    ✓ Successfully associated.")
-    else:
-        # Handle "already associated" gracefully
-        try:
-            data = response.json() if response else {"messages": "No response"}
-            msg = str(data).lower()
-            if response and response.status_code in (409, 422) and ("already" in msg or "exists" in msg):
-                print("    → Already associated. Skipping.")
+            # Check response for THIS specific association
+            if response and response.ok:
+                print("    ✓ Successfully associated.")
             else:
-                print(f"    ✗ Failed to associate: {data}")
-        except Exception as e:
-            print(f"    ✗ Failed to associate: {e}")
+                # Handle "already associated" gracefully
+                try:
+                    data = response.json() if response else {"messages": "No response"}
+                    msg = str(data).lower()
+                    if response and response.status_code in (409, 422) and ("already" in msg or "exists" in msg):
+                        print("    → Already associated. Skipping.")
+                    else:
+                        print(f"    ✗ Failed to associate: {data}")
+                except Exception as e:
+                    print(f"    ✗ Failed to associate: {e}")
 
-        print("Field association process complete.")
-    
+    print("\nField association process complete.")
+
 def create_status_labels():
     """Creates status labels if they don't already exist."""
     print("\n--- Creating Status Labels ---")
@@ -683,19 +683,19 @@ def delete_all_locations():
         print(f"Deleted location: {location_name} (ID: {location_id})")
 
 if __name__ == "__main__":
-    """DELETE ALL CREATED"""
+    """DELETE ALL"""
+    delete_all_fields()
     delete_all_fieldsets()
-    #delete_all_fields()
-    #delete_all_status_labels()
-    #delete_all_categories()
-    #delete_all_locations()
+    delete_all_status_labels()
+    delete_all_categories()
+    delete_all_locations()
     
     """CREATE ALL"""
-    #create_status_labels()
-    #create_categories()
-    #create_locations()
-    #create_all_fields()
-    #create_all_fieldsets()
-    #associate_fields_to_fieldsets()
+    create_status_labels()
+    create_categories()
+    create_locations()
+    create_all_fields()
+    create_all_fieldsets()
+    associate_fields_to_fieldsets()
     
    
