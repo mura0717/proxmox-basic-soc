@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""
+Intune Integration for Snipe-IT
+Syncs devices from Microsoft Intune to Snipe-IT
+"""
+
+import os
+import requests
+from datetime import datetime
+from typing import List, Dict, Optional
+from msal import ConfidentialClientApplication
+from ..lib.asset_matcher import AssetMatcher
+
+class IntuneSync:
+    """Microsoft Intune synchronization service"""
+    
+    def __init__(self):
+        # Load credentials from environment
+        self.tenant_id = os.getenv('AZURE_TENANT_ID')
+        self.client_id = os.getenv('AZURE_CLIENT_ID')
+        self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
+        
+        if not all([self.tenant_id, self.client_id, self.client_secret]):
+            raise ValueError("Azure credentials not configured in environment")
+        
+        self.asset_matcher = AssetMatcher()
+        self.graph_url = "https://graph.microsoft.com/v1.0"
+        self.access_token = None
+    
+    def authenticate(self) -> bool:
+        """Authenticate with Microsoft Graph API"""
+        try:
+            app = ConfidentialClientApplication(
+                self.client_id,
+                authority=f"https://login.microsoftonline.com/{self.tenant_id}",
+                client_credential=self.client_secret
+            )
+            
+            result = app.acquire_token_silent(
+                ["https://graph.microsoft.com/.default"], 
+                account=None
+            )
+            
+            if not result:
+                result = app.acquire_token_for_client(
+                    scopes=["https://graph.microsoft.com/.default"]
+                )
+            
+            if "access_token" in result:
+                self.access_token = result["access_token"]
+                return True
+            else:
+                print(f"Authentication failed: {result.get('error_description')}")
+                return False
+                
+        except Exception as e:
+            print(f"Authentication error: {e}")
+            return False
+    
+    def get_managed_devices(self) -> List[Dict]:
+        """Fetch all managed devices from Intune"""
+        if not self.access_token:
+            if not self.authenticate():
+                return []
+        
+        headers = {
+            'Authorization': f'Bearer {self.access_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        devices = []
+        url = f"{self.graph_url}/deviceManagement/managedDevices"
+        
+        while url:
+            try:
+                response = requests.get(url, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                
+                devices.extend(data.get('value', []))
+                url = data.get('@odata.nextLink')  # Handle pagination
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching devices: {e}")
+                break
+        
+        return devices
+    
+    def get_device_details(self, device_id: str) -> Optional[Dict]:
+        """Get detailed information for a specific device"""
+        if not self.access_token:
+            return None
+        
+        headers = {
+            'Authorization': f'Bearer {self.access_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        try:
+            # Get additional device details
+            url = f"{self.graph_url}/deviceManagement/managedDevices/{device_id}"
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching device details for {device_id}: {e}")
+            return None
+    
+    def transform_intune_to_snipeit(self, intune_device: Dict) -> Dict:
+        """Transform Intune device data to Snipe-IT format"""
+        
+        # Map Intune fields to Snipe-IT custom fields
+        transformed = {
+            # Identity
+            'name': intune_device.get('deviceName'),
+            'serial': intune_device.get('serialNumber'),
+            'azure_ad_id': intune_device.get('azureADDeviceId'),
+            'intune_device_id': intune_device.get('id'),
+            
+            # Management
+            'intune_managed': True,
+            'intune_registered': intune_device.get('azureADRegistered', False),
+            'intune_enrollment_date': intune_device.get('enrolledDateTime'),
+            'intune_last_sync': intune_device.get('lastSyncDateTime'),
+            'managed_by': intune_device.get('managementAgent'),
+            'intune_category': intune_device.get('deviceCategoryDisplayName'),
+            'ownership': intune_device.get('ownerType'),
+            'device_state': intune_device.get('deviceRegistrationState'),
+            'intune_compliance': intune_device.get('complianceState'),
+            'compliance_grace_expiration': intune_device.get('complianceGracePeriodExpirationDateTime'),
+            'management_cert_expiration': intune_device.get('managementCertificateExpirationDateTime'),
+            
+            # OS Information
+            'os_platform': intune_device.get('operatingSystem'),
+            'os_version': intune_device.get('osVersion'),
+            'sku_family': intune_device.get('skuFamily'),
+            'join_type': intune_device.get('joinType'),
+            
+            # Hardware
+            'manufacturer': intune_device.get('manufacturer'),
+            'model': intune_device.get('model'),
+            'total_storage': intune_device.get('totalStorageSpaceInBytes'),
+            'free_storage': intune_device.get('freeStorageSpaceInBytes'),
+            'processor_architecture': intune_device.get('processorArchitecture'),
+            
+            # User
+            'primary_user_upn': intune_device.get('userPrincipalName'),
+            'primary_user_email': intune_device.get('emailAddress'),
+            'primary_user_display_name': intune_device.get('userDisplayName'),
+            'primary_user_id': intune_device.get('userId'),
+            
+            # Network
+            'wifi_mac': intune_device.get('wiFiMacAddress'),
+            'ethernet_mac': intune_device.get('ethernetMacAddress'),
+            'mac_addresses': self._combine_mac_addresses(intune_device),
+            
+            # Mobile specific
+            'imei': intune_device.get('imei'),
+            'meid': intune_device.get('meid'),
+            'phone_number': intune_device.get('phoneNumber'),
+            'subscriber_carrier': intune_device.get('subscriberCarrier'),
+            'cellular_technology': intune_device.get('cellularTechnology'),
+            'iccid': intune_device.get('iccid'),
+            
+            # Security
+            'encrypted': intune_device.get('isEncrypted', False),
+            'supervised': intune_device.get('isSupervised', False),
+            'jailbroken': intune_device.get('jailBroken', False),
+            
+            # EAS
+            'eas_activated': intune_device.get('easActivated', False),
+            'eas_activation_id': intune_device.get('easDeviceId'),
+            'eas_last_sync': intune_device.get('exchangeLastSuccessfulSyncDateTime'),
+            
+            # Device type determination
+            'device_type': self._determine_device_type(intune_device)
+        }
+        
+        # Remove None values
+        return {k: v for k, v in transformed.items() if v is not None}
+    
+    def _combine_mac_addresses(self, device: Dict) -> str:
+        """Combine all MAC addresses into a single field"""
+        macs = []
+        if device.get('wiFiMacAddress'):
+            macs.append(device['wiFiMacAddress'])
+        if device.get('ethernetMacAddress'):
+            macs.append(device['ethernetMacAddress'])
+        return '\n'.join(macs) if macs else None
+    
+    def _determine_device_type(self, device: Dict) -> str:
+        """Determine device type from Intune data"""
+        os_type = device.get('operatingSystem', '').lower()
+        device_type = device.get('deviceType', '').lower()
+        model = device.get('model', '').lower()
+        
+        if 'server' in os_type or 'server' in model:
+            return 'Server'
+        elif 'ios' in os_type or 'iphone' in model:
+            return 'Mobile Phone'
+        elif 'ipad' in os_type or 'ipad' in model:
+            return 'Tablet'
+        elif 'android' in os_type:
+            if 'tablet' in model or device.get('manufacturer', '').lower() in ['samsung', 'lenovo']:
+                return 'Tablet'
+            return 'Mobile Phone'
+        elif 'windows' in os_type:
+            if 'laptop' in model or 'notebook' in model:
+                return 'Laptop'
+            return 'Desktop'
+        elif 'mac' in os_type:
+            if 'macbook' in model:
+                return 'Laptop'
+            return 'Desktop'
+        else:
+            return 'Other Device'
+    
+    def sync_to_snipeit(self) -> Dict:
+        """Main sync function"""
+        print("Starting Intune synchronization...")
+        
+        if not self.authenticate():
+            return {'error': 'Authentication failed'}
+        
+        # Fetch devices from Intune
+        intune_devices = self.get_managed_devices()
+        print(f"Found {len(intune_devices)} devices in Intune")
+        
+        # Transform and prepare for Snipe-IT
+        transformed_devices = []
+        for device in intune_devices:
+            transformed = self.transform_intune_to_snipeit(device)
+            transformed_devices.append(transformed)
+        
+        # Send to asset matcher for processing
+        results = self.asset_matcher.process_scan_data('intune', transformed_devices)
+        
+        print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
+        return results
+
+if __name__ == "__main__":
+    # Add to .env file:
+    # AZURE_TENANT_ID=your-tenant-id
+    # AZURE_CLIENT_ID=your-app-id
+    # AZURE_CLIENT_SECRET=your-app-secret
+    
+    sync = IntuneSync()
+    sync.sync_to_snipeit()
