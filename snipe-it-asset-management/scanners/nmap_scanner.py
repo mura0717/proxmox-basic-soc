@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Nmap scanner using python-nmap library (cleaner approach)
+Nmap scanner using python-nmap library
 """
 
 import nmap
 import hashlib
 from datetime import datetime
 from typing import List, Dict, Optional
-from pathlib import Path
 from ..lib.asset_matcher import AssetMatcher
 
 class NmapScanner:
