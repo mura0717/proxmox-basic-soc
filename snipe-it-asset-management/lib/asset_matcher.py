@@ -225,6 +225,16 @@ class AssetMatcher:
         for field in standard_fields:
             if field in asset_data:
                 payload[field] = asset_data[field]
+                
+         # Handle MAC addresses - set both built-in and custom fields
+        if 'mac_addresses' in asset_data:
+            macs = asset_data['mac_addresses']
+            if isinstance(macs, list) and macs:
+                # Set built-in MAC field with first MAC
+                payload['mac_address'] = macs[0]
+            elif isinstance(macs, str):
+                # If it's a string, use it directly
+                payload['mac_address'] = macs
         
         # Auto-generate asset tag if not provided
         if not is_update and 'asset_tag' not in payload:
