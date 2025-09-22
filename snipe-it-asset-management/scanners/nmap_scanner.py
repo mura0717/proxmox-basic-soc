@@ -1,123 +1,220 @@
-"""Nmap scanner integration"""
+#!/usr/bin/env python3
+"""
+Nmap scanner using python-nmap library (cleaner approach)
+"""
 
-import subprocess
+import nmap
 import hashlib
-import xml.etree.ElementTree as ET
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
+from pathlib import Path
 from ..lib.asset_matcher import AssetMatcher
 
 class NmapScanner:
-    """Nmap network scanner integration"""
+    """Nmap scanner using python-nmap library"""
+    
+    SCAN_PROFILES = {
+        'discovery': {
+            'args': '-sn -PE -PA21,22,25,80,443,3389',
+            'description': 'Fast host discovery'
+        },
+        'basic': {
+            'args': '-sS -sV -T4 --top-ports 100',
+            'description': 'Basic port scan'
+        },
+        'intrusive': {
+            'args': '-sV -O -sC -A --script vuln',
+            'description': 'Full intrusive scan'
+        },
+        'inventory': {
+            'args': '-sV -O --osscan-guess',
+            'description': 'Inventory scan'
+        }
+    }
     
     def __init__(self, network_range: str = "192.168.1.0/24"):
         self.network_range = network_range
+        self.nm = nmap.PortScanner()
         self.asset_matcher = AssetMatcher()
     
-    def run_discovery_scan(self) -> List[Dict]:
-        """Run basic discovery scan"""
-        cmd = [
-            'nmap', '-sn', '-PE', '-PA21,22,25,80,443,3389',
-            '-PS21,22,25,80,443,3389', '-PU161',
-            '--max-retries', '2', '--host-timeout', '30s',
-            '-oX', '-', self.network_range
-        ]
+    def run_scan(self, profile: str = 'discovery', targets: Optional[List[str]] = None) -> List[Dict]:
+        """Run Nmap scan with specified profile"""
+        
+        if profile not in self.SCAN_PROFILES:
+            print(f"Unknown profile: {profile}")
+            return []
+        
+        scan_config = self.SCAN_PROFILES[profile]
+        scan_targets = ' '.join(targets) if targets else self.network_range
+        
+        print(f"Running {profile} scan: {scan_config['description']}")
+        print(f"Targets: {scan_targets}")
         
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True)
-            return self._parse_nmap_xml(result.stdout)
+            # Run the scan
+            self.nm.scan(hosts=scan_targets, arguments=scan_config['args'])
+            
+            # Parse results
+            assets = []
+            for host in self.nm.all_hosts():
+                if self.nm[host].state() == 'up':
+                    asset = self._parse_host(host, profile)
+                    assets.append(asset)
+            
+            return assets
+            
+        except nmap.PortScannerError as e:
+            print(f"Nmap error: {e}")
+            return []
         except Exception as e:
-            print(f"Nmap scan failed: {e}")
+            print(f"Scan failed: {e}")
             return []
     
-    def run_intrusive_scan(self, targets: List[str]) -> List[Dict]:
-        """Run detailed intrusive scan on specific targets"""
-        assets = []
+    def _parse_host(self, host: str, profile: str) -> Dict:
+        """Parse single host results"""
         
-        for target in targets:
-            cmd = [
-                'nmap', '-A', '-sV', '-sC', '-O',
-                '--script', 'vuln',
-                '-oX', '-', target
-            ]
+        asset = {
+            'last_seen_ip': host,
+            'nmap_last_scan': datetime.utcnow().isoformat(),
+            'nmap_scan_profile': profile,
+            'device_type': 'Unknown'
+        }
+        
+        # Get hostname
+        if self.nm[host].hostname():
+            asset['dns_hostname'] = self.nm[host].hostname()
+            asset['name'] = self.nm[host].hostname()
+        else:
+            asset['name'] = f"Device-{host}"
+        
+        # Get MAC address
+        if 'mac' in self.nm[host]['addresses']:
+            asset['mac_addresses'] = self.nm[host]['addresses']['mac']
             
-            try:
-                result = subprocess.run(cmd, capture_output=True, text=True)
-                assets.extend(self._parse_nmap_xml(result.stdout, detailed=True))
-            except Exception as e:
-                print(f"Intrusive scan failed for {target}: {e}")
+            # Get vendor if available
+            if 'vendor' in self.nm[host] and self.nm[host]['vendor']:
+                vendors = list(self.nm[host]['vendor'].values())
+                if vendors:
+                    asset['manufacturer'] = vendors[0]
         
-        return assets
-    
-    def _parse_nmap_xml(self, xml_output: str, detailed: bool = False) -> List[Dict]:
-        """Parse Nmap XML output"""
-        assets = []
+        # OS detection (for non-discovery scans)
+        if profile != 'discovery' and 'osmatch' in self.nm[host]:
+            for osmatch in self.nm[host]['osmatch']:
+                asset['nmap_os_guess'] = osmatch['name']
+                asset['os_accuracy'] = osmatch['accuracy']
+                asset['device_type'] = self._determine_device_type(osmatch['name'])
+                break
         
-        try:
-            root = ET.fromstring(xml_output)
+        # Port information
+        if profile != 'discovery':
+            ports = []
+            services = []
             
-            for host in root.findall('.//host'):
-                if host.find('.//status').get('state') != 'up':
-                    continue
+            for proto in self.nm[host].all_protocols():
+                for port in self.nm[host][proto].keys():
+                    port_info = self.nm[host][proto][port]
+                    if port_info['state'] == 'open':
+                        service = port_info.get('name', 'unknown')
+                        product = port_info.get('product', '')
+                        version = port_info.get('version', '')
+                        
+                        port_str = f"{port}/{proto}/{service}"
+                        if product:
+                            port_str += f" ({product}"
+                            if version:
+                                port_str += f" {version}"
+                            port_str += ")"
+                        
+                        ports.append(port_str)
+                        services.append(service)
+            
+            if ports:
+                asset['nmap_open_ports'] = '\n'.join(ports)
+                asset['open_ports_hash'] = hashlib.md5(
+                    ','.join(sorted(ports)).encode()
+                ).hexdigest()
                 
-                asset = {
-                    'first_seen_date': datetime.utcnow().isoformat(),
-                    'nmap_last_scan': datetime.utcnow().isoformat(),
-                    'device_type': 'Network Device'  # Will be refined
-                }
-                
-                # Get IP address
-                for address in host.findall('.//address'):
-                    if address.get('addrtype') == 'ipv4':
-                        asset['last_seen_ip'] = address.get('addr')
-                    elif address.get('addrtype') == 'mac':
-                        asset['mac_addresses'] = address.get('addr')
-                
-                # Get hostname
-                for hostname in host.findall('.//hostname'):
-                    asset['dns_hostname'] = hostname.get('name')
-                    asset['name'] = hostname.get('name')
-                
-                if detailed:
-                    # Get OS information
-                    for osmatch in host.findall('.//osmatch'):
-                        asset['nmap_os_guess'] = osmatch.get('name')
-                        break
-                    
-                    # Get open ports
-                    ports = []
-                    for port in host.findall('.//port'):
-                        if port.find('.//state').get('state') == 'open':
-                            port_num = port.get('portid')
-                            service = port.find('.//service')
-                            if service is not None:
-                                service_name = service.get('name', '')
-                                ports.append(f"{port_num}/{service_name}")
-                            else:
-                                ports.append(port_num)
-                    
-                    if ports:
-                        asset['nmap_open_ports'] = '\n'.join(ports)
-                        asset['open_ports_hash'] = hashlib.md5(
-                            ','.join(sorted(ports)).encode()
-                        ).hexdigest()
-                
-                assets.append(asset)
+                # Refine device type based on services
+                if services:
+                    asset['device_type'] = self._refine_device_type_by_services(
+                        asset.get('device_type', 'Unknown'),
+                        services
+                    )
         
-        except Exception as e:
-            print(f"Failed to parse Nmap XML: {e}")
+        # Set first seen if new
+        if not asset.get('first_seen_date'):
+            asset['first_seen_date'] = datetime.utcnow().isoformat()
         
-        return assets
+        return asset
     
-    def sync_to_snipeit(self) -> Dict:
-        """Run scan and sync results to Snipe-IT"""
-        print("Starting Nmap discovery scan...")
-        discovered_assets = self.run_discovery_scan()
+    def _determine_device_type(self, os_string: str) -> str:
+        """Determine device type from OS string"""
+        os_lower = os_string.lower()
         
-        print(f"Discovered {len(discovered_assets)} active hosts")
+        if any(x in os_lower for x in ['cisco', 'switch', 'catalyst']):
+            return 'Switch'
+        elif any(x in os_lower for x in ['router', 'mikrotik']):
+            return 'Router'
+        elif any(x in os_lower for x in ['firewall', 'fortigate', 'pfsense']):
+            return 'Firewall'
+        elif 'windows server' in os_lower:
+            return 'Server'
+        elif 'windows' in os_lower:
+            return 'Desktop'
+        elif 'linux' in os_lower:
+            return 'Linux Device'
+        elif any(x in os_lower for x in ['printer', 'jetdirect']):
+            return 'Printer'
+        else:
+            return 'Network Device'
+    
+    def _refine_device_type_by_services(self, current_type: str, services: List[str]) -> str:
+        """Refine device type based on services"""
+        service_str = ' '.join(services).lower()
         
-        # Process and sync to Snipe-IT
-        results = self.asset_matcher.process_scan_data('nmap', discovered_assets)
+        if 'domain' in service_str and 'ldap' in service_str:
+            return 'Domain Controller'
+        elif 'http' in service_str and 'printer' in service_str:
+            return 'Printer'
+        elif any(db in service_str for db in ['mysql', 'mssql', 'postgresql']):
+            return 'Database Server'
+        
+        return current_type
+    
+    def sync_to_snipeit(self, profile: str = 'discovery') -> Dict:
+        """Run scan and sync to Snipe-IT"""
+        print(f"Starting {profile} scan...")
+        assets = self.run_scan(profile)
+        
+        if not assets:
+            return {'created': 0, 'updated': 0, 'failed': 0}
+        
+        print(f"Found {len(assets)} hosts")
+        results = self.asset_matcher.process_scan_data('nmap', assets)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated")
         return results
+
+def main():
+    """Command-line interface"""
+    import sys
+    
+    scanner = NmapScanner()
+    
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
+        
+        if command in scanner.SCAN_PROFILES:
+            scanner.sync_to_snipeit(command)
+        elif command == 'list':
+            print("\nAvailable scan profiles:")
+            for name, config in scanner.SCAN_PROFILES.items():
+                print(f"  {name:12} - {config['description']}")
+        else:
+            print(f"Unknown command: {command}")
+            print("Usage: nmap_scanner.py [discovery|basic|intrusive|inventory|list]")
+    else:
+        scanner.sync_to_snipeit('discovery')
+
+if __name__ == "__main__":
+    main()
