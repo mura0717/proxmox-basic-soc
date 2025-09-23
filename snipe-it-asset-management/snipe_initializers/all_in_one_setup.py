@@ -398,6 +398,64 @@ CATEGORIES = {
         },
 }
 
+# Define Generic Models
+MODELS = [
+    {'name': 'Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Unknown'},
+    {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
+    {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
+    {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Network Device', 'category': 'Network Devices', 'manufacturer': 'Generic'},
+    {'name': 'Generic Printer', 'category': 'Printers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Mobile Phone', 'category': 'Mobile Phones', 'manufacturer': 'Generic'},
+    {'name': 'Generic IoT Device', 'category': 'IoT Devices', 'manufacturer': 'Generic'},
+    {'name': 'Generic Storage Device', 'category': 'Storage Devices', 'manufacturer': 'Generic'},
+    {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines (On-Premises)', 'manufacturer': 'Generic'},
+    {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},
+    {'name': 'Generic Software License', 'category': 'Software Licenses', 'manufacturer': 'Generic'},
+]
+
+#Define Manufacturers
+MANUFACTURERS = [
+    {'name': 'Unknown', 'support_contact': '', 'support_url': ''},
+    {'name': 'Generic', 'support_contact': '', 'support_url': ''},
+    {'name': 'Apple', 'support_contact': '1-800-MY-APPLE', 'support_url': 'https://support.apple.com/'},
+    {'name': 'Dell', 'support_contact': '1-800-624-9897', 'support_url': 'https ://www.dell.com/support/home/en-us'},
+    {'name': 'HP', 'support_contact': '1-800-474-6836', 'support_url': 'https://support.hp.com/'},
+    {'name': 'Lenovo', 'support_contact': '1-855-253-6686', 'support_url': 'https://support.lenovo.com/'},
+    {'name': 'Microsoft', 'support_contact': '1-800-642-7676', 'support_url': 'https://support.microsoft.com/'},
+    {'name': 'Cisco', 'support_contact': '1-800-553-2447', 'support_url': 'https://www.cisco.com/c/en/us/support/index.html'},
+    {'name': 'Samsung', 'support_contact': '1-800-SAMSUNG', 'support_url': 'https://www.samsung.com/us/support/'},
+    {'name': 'Asus', 'support_contact': '1-888-678-3688', 'support_url': 'https://www.asus.com/support/'},
+    {'name': 'Acer', 'support_contact': '1-866-695-2237', 'support_url': 'https://www.acer.com/ac/en/US/content/support'},
+    {'name': 'LG', 'support_contact': '1-800-243-0000', 'support_url': 'https://www.lg.com/us/support'},
+    {'name': 'Sony', 'support_contact': '1-800-222-7669', 'support_url': 'https://www.sony.com/electronics/support'},
+    {'name': 'Toshiba', 'support_contact': '1-800-457-7777', 'support_url': 'https://support.dynabook.com/'},
+    {'name': 'VMware', 'support_contact': '1-877-486-9273', 'support_url': 'https://www.vmware.com/support.html'},
+    {'name': 'Citrix', 'support_contact': '1-800-424-8749', 'support_url': 'https://www.citrix.com/support/'},
+    {'name': 'Red Hat', 'support_contact': '1-866-273-3424', 'support_url': 'https://access.redhat.com/support'},
+    {'name': 'Juniper Networks', 'support_contact': '1-888-314-5822', 'support_url': 'https://www.juniper.net/us/en/support/'},
+    {'name': 'Hewlett Packard Enterprise', 'support_contact': '1-800-633-3600', 'support_url': 'https://www.hpe.com/us/en/support.html'},
+    {'name': 'NetApp', 'support_contact': '1-888-463-8277', 'support_url': 'https://www.netapp.com/support/'},
+    {'name': 'Fujitsu', 'support_contact': '1-800-831-3183', 'support_url': 'https://www.fujitsu.com/global/support/'},
+    {'name': 'Panasonic', 'support_contact': '1-800-662-3537', 'support_url': 'https://www.panasonic.com/global/support.html'},
+    {'name': 'Brother', 'support_contact': '1-877-755-2526', 'support_url': 'https://www.brother-usa.com/support'},
+    {'name': 'Epson', 'support_contact': '1-800-463-7766', 'support_url': 'https://epson.com/support'},
+    {'name': 'Zebra Technologies', 'support_contact': '1-800-423-0442', 'support_url': 'https://www.zebra.com/us/en/support.html'},
+    {'name': 'Poly', 'support_contact': '1-800-289-9100', 'support_url': 'https://www.poly.com/us/en/support'},
+    {'name': 'Logitech', 'support_contact': '1-646-454-3200', 'support_url': 'https://support.logi.com/hc/en-us'},
+    {'name': 'Razer', 'support_contact': '1-888-204-4590', 'support_url': 'https://www.razer.com/support'},
+    {'name': 'Dell EMC', 'support_contact': '1-800-624-9897', 'support_url': 'https://www.dell.com/support/home/en-us'},
+    {'name': 'Supermicro', 'support_contact': '1-408-503-8000', 'support_url': 'https://www.supermicro.com/support/'},
+    {'name': 'Aruba Networks', 'support_contact': '1-800-943-4526', 'support_url': 'https://www.arubanetworks.com/support/'},
+    {'name': 'Extreme Networks', 'support_contact': '1-888-257-3000', 'support_url': 'https://www.extremenetworks.com/support/'},
+    {'name': 'Ubiquiti', 'support_contact': '1-408-942-3080', 'support_url': 'https://www.ui.com/support/'},
+    {'name': 'TP-Link', 'support_contact': '1-866-225-8139', 'support_url': 'https://www.tp-link.com/us/support/'},
+    {'name': 'Netgear', 'support_contact': '1-888-638-4327', 'support_url': 'https://www.netgear.com/support/'},
+    {'name': 'D-Link', 'support_contact': '1-877-453-5465', 'support_url': 'https://support.dlink.com/'},
+    {'name': 'Linksys', 'support_contact': '1-800-326-7114', 'support_url': 'https://www.linksys.com/us/support/'},
+    {'name': 'Citrix', 'support_contact': '1-800-424-8749', 'support_url': 'https://www.citrix.com/support/'},
+]
+
 # Define Locations
 LOCATIONS = {
     "Glostrup Office - Home",
@@ -465,7 +523,17 @@ def get_categories_map():
     """Fetches all categories from Snipe-IT."""
     response = make_api_request("GET", f"{SNIPE_URL}/api/v1/categories", params={"limit": 5000})
     return {cat['name']: cat['id'] for cat in response.json().get("rows", [])} if response else {}
-            
+  
+def get_models_map():
+    """Fetches all models from Snipe-IT."""
+    response = make_api_request("GET", f"{SNIPE_URL}/api/v1/models", params={"limit": 5000})
+    return {model['name']: model['id'] for model in response.json().get("rows", [])} if response else {}
+
+def get_manufacturers_map():
+    """Fetches all manufacturers from Snipe-IT."""
+    response = make_api_request("GET", f"{SNIPE_URL}/api/v1/manufacturers", params={"limit": 5000})
+    return {manu['name']: manu['id'] for manu in response.json().get("rows", [])} if response else {}
+          
 def get_location_map():
     """Fetches all locations from Snipe-IT."""
     response = make_api_request("GET", f"{SNIPE_URL}/api/v1/locations", params={"limit": 5000})
@@ -600,6 +668,33 @@ def create_categories():
         make_api_request("POST", f"{SNIPE_URL}/api/v1/categories", json=payload)
     print("Category creation process complete.")
 
+def create_models():
+    """Creates generic models if they don't already exist."""
+    print("\n--- Creating Generic Models ---")
+    existing_models = set(get_models_map().keys())
+
+    for model in MODELS:
+        model_name = model['name']
+        if model_name in existing_models:
+            print(f"Model '{model_name}' already exists. Skipping.") 
+            continue
+        print(f"Creating model: {model_name}...")
+        make_api_request("POST", f"{SNIPE_URL}/api/v1/models", json=model)
+    print("Model creation process complete.")
+
+def create_manufacturers():
+    """Creates manufacturers if they don't already exist."""
+    print("\n--- Creating Manufacturers ---")
+    existing_manufacturers = set(get_manufacturers_map().keys())
+    for manu in MANUFACTURERS:
+        manu_name = manu['name']
+        if manu_name in existing_manufacturers:
+            print(f"Manufacturer '{manu_name}' already exists. Skipping.") 
+            continue
+        print(f"Creating manufacturer: {manu_name}...")
+        make_api_request("POST", f"{SNIPE_URL}/api/v1/manufacturers", json=manu)
+    print("Manufacturer creation process complete.")
+        
 def create_locations():
     """Creates locations if they don't already exist."""
     print("\n--- Creating Locations ---")
@@ -670,6 +765,32 @@ def delete_all_categories():
         make_api_request("DELETE", f"{SNIPE_URL}/api/v1/categories/{category_id}")
         print(f"Deleted category: {category_name} (ID: {category_id})")
 
+def delete_all_models():
+    """Deletes all generic models defined in MODELS."""
+    print("\n--- Deleting Generic Models ---")
+    existing_models = get_models_map()
+    for model in MODELS:
+        model_name = model['name']
+        if model_name not in existing_models:
+            print(f"Model '{model_name}' does not exist. Skipping.")
+            continue
+        model_id = existing_models[model_name]
+        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/models/{model_id}")
+        print(f"Deleted model: {model_name} (ID: {model_id})")
+
+def delete_all_manufacturers():
+    """Deletes all manufacturers defined in MANUFACTURERS."""
+    print("\n--- Deleting Manufacturers ---")
+    existing_manufacturers = get_manufacturers_map()
+    for manu in MANUFACTURERS:
+        manu_name = manu['name']
+        if manu_name not in existing_manufacturers:
+            print(f"Manufacturer '{manu_name}' does not exist. Skipping.")
+            continue
+        manu_id = existing_manufacturers[manu_name]
+        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/manufacturers/{manu_id}")
+        print(f"Deleted manufacturer: {manu_name} (ID: {manu_id})")
+                
 def delete_all_locations():
     """Deletes all locations defined in LOCATIONS."""
     print("\n--- Deleting Locations ---")
@@ -688,11 +809,15 @@ if __name__ == "__main__":
     delete_all_fieldsets()
     delete_all_status_labels()
     delete_all_categories()
+    delete_all_models()
+    delete_all_manufacturers()
     delete_all_locations()
     
     """CREATE ALL"""
     create_status_labels()
     create_categories()
+    create_models()
+    create_manufacturers()
     create_locations()
     create_all_fields()
     create_all_fieldsets()
