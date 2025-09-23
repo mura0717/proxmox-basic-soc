@@ -4,14 +4,13 @@ Snipe-IT Setup Script
 Initializes Snipe-IT with custom fields, fieldsets, status labels, categories, and locations
 """
 
-import sys
 import argparse
-from ..crud.fields import FieldService
-from ..crud.fieldsets import FieldsetService
-from ..crud.status_labels import StatusLabelService
-from ..crud.categories import CategoryService
-from ..crud.locations import LocationService
-from ..snipe_api.schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, LOCATIONS
+from crud.fields import FieldService
+from crud.fieldsets import FieldsetService
+from crud.status_labels import StatusLabelService
+from crud.categories import CategoryService
+from crud.locations import LocationService
+from snipe_api.schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, LOCATIONS
 
 class SnipeITSetup:
     """Main setup class for Snipe-IT configuration"""

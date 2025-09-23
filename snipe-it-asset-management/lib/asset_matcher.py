@@ -101,7 +101,7 @@ class AssetMatcher:
         """
         merged = {}
         
-        # Define source priorities
+        # Source priorities for conflict resolution - higher number = higher priority
         source_priority = {
             'intune': 4,
             'snmp': 3,

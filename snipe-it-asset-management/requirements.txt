@@ -1,6 +1,6 @@
 requests
 python-dotenv
-crontab
+python-crontab
 msal
 pysnmp
 python-gvm

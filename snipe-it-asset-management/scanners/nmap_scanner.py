@@ -1,35 +1,93 @@
 #!/usr/bin/env python3
 """
-Nmap scanner using python-nmap library
+Nmap scanner with integrated sudo handling
 """
+import os
+import sys
+import subprocess
 
+NO_ROOT_COMMANDS = ['discovery', 'web', 'list', 'help']
+
+# Auto-elevate to root if needed
+if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
+    if os.geteuid() != 0:
+        print("Elevating to root privileges...")
+        subprocess.call(['sudo', sys.executable] + sys.argv)
+        sys.exit()
+    
 import nmap
 import hashlib
 from datetime import datetime
 from typing import List, Dict, Optional
-from ..lib.asset_matcher import AssetMatcher
+from lib.asset_matcher import AssetMatcher
 
 class NmapScanner:
-    """Nmap scanner using python-nmap library"""
-    
+    """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
     SCAN_PROFILES = {
-        'discovery': {
-            'args': '-sn -PE -PA21,22,25,80,443,3389',
-            'description': 'Fast host discovery'
-        },
-        'basic': {
-            'args': '-sS -sV -T4 --top-ports 100',
-            'description': 'Basic port scan'
-        },
-        'intrusive': {
-            'args': '-sV -O -sC -A --script vuln',
-            'description': 'Full intrusive scan'
-        },
-        'inventory': {
-            'args': '-sV -O --osscan-guess',
-            'description': 'Inventory scan'
-        }
+    # LEVEL 1: Discovery (No root, fastest)
+    'discovery': {
+        'args': '-sn -T4',
+        'description': 'Fast ping sweep - finds live hosts',
+        'frequency': 'hourly',
+        'timeout': 300  # 5 minutes
+    },
+    
+    # LEVEL 2: Quick Check (Basic ports)
+    'quick': {
+        'args': '-sS --top-ports 100 -T5 --open',
+        'description': 'Quick port check - top 100 ports only',
+        'frequency': 'daily',
+        'timeout': 600  # 10 minutes
+    },
+    
+    # LEVEL 3: Basic Inventory (Standard scan)
+    'basic': {
+        'args': '-sS -sV --top-ports 1000 -T4',
+        'description': 'Basic service detection - top 1000 ports',
+        'frequency': 'daily_offhours',
+        'timeout': 1800  # 30 minutes
+    },
+    
+    # LEVEL 4: Detailed Inventory (With OS detection)
+    'detailed': {
+        'args': '-sS -sV -O --osscan-guess --top-ports 1000 -T4',
+        'description': 'Service + OS detection',
+        'frequency': 'weekly',
+        'timeout': 3600  # 1 hour
+    },
+    
+    # LEVEL 5: Vulnerability Scan
+    'vulnerability': {
+        'args': '-sS -sV --script vuln,exploit -T3',
+        'description': 'Security vulnerability detection',
+        'frequency': 'weekly_weekend',
+        'timeout': 7200  # 2 hours
+    },
+    
+    # LEVEL 6: Full Audit (Comprehensive)
+    'full': {
+        'args': '-sS -sV -O -A --script default,discovery -p- -T4',
+        'description': 'Complete port and service audit - ALL ports',
+        'frequency': 'monthly',
+        'timeout': 14400  # 4 hours
+    },
+    
+    # SPECIAL: Web Applications
+    'web': {
+        'args': '-sV -p80,443,8080,8443 --script http-enum,http-title',
+        'description': 'Web application discovery',
+        'frequency': 'daily',
+        'timeout': 900  # 15 minutes
+    },
+    
+    # SPECIAL: Network Devices (SNMP/SSH)
+    'network': {
+        'args': '-sU -sS -p161,22,23 --script snmp-info',
+        'description': 'Network device identification',
+        'frequency': 'daily',
+        'timeout': 1200  # 20 minutes
     }
+}
     
     def __init__(self, network_range: str = "192.168.1.0/24"):
         self.network_range = network_range
@@ -211,7 +269,7 @@ def main():
                 print(f"  {name:12} - {config['description']}")
         else:
             print(f"Unknown command: {command}")
-            print("Usage: nmap_scanner.py [discovery|basic|intrusive|inventory|list]")
+            print("Usage: nmap_scanner.py [discovery|quick|basic|detailed|vulnerability|full|web|network|list]")
     else:
         scanner.sync_to_snipeit('discovery')
 
