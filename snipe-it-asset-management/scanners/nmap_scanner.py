@@ -14,7 +14,10 @@ if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
         print("Elevating to root privileges...")
         subprocess.call(['sudo', sys.executable] + sys.argv)
         sys.exit()
-    
+
+# Ensure parent directory is in sys.path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import nmap
 import hashlib
 from datetime import datetime
