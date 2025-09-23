@@ -1,6 +1,10 @@
 """CRUD service for Snipe-IT status labels"""
+import os
+import sys
 
-from base import BaseCRUDService
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from crud.base import BaseCRUDService
 
 class StatusLabelService(BaseCRUDService):
     """Service for managing status labels"""

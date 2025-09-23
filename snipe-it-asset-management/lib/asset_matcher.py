@@ -3,9 +3,14 @@ Centralized Asset Matching Service
 Consolidates data from multiple sources and syncs with Snipe-IT
 """
 
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from crud.base import BaseCRUDService
 
@@ -17,7 +22,7 @@ class AssetService(BaseCRUDService):
     
     def search_by_serial(self, serial: str) -> Optional[Dict]:
         """Search for asset by serial number"""
-        from ..snipe_api.api_client import make_api_request
+        from snipe_api.api_client import make_api_request
         response = make_api_request("GET", f"{self.endpoint}/byserial/{serial}")
         if response and response.json().get("rows"):
             return response.json()["rows"][0]
@@ -25,7 +30,7 @@ class AssetService(BaseCRUDService):
     
     def search_by_asset_tag(self, asset_tag: str) -> Optional[Dict]:
         """Search for asset by asset tag"""
-        from ..snipe_api.api_client import make_api_request
+        from snipe_api.api_client import make_api_request
         response = make_api_request("GET", f"{self.endpoint}/bytag/{asset_tag}")
         if response and response.json().get("id"):
             return response.json()
@@ -129,7 +134,7 @@ class AssetMatcher:
         
         # Update metadata
         merged['last_update_source'] = source
-        merged['last_update_at'] = datetime.utcnow().isoformat()
+        merged['last_update_at'] = datetime.now(timezone.utc).isoformat()
         
         return merged
     
@@ -263,7 +268,7 @@ class AssetMatcher:
         
         # Custom fields
         custom_fields = {}
-        from ..snipe_api.schema import CUSTOM_FIELDS
+        from snipe_api.schema import CUSTOM_FIELDS
         
         for field_key, field_def in CUSTOM_FIELDS.items():
             field_name = field_def['name']

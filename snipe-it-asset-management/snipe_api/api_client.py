@@ -1,8 +1,13 @@
+import os
+import sys
 import urllib3
 import json
 import time
 import requests
-from config import SNIPE_URL, HEADERS, VERIFY_SSL
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from snipe_api.config import SNIPE_URL, HEADERS, VERIFY_SSL
 
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

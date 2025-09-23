@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-config_path = "/opt/snipeit-sync/.env"
+config_path = "/opt/snipeit-sync/snipe-it-asset-management/.env"
 load_dotenv(dotenv_path=config_path)
 
 # API Configuration

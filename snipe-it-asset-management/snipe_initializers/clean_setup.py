@@ -4,7 +4,12 @@ Snipe-IT Setup Script
 Initializes Snipe-IT with custom fields, fieldsets, status labels, categories, and locations
 """
 
+import os
+import sys
 import argparse
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from crud.fields import FieldService
 from crud.fieldsets import FieldsetService
 from crud.status_labels import StatusLabelService

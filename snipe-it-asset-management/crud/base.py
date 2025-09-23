@@ -1,7 +1,13 @@
 """Base CRUD service for Snipe-IT entities"""
 
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from typing import Dict, List, Optional, Any
-from ..snipe_api.api_client import make_api_request
+from snipe_api.api_client import make_api_request
 
 class BaseCRUDService:
     """Base class for CRUD operations on Snipe-IT entities"""

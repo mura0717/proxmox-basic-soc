@@ -1,6 +1,10 @@
 """CRUD service for Snipe-IT fieldsets"""
-
+import os
+import sys
 from typing import List, Dict
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from crud.base import BaseCRUDService
 from crud.fields import FieldService
 
