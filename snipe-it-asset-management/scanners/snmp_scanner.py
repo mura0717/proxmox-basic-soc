@@ -4,7 +4,7 @@ SNMP Scanner for network device discovery
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from pysnmp.hlapi import (
     getCmd,
@@ -43,7 +43,7 @@ class SNMPScanner:
             'last_seen_ip': ip_address,
             'device_type': 'Network Device',
             'last_update_source': 'snmp',
-            'last_update_at': datetime.utcnow().isoformat()
+            'last_update_at': datetime.now(timezone.utc).isoformat()
         }
         
         for oid_name, oid_value in self.oids.items():

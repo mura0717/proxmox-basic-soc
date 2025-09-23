@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import nmap
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
 
@@ -135,7 +135,7 @@ class NmapScanner:
         
         asset = {
             'last_seen_ip': host,
-            'nmap_last_scan': datetime.utcnow().isoformat(),
+            'nmap_last_scan': datetime.now(timezone.utc).isoformat(),
             'nmap_scan_profile': profile,
             'device_type': 'Unknown'
         }
@@ -203,7 +203,7 @@ class NmapScanner:
         
         # Set first seen if new
         if not asset.get('first_seen_date'):
-            asset['first_seen_date'] = datetime.utcnow().isoformat()
+            asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
         
         return asset
     

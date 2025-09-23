@@ -5,7 +5,7 @@ OpenVAS Vulnerability Scanner Integration
 
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import Gmp
@@ -83,7 +83,7 @@ class OpenVASScanner:
         
         vuln_data = {
             'last_seen_ip': target_ip,
-            'vulnerability_scan_date': datetime.utcnow().isoformat(),
+            'vulnerability_scan_date': datetime.now(timezone.utc).isoformat(),
             'critical_vulns': 0,
             'high_vulns': 0,
             'medium_vulns': 0,
