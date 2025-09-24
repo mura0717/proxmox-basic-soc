@@ -400,7 +400,7 @@ CATEGORIES = {
 
 # Define Generic Models
 MODELS = [
-    {'name': 'Generic Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
+    {'name': 'Generic Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
     {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
