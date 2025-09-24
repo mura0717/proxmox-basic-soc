@@ -52,18 +52,26 @@ class BaseCRUDService:
     def create(self, data: Dict) -> Optional[Dict]:
         """Create new entity"""
         response = make_api_request("POST", self.endpoint, json=data)
-        if response:
-            self._cache.clear()  # Clear cache on modification
-            return response.json()
-        return None
-    
+        if not response:
+            return None
+        js = response.json()
+        if isinstance(js, dict) and js.get("status") == "error":
+            print(f"[CREATE ERROR] {self.entity_name}: {js.get('messages')}")
+            return None
+        self._cache.clear()  # Clear cache on modification
+        return js
+
     def update(self, entity_id: int, data: Dict) -> Optional[Dict]:
         """Update entity by ID"""
         response = make_api_request("PATCH", f"{self.endpoint}/{entity_id}", json=data)
-        if response:
-            self._cache.clear()
-            return response.json()
-        return None
+        if not response:
+            return None
+        js = response.json()
+        if isinstance(js, dict) and js.get("status") == "error":
+            print(f"[UPDATE ERROR] {self.entity_name}: {js.get('messages')}")
+            return None
+        self._cache.clear()
+        return js
     
     def delete(self, entity_id: int) -> bool:
         """Delete entity by ID"""
@@ -81,7 +89,7 @@ class BaseCRUDService:
             return False
         
         if self.get_by_name(name):
-            # print(f"{self.entity_name.title()} '{name}' already exists")
+            print(f"{self.entity_name.title()} '{name}' already exists")
             return False
         
         result = self.create(data)

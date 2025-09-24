@@ -370,7 +370,7 @@ CATEGORIES = {
 
 # Define Generic Models
 MODELS = [
-    {'name': 'Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Unknown'},
+    {'name': 'Generic Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
     {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
@@ -386,7 +386,6 @@ MODELS = [
 
 #Define Manufacturers
 MANUFACTURERS = [
-    {'name': 'Unknown', 'support_contact': '', 'support_url': ''},
     {'name': 'Generic', 'support_contact': '', 'support_url': ''},
     {'name': 'Apple', 'support_contact': '1-800-MY-APPLE', 'support_url': 'https://support.apple.com/'},
     {'name': 'Dell', 'support_contact': '1-800-624-9897', 'support_url': 'https ://www.dell.com/support/home/en-us'},

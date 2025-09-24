@@ -12,10 +12,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.fields import FieldService
 from crud.fieldsets import FieldsetService
+from crud.manufacturers import ManufacturerService
+from crud.models import ModelService
 from crud.status_labels import StatusLabelService
 from crud.categories import CategoryService
 from crud.locations import LocationService
-from snipe_api.schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, LOCATIONS
+from snipe_api.schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
 class SnipeITSetup:
     """Main setup class for Snipe-IT configuration"""
@@ -25,7 +27,10 @@ class SnipeITSetup:
         self.fieldset_service = FieldsetService()
         self.status_service = StatusLabelService()
         self.category_service = CategoryService()
+        self.model_service = ModelService()
+        self.model_service = ModelService()
         self.location_service = LocationService()
+    
     
     def setup_all(self):
         """Run complete setup"""
@@ -36,6 +41,8 @@ class SnipeITSetup:
         self.setup_status_labels()
         self.setup_categories()
         self.setup_locations()
+        self.setup_manufacturers()
+        self.setup_models()
         self.setup_fields()
         self.setup_fieldsets()
         self.associate_fields_to_fieldsets()
@@ -43,48 +50,6 @@ class SnipeITSetup:
         print("\n" + "=" * 60)
         print("Setup Complete!")
         print("=" * 60)
-    
-    def setup_fields(self):
-        """Create all custom fields"""
-        print("\n--- Setting up Custom Fields ---")
-        created, skipped = 0, 0
-        
-        for field_key, field_data in CUSTOM_FIELDS.items():
-            result = self.field_service.create_if_not_exists(field_data)
-            if result:
-                created += 1
-            else:
-                skipped += 1
-        
-        print(f"✓ Fields: {created} created, {skipped} already existed")
-    
-    def setup_fieldsets(self):
-        """Create all fieldsets"""
-        print("\n--- Setting up Fieldsets ---")
-        created, skipped = 0, 0
-        
-        for fieldset_name in CUSTOM_FIELDSETS.keys():
-            result = self.fieldset_service.create_if_not_exists({"name": fieldset_name})
-            if result:
-                created += 1
-            else:
-                skipped += 1
-        
-        print(f"✓ Fieldsets: {created} created, {skipped} already existed")
-    
-    def associate_fields_to_fieldsets(self):
-        """Associate fields with their fieldsets"""
-        print("\n--- Associating Fields with Fieldsets ---")
-        total_associations = 0
-        
-        for fieldset_name, field_keys in CUSTOM_FIELDSETS.items():
-            associations = self.fieldset_service.setup_fieldset_associations(
-                fieldset_name, field_keys, CUSTOM_FIELDS
-            )
-            total_associations += associations
-            print(f"  ✓ {fieldset_name}: {associations} fields associated")
-        
-        print(f"✓ Total associations created: {total_associations}")
     
     def setup_status_labels(self):
         """Create all status labels"""
@@ -142,18 +107,90 @@ class SnipeITSetup:
         
         print(f"✓ Locations: {created} created, {skipped} already existed")
     
+    def setup_manufacturers(self):
+        """Create all common manufacturers"""
+        print("\n--- Setting up Manufacturers ---")
+        created, skipped = 0, 0
+        for manufacturer_name in MANUFACTURERS:
+            result = ManufacturerService().create_if_not_exists({"name": manufacturer_name})
+            if result:
+                created += 1
+            else:
+                skipped += 1
+                
+        print(f"✓ Manufacturers: {created} created, {skipped} already existed")
+        
+    def setup_models(self):
+        """Create default model if not exists"""
+        print("\n--- Setting up Default Model ---")
+        created, skipped = 0, 0
+        for model_name in MODELS:
+            result = self.model_service.create_if_not_exists({"name": model_name})
+            if result:
+                created += 1
+            else:
+                skipped += 1
+                
+        print(f"✓ Models: {created} created, {skipped} already existed")
+    
+    def setup_fields(self):
+        """Create all custom fields"""
+        print("\n--- Setting up Custom Fields ---")
+        created, skipped = 0, 0
+        
+        for field_key, field_data in CUSTOM_FIELDS.items():
+            result = self.field_service.create_if_not_exists(field_data)
+            if result:
+                created += 1
+            else:
+                skipped += 1
+        
+        print(f"✓ Fields: {created} created, {skipped} already existed")
+    
+    def setup_fieldsets(self):
+        """Create all fieldsets"""
+        print("\n--- Setting up Fieldsets ---")
+        created, skipped = 0, 0
+        
+        for fieldset_name in CUSTOM_FIELDSETS.keys():
+            result = self.fieldset_service.create_if_not_exists({"name": fieldset_name})
+            if result:
+                created += 1
+            else:
+                skipped += 1
+        
+        print(f"✓ Fieldsets: {created} created, {skipped} already existed")
+    
+    def associate_fields_to_fieldsets(self):
+        """Associate fields with their fieldsets"""
+        print("\n--- Associating Fields with Fieldsets ---")
+        total_associations = 0
+        
+        for fieldset_name, field_keys in CUSTOM_FIELDSETS.items():
+            associations = self.fieldset_service.setup_fieldset_associations(
+                fieldset_name, field_keys, CUSTOM_FIELDS
+            )
+            total_associations += associations
+            print(f"  ✓ {fieldset_name}: {associations} fields associated")
+        
+        print(f"✓ Total associations created: {total_associations}")
+    
+    
     def cleanup_all(self):
         """Remove all custom configuration"""
         print("=" * 60)
         print("Starting Cleanup")
         print("=" * 60)
         
+        
         # Delete in reverse order of dependencies
         self.cleanup_fields()
         self.cleanup_fieldsets()
-        self.cleanup_status_labels()
-        self.cleanup_categories()
+        self.cleanup_models()
+        self.cleanup_manufacturers()
         self.cleanup_locations()
+        self.cleanup_categories()
+        self.cleanup_status_labels()
         
         print("\n" + "=" * 60)
         print("Cleanup Complete!")
@@ -176,6 +213,24 @@ class SnipeITSetup:
             if self.fieldset_service.delete_by_name(fieldset_name):
                 deleted += 1
         print(f"✓ Deleted {deleted} fieldsets")
+        
+    def cleanup_manufacturers(self):
+        """Delete all manufacturers"""
+        print("\n--- Cleaning up Manufacturers ---")
+        deleted = 0
+        for manufacturer_name in MANUFACTURERS:
+            if ManufacturerService().delete_by_name(manufacturer_name):
+                deleted += 1
+        print(f"✓ Deleted {deleted} manufacturers")
+    
+    def cleanup_models(self):
+        """Delete all models"""
+        print("\n--- Cleaning up Models ---")
+        deleted = 0
+        for model_name in MODELS:
+            if self.model_service.delete_by_name(model_name):
+                deleted += 1
+        print(f"✓ Deleted {deleted} models")
     
     def cleanup_status_labels(self):
         """Delete all status labels"""
