@@ -7,6 +7,7 @@ import os
 import sys
 import requests
 import json
+from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -34,20 +35,21 @@ def get_valid_defaults():
         return 1, 1, 1
 
 def test_create_asset():
-    model_id, status_id, category_id = get_valid_defaults()
-    
     print("Testing asset creation...")
+    
+    model_id, status_id, category_id = get_valid_defaults()
     print(f"Using - Model ID: {model_id}, Status ID: {status_id}, Category ID: {category_id}")
-    print(f"Payload: {json.dumps(test_asset, indent=2)}")
     
     test_asset = {
         "name": "Test-Asset-Debug",
-        "asset_tag": "TEST-DEBUG-001",
+        "asset_tag": f"TEST-{datetime.now().strftime('%H%M%S')}",
         "model_id": model_id, 
         "status_id": status_id,
         "category_id": category_id,  
         "notes": "Test asset for debugging"
     }
+  
+    print(f"Payload: {json.dumps(test_asset, indent=2)}")
         
     try:
         response = requests.post(
