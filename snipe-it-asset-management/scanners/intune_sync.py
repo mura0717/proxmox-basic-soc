@@ -244,11 +244,6 @@ class IntuneSync:
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 
-if __name__ == "__main__":
-    # Add to .env file:
-    # AZURE_TENANT_ID=your-tenant-id
-    # AZURE_CLIENT_ID=your-app-id
-    # AZURE_CLIENT_SECRET=your-app-secret
-    
+if __name__ == "__main__":   
     sync = IntuneSync()
     sync.sync_to_snipeit()

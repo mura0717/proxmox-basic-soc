@@ -4,8 +4,10 @@ SNMP Scanner for network device discovery
 """
 
 import os
+import sys
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
+import ipaddress
 from pysnmp.hlapi import (
     getCmd,
     SnmpEngine,
@@ -15,7 +17,10 @@ from pysnmp.hlapi import (
     ObjectType,
     ObjectIdentity
 )
-from ..lib.asset_matcher import AssetMatcher
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from lib.asset_matcher import AssetMatcher
 
 class SNMPScanner:
     """SNMP network device scanner"""
@@ -46,10 +51,13 @@ class SNMPScanner:
             'last_update_at': datetime.now(timezone.utc).isoformat()
         }
         
+        found_snmp_data = False # Flag to check if any SNMP data was retrieved
+        
         for oid_name, oid_value in self.oids.items():
             try:
                 result = self._snmp_get(ip_address, oid_value)
                 if result:
+                    found_snmp_data = True
                     if oid_name == 'sysName':
                         device_info['dns_hostname'] = result
                         device_info['name'] = result
@@ -73,7 +81,7 @@ class SNMPScanner:
             if mac_addresses:
                 device_info['mac_addresses'] = '\n'.join(mac_addresses)
         
-        return device_info if len(device_info) > 3 else None
+        return device_info if found_snmp_data else None
     
     def _snmp_get(self, ip: str, oid: str) -> Optional[str]:
         """Perform SNMP GET operation"""
@@ -124,7 +132,7 @@ class SNMPScanner:
             hours = (ticks % 8640000) // 360000
             minutes = (ticks % 360000) // 6000
             return f"{days}d {hours}h {minutes}m"
-        except:
+        except(ValueError, TypeError):
             return timeticks
     
     def _get_mac_addresses(self, ip: str) -> List[str]:
@@ -136,7 +144,6 @@ class SNMPScanner:
     
     def scan_network(self, network_range: str = "192.168.1.0/24") -> List[Dict]:
         """Scan network range for SNMP-enabled devices"""
-        import ipaddress
         
         devices = []
         network = ipaddress.ip_network(network_range)
