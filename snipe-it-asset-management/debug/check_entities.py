@@ -14,6 +14,10 @@ endpoints = [
     ('/api/v1/manufacturers', 'Manufacturers'),
     ('/api/v1/statuslabels', 'Status Labels'),
     ('/api/v1/categories', 'Categories'),
+    ('/api/v1/locations', 'Locations'),
+    ('/api/v1/users', 'Users'),
+    ('/api/v1/fields', 'Fields'),
+    ('/api/v1/fieldsets', 'Fieldsets'),
 ]
 
 for endpoint, name in endpoints:
