@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # check_assets.py
 
+import os
 import sys
-sys.path.insert(0, '/opt/snipeit-sync/snipe-it-asset-management')
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.base import BaseCRUDService
 
@@ -12,7 +14,10 @@ endpoints = [
     ('/api/v1/models', 'Models'),
     ('/api/v1/manufacturers', 'Manufacturers'),
     ('/api/v1/statuslabels', 'Status Labels'),
-    ('/api/v1/categories', 'Categories')
+
+    ('/api/v1/locations', 'Locations'),
+
+    ('/api/v1/licenses', 'Licenses')
 ]
 
 for endpoint, name in endpoints:
