@@ -635,14 +635,32 @@ def create_models():
     """Creates generic models if they don't already exist."""
     print("\n--- Creating Generic Models ---")
     existing_models = set(get_models_map().keys())
+    manufacturers_map = get_manufacturers_map()
+    categories_map = get_categories_map()
 
     for model in MODELS:
         model_name = model['name']
         if model_name in existing_models:
             print(f"Model '{model_name}' already exists. Skipping.") 
             continue
+        manu_id = manufacturers_map.get(model['manufacturer'])
+        cat_id = categories_map.get(model['category'])
+        if not manu_id:
+            print(f"  ✗ Manufacturer '{model['manufacturer']}' not found for model '{model_name}'. Skipping.")
+            continue
+        if not cat_id:
+            print(f"  ✗ Category '{model['category']}' not found for model '{model_name}'. Skipping.")
+            continue
+        
+        payload = {
+            'name': model_name,
+            'manufacturer_id': manu_id,
+            'category_id': cat_id,
+            'model_number': model_name.replace(' ', '-').upper()
+        }
+        
         print(f"Creating model: {model_name}...")
-        make_api_request("POST", f"{SNIPE_URL}/api/v1/models", json=model)
+        make_api_request("POST", f"{SNIPE_URL}/api/v1/models", json=payload)
     print("Model creation process complete.")
 
 def create_manufacturers():
@@ -772,16 +790,16 @@ if __name__ == "__main__":
     delete_all_fieldsets()
     delete_all_status_labels()
     delete_all_categories()
-    delete_all_models()
     delete_all_manufacturers()
+    delete_all_models()
     delete_all_locations()
     
     """CREATE ALL"""
     create_status_labels()
     create_categories()
     create_locations()
-    create_models()
     create_manufacturers()
+    create_models()
     create_all_fields()
     create_all_fieldsets()
     associate_fields_to_fieldsets()
