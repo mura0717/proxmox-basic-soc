@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# test_imports.py - Save in /opt/snipeit-sync/snipe-it-asset-management/
 
 import sys
 import os

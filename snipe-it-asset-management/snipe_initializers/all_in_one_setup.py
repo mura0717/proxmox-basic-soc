@@ -400,7 +400,7 @@ CATEGORIES = {
 
 # Define Generic Models
 MODELS = [
-    {'name': 'Generic Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
+    {'name': 'Generic Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
     {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
@@ -416,43 +416,7 @@ MODELS = [
 
 #Define Manufacturers
 MANUFACTURERS = [
-    {'name': 'Generic', 'support_contact': '', 'support_url': ''},
-    {'name': 'Apple', 'support_contact': '1-800-MY-APPLE', 'support_url': 'https://support.apple.com/'},
-    {'name': 'Dell', 'support_contact': '1-800-624-9897', 'support_url': 'https ://www.dell.com/support/home/en-us'},
-    {'name': 'HP', 'support_contact': '1-800-474-6836', 'support_url': 'https://support.hp.com/'},
-    {'name': 'Lenovo', 'support_contact': '1-855-253-6686', 'support_url': 'https://support.lenovo.com/'},
-    {'name': 'Microsoft', 'support_contact': '1-800-642-7676', 'support_url': 'https://support.microsoft.com/'},
-    {'name': 'Cisco', 'support_contact': '1-800-553-2447', 'support_url': 'https://www.cisco.com/c/en/us/support/index.html'},
-    {'name': 'Samsung', 'support_contact': '1-800-SAMSUNG', 'support_url': 'https://www.samsung.com/us/support/'},
-    {'name': 'Asus', 'support_contact': '1-888-678-3688', 'support_url': 'https://www.asus.com/support/'},
-    {'name': 'Acer', 'support_contact': '1-866-695-2237', 'support_url': 'https://www.acer.com/ac/en/US/content/support'},
-    {'name': 'LG', 'support_contact': '1-800-243-0000', 'support_url': 'https://www.lg.com/us/support'},
-    {'name': 'Sony', 'support_contact': '1-800-222-7669', 'support_url': 'https://www.sony.com/electronics/support'},
-    {'name': 'Toshiba', 'support_contact': '1-800-457-7777', 'support_url': 'https://support.dynabook.com/'},
-    {'name': 'VMware', 'support_contact': '1-877-486-9273', 'support_url': 'https://www.vmware.com/support.html'},
-    {'name': 'Citrix', 'support_contact': '1-800-424-8749', 'support_url': 'https://www.citrix.com/support/'},
-    {'name': 'Red Hat', 'support_contact': '1-866-273-3424', 'support_url': 'https://access.redhat.com/support'},
-    {'name': 'Juniper Networks', 'support_contact': '1-888-314-5822', 'support_url': 'https://www.juniper.net/us/en/support/'},
-    {'name': 'Hewlett Packard Enterprise', 'support_contact': '1-800-633-3600', 'support_url': 'https://www.hpe.com/us/en/support.html'},
-    {'name': 'NetApp', 'support_contact': '1-888-463-8277', 'support_url': 'https://www.netapp.com/support/'},
-    {'name': 'Fujitsu', 'support_contact': '1-800-831-3183', 'support_url': 'https://www.fujitsu.com/global/support/'},
-    {'name': 'Panasonic', 'support_contact': '1-800-662-3537', 'support_url': 'https://www.panasonic.com/global/support.html'},
-    {'name': 'Brother', 'support_contact': '1-877-755-2526', 'support_url': 'https://www.brother-usa.com/support'},
-    {'name': 'Epson', 'support_contact': '1-800-463-7766', 'support_url': 'https://epson.com/support'},
-    {'name': 'Zebra Technologies', 'support_contact': '1-800-423-0442', 'support_url': 'https://www.zebra.com/us/en/support.html'},
-    {'name': 'Poly', 'support_contact': '1-800-289-9100', 'support_url': 'https://www.poly.com/us/en/support'},
-    {'name': 'Logitech', 'support_contact': '1-646-454-3200', 'support_url': 'https://support.logi.com/hc/en-us'},
-    {'name': 'Razer', 'support_contact': '1-888-204-4590', 'support_url': 'https://www.razer.com/support'},
-    {'name': 'Dell EMC', 'support_contact': '1-800-624-9897', 'support_url': 'https://www.dell.com/support/home/en-us'},
-    {'name': 'Supermicro', 'support_contact': '1-408-503-8000', 'support_url': 'https://www.supermicro.com/support/'},
-    {'name': 'Aruba Networks', 'support_contact': '1-800-943-4526', 'support_url': 'https://www.arubanetworks.com/support/'},
-    {'name': 'Extreme Networks', 'support_contact': '1-888-257-3000', 'support_url': 'https://www.extremenetworks.com/support/'},
-    {'name': 'Ubiquiti', 'support_contact': '1-408-942-3080', 'support_url': 'https://www.ui.com/support/'},
-    {'name': 'TP-Link', 'support_contact': '1-866-225-8139', 'support_url': 'https://www.tp-link.com/us/support/'},
-    {'name': 'Netgear', 'support_contact': '1-888-638-4327', 'support_url': 'https://www.netgear.com/support/'},
-    {'name': 'D-Link', 'support_contact': '1-877-453-5465', 'support_url': 'https://support.dlink.com/'},
-    {'name': 'Linksys', 'support_contact': '1-800-326-7114', 'support_url': 'https://www.linksys.com/us/support/'},
-    {'name': 'Citrix', 'support_contact': '1-800-424-8749', 'support_url': 'https://www.citrix.com/support/'},
+    {'name': 'Generic', 'support_contact': '', 'support_url': ''}
 ]
 
 # Define Locations

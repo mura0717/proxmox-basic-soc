@@ -13,6 +13,10 @@ import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from crud.base import BaseCRUDService
+from crud.status_labels import StatusLabelService
+from crud.categories import CategoryService
+from crud.manufacturers import ManufacturerService
+from crud.models import ModelService
 
 class AssetService(BaseCRUDService):
     """Service for managing assets"""
@@ -44,8 +48,12 @@ class AssetMatcher:
     def __init__(self):
         self.asset_service = AssetService()
         self.matched_assets = {}
+        self.status_service = StatusLabelService()
+        self.category_service = CategoryService()
+        self.manufacturer_service = ManufacturerService()
+        self.model_service = ModelService()
         self.match_rules = self._initialize_match_rules()
-    
+        
     def _initialize_match_rules(self) -> Dict:
         """Define matching rules for different data sources"""
         return {
@@ -213,12 +221,10 @@ class AssetMatcher:
     
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Prepare asset data for Snipe-IT API"""
-        from crud.status_labels import StatusLabelService
-        from crud.categories import CategoryService
-        
-        # Get service instances
-        status_service = StatusLabelService()
-        category_service = CategoryService()
+
+        # Get service instances (already initialized in __init__)
+        status_service = self.status_service
+        category_service = self.category_service
         
         # Base payload
         payload = {}
@@ -258,6 +264,19 @@ class AssetMatcher:
             status = status_service.get_by_name(status_name)
             if status:
                 payload['status_id'] = status['id']
+                
+        if 'model_id' not in payload:
+            # Try to determine model based on device type
+            device_type = asset_data.get('device_type', '').lower()
+            model_name = self._determine_model_name(device_type)
+            model = self.model_service.get_by_name(model_name)
+            if model:
+                payload['model_id'] = model['id']
+            else:
+                # Fallback to generic model
+                generic_model = self.model_service.get_by_name('Generic Unknown Device')
+                if generic_model:
+                    payload['model_id'] = generic_model['id']
         
         # Determine category
         if 'category_id' not in payload:
@@ -320,3 +339,26 @@ class AssetMatcher:
             return 'Cloud Resources'
         else:
             return 'Other Assets'
+    
+    def _determine_model_name(self, device_type: str) -> str:
+        """Determine model name based on device type"""
+        device_type = device_type.lower()
+        
+        model_map = {
+            'server': 'Generic Server',
+            'desktop': 'Generic Desktop', 
+            'laptop': 'Generic Laptop',
+            'switch': 'Generic Network Device',
+            'router': 'Generic Network Device',
+            'printer': 'Generic Printer',
+            'mobile phone': 'Generic Mobile Phone',
+            'tablet': 'Generic Mobile Phone',
+            'virtual machine': 'Generic Virtual Machine',
+            'cloud resource': 'Generic Cloud Resource'
+        }
+        
+        for key, model_name in model_map.items():
+            if key in device_type:
+                return model_name
+        
+        return 'Generic Unknown Device'

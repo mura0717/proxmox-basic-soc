@@ -28,7 +28,7 @@ class SnipeITSetup:
         self.status_service = StatusLabelService()
         self.category_service = CategoryService()
         self.model_service = ModelService()
-        self.model_service = ModelService()
+        self.manufacture_service = ManufacturerService()
         self.location_service = LocationService()
     
     
@@ -111,8 +111,8 @@ class SnipeITSetup:
         """Create all common manufacturers"""
         print("\n--- Setting up Manufacturers ---")
         created, skipped = 0, 0
-        for manufacturer_name in MANUFACTURERS:
-            result = ManufacturerService().create_if_not_exists({"name": manufacturer_name})
+        for manufacturer_data in MANUFACTURERS:
+            result = ManufacturerService().create_if_not_exists({"name": manufacturer_data})
             if result:
                 created += 1
             else:
@@ -124,8 +124,19 @@ class SnipeITSetup:
         """Create default model if not exists"""
         print("\n--- Setting up Default Model ---")
         created, skipped = 0, 0
-        for model_name in MODELS:
-            result = self.model_service.create_if_not_exists({"name": model_name})
+        
+        for model_data in MODELS:
+            mfr = self.manufacture_service.get_by_name(model_data['manufacturer'])
+            cat = self.category_service.get_by_name(model_data['category'])
+            
+            if mfr & cat:
+                payload = {
+                    "name": model_data['name'],
+                    "manufacturer_id": mfr['id'],
+                    "category_id": cat['id'],
+                    "model_number": model_data.get('model_number', ''),
+                }
+            result = self.model_service.create_if_not_exists(payload)
             if result:
                 created += 1
             else:

@@ -5,11 +5,14 @@ Syncs devices from Microsoft Intune to Snipe-IT
 """
 
 import os
+import sys
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from msal import ConfidentialClientApplication
-from ..lib.asset_matcher import AssetMatcher
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from lib.asset_matcher import AssetMatcher
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -109,7 +112,7 @@ class IntuneSync:
     
     def transform_intune_to_snipeit(self, intune_device: Dict) -> Dict:
         """Transform Intune device data to Snipe-IT format"""
-        
+        current_time = datetime.now(timezone.utc).isoformat()
         # Map Intune fields to Snipe-IT custom fields
         transformed = {
             # Identity
@@ -130,6 +133,8 @@ class IntuneSync:
             'intune_compliance': intune_device.get('complianceState'),
             'compliance_grace_expiration': intune_device.get('complianceGracePeriodExpirationDateTime'),
             'management_cert_expiration': intune_device.get('managementCertificateExpirationDateTime'),
+            'last_update_source': 'intune',
+            'last_update_at': current_time,
             
             # OS Information
             'os_platform': intune_device.get('operatingSystem'),

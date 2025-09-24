@@ -1,6 +1,5 @@
 """Base CRUD service for Snipe-IT entities"""
 
-
 import os
 import sys
 
@@ -51,15 +50,27 @@ class BaseCRUDService:
     
     def create(self, data: Dict) -> Optional[Dict]:
         """Create new entity"""
+        if not data:
+            print(f"Cannot create {self.entity_name}: No data provided")
+            return None
+    
         response = make_api_request("POST", self.endpoint, json=data)
         if not response:
             return None
-        js = response.json()
-        if isinstance(js, dict) and js.get("status") == "error":
-            print(f"[CREATE ERROR] {self.entity_name}: {js.get('messages')}")
+        try:
+            js = response.json()
+            if isinstance(js, dict):
+                if js.get("status") == "success":
+                    self._cache.clear()
+                    return js.get("payload", js)
+                elif js.get("status") == "error":
+                    print(f"[CREATE ERROR] {self.entity_name}: {js.get('messages')}")
+                    return None
+            self._cache.clear() 
+            return js
+        except Exception as e:
+            print(f"[CREATE ERROR] Failed to parse response: {e}")
             return None
-        self._cache.clear()  # Clear cache on modification
-        return js
 
     def update(self, entity_id: int, data: Dict) -> Optional[Dict]:
         """Update entity by ID"""
