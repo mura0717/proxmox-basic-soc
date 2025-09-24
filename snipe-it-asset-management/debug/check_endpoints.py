@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from snipe_api.config import SNIPE_URL, HEADERS, VERIFY_SSL
 
-ENDPOINTS = [
+endpoints = [
     ('/api/v1/hardware', 'Assets'),
     ('/api/v1/models', 'Models'),
     ('/api/v1/manufacturers', 'Manufacturers'),
@@ -42,7 +42,7 @@ def check_endpoints():
     
     # Test API connection
     print("1. Testing API connections...")
-    for endpoint, name in ENDPOINTS:
+    for endpoint, name in endpoints:
         print(f"Checking {name} endpoint...")    
         try:
             response = requests.get(f"{SNIPE_URL}{endpoint}", headers=HEADERS, verify=VERIFY_SSL)
@@ -54,7 +54,6 @@ def check_endpoints():
         except Exception as e:
             print(f"✗ API connection test error: {e}")
             return
-
 
 check_endpoints()
 print("Successful Endpoints: ", positive_results)

@@ -17,8 +17,8 @@ def test_create_asset():
     test_asset = {
         "name": "Test-Asset-Debug",
         "asset_tag": "TEST-DEBUG-001",
-        "model_id": 1,  # Use your default model ID
-        "status_id": 1,  # Use your default status ID
+        "model_id": 1, 
+        "status_id": 1,  
         "notes": "Test asset for debugging"
     }
     
