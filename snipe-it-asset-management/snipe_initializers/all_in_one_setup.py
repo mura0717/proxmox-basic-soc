@@ -282,7 +282,17 @@ CUSTOM_FIELDSETS = {
     "All Network Identifiers": [
         'dns_hostname', 'wifi_mac', 'ethernet_mac', 'mac_addresses', 'wifi_ipv4',
         'wifi_subnet', 'last_seen_ip', 'connected_switch_port'
+    ],
+    
+       # Exchange and Remote Assistance
+    "Exchange and Remote Assistance": [
+        'exchange_last_successful_sync_date_time',
+        'exchange_access_state',
+        'exchange_access_state_reason',
+        'remote_assistance_session_url',
+        'remote_assistance_session_error_details'
     ]
+    
 }
 
 # Define Status Labels
