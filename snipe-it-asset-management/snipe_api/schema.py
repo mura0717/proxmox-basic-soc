@@ -150,21 +150,25 @@ CUSTOM_FIELDSETS = {
     # Comprehensive fieldset for all managed assets
     "Managed Assets (Intune+Nmap)": [
         # Identity / IDs
-        'azure_ad_id', 'intune_device_id', 'primary_user_id',
+        'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
 
         # Enrollment / Management
         'intune_managed', 'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
         'managed_by', 'management_name', 'intune_category', 'ownership', 'device_state',
         'intune_compliance', 'compliance_grace_expiration', 'management_cert_expiration',
+        'enrollment_profile_name', 'require_user_enrollment_approval', 'activation_lock_bypass_code',
 
         # OS / Platform
         'os_platform', 'os_version', 'sku_family', 'join_type', 'product_name',
         'processor_architecture', 'security_patch_level', 'encrypted', 'supervised',
         'jailbroken', 'azure_ad_registered', 'bios_version',
-        'tpm_manufacturer_id', 'tpm_manufacturer_version',
+        'tpm_manufacturer_id', 'tpm_manufacturer_version', 'android_security_patch_level', 'model', 'manufacturer',
 
         # User
-        'primary_user_upn', 'primary_user_email', 'primary_user_display_name',
+        'primary_user_upn', 'primary_user_email', 'primary_user_display_name', 'user_display_name',
+
+        # Software Inventory
+        'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
 
         # Networking
         'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id',
@@ -173,7 +177,7 @@ CUSTOM_FIELDSETS = {
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',
 
         # Storage
-        'total_storage', 'free_storage',
+        'total_storage', 'free_storage', 'physical_memory_in_bytes',
 
         # EAS
         'eas_activation_id', 'eas_activated', 'eas_last_sync', 'eas_reason', 'eas_status',
@@ -182,68 +186,68 @@ CUSTOM_FIELDSETS = {
         'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'nmap_open_ports', 'open_ports_hash',
 
         # Hygiene
-        'last_update_source', 'last_update_at',
-        
+        'last_update_source', 'last_update_at', 'device_action_results', 'device_health_attestation_state', 'partner_reported_threat_state', 'notes',
+
         # Notes
         'discovery_note',
     ],
-    
+
     # Focused fieldset for core managed asset details
-   "Managed Assets - Core Info": [
-        'azure_ad_id', 'intune_device_id',
-        'primary_user_upn', 'primary_user_display_name',
+    "Managed Assets - Core Info": [
+        'azure_ad_id', 'intune_device_id', 'primary_user_upn', 'primary_user_display_name',
         'ownership', 'device_state', 'intune_compliance', 'intune_last_sync',
         'os_platform', 'os_version', 'product_name', 'device_type'
     ],
-    
+
     # Focused fieldset for network and security details
     "Managed Assets - Network and Security": [
         'dns_hostname', 'mac_addresses', 'intune_wifi_ipv4', 'wifi_subnet_id', 'last_seen_ip',
         'encrypted', 'supervised', 'jailbroken', 'security_patch_level',
         'nmap_last_scan', 'nmap_open_ports', 'open_ports_hash', 'connected_switch_port'
     ],
-    
+
     # Focused fieldset for hardware and system details
-     "Managed Assets - Hardware Details": [
+    "Managed Assets - Hardware Details": [
         'total_storage', 'free_storage', 'processor_architecture', 'tpm_manufacturer_id',
         'tpm_manufacturer_version', 'bios_version', 'sku_family', 'parent_device_id', 'hypervisor_host'
     ],
-     
+
     # Software inventory details
     "Software and Applications": [
-        'installed_software', 'software_count', 'last_software_scan'
+        'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features'
     ],
+
     # Vulnerability and certificate details
     "Security and Vulnerabilities": [
         'vulnerability_scan_date', 'critical_vulns', 'high_vulns', 'vulnerability_score',
         'certificates', 'cert_expiry_warning', 'security_patch_level', 'encrypted'
     ],
-    
+
     # Network devices and infrastructure
-     "Network Infrastructure": [
+    "Network Infrastructure": [
         'device_type', 'snmp_location', 'snmp_contact', 'snmp_uptime',
         'switch_port_count', 'firmware_version', 'dns_hostname', 'mac_addresses', 'connected_switch_port',
     ],
-    
+
     # Cellular and mobile device specifics
     "Mobile Devices": [
         'imei', 'meid', 'phone_number', 'iccid', 'eid', 'subscriber_carrier',
         'cellular_technology', 'supervised', 'jailbroken'
     ],
-    
+
     # Nmap-discovered assets
     "Discovered Assets (Nmap Only)": [
         'dns_hostname', 'mac_addresses', 'last_seen_ip',
         'first_seen_date', 'nmap_last_scan', 'nmap_os_guess',
         'nmap_open_ports', 'open_ports_hash', 'discovery_note', 'device_type'
     ],
-    
+
     # Cloud resources
     "Cloud Resources (Azure)": [
         'cloud_provider', 'azure_resource_id', 'azure_subscription_id', 'azure_resource_group',
         'azure_region', 'azure_tags_json', 'last_update_source', 'last_update_at'
     ],
-    
+
     # All network identifiers for easy reference
     "All Network Identifiers": [
         'dns_hostname', 'wifi_mac', 'ethernet_mac', 'mac_addresses', 'wifi_ipv4',
