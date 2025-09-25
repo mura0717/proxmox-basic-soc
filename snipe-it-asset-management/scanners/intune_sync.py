@@ -226,7 +226,14 @@ class IntuneSync:
             macs.append(device['wiFiMacAddress'])
         if device.get('ethernetMacAddress'):
             macs.append(device['ethernetMacAddress'])
-        return '\n'.join(macs) if macs else None
+         
+        # Remove duplicates while preserving order
+        unique_macs = []
+        for mac in macs:
+            if mac not in unique_macs:
+                unique_macs.append(mac)
+        
+        return '\n'.join(unique_macs) if unique_macs else None
     
     def _determine_device_type(self, device: Dict) -> str:
         #Markers to identify
