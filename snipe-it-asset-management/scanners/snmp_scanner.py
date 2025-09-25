@@ -5,9 +5,15 @@ SNMP Scanner for network device discovery
 
 import os
 import sys
+import argparse
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 import ipaddress
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from lib.asset_matcher import AssetMatcher
 from pysnmp.hlapi import (
     getCmd,
     SnmpEngine,
@@ -17,10 +23,6 @@ from pysnmp.hlapi import (
     ObjectType,
     ObjectIdentity
 )
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from lib.asset_matcher import AssetMatcher
 
 class SNMPScanner:
     """SNMP network device scanner"""
@@ -32,7 +34,7 @@ class SNMPScanner:
         self.retries = 2
         
         # Standard SNMP OIDs
-        self.oids = {
+        self.standard_oids = {
             'sysDescr': '1.3.6.1.2.1.1.1.0',
             'sysObjectID': '1.3.6.1.2.1.1.2.0',
             'sysUpTime': '1.3.6.1.2.1.1.3.0',
@@ -40,40 +42,61 @@ class SNMPScanner:
             'sysName': '1.3.6.1.2.1.1.5.0',
             'sysLocation': '1.3.6.1.2.1.1.6.0',
             'ifNumber': '1.3.6.1.2.1.2.1.0',  # Number of interfaces
+            'sysSerial': '1.3.6.1.2.1.47.1.1.1.1.11.1',  # ENTITY-MIB serial
+            'ifPhysAddress.1': '1.3.6.1.2.1.2.2.1.6.1',  # First interface MAC
         }
+        
+        self.vendor_oids = {
+            'cisco': {
+                'serial': '1.3.6.1.2.1.47.1.1.1.1.11.1',
+                'model': '1.3.6.1.2.1.47.1.1.1.1.13.1',
+            },
+            'hp': {
+                'serial': '1.3.6.1.4.1.11.2.36.1.1.2.9.0',
+                'model': '1.3.6.1.4.1.11.2.36.1.1.5.1.1.2.1',
+            },
+            'dell': {
+                'service_tag': '1.3.6.1.4.1.674.10892.1.300.10.1.11.1',
+            },
+        }
+            
     
     def scan_device(self, ip_address: str) -> Optional[Dict]:
         """Scan single device via SNMP"""
+        
+        current_time = datetime.now(timezone.utc).isoformat()
         device_info = {
             'last_seen_ip': ip_address,
             'device_type': 'Network Device',
             'last_update_source': 'snmp',
-            'last_update_at': datetime.now(timezone.utc).isoformat()
+            'last_update_at': current_time,
+            # Device identification
+            'device_type': 'Network Device',
+            'dns_hostname': None,
+            'manufacturer': None,
+            'model': None,
+            
+            # SNMP-specific data
+            'snmp_sys_description': None,
+            'snmp_location': None,
+            'snmp_contact': None,
+            'snmp_uptime': None,
+            'switch_port_count': None,
+            'mac_addresses': None,
+            'notes': None,
         }
         
         found_snmp_data = False # Flag to check if any SNMP data was retrieved
         
-        for oid_name, oid_value in self.oids.items():
+        snmp_data = {}
+        for oid_name, oid_value in self.standard_oids.items():
             try:
                 result = self._snmp_get(ip_address, oid_value)
                 if result:
                     found_snmp_data = True
-                    if oid_name == 'sysName':
-                        device_info['dns_hostname'] = result
-                        device_info['name'] = result
-                    elif oid_name == 'sysDescr':
-                        device_info['notes'] = result
-                        device_info['device_type'] = self._determine_device_type(result)
-                    elif oid_name == 'sysLocation':
-                        device_info['snmp_location'] = result
-                    elif oid_name == 'sysContact':
-                        device_info['snmp_contact'] = result
-                    elif oid_name == 'sysUpTime':
-                        device_info['snmp_uptime'] = self._format_uptime(result)
-                    elif oid_name == 'ifNumber':
-                        device_info['switch_port_count'] = result
+                    snmp_data[oid_name] = result
             except Exception as e:
-                print(f"SNMP error for {ip_address}: {e}")
+                print(f"SNMP error for {ip_address} OID {oid_name}: {e}")
         
         # Get MAC addresses from ARP table if it's a switch/router
         if 'switch' in device_info.get('device_type', '').lower():

@@ -57,9 +57,9 @@ class AssetMatcher:
     def _initialize_match_rules(self) -> Dict:
         """Define matching rules for different data sources"""
         return {
-            'primary': ['serial_number', 'intune_device_id', 'azure_ad_id'],
+            'primary': ['serial', 'intune_device_id', 'azure_ad_id'],
             'secondary': ['mac_addresses', 'imei', 'asset_tag'],
-            'tertiary': ['dns_hostname', 'primary_user_upn']
+            'tertiary': ['name', 'primary_user_upn']
         }
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
@@ -71,12 +71,16 @@ class AssetMatcher:
         """
         Find existing asset in Snipe-IT using multiple matching strategies
         """
+        
+        print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
+        
         # Try primary identifiers first
         for identifier in self.match_rules['primary']:
             if identifier in asset_data and asset_data[identifier]:
-                if identifier == 'serial_number':
+                if identifier == 'serial':
                     existing = self.asset_service.search_by_serial(asset_data[identifier])
                     if existing:
+                        print(f"Found existing asset by serial: {existing.get('id')}")
                         return existing
         
         # Try secondary identifiers
@@ -85,6 +89,7 @@ class AssetMatcher:
                 if identifier == 'asset_tag':
                     existing = self.asset_service.search_by_asset_tag(asset_data[identifier])
                     if existing:
+                        print(f"Found existing asset by asset_tag: {existing.get('id')}")
                         return existing
         
         # Search through all assets for other matches
@@ -93,6 +98,7 @@ class AssetMatcher:
             if self._matches_asset(asset, asset_data):
                 return asset
         
+        print("No existing asset found")
         return None
     
     def _matches_asset(self, existing_asset: Dict, new_data: Dict) -> bool:

@@ -36,6 +36,11 @@ CUSTOM_FIELDS = {
     'azure_ad_id': {"name": "Azure AD Device ID", "element": "text", "help_text": "Unique Identifier from Microsoft Entra ID (formerly Azure AD)"},
     'intune_device_id': {"name": "Intune Device ID", "element": "text", "help_text": "Unique Identifier from Intune"},
     'primary_user_id': {"name": "Primary User ID", "element": "text", "help_text": "Intune/AAD user object ID for the primary user"},
+    'device_enrollment_type': {"name": "Device Enrollment Type", "element": "text", "help_text": "Type of device enrollment"},
+    'device_registration_state': {"name": "Device Registration State", "element": "text", "help_text": "State of device registration"},
+    'device_category_display_name': {"name": "Device Category Display Name", "element": "text", "help_text": "Display name of the device category"},
+    'udid': {"name": "UDID", "element": "text", "help_text": "Unique Device Identifier"},
+    'serial_number': {"name": "Serial Number", "element": "text", "help_text": "Serial number of the device"},
 
     # Enrollment / Management
     'intune_managed': {"name": "Intune Managed", "element": "checkbox", "help_text": "Is this device managed by Intune?"},
@@ -50,6 +55,9 @@ CUSTOM_FIELDS = {
     'intune_compliance': {"name": "Intune Compliance", "element": "text", "help_text": "Compliance state (Compliant/Noncompliant/Unknown)"},
     'compliance_grace_expiration': {"name": "Compliance Grace Expiration", "element": "text", "help_text": "Compliance grace period expiration (ISO 8601)"},
     'management_cert_expiration': {"name": "Management Cert Expiration", "element": "text", "help_text": "Management certificate expiration date (ISO 8601)"},
+    'enrollment_profile_name': {"name": "Enrollment Profile Name", "element": "text", "help_text": "Name of the enrollment profile used"},
+    'require_user_enrollment_approval': {"name": "Require User Enrollment Approval", "element": "checkbox", "help_text": "Indicates if user enrollment approval is required"},
+    'activation_lock_bypass_code': {"name": "Activation Lock Bypass Code", "element": "text", "help_text": "Bypass code for activation lock"},
 
     # OS / Platform
     'os_platform': {"name": "OS Platform", "element": "text", "help_text": "Operating system platform (e.g., Windows, macOS, iOS)"},
@@ -66,17 +74,22 @@ CUSTOM_FIELDS = {
     'bios_version': {"name": "System Management BIOS Version", "element": "text", "help_text": "SMBIOS/Firmware version"},
     'tpm_manufacturer_id': {"name": "TPM Manufacturer ID", "element": "text", "help_text": "TPM manufacturer ID"},
     'tpm_manufacturer_version': {"name": "TPM Manufacturer Version", "element": "text", "help_text": "TPM manufacturer version"},
+    'android_security_patch_level': {"name": "Android Security Patch Level", "element": "text", "help_text": "Security patch level for Android devices"},
+    'model': {"name": "Model", "element": "text", "help_text": "Device model"},
+    'manufacturer': {"name": "Manufacturer", "element": "text", "help_text": "Device manufacturer"},
 
     # User
     'primary_user_upn': {"name": "Primary User UPN", "element": "text", "help_text": "User Principal Name of the primary user"},
     'primary_user_email': {"name": "Primary User Email", "element": "text", "help_text": "Primary user's email address"},
     'primary_user_display_name': {"name": "Primary User Display Name", "element": "text", "help_text": "Primary user's display name"},
+    'user_display_name': {"name": "User Display Name", "element": "text", "help_text": "Display name of the user"},
 
     # Software Inventory
     'installed_software': {"name": "Installed Software", "element": "textarea", "help_text": "JSON list of installed applications from Intune"},
     'software_count': {"name": "Software Count", "element": "text", "help_text": "Total number of installed applications"},
     'last_software_scan': {"name": "Last Software Scan", "element": "text", "help_text": "Timestamp of last software inventory scan"},
-    
+    'configuration_manager_client_enabled_features': {"name": "Configuration Manager Client Enabled Features", "element": "text", "help_text": "Enabled features for Configuration Manager client"},
+
     # Networking
     'dns_hostname': {"name": "DNS Hostname", "element": "text", "help_text": "Hostname from DNS or discovery"},
     'mac_addresses': {"name": "MAC Addresses", "element": "textarea", "help_text": "Newline-separated list of all MACs (Wi-Fi/Ethernet)"},
@@ -87,7 +100,7 @@ CUSTOM_FIELDS = {
     'ethernet_mac': {"name": "Ethernet MAC Address", "element": "text", "help_text": "MAC address for Ethernet interface"},
     'wifi_ipv4': {"name": "WiFi IPv4 Address", "element": "text", "help_text": "IPv4 address assigned to the WiFi interface"},
     'wifi_subnet': {"name": "WiFi Subnet", "element": "text", "help_text": "Subnet information for the WiFi interface"},
-    
+
     # Network Device Information (SNMP)
     'device_type': {"name": "Device Type", "element": "text", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
     'snmp_location': {"name": "SNMP Location", "element": "text", "help_text": "Physical location from SNMP"},
@@ -108,6 +121,7 @@ CUSTOM_FIELDS = {
     # Storage
     'total_storage': {"name": "Total Storage", "element": "text", "help_text": "Total device storage (bytes)"},
     'free_storage': {"name": "Free Storage", "element": "text", "help_text": "Free device storage (bytes)"},
+    'physical_memory_in_bytes': {"name": "Physical Memory (Bytes)", "element": "text", "help_text": "Total physical memory in bytes"},
 
     # EAS (Exchange ActiveSync)
     'eas_activation_id': {"name": "EAS Activation ID", "element": "text", "help_text": "EAS activation ID"},
@@ -115,6 +129,11 @@ CUSTOM_FIELDS = {
     'eas_last_sync': {"name": "EAS Last Sync", "element": "text", "help_text": "Last EAS sync time (ISO 8601)"},
     'eas_reason': {"name": "EAS Reason", "element": "text", "help_text": "EAS status reason"},
     'eas_status': {"name": "EAS Status", "element": "text", "help_text": "EAS status"},
+    'exchange_last_successful_sync_date_time': {"name": "Exchange Last Successful Sync DateTime", "element": "text", "help_text": "Date and time of the last successful Exchange sync"},
+    'exchange_access_state': {"name": "Exchange Access State", "element": "text", "help_text": "Current state of Exchange access"},
+    'exchange_access_state_reason': {"name": "Exchange Access State Reason", "element": "text", "help_text": "Reason for the current Exchange access state"},
+    'remote_assistance_session_url': {"name": "Remote Assistance Session URL", "element": "text", "help_text": "URL for remote assistance session"},
+    'remote_assistance_session_error_details': {"name": "Remote Assistance Session Error Details", "element": "text", "help_text": "Error details for remote assistance session"},
 
     # Nmap discovery
     'first_seen_date': {"name": "First Seen Date", "element": "text", "help_text": "Timestamp when first discovered (ISO 8601)"},
@@ -123,26 +142,30 @@ CUSTOM_FIELDS = {
     'nmap_open_ports': {"name": "Nmap Open Ports", "element": "textarea", "help_text": "Newline or comma-separated list of open ports"},
     'open_ports_hash': {"name": "Open Ports Hash", "element": "text", "help_text": "Hash of open ports list to detect changes"},
     'discovery_note': {"name": "Discovery Note", "element": "textarea", "help_text": "Notes about discovery (VLAN, location, etc.)"},
-    
+
     # Data hygiene
     'last_update_source': {"name": "Last Update Source", "element": "text", "help_text": "Which system updated last (Intune/Nmap/Azure)"},
     'last_update_at': {"name": "Last Update At", "element": "text", "help_text": "Timestamp of last update (ISO 8601)"},
-    
+    'device_action_results': {"name": "Device Action Results", "element": "textarea", "help_text": "Results of device actions performed"},
+    'device_health_attestation_state': {"name": "Device Health Attestation State", "element": "text", "help_text": "State of device health attestation"},
+    'partner_reported_threat_state': {"name": "Partner Reported Threat State", "element": "text", "help_text": "Threat state reported by partner"},
+    'notes': {"name": "Notes", "element": "textarea", "help_text": "Additional notes about the device"},
+
     # Vulnerability Information
     'vulnerability_scan_date': {"name": "Last Vulnerability Scan", "element": "text", "help_text": "Date of last vulnerability scan"},
     'critical_vulns': {"name": "Critical Vulnerabilities", "element": "text", "help_text": "Count of critical vulnerabilities"},
     'high_vulns': {"name": "High Vulnerabilities", "element": "text", "help_text": "Count of high vulnerabilities"},
     'vulnerability_score': {"name": "Vulnerability Score", "element": "text", "help_text": "Overall vulnerability score (0-10)"},
-    
+
     # Certificate Management
     'certificates': {"name": "Certificates", "element": "textarea", "help_text": "JSON list of certificates and expiry dates"},
     'cert_expiry_warning': {"name": "Certificate Expiry Warning", "element": "text", "help_text": "Earliest certificate expiry date"},
-    
+
     # Asset Relationships
     'parent_device_id': {"name": "Parent Device ID", "element": "text", "help_text": "ID of parent device (for VMs, containers)"},
     'hypervisor_host': {"name": "Hypervisor Host", "element": "text", "help_text": "Host server for virtual machines"},
     'connected_switch_port': {"name": "Connected Switch Port", "element": "text", "help_text": "Switch and port this device connects to"},
-    
+
     # Cloud Resource Information
     'cloud_provider': {"name": "Cloud Provider", "element": "text", "help_text": "Cloud provider (Azure, AWS, GCP, On-Premise)"},
     'azure_resource_id': {"name": "Azure Resource ID", "element": "text", "help_text": "ARM resource ID"},
