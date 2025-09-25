@@ -115,6 +115,16 @@ class IntuneSync:
     def transform_intune_to_snipeit(self, intune_device: Dict) -> Dict:
         """Transform Intune device data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
+        
+        # Determine if this is actually a cloud resource
+        management_agent = intune_device.get('managementAgent', '').lower()
+        enrollment_type = intune_device.get('deviceEnrollmentType', '').lower()
+        
+        cloud_provider = None
+        if any(keyword in management_agent for keyword in ['cloud', 'azure']) or \
+        any(keyword in enrollment_type for keyword in ['cloud', 'azure']):
+            cloud_provider = 'Azure'
+        
         # Map Intune fields to Snipe-IT custom fields
         transformed = {
             # Identity
@@ -205,7 +215,7 @@ class IntuneSync:
             'configuration_manager_client_enabled_features': intune_device.get('configurationManagerClientEnabledFeatures'),
             
             # Cloud Resource Information
-            'cloud_provider': 'Azure',  # Assuming it's Azure based on the provided data
+            'cloud_provider': cloud_provider,         
             'azure_resource_id': intune_device.get('azureResourceId'),
             'azure_subscription_id': intune_device.get('azureSubscriptionId'),
             'azure_resource_group': intune_device.get('azureResourceGroup'),
@@ -236,7 +246,6 @@ class IntuneSync:
         return '\n'.join(unique_macs) if unique_macs else None
     
     def _determine_device_type(self, device: Dict) -> str:
-        #Markers to identify
         laptop_markers = {'laptop', 'notebook', 'book', 'zenbook', 'vivobook', 'thinkpad', 'latitude', 
                       'xps', 'precision', 'elitebook', 'probook', 'spectre', 'envy', 'surface laptop', 
                       'travelmate', 'gram', 'ideapad', 'chromebook'}
@@ -266,7 +275,7 @@ class IntuneSync:
             if 'tablet' in model or 'tab' in model or manufacturer in ['samsung', 'lenovo', 'huawei']:
                 return 'Tablet'
             elif 'meetingbar' in model or 'roompanel' in model or 'ctp' in model:
-                return 'IoT Device' # Special case for Yealink meeting devices
+                return 'IoT Device' 
             return 'Mobile Phone'
         elif 'windows' in os_type or device_type in ['windows', 'windowsrt', 'desktop']:
             if any(keyword in model for keyword in laptop_markers):
@@ -282,6 +291,8 @@ class IntuneSync:
             elif any(keyword in model for keyword in ['imac', 'mac mini', 'mac pro']):
                 return 'Desktop'
             return 'Laptop'
+        elif 'iot' in device_type:
+            return 'IoT Devices'
         else:
             return 'Other Device'
     

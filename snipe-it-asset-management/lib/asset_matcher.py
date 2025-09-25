@@ -212,7 +212,7 @@ class AssetMatcher:
         """Create new asset in Snipe-IT"""
         # Prepare asset data for creation
         payload = self._prepare_asset_payload(asset_data)
-        
+        print(f"Creating new asset: {asset_data.get('name', 'Unknown')}")
         # Create asset
         return self.asset_service.create(payload)
     
@@ -227,88 +227,144 @@ class AssetMatcher:
     
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Prepare asset data for Snipe-IT API"""
-
-        # Get service instances (already initialized in __init__)
-        status_service = self.status_service
-        category_service = self.category_service
         
-        # Base payload
         payload = {}
+        debug = os.getenv('ASSET_DEBUG', '0') == '1'  # Add debug flag
         
-        # Standard fields
-        standard_fields = ['name', 'asset_tag', 'serial', 'model_id', 'status_id', 
-                          'category_id', 'manufacturer_id', 'location_id', 'notes']
+        # 1. MANUFACTURER & MODEL FIRST (they depend on each other)
+        manufacturer_name = asset_data.get('manufacturer', '').strip()
+        model_name = asset_data.get('model', '').strip()
         
-        for field in standard_fields:
-            if field in asset_data:
-                payload[field] = asset_data[field]
+        # Only process if we have actual data
+        if manufacturer_name and model_name:
+            # Get or create manufacturer
+            manufacturer = self.manufacturer_service.get_by_name(manufacturer_name)
+            if not manufacturer:
+                manufacturer = self.manufacturer_service.create({
+                    'name': manufacturer_name
+                })
+                if debug:
+                    print(f"Created manufacturer: {manufacturer_name}")
+            
+            if manufacturer:
+                payload['manufacturer_id'] = manufacturer['id']
                 
-         # Handle MAC addresses - set both built-in and custom fields
-        if 'mac_addresses' in asset_data:
-            macs = asset_data['mac_addresses']
-            if isinstance(macs, list) and macs:
-                # Set built-in MAC field with first MAC
-                payload['mac_address'] = macs[0]
-            elif isinstance(macs, str):
-                # If it's a string, use it directly
-                payload['mac_address'] = macs
+                # Determine category
+                category_name = self._determine_category(asset_data)
+                category = self.category_service.get_by_name(category_name)
+                
+                if category:
+                    payload['category_id'] = category['id']
+                    
+                    # Create FULL model name (e.g., "LENOVO 20L8002WMD")
+                    full_model_name = f"{manufacturer_name} {model_name}"
+                    
+                    # Check if model exists
+                    existing_model = self.model_service.get_by_name(full_model_name)
+                    
+                    if not existing_model:
+                        # Create model with proper fieldset
+                        from crud.fieldsets import FieldsetService
+                        fieldset_service = FieldsetService()
+                        
+                        fieldset_map = {
+                            'Laptops': 'Managed Assets (Intune+Nmap)',
+                            'Desktops': 'Managed Assets (Intune+Nmap)',
+                            'Mobile Phones': 'Mobile Devices',
+                            'Tablets': 'Mobile Devices',
+                            'IoT Devices': 'Managed Assets (Intune+Nmap)',
+                        }
+                        
+                        fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
+                        fieldset = fieldset_service.get_by_name(fieldset_name)
+                        
+                        model_data = {
+                            'name': full_model_name,
+                            'manufacturer_id': manufacturer['id'],
+                            'category_id': category['id'],
+                            'model_number': model_name
+                        }
+                        
+                        if fieldset:
+                            model_data['fieldset_id'] = fieldset['id']
+                        
+                        existing_model = self.model_service.create(model_data)
+                        if debug:
+                            print(f"Created model: {full_model_name}")
+                    
+                    if existing_model:
+                        payload['model_id'] = existing_model['id']
         
-        # Auto-generate asset tag if not provided
+        # 2. FALLBACK to generic if no specific model
+        if 'model_id' not in payload:
+            device_type = asset_data.get('device_type', '').lower()
+            generic_name = self._determine_model_name(device_type)
+            generic_model = self.model_service.get_by_name(generic_name)
+            
+            if generic_model:
+                payload['model_id'] = generic_model['id']
+                # Set category from generic model if not already set
+                if 'category_id' not in payload and generic_model.get('category'):
+                    payload['category_id'] = generic_model['category']['id']
+        
+        # 3. STANDARD FIELDS (only process once)
+        standard_fields = ['name', 'asset_tag', 'serial', 'notes']
+        for field in standard_fields:
+            if field in asset_data and asset_data[field]:
+                payload[field] = asset_data[field]
+        
+        # 4. MAC ADDRESS (built-in field)
+        if 'mac_addresses' in asset_data and asset_data['mac_addresses']:
+            macs = asset_data['mac_addresses']
+            if isinstance(macs, str):
+                # Take first MAC for built-in field
+                first_mac = macs.split('\n')[0] if '\n' in macs else macs
+                if first_mac:
+                    payload['mac_address'] = first_mac.strip()
+        
+        # 5. AUTO-GENERATE ASSET TAG
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)
         
-        # Set status based on source
+        # 6. STATUS
         if 'status_id' not in payload:
             source = asset_data.get('_source', 'unknown')
             status_map = {
                 'intune': 'Managed (Intune)',
                 'nmap': 'Discovered (Nmap)',
                 'snmp': 'On-Premise',
-                'azure': 'Cloud Resource'
             }
             status_name = status_map.get(source, 'Unknown')
-            status = status_service.get_by_name(status_name)
+            status = self.status_service.get_by_name(status_name)
             if status:
                 payload['status_id'] = status['id']
-                
-        if 'model_id' not in payload:
-            # Try to determine model based on device type
-            device_type = asset_data.get('device_type', '').lower()
-            model_name = self._determine_model_name(device_type)
-            model = self.model_service.get_by_name(model_name)
-            if model:
-                payload['model_id'] = model['id']
-            else:
-                # Fallback to generic model
-                generic_model = self.model_service.get_by_name('Generic Unknown Device')
-                if generic_model:
-                    payload['model_id'] = generic_model['id']
         
-        # Determine category
-        if 'category_id' not in payload:
-            category_name = self._determine_category(asset_data)
-            category = category_service.get_by_name(category_name)
-            if category:
-                payload['category_id'] = category['id']
-        
-        # Custom fields
-        custom_fields = {}
+        # 7. CUSTOM FIELDS (corrected format)
         from snipe_api.schema import CUSTOM_FIELDS
         
         for field_key, field_def in CUSTOM_FIELDS.items():
-            field_name = field_def['name']
-            if field_key in asset_data:
-                # Convert value based on field type
+            if field_key in asset_data and asset_data[field_key] is not None:
+                field_name = field_def['name']
                 value = asset_data[field_key]
+                
+                # Skip empty values
+                if value == "" or value == "Unknown":
+                    continue
+                
+                # Convert based on type
                 if field_def['element'] == 'checkbox':
                     value = 1 if value else 0
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
                     value = json.dumps(value)
                 
-                custom_fields[field_name] = value
+                # Use exact field name from schema
+                payload[field_name] = value
         
-        if custom_fields:
-            payload.update(custom_fields)
+        if debug:
+            print(f"Final payload for {asset_data.get('name')}:")
+            print(f"  Model: {payload.get('model_id')}")
+            print(f"  Category: {payload.get('category_id')}")
+            print(f"  Status: {payload.get('status_id')}")
         
         return payload
     
@@ -323,9 +379,17 @@ class AssetMatcher:
         """Determine asset category based on data"""
         device_type = asset_data.get('device_type', '').lower()
         os_platform = asset_data.get('os_platform', '').lower()
+        manufacturer = asset_data.get('manufacturer', '').lower()
+        model = asset_data.get('model', '').lower()
         
         # Category mapping logic
-        if 'server' in device_type or 'server' in os_platform:
+        if (manufacturer == 'yealink' and 
+            any(x in model.lower() for x in ['roompanel', 'meetingbar', 'ctp'])):
+            return 'Meeting Room Devices'
+        
+        if 'iot' in device_type:
+            return 'IoT Devices'
+        elif 'server' in device_type or 'server' in os_platform:
             return 'Servers'
         elif 'switch' in device_type or 'router' in device_type:
             return 'Network Devices'
