@@ -387,7 +387,7 @@ class AssetMatcher:
             any(x in model.lower() for x in ['roompanel', 'meetingbar', 'ctp'])):
             return 'Meeting Room Devices'
         
-        if 'iot' in device_type:
+        if 'iot' or 'iot device' in device_type:
             return 'IoT Devices'
         elif 'server' in device_type or 'server' in os_platform:
             return 'Servers'

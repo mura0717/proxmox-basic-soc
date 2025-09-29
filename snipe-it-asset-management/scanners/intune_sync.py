@@ -116,15 +116,6 @@ class IntuneSync:
         """Transform Intune device data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
         
-        # Determine if this is actually a cloud resource
-        management_agent = intune_device.get('managementAgent', '').lower()
-        enrollment_type = intune_device.get('deviceEnrollmentType', '').lower()
-        
-        cloud_provider = None
-        if any(keyword in management_agent for keyword in ['cloud', 'azure']) or \
-        any(keyword in enrollment_type for keyword in ['cloud', 'azure']):
-            cloud_provider = 'Azure'
-        
         # Map Intune fields to Snipe-IT custom fields
         transformed = {
             # Identity
@@ -215,15 +206,12 @@ class IntuneSync:
             'configuration_manager_client_enabled_features': intune_device.get('configurationManagerClientEnabledFeatures'),
             
             # Cloud Resource Information
-            'cloud_provider': cloud_provider,         
+            'cloud_provider': intune_device.get('cloudProvider'),        
             'azure_resource_id': intune_device.get('azureResourceId'),
             'azure_subscription_id': intune_device.get('azureSubscriptionId'),
             'azure_resource_group': intune_device.get('azureResourceGroup'),
             'azure_region': intune_device.get('azureRegion'),
             'azure_tags_json': intune_device.get('azureTagsJson'),
-            
-            # Device type determination
-            'device_type': self._determine_device_type(intune_device)
         }
 
         # Remove None values
@@ -258,12 +246,29 @@ class IntuneSync:
         model = device.get('model', '').lower()
         manufacturer = device.get('manufacturer', '').lower()
         
-        """ if self.debug:
-            print(f"DEVICE TYPE DETERMINATION:")
-            print(f"  OS Type: {os_type}")
-            print(f"  Device Type: {device_type}")
-            print(f"  Model: {model}")
-            print(f"  Manufacturer: {manufacturer}") """
+        """Device data log to a file for debugging"""
+        if self.debug:
+            log_file = "device_classification_log.txt"
+            device_name = device.get('deviceName', 'Unknown Device')
+            os_type = device.get('operatingSystem', '').lower()
+            model = device.get('model', '').lower()
+            manufacturer = device.get('manufacturer', '').lower()
+            cloud_provider = device.get('cloudProvider', '').lower()
+
+            log_entry = (
+                f"--- Device: {device_name} ---\n"
+                f"  OS Type:      {os_type}\n"
+                f"  Model:        {model}\n"
+                f"  Manufacturer: {manufacturer}\n"
+                f"  Cloud Provider: {cloud_provider}\n"
+                f"-" * 50 + "\n"
+            )
+
+            try:
+                with open(log_file, "a", encoding="utf-8") as f:
+                    f.write(log_entry)
+            except IOError as e:
+                print(f"Warning: Could not write to log file {log_file}: {e}")
         
         if 'server' in os_type or 'server' in model:
             return 'Server'
@@ -275,7 +280,7 @@ class IntuneSync:
             if 'tablet' in model or 'tab' in model or manufacturer in ['samsung', 'lenovo', 'huawei']:
                 return 'Tablet'
             elif 'meetingbar' in model or 'roompanel' in model or 'ctp' in model:
-                return 'IoT Device' 
+                return 'IoT Devices' 
             return 'Mobile Phone'
         elif 'windows' in os_type or device_type in ['windows', 'windowsrt', 'desktop']:
             if any(keyword in model for keyword in laptop_markers):
