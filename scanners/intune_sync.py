@@ -206,7 +206,7 @@ class IntuneSync:
             'configuration_manager_client_enabled_features': intune_device.get('configurationManagerClientEnabledFeatures'),
             
             # Cloud Resource Information
-            'cloud_provider': intune_device.get('cloudProvider'),        
+            'cloud_provider': self._determine_cloud_provider(intune_device),        
             'azure_resource_id': intune_device.get('azureResourceId'),
             'azure_subscription_id': intune_device.get('azureSubscriptionId'),
             'azure_resource_group': intune_device.get('azureResourceGroup'),
@@ -233,7 +233,19 @@ class IntuneSync:
         
         return '\n'.join(unique_macs) if unique_macs else None
     
-      def _determine_device_type(self, device: Dict) -> str:
+    def _determine_cloud_provider(self, intune_device: Dict) -> str | None: 
+        """ Determines the cloud provider based on device manufacturer and model. """ 
+        manufacturer = intune_device.get('manufacturer', '').lower() 
+        model = intune_device.get('model', '').lower() 
+        
+        if 'microsoft corporation' in manufacturer and 'virtual machine' in model: 
+            return 'Azure'
+        elif 'amazon' or "aws" in manufacturer or 'amazon ec2' in model: 
+            return 'AWS'
+        else:
+            return 'On-Premise'
+    
+    def _determine_device_type(self, device: Dict) -> str:
         laptop_markers = {'laptop', 'notebook', 'book', 'zenbook', 'vivobook', 'thinkpad', 'latitude', 
                       'xps', 'precision', 'elitebook', 'probook', 'spectre', 'envy', 'surface laptop', 
                       'travelmate', 'gram', 'ideapad', 'chromebook'}
@@ -270,6 +282,8 @@ class IntuneSync:
             except IOError as e:
                 print(f"Warning: Could not write to log file {log_file}: {e}")
         
+        if ('vmware' in manufacturer or 'virtualbox' in manufacturer or 'qemu' in manufacturer or 'microsoft corporation' in manufacturer) and ('virtual machine' in model or 'vm' in model):
+            return 'Virtual Machine'        
         if 'server' in os_type or 'server' in model:
             return 'Server'
         elif 'ios' in os_type or 'iphone' in model:
