@@ -23,7 +23,17 @@ class IntuneSync:
         self.tenant_id = os.getenv('AZURE_TENANT_ID')
         self.client_id = os.getenv('AZURE_CLIENT_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
+        
+        # Debugging setup
         self.debug = os.getenv('INTUNE_DEBUG', '0') == '1'
+        self.log_dir = os.path.join("logs", "debug_logs")
+        os.makedirs(self.log_dir, exist_ok=True)
+        self.device_log_file = os.path.join(self.log_dir, "device_data_log.txt")
+        self.raw_log_file = os.path.join(self.log_dir, "raw_intune_log.txt")
+        self.transformed_log_file = os.path.join(self.log_dir, "transformed_log.txt")
+        self._device_log_count = 0
+        self._raw_log_count = 0
+        self._transformed_log_count = 0
         
         if not all([self.tenant_id, self.client_id, self.client_secret]):
             raise ValueError("Azure credentials not configured in environment")
@@ -31,6 +41,49 @@ class IntuneSync:
         self.asset_matcher = AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/v1.0"
         self.access_token = None
+    
+    # Debugging functions
+    def _clear_log_file(self, log_file: str):
+        """Overwrite a log file."""
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write("") 
+            
+    def _clear_all_debug_logs(self):
+        """Clear all debug log files at the start of each sync."""
+        self._clear_log_file(self.device_log_file)
+        self._clear_log_file(self.raw_log_file)
+        self._clear_log_file(self.transformed_log_file)
+        self._device_log_count = 0
+        self._raw_log_count = 0
+        self._transformed_log_count = 0 
+                
+    def _debug_log(self, message: str, log_file: str, print_terminal: bool = True):
+        """Centralized debug logging to file and optionally to terminal."""
+        if self.debug:
+            try:
+                with open(log_file, "a", encoding="utf-8") as f:
+                    f.write(message + "\n")
+            except IOError as e:
+                print(f"Warning: Could not write to log file {log_file}: {e}")
+            if print_terminal:
+                print(message)
+        else:
+            return
+                
+    def _device_data_log(self, message: str, print_terminal: bool = True):
+        print_terminal = self._device_log_count < 3
+        self._device_log_count += 1
+        self._debug_log(message, self.device_log_file, print_terminal=print_terminal)
+
+    def _raw_data_log(self, message: str, print_terminal: bool = True):
+        print_terminal = self._device_log_count < 3
+        self._raw_log_count += 1
+        self._debug_log(message, self.raw_log_file, print_terminal=print_terminal)
+
+    def _transformed_data_log(self, message: str, print_terminal: bool = True):
+        print_terminal = self._device_log_count < 3
+        self._transformed_log_count += 1
+        self._debug_log(message, self.transformed_log_file, print_terminal=print_terminal)
     
     def authenticate(self) -> bool:
         """Authenticate with Microsoft Graph API"""
@@ -258,30 +311,24 @@ class IntuneSync:
         model = device.get('model', '').lower()
         manufacturer = device.get('manufacturer', '').lower()
         
-        """Device data log to a file for debugging"""
+        """Device data log for debugging"""
         if self.debug:
-            log_file = "device_classification_log.txt"
             device_name = device.get('deviceName', 'Unknown Device')
             os_type = device.get('operatingSystem', '').lower()
             model = device.get('model', '').lower()
             manufacturer = device.get('manufacturer', '').lower()
-            cloud_provider = device.get('cloudProvider', '').lower()
-
+            cloud_provider = self._determine_cloud_provider(device)
             log_entry = (
                 f"--- Device: {device_name} ---\n"
                 f"  OS Type:      {os_type}\n"
                 f"  Model:        {model}\n"
                 f"  Manufacturer: {manufacturer}\n"
                 f"  Cloud Provider: {cloud_provider}\n"
-                f"-" * 50 + "\n"
+                f"{'-'*50}\n"
             )
-
-            try:
-                with open(log_file, "a", encoding="utf-8") as f:
-                    f.write(log_entry)
-            except IOError as e:
-                print(f"Warning: Could not write to log file {log_file}: {e}")
+            self._device_data_log(log_entry)
         
+        """Categorizing logic based on device data"""
         if ('vmware' in manufacturer or 'virtualbox' in manufacturer or 'qemu' in manufacturer or 'microsoft corporation' in manufacturer) and ('virtual machine' in model or 'vm' in model):
             return 'Virtual Machine'        
         if 'server' in os_type or 'server' in model:
@@ -317,6 +364,8 @@ class IntuneSync:
 
     def sync_to_snipeit(self) -> Dict:
         """Main sync function"""
+        if self.debug:
+            self._clear_all_debug_logs()   
         print("Starting Intune synchronization...")
         
         if not self.authenticate():
@@ -328,9 +377,11 @@ class IntuneSync:
         
         # --- DEBUG: Print the first raw device from Intune ---
         if intune_devices and self.debug:
-            print("\n--- RAW INTUNE DATA (FIRST 4 DEVICES) ---")
-            print(json.dumps(intune_devices[:3], indent=2))
-            print("----------------------------------------\n")
+            for device in intune_devices:
+                raw_message = "\n--- RAW INTUNE DEVICE ---\n" + \
+                    json.dumps(device, indent=2) + \
+                        "\n----------------------------------------\n"
+                self._raw_data_log(raw_message)     
             
         # Transform and prepare for Snipe-IT
         transformed_devices = []
@@ -340,9 +391,11 @@ class IntuneSync:
         
         # --- DEBUG: Print the first transformed device ---
         if transformed_devices and self.debug:
-            print("\n--- TRANSFORMED DATA FOR MATCHER (FIRST 4 DEVICES) ---")
-            print(json.dumps(transformed_devices[:3], indent=2))
-            print("---------------------------------------------------\n")
+            for transformed_device in transformed_devices:
+                transformed_message = "\n--- TRANSFORMED DEVICE ---\n" + \
+                    json.dumps(transformed_device, indent=2) + \
+                        "\n----------------------------------------\n"
+                self._transformed_data_log(transformed_message)
         
         # Send to asset matcher for processing
         results = self.asset_matcher.process_scan_data('intune', transformed_devices)
