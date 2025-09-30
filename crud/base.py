@@ -35,17 +35,42 @@ class BaseCRUDService:
         name = re.sub(r'[^a-z0-9\s]', '', name)
         return name.strip()
     
-    def get_all(self, limit: int = 5000, refresh_cache: bool = False) -> List[Dict]:
+    def get_all(self, per_page: int = 500, refresh_cache: bool = False) -> List[Dict]:
         """Get all entities"""
         if not refresh_cache and 'all' in self._cache:
             return self._cache['all']
         
-        response = make_api_request("GET", self.endpoint, params={"limit": limit})
-        if response:
-            data = response.json().get("rows", [])
-            self._cache['all'] = data
-            return data
-        return []
+        all_items: List[Dict] = []
+        offset = 0
+        while True:
+            try:
+                # Request a page of results
+                response = make_api_request("GET", self.endpoint, params={"limit": per_page, "offset": offset})
+                if not response:
+                    print(f"[WARNING] get_all: No response from API at offset {offset}. Stopping.")
+                    break
+                
+                js = response.json()
+                rows = js.get("rows", [])
+                total = js.get("total") # Get total to avoid unnecessary loops
+
+                if not rows:
+                    break # Stop if a page has no rows
+
+                all_items.extend(rows)
+                
+                # Check if we have fetched all items
+                if len(all_items) >= total:
+                    break
+                
+                offset += len(rows) # Move to the next page
+
+            except Exception as e:
+                print(f"[ERROR] get_all: Failed during pagination at offset {offset}: {e}")
+                break
+
+        self._cache['all'] = all_items
+        return all_items
     
     def get_by_id(self, entity_id: int) -> Optional[Dict]:
         """Get entity by ID"""
@@ -86,10 +111,12 @@ class BaseCRUDService:
                     return js.get("payload", js)
                 elif js.get("status") == "error":
                     print(f"[CREATE ERROR] {self.entity_name}: {js.get('messages')}")
+                    self._cache.clear() 
                     return None
-            self._cache.clear() 
+                
             return js
         except Exception as e:
+            self._cache.clear() 
             print(f"[CREATE ERROR] Failed to parse response: {e}")
             return None
 
