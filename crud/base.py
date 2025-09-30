@@ -31,7 +31,9 @@ class BaseCRUDService:
     
         name = name.strip()
         name = re.sub(r'\s+', ' ', name)
-        return name.lower()
+        name = name.lower()
+        name = re.sub(r'[^a-z0-9\s]', '', name)
+        return name.strip()
     
     def get_all(self, limit: int = 5000, refresh_cache: bool = False) -> List[Dict]:
         """Get all entities"""

@@ -76,12 +76,12 @@ class IntuneSync:
         self._debug_log(message, self.device_log_file, print_terminal=print_terminal)
 
     def _raw_data_log(self, message: str, print_terminal: bool = True):
-        print_terminal = self._device_log_count < 3
+        print_terminal = self._raw_log_count < 3
         self._raw_log_count += 1
         self._debug_log(message, self.raw_log_file, print_terminal=print_terminal)
 
     def _transformed_data_log(self, message: str, print_terminal: bool = True):
-        print_terminal = self._device_log_count < 3
+        print_terminal = self._transformed_log_count < 3
         self._transformed_log_count += 1
         self._debug_log(message, self.transformed_log_file, print_terminal=print_terminal)
     
