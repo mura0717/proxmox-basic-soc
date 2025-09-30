@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -23,6 +24,15 @@ class BaseCRUDService:
         self.entity_name = entity_name
         self._cache = {}
     
+    """Helper to normalize entity names for comparison."""
+    def _normalize_name(self, name: str):
+        if not isinstance(name, str):
+            return ""
+    
+        name = name.strip()
+        name = re.sub(r'\s+', ' ', name)
+        return name.lower()
+    
     def get_all(self, limit: int = 5000, refresh_cache: bool = False) -> List[Dict]:
         """Get all entities"""
         if not refresh_cache and 'all' in self._cache:
@@ -41,10 +51,19 @@ class BaseCRUDService:
         return response.json() if response else None
     
     def get_by_name(self, name: str) -> Optional[Dict]:
-        """Get entity by name"""
+        """Get entity by name (normalized)"""
+        if not name:
+            return None
+        
+        normalized_search_name = self._normalize_name(name)
         all_entities = self.get_all()
         for entity in all_entities:
-            if entity.get('name') == name:
+            entity_name = entity.get('name')
+            if not entity_name:
+                continue
+            
+            normalized_entity_name = self._normalize_name(entity_name)
+            if normalized_entity_name == normalized_search_name:
                 return entity
         return None
     
