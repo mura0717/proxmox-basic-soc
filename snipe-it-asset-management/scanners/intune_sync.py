@@ -233,7 +233,108 @@ class IntuneSync:
         
         return '\n'.join(unique_macs) if unique_macs else None
     
-    
+      def _determine_device_type(self, device: Dict) -> str:
+        laptop_markers = {'laptop', 'notebook', 'book', 'zenbook', 'vivobook', 'thinkpad', 'latitude', 
+                      'xps', 'precision', 'elitebook', 'probook', 'spectre', 'envy', 'surface laptop', 
+                      'travelmate', 'gram', 'ideapad', 'chromebook'}
+        
+        lenovo_laptop_prefixes = {'20', '21', '11', '40'}
+        
+        """Determine device type from Intune data"""
+        os_type = device.get('operatingSystem', '').lower()
+        device_type = device.get('deviceType', '').lower()
+        model = device.get('model', '').lower()
+        manufacturer = device.get('manufacturer', '').lower()
+        
+        """Device data log to a file for debugging"""
+        if self.debug:
+            log_file = "device_classification_log.txt"
+            device_name = device.get('deviceName', 'Unknown Device')
+            os_type = device.get('operatingSystem', '').lower()
+            model = device.get('model', '').lower()
+            manufacturer = device.get('manufacturer', '').lower()
+            cloud_provider = device.get('cloudProvider', '').lower()
+
+            log_entry = (
+                f"--- Device: {device_name} ---\n"
+                f"  OS Type:      {os_type}\n"
+                f"  Model:        {model}\n"
+                f"  Manufacturer: {manufacturer}\n"
+                f"  Cloud Provider: {cloud_provider}\n"
+                f"-" * 50 + "\n"
+            )
+
+            try:
+                with open(log_file, "a", encoding="utf-8") as f:
+                    f.write(log_entry)
+            except IOError as e:
+                print(f"Warning: Could not write to log file {log_file}: {e}")
+        
+        if 'server' in os_type or 'server' in model:
+            return 'Server'
+        elif 'ios' in os_type or 'iphone' in model:
+            return 'Mobile Phone'
+        elif 'ipad' in os_type or 'ipad' in model:
+            return 'Tablet'
+        elif 'android' in os_type or device_type == 'android':
+            if 'tablet' in model or 'tab' in model or manufacturer in ['samsung', 'lenovo', 'huawei']:
+                return 'Tablet'
+            elif 'meetingbar' in model or 'roompanel' in model or 'ctp' in model:
+                return 'IoT Devices' 
+            return 'Mobile Phone'
+        elif 'windows' in os_type or device_type in ['windows', 'windowsrt', 'desktop']:
+            if any(keyword in model for keyword in laptop_markers):
+                return 'Laptop'
+            elif manufacturer == 'lenovo' and any(model.startswith(prefix) for prefix in lenovo_laptop_prefixes):
+                return 'Laptop'  # Handles codes like '20t0001jmx', '21ls001umx'
+            elif 'desktop' in model or device_type == 'desktop':
+                return 'Desktop'
+            return 'Laptop'
+        elif 'mac' in os_type:
+            if 'macbook' in model:
+                return 'Laptop'
+            elif any(keyword in model for keyword in ['imac', 'mac mini', 'mac pro']):
+                return 'Desktop'
+            return 'Laptop'
+        elif 'iot' in device_type:
+            return 'IoT Devices'
+        else:
+            return 'Other Device'
+
+    def sync_to_snipeit(self) -> Dict:
+        """Main sync function"""
+        print("Starting Intune synchronization...")
+        
+        if not self.authenticate():
+            return {'error': 'Authentication failed'}
+        
+        # Fetch devices from Intune
+        intune_devices = self.get_managed_devices()
+        print(f"Found {len(intune_devices)} devices in Intune")
+        
+        # --- DEBUG: Print the first raw device from Intune ---
+        if intune_devices and self.debug:
+            print("\n--- RAW INTUNE DATA (FIRST 4 DEVICES) ---")
+            print(json.dumps(intune_devices[:3], indent=2))
+            print("----------------------------------------\n")
+            
+        # Transform and prepare for Snipe-IT
+        transformed_devices = []
+        for device in intune_devices:
+            transformed = self.transform_intune_to_snipeit(device)
+            transformed_devices.append(transformed)
+        
+        # --- DEBUG: Print the first transformed device ---
+        if transformed_devices and self.debug:
+            print("\n--- TRANSFORMED DATA FOR MATCHER (FIRST 4 DEVICES) ---")
+            print(json.dumps(transformed_devices[:3], indent=2))
+            print("---------------------------------------------------\n")
+        
+        # Send to asset matcher for processing
+        results = self.asset_matcher.process_scan_data('intune', transformed_devices)
+        
+        print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
+        return results
 
 if __name__ == "__main__":   
     sync = IntuneSync()
