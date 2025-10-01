@@ -2,11 +2,11 @@
 
 import os
 import sys
-import re
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from typing import Dict, List, Optional
+import re
 from snipe_api.api_client import make_api_request
 
 class BaseCRUDService:
@@ -28,7 +28,7 @@ class BaseCRUDService:
     def _normalize_name(self, name: str):
         if not isinstance(name, str):
             return ""
-        name = name.lower()
+        name = name.replace('"', '-inch').replace('\"', 'inch')
         name = re.sub(r'[()"\/]', ' ', name)
         name = re.sub(r'\s+', ' ', name)
         return name.strip()
@@ -71,6 +71,11 @@ class BaseCRUDService:
         if not data:
             print(f"Cannot create {self.entity_name}: No data provided")
             return None
+        
+        if 'name' in data:
+            data['name'] = self._normalize_name(data['name'])
+        if 'model_number' in data:
+            data['model_number'] = self._normalize_name(data['model_number'])
     
         response = make_api_request("POST", self.endpoint, json=data)
         if not response:

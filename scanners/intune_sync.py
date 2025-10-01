@@ -290,10 +290,11 @@ class IntuneSync:
         """ Determines the cloud provider based on device manufacturer and model. """ 
         manufacturer = intune_device.get('manufacturer', '').lower() 
         model = intune_device.get('model', '').lower() 
-        
+        if 'yealink' in manufacturer:
+            return None
         if 'microsoft corporation' in manufacturer and 'virtual machine' in model: 
             return 'Azure'
-        elif 'amazon' or "aws" in manufacturer or 'amazon ec2' in model: 
+        elif 'amazon' in manufacturer or 'aws' in manufacturer or 'amazon ec2' in model: 
             return 'AWS'
         else:
             return 'On-Premise'
@@ -306,6 +307,7 @@ class IntuneSync:
         lenovo_laptop_prefixes = {'20', '21', '11', '40'}
         
         """Determine device type from Intune data"""
+        device_name = device.get('deviceName', 'Unknown Device').lower()
         os_type = device.get('operatingSystem', '').lower()
         device_type = device.get('deviceType', '').lower()
         model = device.get('model', '').lower()
@@ -313,7 +315,7 @@ class IntuneSync:
         
         """Device data log for debugging"""
         if self.debug:
-            device_name = device.get('deviceName', 'Unknown Device')
+            device_name = device.get('deviceName', 'Unknown Device').lower()
             os_type = device.get('operatingSystem', '').lower()
             model = device.get('model', '').lower()
             manufacturer = device.get('manufacturer', '').lower()
@@ -333,10 +335,11 @@ class IntuneSync:
             return 'Virtual Machine'        
         if 'server' in os_type or 'server' in model:
             return 'Server'
-        elif 'ios' in os_type or 'iphone' in model:
-            return 'Mobile Phone'
-        elif 'ipad' in os_type or 'ipad' in model:
-            return 'Tablet'
+        elif 'ios' in os_type:
+            if 'ipad' in model or 'ipad' in device_name:
+                return 'Tablet'
+            else:
+                return 'Mobile Phone'
         elif 'android' in os_type or device_type == 'android':
             if 'tablet' in model or 'tab' in model or manufacturer in ['samsung', 'lenovo', 'huawei']:
                 return 'Tablet'

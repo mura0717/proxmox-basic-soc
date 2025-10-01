@@ -1,1505 +1,1505 @@
---- Device: CBS-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Sussies iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ICH-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: christina christensens iPhone 16 ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: THE-LAPTOP1 ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: SEH-LAPTOP5 ---
-  OS Type:      windows
-  Model:        21kds68a00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone XS ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Kim Thines iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Karstens iphone ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7364 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Michaels iPad ---
-  OS Type:      ios
-  Model:        ipad pro (10.5")
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R734A ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC2GT9ZN ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LMA-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20wm00b8mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7357 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: YJ01RAY8 ---
-  OS Type:      windows
-  Model:        12ln002ymx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone 13 Pro ---
-  OS Type:      ios
-  Model:        iphone 13 pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: EKSTRA-T470S2 ---
-  OS Type:      windows
-  Model:        20hf0000md
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone xr
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: sbs iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73W0 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: TBU-LAPTOP3 ---
-  OS Type:      windows
-  Model:        21br00exmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73TQ ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1PW888 ---
-  OS Type:      windows
-  Model:        20t0001smx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R735S ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Louises iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R737M ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC0XQ0HU ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R735X ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC2GT29C ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GTL-LAPTOP5 ---
-  OS Type:      windows
-  Model:        20t0001ymx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MacBookProM1SHS ---
-  OS Type:      macos
-  Model:        macbook pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R737T ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: THN-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21bv00admx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: KAP-LAPTOP3 ---
-  OS Type:      windows
-  Model:        21br002amx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: SRA-LAPTOP1 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LOGISTIK-Print-PC1 ---
-  OS Type:      windows
-  Model:        10aw008rmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R734K ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC0XQ0LY ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: NCM-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20wm00b8mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone tilhørende admin ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Susannes’s iPhone ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LOGISTIK-PC2 ---
+--- Device: logistik-pc2 ---
   OS Type:      windows
   Model:        10du000bmd
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: LW-LAPTOP7 ---
+--- Device: sussies iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ich-laptop2 ---
   OS Type:      windows
   Model:        20wm00b9mx
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: GM0R73VC ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ann-britt - iPhone ---
+--- Device: christina christensens iphone 16 ---
   OS Type:      ios
-  Model:        iphone 15
+  Model:        iphone 16
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: White_AndroidAOSP_3/19/2025_9:44 AM ---
+--- Device: white_androidaosp_3/19/2025_9:44 am ---
   OS Type:      android
   Model:        roompanel
   Manufacturer: yealink
-  Cloud Provider: AWS
+  Cloud Provider: None
 --------------------------------------------------
 
---- Device: NBO-LAPTOP1 ---
+--- Device: seh-laptop5 ---
   OS Type:      windows
-  Model:        21bv009vmx
+  Model:        21kds68a00
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: IT - iPhone ---
+--- Device: iphone xs ---
   OS Type:      ios
   Model:        iphone 11
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: Lisa Heidis iPhone ---
+--- Device: kim thines iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: bettina zinckernagels iphone (2) ---
   OS Type:      ios
   Model:        iphone 15
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: Bettina Zinckernagels iPhone (2) ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Marias iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: EKSTRA-T460S1 ---
-  OS Type:      windows
-  Model:        20f9005cmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R737N ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Anders - iPhone ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Claus - iPhone ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Marias iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Pernilles iPhone ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1872Z9 ---
-  OS Type:      windows
-  Model:        20nx0056mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: JMR-PC2 ---
-  OS Type:      windows
-  Model:        10t700ammt
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MDL-LAPTOP10 ---
-  OS Type:      windows
-  Model:        21br002dmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Theresa Sørensens iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1872XA ---
-  OS Type:      windows
-  Model:        20nx0056mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: DESKTOP-FUO7G1S ---
-  OS Type:      windows
-  Model:        20wm003kmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: R90RJ2EZ ---
-  OS Type:      windows
-  Model:        20la0026md
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Klaus - iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ulla - iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Mariannes iPhone ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: WIN10TEST ---
-  OS Type:      windows
-  Model:        vmware7,1
-  Manufacturer: vmware, inc.
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: kantine_AndroidAOSP_5/1/2025_2:56 PM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC227PN4 ---
-  OS Type:      windows
-  Model:        20wm00b6mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1N63BN ---
-  OS Type:      windows
-  Model:        20t0001jmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF36VBXK ---
-  OS Type:      windows
-  Model:        20wm00b8mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: White_AndroidAOSP_5/20/2025_10:29 AM ---
-  OS Type:      android
-  Model:        meetingbar a20
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Hagedorn_AndroidAOSP_8/6/2025_12:06 AM ---
-  OS Type:      android
-  Model:        ctp18
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF29G8GL ---
-  OS Type:      windows
-  Model:        20t0001nmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LRC-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20t0001jmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1ATME4 ---
-  OS Type:      windows
-  Model:        20nx0056mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1Q4TNF ---
-  OS Type:      windows
-  Model:        20t00055mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Hagedorn_AndroidAOSP_6/23/2025_8:17 AM ---
-  OS Type:      android
-  Model:        meetingbar a20
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1AQE5Y ---
-  OS Type:      windows
-  Model:        20nx006smx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: HB-Lokale_AndroidAOSP_8/4/2025_11:16 PM ---
-  OS Type:      android
-  Model:        ctp18
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: TTH-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20wm003kmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Lene Kølle - iPhone ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Peters iPhone (2) ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LA-LAPTOP3 ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC0XQ2CR ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Hodgkin_AndroidAOSP_5/2/2025_11:55 AM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7384 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R737X ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MRK-LAPTOP1 ---
-  OS Type:      windows
-  Model:        21hns8ax00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Mia - iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Mia - iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPad ---
-  OS Type:      ios
-  Model:        ipad pro 11-inch (m4)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Mac mini tilhørende admin ---
-  OS Type:      macos
-  Model:        mac mini
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Saras iPhone ---
-  OS Type:      ios
-  Model:        iphone 14 pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: EKSTRA-T480S2 ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7367 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF2WJ1WT ---
-  OS Type:      windows
-  Model:        20wm003kmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: krogh_AndroidAOSP_5/14/2025_10:25 AM ---
-  OS Type:      android
-  Model:        meetingbar a20
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7374 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0HM7D6 ---
-  OS Type:      windows
-  Model:        21f6002nmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Gitte's iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R736X ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Jari iPhone ---
-  OS Type:      ios
-  Model:        iphone 15 pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: HB-Lokale_AndroidAOSP_7/2/2025_12:01 PM ---
-  OS Type:      android
-  Model:        meetingbar a30
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Steensen_AndroidAOSP_6/20/2025_1:16 AM ---
-  OS Type:      android
-  Model:        ctp18
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ET ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: STUD-MARK1 ---
-  OS Type:      windows
-  Model:        20t00055mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Thyrés mobil 2024 ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: EKSTRA-T490S1 ---
-  OS Type:      windows
-  Model:        20nx0056mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Claus - iPad ---
-  OS Type:      ios
-  Model:        ipad pro (11")(2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73V0 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: CHC-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21bv00apmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Clauss iPhone (2) ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ANJ-LAPTOP5 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: EVA-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21br00exmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: OLP-LAPTOP1 ---
-  OS Type:      windows
-  Model:        20th004hmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 12 pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: STUD-MEDLEM1 ---
-  OS Type:      windows
-  Model:        20kh006jmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Sebastian Erbo - iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LHJ-LAPTOP1 ---
-  OS Type:      windows
-  Model:        21hns8ax00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Louises iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: HB-Lokale_AndroidAOSP_5/14/2025_10:45 AM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: KANTINE-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: krogh_AndroidAOSP_8/8/2025_1:17 AM ---
-  OS Type:      android
-  Model:        ctp18
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: YJ01RASS ---
-  OS Type:      windows
-  Model:        12ln002ymx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0DLB0J ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: TSO-PC2 ---
-  OS Type:      windows
-  Model:        10mr000ymt
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: It - iPad ---
-  OS Type:      ios
-  Model:        ipad air 2
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: NS-PC3 ---
-  OS Type:      windows
-  Model:        10mr0052mt
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: White_AndroidAOSP_8/6/2025_2:03 PM ---
-  OS Type:      android
-  Model:        ctp18
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MDL-PC2 ---
-  OS Type:      windows
-  Model:        10mr0052mt
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: R90R0GNP ---
-  OS Type:      windows
-  Model:        20l90020md
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM00BZR1 ---
-  OS Type:      windows
-  Model:        21br00exmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: S7N0CX03P89328A ---
+--- Device: s7n0cx03p89328a ---
   OS Type:      windows
   Model:        proart p16 h7606wv_h7606wv
   Manufacturer: asustek computer inc.
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: MacBook Air tilhørende Jari ---
-  OS Type:      macos
-  Model:        macbook air (13-inch, m4, 2025)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC0Z3WUH ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC1B9XKS ---
-  OS Type:      windows
-  Model:        20nx006smx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC10X0MH ---
-  OS Type:      windows
-  Model:        20l7s25n00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R738H ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Steensen_AndroidAOSP_5/8/2025_6:44 AM ---
-  OS Type:      android
-  Model:        meetingbar a20
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: SUD-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20wm003fmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone tilhørende admin ---
+--- Device: michaels ipad ---
   OS Type:      ios
-  Model:        iphone 11
+  Model:        ipad pro (10.5")
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: JKJ-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21bv009vmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone TTH (2) ---
+--- Device: saras iphone ---
   OS Type:      ios
-  Model:        iphone 13
+  Model:        iphone 14 pro
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: Diabetesforeningen T4 ---
-  OS Type:      ios
-  Model:        ipad (5th generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: CR-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPad ---
-  OS Type:      ios
-  Model:        ipad pro 11-inch (m4)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MDL-PC3 ---
-  OS Type:      windows
-  Model:        10rs003pmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LJ-LAPTOP6 ---
-  OS Type:      windows
-  Model:        20t0001ymx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73WE ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MacBook Air tilhørende Gitte ---
-  OS Type:      macos
-  Model:        macbook air (13-inch, m4, 2025)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC186SEF ---
-  OS Type:      windows
-  Model:        20nx0056mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Anna Thyra - iPhone ---
-  OS Type:      ios
-  Model:        iphone 11 pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone SE (2nd generation) ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MFR-LAPTOP1 ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Julia ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0DLB0L ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: LPM934356N-iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Lisbeths iPhone ---
-  OS Type:      ios
-  Model:        iphone 15
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73VF ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MacBook Air tilhørende Sofie ---
-  OS Type:      macos
-  Model:        macbook air (m2, 2022)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Diabetes - iPhone (2) ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Anne-Maries iPhone ---
-  OS Type:      ios
-  Model:        iphone 13 mini
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ULN-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20wm00b7mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Nuri - iPhone ---
-  OS Type:      ios
-  Model:        iphone xr
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0EFXEE ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Steensen_AndroidAOSP_5/8/2025_7:49 AM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: krogh_AndroidAOSP_5/1/2025_2:57 PM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: KLW-PC1 ---
-  OS Type:      windows
-  Model:        10mr0052mt
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Lars’s iPhone ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC27ZK9Z ---
-  OS Type:      windows
-  Model:        20wm00b6mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF4QVWAC ---
-  OS Type:      windows
-  Model:        21hns8ax00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PPE-LAPTOP3 ---
-  OS Type:      windows
-  Model:        20tk002emx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC13RTJ2 ---
-  OS Type:      windows
-  Model:        20l8s3bl00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: CSA-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC24DMX3 ---
-  OS Type:      windows
-  Model:        20wm00b9mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: SDE-LAPTOP1 ---
-  OS Type:      windows
-  Model:        20wm003kmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R732Y ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Lones iPhone ---
-  OS Type:      ios
-  Model:        iphone 13
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Richter (2) ---
+--- Device: richter (2) ---
   OS Type:      ios
   Model:        iphone 15 pro
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: GM0R73V8 ---
+--- Device: lma-laptop3 ---
   OS Type:      windows
-  Model:        21ls001umx
+  Model:        20wm00b8mx
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: LKJ-LAPTOP3 ---
+--- Device: lkj-laptop3 ---
   OS Type:      windows
   Model:        20wm00b9mx
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: Signes iPhone (2) ---
+--- Device: steensen_androidaosp_5/8/2025_6:44 am ---
+  OS Type:      android
+  Model:        meetingbar a20
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: sud-laptop2 ---
+  OS Type:      windows
+  Model:        20wm003fmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ekstra-t470s2 ---
+  OS Type:      windows
+  Model:        20hf0000md
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r736x ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1872xa ---
+  OS Type:      windows
+  Model:        20nx0056mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: sbs iphone ---
   OS Type:      ios
   Model:        iphone 13
   Manufacturer: apple
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
---- Device: Sophie - iPhone ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC2DMK2N ---
-  OS Type:      windows
-  Model:        20wm00b5mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MacBook Air tilhørende Anne-Marie ---
-  OS Type:      macos
-  Model:        macbook air (13-inch, m3, 2024)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: ATW-LAPTOP6 ---
-  OS Type:      windows
-  Model:        20wm00b7mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R245F ---
-  OS Type:      windows
-  Model:        21ls002dmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: NRB-LAPTOP2 ---
-  OS Type:      windows
-  Model:        20t0001jmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Nadja Stine Aagaard-Christensen’s iPhone ---
-  OS Type:      ios
-  Model:        iphone 16
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: JJA-LAPTOP1 ---
-  OS Type:      windows
-  Model:        20nx006smx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R7388 ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73VM ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone se (2nd generation)
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF4R8A1K ---
-  OS Type:      windows
-  Model:        21hes69w00
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PC0XQ2DM ---
-  OS Type:      windows
-  Model:        20l8002wmd
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: MacBookProM1ANN ---
-  OS Type:      macos
-  Model:        macbook pro
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: JDJ-LAPTOP1 ---
-  OS Type:      windows
-  Model:        21f60054mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Lene - iPhone ---
-  OS Type:      ios
-  Model:        iphone 11
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: PF2BF09G ---
-  OS Type:      windows
-  Model:        20t0001jmx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: iPhone ---
-  OS Type:      ios
-  Model:        iphone 12
-  Manufacturer: apple
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0DLB0K ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: GM0R73TT ---
-  OS Type:      windows
-  Model:        21ls001umx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: AKA-LAPTOP1 ---
-  OS Type:      windows
-  Model:        20wm00b6mx
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: CAR-LAPTOP2 ---
-  OS Type:      windows
-  Model:        21f7s1t20b
-  Manufacturer: lenovo
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: Hagedorn_AndroidAOSP_5/1/2025_2:53 PM ---
-  OS Type:      android
-  Model:        roompanel
-  Manufacturer: yealink
-  Cloud Provider: AWS
---------------------------------------------------
-
---- Device: R90RJ2EK ---
+--- Device: r90rj2ez ---
   OS Type:      windows
   Model:        20la0026md
   Manufacturer: lenovo
-  Cloud Provider: AWS
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: klaus - iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ulla - iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7388 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mariannes iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: kantine_androidaosp_5/1/2025_2:56 pm ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: gm0r73v0 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r735x ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc2gt29c ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbookprom1ann ---
+  OS Type:      macos
+  Model:        macbook pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0dlb0l ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lpm934356n-iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: sra-laptop1 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbook air tilhørende sofie ---
+  OS Type:      macos
+  Model:        macbook air (m2, 2022)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: aka-laptop1 ---
+  OS Type:      windows
+  Model:        20wm00b6mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: car-laptop2 ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ncm-laptop3 ---
+  OS Type:      windows
+  Model:        20wm00b8mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone tilhørende admin ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0efxee ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: la-laptop3 ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: steensen_androidaosp_5/8/2025_7:49 am ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: lw-laptop7 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73vc ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ns-pc3 ---
+  OS Type:      windows
+  Model:        10mr0052mt
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: white_androidaosp_8/6/2025_2:03 pm ---
+  OS Type:      android
+  Model:        ctp18
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: it - iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc13rtj2 ---
+  OS Type:      windows
+  Model:        20l8s3bl00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: karstens iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ekstra-t460s1 ---
+  OS Type:      windows
+  Model:        20f9005cmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r737n ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: anders - iphone ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: claus - iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc10x0mh ---
+  OS Type:      windows
+  Model:        20l7s25n00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7357 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: yj01ray8 ---
+  OS Type:      windows
+  Model:        12ln002ymx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: sophie - iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone tilhørende admin ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: theresa sørensens iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: jari iphone ---
+  OS Type:      ios
+  Model:        iphone 15 pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: desktop-fuo7g1s ---
+  OS Type:      windows
+  Model:        20wm003kmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73w0 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: tbu-laptop3 ---
+  OS Type:      windows
+  Model:        21br00exmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73tq ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1pw888 ---
+  OS Type:      windows
+  Model:        20t0001smx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r735s ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: louises iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: claus - ipad ---
+  OS Type:      ios
+  Model:        ipad pro (11")(2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1n63bn ---
+  OS Type:      windows
+  Model:        20t0001jmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf36vbxk ---
+  OS Type:      windows
+  Model:        20wm00b8mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: white_androidaosp_5/20/2025_10:29 am ---
+  OS Type:      android
+  Model:        meetingbar a20
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: hagedorn_androidaosp_8/6/2025_12:06 am ---
+  OS Type:      android
+  Model:        ctp18
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: gm0r737t ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lrc-laptop2 ---
+  OS Type:      windows
+  Model:        20t0001jmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1atme4 ---
+  OS Type:      windows
+  Model:        20nx0056mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1q4tnf ---
+  OS Type:      windows
+  Model:        20t00055mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: hagedorn_androidaosp_6/23/2025_8:17 am ---
+  OS Type:      android
+  Model:        meetingbar a20
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: hb-lokale_androidaosp_5/14/2025_10:45 am ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: gm0r734k ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: krogh_androidaosp_8/8/2025_1:17 am ---
+  OS Type:      android
+  Model:        ctp18
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: hagedorn_androidaosp_5/1/2025_2:53 pm ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: nuri - iphone ---
+  OS Type:      ios
+  Model:        iphone xr
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: susannes’s iphone ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: cbs-laptop2 ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc0xq2cr ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: hodgkin_androidaosp_5/2/2025_11:55 am ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: lars’s iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ann-britt - iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: the-laptop1 ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mrk-laptop1 ---
+  OS Type:      windows
+  Model:        21hns8ax00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: r90r0gnp ---
+  OS Type:      windows
+  Model:        20l90020md
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: csa-laptop2 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc24dmx3 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ipad ---
+  OS Type:      ios
+  Model:        ipad pro 11-inch (m4)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r732y ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lones iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1b9xks ---
+  OS Type:      windows
+  Model:        20nx006smx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73v8 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r738h ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: krogh_androidaosp_5/14/2025_10:25 am ---
+  OS Type:      android
+  Model:        meetingbar a20
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: iphone 13 pro ---
+  OS Type:      ios
+  Model:        iphone 13 pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gitte's iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone xr
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: atw-laptop6 ---
+  OS Type:      windows
+  Model:        20wm00b7mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r245f ---
+  OS Type:      windows
+  Model:        21ls002dmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: nrb-laptop2 ---
+  OS Type:      windows
+  Model:        20t0001jmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mdl-pc3 ---
+  OS Type:      windows
+  Model:        10rs003pmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lj-laptop6 ---
+  OS Type:      windows
+  Model:        20t0001ymx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ekstra-t490s1 ---
+  OS Type:      windows
+  Model:        20nx0056mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: win10test ---
+  OS Type:      windows
+  Model:        vmware7,1
+  Manufacturer: vmware, inc.
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r737m ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc0xq0hu ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf4r8a1k ---
+  OS Type:      windows
+  Model:        21hes69w00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc0xq2dm ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: eva-laptop2 ---
+  OS Type:      windows
+  Model:        21br00exmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: olp-laptop1 ---
+  OS Type:      windows
+  Model:        20th004hmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: jdj-laptop1 ---
+  OS Type:      windows
+  Model:        21f60054mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lene - iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf2bf09g ---
+  OS Type:      windows
+  Model:        20t0001jmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lhj-laptop1 ---
+  OS Type:      windows
+  Model:        21hns8ax00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0dlb0k ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73tt ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: diabetes - iphone (2) ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: anne-maries iphone ---
+  OS Type:      ios
+  Model:        iphone 13 mini
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: uln-laptop3 ---
+  OS Type:      windows
+  Model:        20wm00b7mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lene kølle - iphone ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: peters iphone (2) ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: tso-pc2 ---
+  OS Type:      windows
+  Model:        10mr000ymt
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: krogh_androidaosp_5/1/2025_2:57 pm ---
+  OS Type:      android
+  Model:        roompanel
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: klw-pc1 ---
+  OS Type:      windows
+  Model:        10mr0052mt
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7384 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc27zk9z ---
+  OS Type:      windows
+  Model:        20wm00b6mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: nbo-laptop1 ---
+  OS Type:      windows
+  Model:        21bv009vmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mdl-pc2 ---
+  OS Type:      windows
+  Model:        10mr0052mt
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mia - iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm00bzr1 ---
+  OS Type:      windows
+  Model:        21br00exmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: marias iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: sde-laptop1 ---
+  OS Type:      windows
+  Model:        20wm003kmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mac mini tilhørende admin ---
+  OS Type:      macos
+  Model:        mac mini
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc0z3wuh ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ekstra-t480s2 ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: marias iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pernilles iphone ---
+  OS Type:      ios
+  Model:        iphone 11
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: signes iphone (2) ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7374 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mdl-laptop10 ---
+  OS Type:      windows
+  Model:        21br002dmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: jkj-laptop2 ---
+  OS Type:      windows
+  Model:        21bv009vmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbook air tilhørende anne-marie ---
+  OS Type:      macos
+  Model:        macbook air (13-inch, m3, 2024)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: hb-lokale_androidaosp_7/2/2025_12:01 pm ---
+  OS Type:      android
+  Model:        meetingbar a30
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: cr-laptop3 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ipad ---
+  OS Type:      ios
+  Model:        ipad pro 11-inch (m4)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: nadja stine aagaard-christensen’s iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: jja-laptop1 ---
+  OS Type:      windows
+  Model:        20nx006smx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73vm ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc227pn4 ---
+  OS Type:      windows
+  Model:        20wm00b6mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: chc-laptop2 ---
+  OS Type:      windows
+  Model:        21bv00apmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone se (2nd generation) ---
+  OS Type:      ios
+  Model:        iphone se (2nd generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mfr-laptop1 ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: julia ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 12 pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: stud-medlem1 ---
+  OS Type:      windows
+  Model:        20kh006jmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: sebastian erbo - iphone ---
+  OS Type:      ios
+  Model:        iphone 16
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lisbeths iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73vf ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1aqe5y ---
+  OS Type:      windows
+  Model:        20nx006smx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: hb-lokale_androidaosp_8/4/2025_11:16 pm ---
+  OS Type:      android
+  Model:        ctp18
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: tth-laptop2 ---
+  OS Type:      windows
+  Model:        20wm003kmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: yj01rass ---
+  OS Type:      windows
+  Model:        12ln002ymx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0dlb0j ---
+  OS Type:      windows
+  Model:        21f7s1t20b
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: it - ipad ---
+  OS Type:      ios
+  Model:        ipad air 2
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r737x ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf4qvwac ---
+  OS Type:      windows
+  Model:        21hns8ax00
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: ppe-laptop3 ---
+  OS Type:      windows
+  Model:        20tk002emx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: lisa heidis iphone ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: mia - iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7364 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbook air tilhørende jari ---
+  OS Type:      macos
+  Model:        macbook air (13-inch, m4, 2025)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r734a ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc2gt9zn ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r7367 ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf2wj1wt ---
+  OS Type:      windows
+  Model:        20wm003kmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc1872z9 ---
+  OS Type:      windows
+  Model:        20nx0056mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: jmr-pc2 ---
+  OS Type:      windows
+  Model:        10t700ammt
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0hm7d6 ---
+  OS Type:      windows
+  Model:        21f6002nmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc2dmk2n ---
+  OS Type:      windows
+  Model:        20wm00b5mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: iphone tth (2) ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: diabetesforeningen t4 ---
+  OS Type:      ios
+  Model:        ipad (5th generation)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: steensen_androidaosp_6/20/2025_1:16 am ---
+  OS Type:      android
+  Model:        ctp18
+  Manufacturer: yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+--- Device: iphone et ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: stud-mark1 ---
+  OS Type:      windows
+  Model:        20t00055mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: thyrés mobil 2024 ---
+  OS Type:      ios
+  Model:        iphone 15
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gm0r73we ---
+  OS Type:      windows
+  Model:        21ls001umx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbook air tilhørende gitte ---
+  OS Type:      macos
+  Model:        macbook air (13-inch, m4, 2025)
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc186sef ---
+  OS Type:      windows
+  Model:        20nx0056mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: anna thyra - iphone ---
+  OS Type:      ios
+  Model:        iphone 11 pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: clauss iphone (2) ---
+  OS Type:      ios
+  Model:        iphone 13
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: anj-laptop5 ---
+  OS Type:      windows
+  Model:        20wm00b9mx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: gtl-laptop5 ---
+  OS Type:      windows
+  Model:        20t0001ymx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: macbookprom1shs ---
+  OS Type:      macos
+  Model:        macbook pro
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pf29g8gl ---
+  OS Type:      windows
+  Model:        20t0001nmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: thn-laptop2 ---
+  OS Type:      windows
+  Model:        21bv00admx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: kap-laptop3 ---
+  OS Type:      windows
+  Model:        21br002amx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: louises iphone ---
+  OS Type:      ios
+  Model:        iphone 12
+  Manufacturer: apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: logistik-print-pc1 ---
+  OS Type:      windows
+  Model:        10aw008rmx
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: kantine-laptop3 ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: pc0xq0ly ---
+  OS Type:      windows
+  Model:        20l8002wmd
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+--- Device: r90rj2ek ---
+  OS Type:      windows
+  Model:        20la0026md
+  Manufacturer: lenovo
+  Cloud Provider: On-Premise
 --------------------------------------------------
 
