@@ -413,6 +413,7 @@ MODELS = [
     {'name': 'Generic Network Device', 'category': 'Network Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Printer', 'category': 'Printers', 'manufacturer': 'Generic'},
     {'name': 'Generic Mobile Phone', 'category': 'Mobile Phones', 'manufacturer': 'Generic'},
+    {'name': 'Generic Tablet', 'category': 'Tablets', 'manufacturer': 'Generic'},
     {'name': 'Generic IoT Device', 'category': 'IoT Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Storage Device', 'category': 'Storage Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines (On-Premises)', 'manufacturer': 'Generic'},
