@@ -374,6 +374,8 @@ class IntuneSync:
         if not self.authenticate():
             return {'error': 'Authentication failed'}
         
+        self.asset_matcher.clear_all_caches()
+        
         # Fetch devices from Intune
         intune_devices = self.get_managed_devices()
         print(f"Found {len(intune_devices)} devices in Intune")

@@ -24,3 +24,4 @@ if assets != []:
     print("Asset deletion completed. But might need to rerun due to Rate Limiting.")
 else:
     print("There are no assets to delete.")
+ 
