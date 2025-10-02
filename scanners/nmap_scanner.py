@@ -23,6 +23,7 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
+from lib.device_categorizer import DeviceCategorizer
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
@@ -162,7 +163,7 @@ class NmapScanner:
             for osmatch in self.nm[host]['osmatch']:
                 asset['nmap_os_guess'] = osmatch['name']
                 asset['os_accuracy'] = osmatch['accuracy']
-                asset['device_type'] = self._determine_device_type(osmatch['name'])
+                asset['device_type'] = self._determine_device_type(osmatch['name'], asset)
                 break
         
         # Port information
@@ -197,9 +198,10 @@ class NmapScanner:
                 # Refine device type based on services
                 if services:
                     asset['device_type'] = self._refine_device_type_by_services(
-                        asset.get('device_type', 'Unknown'),
-                        services
-                    )
+                    asset.get('device_type', 'Unknown'),
+                    services,
+                    asset
+                )
         
         # Set first seen if new
         if not asset.get('first_seen_date'):
@@ -207,37 +209,33 @@ class NmapScanner:
         
         return asset
     
-    def _determine_device_type(self, os_string: str) -> str:
-        """Determine device type from OS string"""
-        os_lower = os_string.lower()
-        
-        if any(x in os_lower for x in ['cisco', 'switch', 'catalyst']):
-            return 'Switch'
-        elif any(x in os_lower for x in ['router', 'mikrotik']):
-            return 'Router'
-        elif any(x in os_lower for x in ['firewall', 'fortigate', 'pfsense']):
-            return 'Firewall'
-        elif 'windows server' in os_lower:
-            return 'Server'
-        elif 'windows' in os_lower:
-            return 'Desktop'
-        elif 'linux' in os_lower:
-            return 'Linux Device'
-        elif any(x in os_lower for x in ['printer', 'jetdirect']):
-            return 'Printer'
-        else:
-            return 'Network Device'
+    def _determine_device_type(self, os_string: str, host_data: Dict = None) -> str:
+        """Determine device type using centralized categorizer"""
+        # Build a data dict compatible with DeviceCategorizer
+        device_data = {
+            'os_platform': os_string,
+            'manufacturer': host_data.get('manufacturer', '') if host_data else '',
+            'model': '',  # Nmap doesn't give us model info
+            'name': host_data.get('name', '') if host_data else ''
+        }
     
-    def _refine_device_type_by_services(self, current_type: str, services: List[str]) -> str:
+        result = DeviceCategorizer.categorize(device_data)
+        return result.get('device_type', 'Network Device')
+    
+    def _refine_device_type_by_services(self, current_type: str, services: List[str], host_data: Dict = None) -> str:
         """Refine device type based on services"""
         service_str = ' '.join(services).lower()
         
+        # Special service-based detection
         if 'domain' in service_str and 'ldap' in service_str:
             return 'Domain Controller'
         elif 'http' in service_str and 'printer' in service_str:
             return 'Printer'
-        elif any(db in service_str for db in ['mysql', 'mssql', 'postgresql']):
+        elif any(db in service_str for db in ['mysql', 'mssql', 'postgresql', 'oracle']):
             return 'Database Server'
+        elif 'http' in service_str or 'https' in service_str:
+            if 'nginx' in service_str or 'apache' in service_str:
+                return 'Web Server'
         
         return current_type
     
