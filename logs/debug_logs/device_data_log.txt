@@ -1,546 +1,2996 @@
-[2025-10-02T12:49:02.967548] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:16.998679] --- Device: TSO-PC2 ---
+  OS Type:      Windows
   Model:        10MR000YMT
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:03.100031] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:17.197506] --- Device: TSO-PC2 ---
+  OS Type:      Windows
   Model:        10MR000YMT
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:04.366348] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20L8002WMD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:04.367399] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20L8002WMD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:04.800005] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B9MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:04.800448] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B9MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.163506] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 16
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.164195] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 16
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.473358] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        RoomPanel
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.474491] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        RoomPanel
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.863821] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21KDS68A00
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:05.864551] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21KDS68A00
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:07.087791] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20TK002EMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:07.088620] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20TK002EMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:07.737259] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:18.215782] --- Device: iPhone ---
+  OS Type:      iOS
   Model:        iPhone 13
   Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:07.737709] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:18.216417] --- Device: iPhone ---
+  OS Type:      iOS
   Model:        iPhone 13
   Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:08.052737] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 15
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:08.053362] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 15
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:08.412263] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20F9005CMD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:08.413059] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20F9005CMD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:08.837758] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:08.838479] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.248521] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.249105] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.534502] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B8MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.535029] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B8MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.993532] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:09.994317] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:10.654839] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MeetingBar A20
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:10.655356] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MeetingBar A20
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.065117] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM003FMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.065780] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM003FMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.506323] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20HF0000MD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.506732] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20HF0000MD
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.909218] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone XR
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:11.910014] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone XR
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:12.256866] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MeetingBar A30
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:12.257435] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MeetingBar A30
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:12.723987] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:12.724468] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:13.146270] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPad Pro 11-inch (M4)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:13.146964] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPad Pro 11-inch (M4)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:13.565264] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        10RS003PMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:13.565650] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        10RS003PMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.000406] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.000876] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.375305] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.375856] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.733862] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:14.734796] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21LS001UMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.178169] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 11 Pro
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.178599] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 11 Pro
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.544639] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.545454] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone SE (2nd generation)
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.922191] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21BR00EXMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:15.922691] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21BR00EXMX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:16.341038] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MacBook Pro
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:16.341406] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        MacBook Pro
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:16.737250] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21F7S1T20B
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:16.737850] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        21F7S1T20B
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:17.126343] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 16
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:17.126724] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        iPhone 16
-  Manufacturer: Apple
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:17.497897] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20NX0056MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:17.498967] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20NX0056MX
-  Manufacturer: LENOVO
-  Cloud Provider: On-Premise
---------------------------------------------------
-
-[2025-10-02T12:49:18.106678] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:18.582394] --- Device: iPhone ---
+  OS Type:      iOS
   Model:        iPhone 12
   Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:18.107073] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:18.583814] --- Device: iPhone ---
+  OS Type:      iOS
   Model:        iPhone 12
   Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:18.532945] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        RoomPanel
-  Manufacturer: Yealink
+[2025-10-02T15:31:18.970370] --- Device: christina christensens iPhone 16 ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:18.533939] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        RoomPanel
-  Manufacturer: Yealink
+[2025-10-02T15:31:18.971123] --- Device: christina christensens iPhone 16 ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:19.009563] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B6MX
+[2025-10-02T15:31:19.655991] --- Device: White_AndroidAOSP_8/6/2025_2:03 PM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:19.656302] --- Device: White_AndroidAOSP_8/6/2025_2:03 PM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:20.128905] --- Device: MRK-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:19.010232] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        20WM00B6MX
+[2025-10-02T15:31:20.129040] --- Device: MRK-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:19.592791] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
+[2025-10-02T15:31:20.643043] --- Device: Mia - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:19.593389] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
+[2025-10-02T15:31:20.643331] --- Device: Mia - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:20.137328] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
+[2025-10-02T15:31:21.026565] --- Device: Bettina Zinckernagels iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:20.137670] --- Device: Unknown Device ---
-  OS Type:      
-  Model:        CTP18
-  Manufacturer: Yealink
+[2025-10-02T15:31:21.028026] --- Device: Bettina Zinckernagels iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:20.606228] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:21.406063] --- Device: S7N0CX03P89328A ---
+  OS Type:      Windows
+  Model:        ProArt P16 H7606WV_H7606WV
+  Manufacturer: ASUSTeK COMPUTER INC.
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:21.406874] --- Device: S7N0CX03P89328A ---
+  OS Type:      Windows
+  Model:        ProArt P16 H7606WV_H7606WV
+  Manufacturer: ASUSTeK COMPUTER INC.
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:21.813085] --- Device: Mac mini tilhørende admin ---
+  OS Type:      macOS
+  Model:        Mac mini
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:21.814186] --- Device: Mac mini tilhørende admin ---
+  OS Type:      macOS
+  Model:        Mac mini
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:22.322515] --- Device: PC0Z3WUH ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:22.323567] --- Device: PC0Z3WUH ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:22.817695] --- Device: Richter (2) ---
+  OS Type:      iOS
+  Model:        iPhone 15 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:22.818709] --- Device: Richter (2) ---
+  OS Type:      iOS
+  Model:        iPhone 15 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:23.215496] --- Device: LMA-LAPTOP3 ---
+  OS Type:      Windows
   Model:        20WM00B8MX
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:20.607003] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:23.216267] --- Device: LMA-LAPTOP3 ---
+  OS Type:      Windows
   Model:        20WM00B8MX
   Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:21.057228] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:23.709768] --- Device: Pernilles iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:23.710473] --- Device: Pernilles iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:24.132199] --- Device: GM0R738H ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:24.132832] --- Device: GM0R738H ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:24.634588] --- Device: YJ01RAY8 ---
+  OS Type:      Windows
+  Model:        12LN002YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:24.635516] --- Device: YJ01RAY8 ---
+  OS Type:      Windows
+  Model:        12LN002YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:25.138394] --- Device: iPhone 13 Pro ---
+  OS Type:      iOS
+  Model:        iPhone 13 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:25.139289] --- Device: iPhone 13 Pro ---
+  OS Type:      iOS
+  Model:        iPhone 13 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:25.619550] --- Device: EKSTRA-T470S2 ---
+  OS Type:      Windows
+  Model:        20HF0000MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:25.620010] --- Device: EKSTRA-T470S2 ---
+  OS Type:      Windows
+  Model:        20HF0000MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.063716] --- Device: GM0R736X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.064368] --- Device: GM0R736X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.547052] --- Device: Jari iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.547575] --- Device: Jari iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.993163] --- Device: sbs iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:26.993934] --- Device: sbs iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:27.469307] --- Device: R90RJ2EZ ---
+  OS Type:      Windows
+  Model:        20LA0026MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:27.469576] --- Device: R90RJ2EZ ---
+  OS Type:      Windows
+  Model:        20LA0026MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:27.895592] --- Device: STUD-MARK1 ---
+  OS Type:      Windows
+  Model:        20T00055MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:27.896461] --- Device: STUD-MARK1 ---
+  OS Type:      Windows
+  Model:        20T00055MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:28.582171] --- Device: Thyrés mobil 2024 ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:28.582837] --- Device: Thyrés mobil 2024 ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:28.948953] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:28.949948] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:29.357140] --- Device: MacBook Air tilhørende Gitte ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M4, 2025)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:29.357574] --- Device: MacBook Air tilhørende Gitte ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M4, 2025)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:29.858027] --- Device: PC186SEF ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:29.859305] --- Device: PC186SEF ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:30.301069] --- Device: PC0XQ0HU ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:30.301514] --- Device: PC0XQ0HU ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:30.758966] --- Device: GM0R735X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:30.759759] --- Device: GM0R735X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:31.360968] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:31.361162] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:31.756280] --- Device: PF36VBXK ---
+  OS Type:      Windows
+  Model:        20WM00B8MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:31.757160] --- Device: PF36VBXK ---
+  OS Type:      Windows
+  Model:        20WM00B8MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:32.211636] --- Device: White_AndroidAOSP_5/20/2025_10:29 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:32.212318] --- Device: White_AndroidAOSP_5/20/2025_10:29 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:32.738724] --- Device: MacBookProM1SHS ---
+  OS Type:      macOS
+  Model:        MacBook Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:32.738922] --- Device: MacBookProM1SHS ---
+  OS Type:      macOS
+  Model:        MacBook Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.154431] --- Device: PF29G8GL ---
+  OS Type:      Windows
+  Model:        20T0001NMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.155205] --- Device: PF29G8GL ---
+  OS Type:      Windows
+  Model:        20T0001NMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.464161] --- Device: LRC-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.464446] --- Device: LRC-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.710828] --- Device: Lisbeths iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.711140] --- Device: Lisbeths iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.994440] --- Device: PC1Q4TNF ---
+  OS Type:      Windows
+  Model:        20T00055MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:33.994920] --- Device: PC1Q4TNF ---
+  OS Type:      Windows
+  Model:        20T00055MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.301228] --- Device: SRA-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.301964] --- Device: SRA-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.654467] --- Device: MacBook Air tilhørende Sofie ---
+  OS Type:      macOS
+  Model:        MacBook Air (M2, 2022)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.654629] --- Device: MacBook Air tilhørende Sofie ---
+  OS Type:      macOS
+  Model:        MacBook Air (M2, 2022)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.925982] --- Device: GM0R734K ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:34.926656] --- Device: GM0R734K ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:35.292267] --- Device: krogh_AndroidAOSP_8/8/2025_1:17 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:35.292863] --- Device: krogh_AndroidAOSP_8/8/2025_1:17 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:31:35.650413] --- Device: NCM-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B8MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:35.650982] --- Device: NCM-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B8MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:35.932367] --- Device: iPhone tilhørende admin ---
+  OS Type:      iOS
   Model:        iPhone SE (2nd generation)
   Manufacturer: Apple
   Cloud Provider: On-Premise
 --------------------------------------------------
 
-[2025-10-02T12:49:21.057680] --- Device: Unknown Device ---
-  OS Type:      
+[2025-10-02T15:31:35.932872] --- Device: iPhone tilhørende admin ---
+  OS Type:      iOS
   Model:        iPhone SE (2nd generation)
   Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.218002] --- Device: GM0EFXEE ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.218540] --- Device: GM0EFXEE ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.537752] --- Device: LOGISTIK-PC2 ---
+  OS Type:      Windows
+  Model:        10DU000BMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.538301] --- Device: LOGISTIK-PC2 ---
+  OS Type:      Windows
+  Model:        10DU000BMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.912152] --- Device: Sussies iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:36.913597] --- Device: Sussies iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.210913] --- Device: Lars’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.211772] --- Device: Lars’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.509559] --- Device: NS-PC3 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.510335] --- Device: NS-PC3 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.858373] --- Device: NBO-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21BV009VMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:37.859034] --- Device: NBO-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21BV009VMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.214880] --- Device: iPhone XS ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.215068] --- Device: iPhone XS ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.500568] --- Device: PC13RTJ2 ---
+  OS Type:      Windows
+  Model:        20L8S3BL00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.501091] --- Device: PC13RTJ2 ---
+  OS Type:      Windows
+  Model:        20L8S3BL00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.828591] --- Device: Karstens iphone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:38.829114] --- Device: Karstens iphone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.124597] --- Device: SDE-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.125933] --- Device: SDE-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.430741] --- Device: GM0R737N ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.430950] --- Device: GM0R737N ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.761348] --- Device: Anders - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:39.761744] --- Device: Anders - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.057731] --- Device: Marias iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.058868] --- Device: Marias iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.375429] --- Device: PF2WJ1WT ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.376013] --- Device: PF2WJ1WT ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.663911] --- Device: Signes iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:31:40.664568] --- Device: Signes iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.215802] --- Device: GM0R7374 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.216599] --- Device: GM0R7374 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.489210] --- Device: iPhone tilhørende admin ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.489606] --- Device: iPhone tilhørende admin ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.797342] --- Device: Theresa Sørensens iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:19.797796] --- Device: Theresa Sørensens iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.090475] --- Device: PC1872XA ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.091020] --- Device: PC1872XA ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.413860] --- Device: GM0R245F ---
+  OS Type:      Windows
+  Model:        21LS002DMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.414088] --- Device: GM0R245F ---
+  OS Type:      Windows
+  Model:        21LS002DMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.703429] --- Device: iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro 11-inch (M4)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.703611] --- Device: iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro 11-inch (M4)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.960958] --- Device: MDL-PC3 ---
+  OS Type:      Windows
+  Model:        10RS003PMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:20.961676] --- Device: MDL-PC3 ---
+  OS Type:      Windows
+  Model:        10RS003PMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.223686] --- Device: LJ-LAPTOP6 ---
+  OS Type:      Windows
+  Model:        20T0001YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.224587] --- Device: LJ-LAPTOP6 ---
+  OS Type:      Windows
+  Model:        20T0001YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.536381] --- Device: GM0R735S ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.536608] --- Device: GM0R735S ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.808640] --- Device: GM0R73VM ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:21.809066] --- Device: GM0R73VM ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.115207] --- Device: PC227PN4 ---
+  OS Type:      Windows
+  Model:        20WM00B6MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.115831] --- Device: PC227PN4 ---
+  OS Type:      Windows
+  Model:        20WM00B6MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.392423] --- Device: PC1N63BN ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.392888] --- Device: PC1N63BN ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.673843] --- Device: PC2GT29C ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.674107] --- Device: PC2GT29C ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.978174] --- Device: MacBookProM1ANN ---
+  OS Type:      macOS
+  Model:        MacBook Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:22.978621] --- Device: MacBookProM1ANN ---
+  OS Type:      macOS
+  Model:        MacBook Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.247887] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.248481] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.534161] --- Device: STUD-MEDLEM1 ---
+  OS Type:      Windows
+  Model:        20KH006JMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.534836] --- Device: STUD-MEDLEM1 ---
+  OS Type:      Windows
+  Model:        20KH006JMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.824252] --- Device: Sebastian Erbo - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:23.824644] --- Device: Sebastian Erbo - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.186358] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.186863] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.451457] --- Device: GM0R73VF ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.452027] --- Device: GM0R73VF ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.741082] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:24.741309] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:25.057127] --- Device: LOGISTIK-Print-PC1 ---
+  OS Type:      Windows
+  Model:        10AW008RMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:25.057546] --- Device: LOGISTIK-Print-PC1 ---
+  OS Type:      Windows
+  Model:        10AW008RMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:25.428376] --- Device: HB-Lokale_AndroidAOSP_8/4/2025_11:16 PM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:25.429010] --- Device: HB-Lokale_AndroidAOSP_8/4/2025_11:16 PM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:25.886460] --- Device: PC0XQ0LY ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:25.886771] --- Device: PC0XQ0LY ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:26.244729] --- Device: Hagedorn_AndroidAOSP_5/1/2025_2:53 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:26.245679] --- Device: Hagedorn_AndroidAOSP_5/1/2025_2:53 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:26.620299] --- Device: Nuri - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone XR
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:26.620825] --- Device: Nuri - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone XR
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.136351] --- Device: Susannes’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.136560] --- Device: Susannes’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.484540] --- Device: LA-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.485183] --- Device: LA-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.910030] --- Device: PC0XQ2CR ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:27.910454] --- Device: PC0XQ2CR ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:28.297960] --- Device: KLW-PC1 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:28.298605] --- Device: KLW-PC1 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:28.703316] --- Device: GM0R7384 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:28.703554] --- Device: GM0R7384 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:29.101412] --- Device: PC27ZK9Z ---
+  OS Type:      Windows
+  Model:        20WM00B6MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:29.101710] --- Device: PC27ZK9Z ---
+  OS Type:      Windows
+  Model:        20WM00B6MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:29.439021] --- Device: White_AndroidAOSP_3/19/2025_9:44 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:29.439835] --- Device: White_AndroidAOSP_3/19/2025_9:44 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:29.854861] --- Device: SEH-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        21KDS68A00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:29.857151] --- Device: SEH-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        21KDS68A00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:30.285814] --- Device: IT - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:30.285991] --- Device: IT - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:30.662672] --- Device: Lisa Heidis iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:30.663129] --- Device: Lisa Heidis iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:31.353229] --- Device: GM00BZR1 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:31.355191] --- Device: GM00BZR1 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:31.794310] --- Device: Marias iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:31.795067] --- Device: Marias iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.238788] --- Device: iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro 11-inch (M4)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.239479] --- Device: iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro 11-inch (M4)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.637511] --- Device: Michaels iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro (10.5")
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.638102] --- Device: Michaels iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro (10.5")
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.965345] --- Device: Saras iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 14 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:32.966067] --- Device: Saras iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 14 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:33.287950] --- Device: EKSTRA-T480S2 ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:33.288126] --- Device: EKSTRA-T480S2 ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:33.637658] --- Device: PC1B9XKS ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:33.638508] --- Device: PC1B9XKS ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:34.212327] --- Device: GM0R73V8 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:34.212683] --- Device: GM0R73V8 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:34.593706] --- Device: GM0R7357 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:34.594403] --- Device: GM0R7357 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:34.936008] --- Device: krogh_AndroidAOSP_5/14/2025_10:25 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:34.936661] --- Device: krogh_AndroidAOSP_5/14/2025_10:25 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:32:35.333979] --- Device: JMR-PC2 ---
+  OS Type:      Windows
+  Model:        10T700AMMT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:35.339556] --- Device: JMR-PC2 ---
+  OS Type:      Windows
+  Model:        10T700AMMT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:35.815262] --- Device: GM0HM7D6 ---
+  OS Type:      Windows
+  Model:        21F6002NMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:35.816007] --- Device: GM0HM7D6 ---
+  OS Type:      Windows
+  Model:        21F6002NMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:36.209341] --- Device: JKJ-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV009VMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:36.210001] --- Device: JKJ-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV009VMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:36.623680] --- Device: iPhone TTH (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:36.624313] --- Device: iPhone TTH (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.007052] --- Device: Diabetesforeningen T4 ---
+  OS Type:      iOS
+  Model:        iPad (5th generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.007576] --- Device: Diabetesforeningen T4 ---
+  OS Type:      iOS
+  Model:        iPad (5th generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.322240] --- Device: CR-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.322526] --- Device: CR-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.631584] --- Device: NRB-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.631953] --- Device: NRB-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.955807] --- Device: Klaus - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:37.956336] --- Device: Klaus - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:38.265294] --- Device: ulla - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:38.265667] --- Device: ulla - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:38.665529] --- Device: PC1PW888 ---
+  OS Type:      Windows
+  Model:        20T0001SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:38.667153] --- Device: PC1PW888 ---
+  OS Type:      Windows
+  Model:        20T0001SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.084914] --- Device: GM0R73WE ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.085114] --- Device: GM0R73WE ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.442126] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.442329] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.823636] --- Device: Claus - iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro (11")(2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:39.823946] --- Device: Claus - iPad ---
+  OS Type:      iOS
+  Model:        iPad Pro (11")(2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:40.180394] --- Device: GM0R73V0 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:40.181171] --- Device: GM0R73V0 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:40.550205] --- Device: PF4R8A1K ---
+  OS Type:      Windows
+  Model:        21HES69W00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:32:40.550643] --- Device: PF4R8A1K ---
+  OS Type:      Windows
+  Model:        21HES69W00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:21.110967] --- Device: PC0XQ2DM ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:21.111587] --- Device: PC0XQ2DM ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:21.521620] --- Device: GTL-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        20T0001YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:21.521997] --- Device: GTL-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        20T0001YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:22.039323] --- Device: Hagedorn_AndroidAOSP_8/6/2025_12:06 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:22.039951] --- Device: Hagedorn_AndroidAOSP_8/6/2025_12:06 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:22.412787] --- Device: GM0R737T ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:22.413408] --- Device: GM0R737T ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:22.788302] --- Device: LPM934356N-iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:22.788894] --- Device: LPM934356N-iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:23.199609] --- Device: PC1ATME4 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:23.200561] --- Device: PC1ATME4 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:23.634146] --- Device: GM0DLB0K ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:23.635349] --- Device: GM0DLB0K ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:24.144576] --- Device: HB-Lokale_AndroidAOSP_5/14/2025_10:45 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:24.145318] --- Device: HB-Lokale_AndroidAOSP_5/14/2025_10:45 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:24.581118] --- Device: KANTINE-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:24.581324] --- Device: KANTINE-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20L8002WMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:24.972152] --- Device: TTH-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:24.974020] --- Device: TTH-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:25.382337] --- Device: Lene Kølle - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:25.383098] --- Device: Lene Kølle - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:25.707314] --- Device: Peters iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:25.708021] --- Device: Peters iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:26.187433] --- Device: CBS-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:26.188215] --- Device: CBS-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:26.584786] --- Device: krogh_AndroidAOSP_5/1/2025_2:57 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:26.585047] --- Device: krogh_AndroidAOSP_5/1/2025_2:57 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:27.010769] --- Device: Hodgkin_AndroidAOSP_5/2/2025_11:55 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:27.011411] --- Device: Hodgkin_AndroidAOSP_5/2/2025_11:55 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:27.411715] --- Device: ICH-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:27.412967] --- Device: ICH-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:27.861771] --- Device: It - iPad ---
+  OS Type:      iOS
+  Model:        iPad Air 2
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:27.862266] --- Device: It - iPad ---
+  OS Type:      iOS
+  Model:        iPad Air 2
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:28.241508] --- Device: GM0R737X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:28.243181] --- Device: GM0R737X ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:28.695165] --- Device: PF4QVWAC ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:28.695320] --- Device: PF4QVWAC ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.076007] --- Device: MDL-PC2 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.076881] --- Device: MDL-PC2 ---
+  OS Type:      Windows
+  Model:        10MR0052MT
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.483679] --- Device: R90R0GNP ---
+  OS Type:      Windows
+  Model:        20L90020MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.484031] --- Device: R90R0GNP ---
+  OS Type:      Windows
+  Model:        20L90020MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.844636] --- Device: CSA-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:29.845452] --- Device: CSA-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:30.312442] --- Device: Mia - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:30.313118] --- Device: Mia - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:30.722353] --- Device: GM0R7364 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:30.723166] --- Device: GM0R7364 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.188431] --- Device: MacBook Air tilhørende Jari ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M4, 2025)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.189255] --- Device: MacBook Air tilhørende Jari ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M4, 2025)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.516536] --- Device: GM0R734A ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.517126] --- Device: GM0R734A ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.859724] --- Device: Lones iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:31.860226] --- Device: Lones iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.172677] --- Device: Claus - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.173005] --- Device: Claus - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.500563] --- Device: PC10X0MH ---
+  OS Type:      Windows
+  Model:        20L7S25N00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.501335] --- Device: PC10X0MH ---
+  OS Type:      Windows
+  Model:        20L7S25N00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.833039] --- Device: PC1872Z9 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:32.833218] --- Device: PC1872Z9 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.118268] --- Device: Sophie - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.118899] --- Device: Sophie - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.454029] --- Device: MDL-LAPTOP10 ---
+  OS Type:      Windows
+  Model:        21BR002DMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.455004] --- Device: MDL-LAPTOP10 ---
+  OS Type:      Windows
+  Model:        21BR002DMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.773488] --- Device: PC2DMK2N ---
+  OS Type:      Windows
+  Model:        20WM00B5MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:33.773830] --- Device: PC2DMK2N ---
+  OS Type:      Windows
+  Model:        20WM00B5MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.107261] --- Device: MacBook Air tilhørende Anne-Marie ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M3, 2024)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.107905] --- Device: MacBook Air tilhørende Anne-Marie ---
+  OS Type:      macOS
+  Model:        MacBook Air (13-inch, M3, 2024)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.621102] --- Device: ATW-LAPTOP6 ---
+  OS Type:      Windows
+  Model:        20WM00B7MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.621289] --- Device: ATW-LAPTOP6 ---
+  OS Type:      Windows
+  Model:        20WM00B7MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.965342] --- Device: DESKTOP-FUO7G1S ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:34.965859] --- Device: DESKTOP-FUO7G1S ---
+  OS Type:      Windows
+  Model:        20WM003KMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.287518] --- Device: GM0R73W0 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.288034] --- Device: GM0R73W0 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.566214] --- Device: TBU-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.566806] --- Device: TBU-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.889641] --- Device: GM0R73TQ ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:35.890183] --- Device: GM0R73TQ ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.192480] --- Device: GM0R7388 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.193015] --- Device: GM0R7388 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.507204] --- Device: Mariannes iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.507470] --- Device: Mariannes iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.903812] --- Device: WIN10TEST ---
+  OS Type:      Windows
+  Model:        VMware7,1
+  Manufacturer: VMware, Inc.
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:36.904025] --- Device: WIN10TEST ---
+  OS Type:      Windows
+  Model:        VMware7,1
+  Manufacturer: VMware, Inc.
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:37.211656] --- Device: kantine_AndroidAOSP_5/1/2025_2:56 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:37.211907] --- Device: kantine_AndroidAOSP_5/1/2025_2:56 PM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:37.620448] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:37.621131] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:37.951611] --- Device: CHC-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV00APMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:37.952479] --- Device: CHC-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV00APMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.259052] --- Device: iPhone SE (2nd generation) ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.259466] --- Device: iPhone SE (2nd generation) ---
+  OS Type:      iOS
+  Model:        iPhone SE (2nd generation)
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.573919] --- Device: ANJ-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.574427] --- Device: ANJ-LAPTOP5 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.866756] --- Device: EVA-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:38.867431] --- Device: EVA-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BR00EXMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:39.245364] --- Device: OLP-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20TH004HMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:39.245907] --- Device: OLP-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20TH004HMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:39.701814] --- Device: JDJ-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F60054MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:39.702625] --- Device: JDJ-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F60054MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:40.201683] --- Device: THN-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV00ADMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:40.204173] --- Device: THN-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21BV00ADMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:40.535386] --- Device: KAP-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21BR002AMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:40.535583] --- Device: KAP-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        21BR002AMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:40.784516] --- Device: Hagedorn_AndroidAOSP_6/23/2025_8:17 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:40.784821] --- Device: Hagedorn_AndroidAOSP_6/23/2025_8:17 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:41.110209] --- Device: PC1AQE5Y ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:41.111165] --- Device: PC1AQE5Y ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:41.413894] --- Device: CAR-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:41.414342] --- Device: CAR-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:41.729444] --- Device: YJ01RASS ---
+  OS Type:      Windows
+  Model:        12LN002YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:41.729816] --- Device: YJ01RASS ---
+  OS Type:      Windows
+  Model:        12LN002YMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.035354] --- Device: GM0DLB0J ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.036017] --- Device: GM0DLB0J ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.340570] --- Device: Steensen_AndroidAOSP_5/8/2025_7:49 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:42.340998] --- Device: Steensen_AndroidAOSP_5/8/2025_7:49 AM ---
+  OS Type:      Android
+  Model:        RoomPanel
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:33:42.648991] --- Device: LW-LAPTOP7 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.649352] --- Device: LW-LAPTOP7 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.940347] --- Device: GM0R73VC ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:33:42.940603] --- Device: GM0R73VC ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:22.362492] --- Device: ann-britt - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:22.362966] --- Device: ann-britt - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 15
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:22.689944] --- Device: THE-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:22.690238] --- Device: THE-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.087205] --- Device: PPE-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20TK002EMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.088118] --- Device: PPE-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20TK002EMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.369936] --- Device: Kim Thines iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.370542] --- Device: Kim Thines iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.796194] --- Device: PC24DMX3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:23.796920] --- Device: PC24DMX3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.118450] --- Device: EKSTRA-T460S1 ---
+  OS Type:      Windows
+  Model:        20F9005CMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.119256] --- Device: EKSTRA-T460S1 ---
+  OS Type:      Windows
+  Model:        20F9005CMD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.400735] --- Device: GM0R732Y ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.401421] --- Device: GM0R732Y ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.717947] --- Device: PC2GT9ZN ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:24.718631] --- Device: PC2GT9ZN ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.029490] --- Device: GM0R7367 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.030077] --- Device: GM0R7367 ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.317319] --- Device: LKJ-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.318017] --- Device: LKJ-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B9MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.602063] --- Device: Steensen_AndroidAOSP_5/8/2025_6:44 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:25.602851] --- Device: Steensen_AndroidAOSP_5/8/2025_6:44 AM ---
+  OS Type:      Android
+  Model:        MeetingBar A20
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:25.935815] --- Device: SUD-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM003FMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:25.937366] --- Device: SUD-LAPTOP2 ---
+  OS Type:      Windows
+  Model:        20WM003FMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:26.234183] --- Device: Gitte's iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:26.234761] --- Device: Gitte's iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:26.519238] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone XR
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:26.519771] --- Device: iPhone ---
+  OS Type:      iOS
+  Model:        iPhone XR
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:26.842925] --- Device: HB-Lokale_AndroidAOSP_7/2/2025_12:01 PM ---
+  OS Type:      Android
+  Model:        MeetingBar A30
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:26.843383] --- Device: HB-Lokale_AndroidAOSP_7/2/2025_12:01 PM ---
+  OS Type:      Android
+  Model:        MeetingBar A30
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:27.118312] --- Device: Steensen_AndroidAOSP_6/20/2025_1:16 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:27.118720] --- Device: Steensen_AndroidAOSP_6/20/2025_1:16 AM ---
+  OS Type:      Android
+  Model:        CTP18
+  Manufacturer: Yealink
+  Cloud Provider: None
+--------------------------------------------------
+
+[2025-10-02T15:34:27.410454] --- Device: iPhone ET ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:27.411014] --- Device: iPhone ET ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:27.673128] --- Device: Nadja Stine Aagaard-Christensen’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:27.673350] --- Device: Nadja Stine Aagaard-Christensen’s iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.026882] --- Device: JJA-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.027253] --- Device: JJA-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        20NX006SMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.317515] --- Device: EKSTRA-T490S1 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.318177] --- Device: EKSTRA-T490S1 ---
+  OS Type:      Windows
+  Model:        20NX0056MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.619073] --- Device: Louises iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.619401] --- Device: Louises iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.899482] --- Device: GM0R737M ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:28.899989] --- Device: GM0R737M ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.283468] --- Device: Anna Thyra - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.283996] --- Device: Anna Thyra - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11 Pro
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.586970] --- Device: Clauss iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.588234] --- Device: Clauss iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 13
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.954028] --- Device: MFR-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:29.954504] --- Device: MFR-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:30.290156] --- Device: Julia ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:30.290893] --- Device: Julia ---
+  OS Type:      iOS
+  Model:        iPhone 16
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:30.604370] --- Device: GM0DLB0L ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:30.605161] --- Device: GM0DLB0L ---
+  OS Type:      Windows
+  Model:        21F7S1T20B
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.058558] --- Device: Lene - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.059338] --- Device: Lene - iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.530125] --- Device: PF2BF09G ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.530337] --- Device: PF2BF09G ---
+  OS Type:      Windows
+  Model:        20T0001JMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.827221] --- Device: LHJ-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:31.827608] --- Device: LHJ-LAPTOP1 ---
+  OS Type:      Windows
+  Model:        21HNS8AX00
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.159130] --- Device: Louises iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.160052] --- Device: Louises iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 12
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.535428] --- Device: GM0R73TT ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.536208] --- Device: GM0R73TT ---
+  OS Type:      Windows
+  Model:        21LS001UMX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.837964] --- Device: Diabetes - iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:32.838551] --- Device: Diabetes - iPhone (2) ---
+  OS Type:      iOS
+  Model:        iPhone 11
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.172591] --- Device: Anne-Maries iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13 mini
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.173155] --- Device: Anne-Maries iPhone ---
+  OS Type:      iOS
+  Model:        iPhone 13 mini
+  Manufacturer: Apple
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.456939] --- Device: ULN-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B7MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.457126] --- Device: ULN-LAPTOP3 ---
+  OS Type:      Windows
+  Model:        20WM00B7MX
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.785997] --- Device: R90RJ2EK ---
+  OS Type:      Windows
+  Model:        20LA0026MD
+  Manufacturer: LENOVO
+  Cloud Provider: On-Premise
+--------------------------------------------------
+
+[2025-10-02T15:34:33.786187] --- Device: R90RJ2EK ---
+  OS Type:      Windows
+  Model:        20LA0026MD
+  Manufacturer: LENOVO
   Cloud Provider: On-Premise
 --------------------------------------------------
 

@@ -19,6 +19,7 @@ asset_service = AssetService()
 assets = asset_service.get_all(limit=10000, refresh_cache=True)
 
 if assets != []:
+    print("All assets are being deleted...")
     for asset in assets:
         asset_service.delete_by_name(asset['name'])
     print("Asset deletion completed. But might need to rerun due to Rate Limiting.")
