@@ -360,6 +360,30 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
     },
+    "Firewalls": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
+    "Switches": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
+    "Routers": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
+    "Access Points": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
      "Network Devices": {
         "category_type": "asset",
         "use_default_eula": False,
@@ -410,6 +434,10 @@ MODELS = [
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
     {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Firewall', 'category': 'Firewalls', 'manufacturer': 'Generic'},
+    {'name': 'Generic Switch', 'category': 'Switches', 'manufacturer': 'Generic'},
+    {'name': 'Generic Router', 'category': 'Routers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Access Point', 'category': 'Access Points', 'manufacturer': 'Generic'},
     {'name': 'Generic Network Device', 'category': 'Network Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Printer', 'category': 'Printers', 'manufacturer': 'Generic'},
     {'name': 'Generic Mobile Phone', 'category': 'Mobile Phones', 'manufacturer': 'Generic'},

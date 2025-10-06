@@ -132,112 +132,72 @@ class NmapScanner:
             return []
     
     def _parse_host(self, host: str, profile: str) -> Dict:
-        """Parse single host results"""
-        
+        """
+        Parse single host results - DATA COLLECTION ONLY.
+        This method's only job is to extract raw data from Nmap.
+        All categorization logic is handled by the AssetMatcher/AssetCategorizer.
+        """
+        nmap_host = self.nm[host]
+
+        # This dictionary holds all the raw data we can find.
         asset = {
             'last_seen_ip': host,
             'nmap_last_scan': datetime.now(timezone.utc).isoformat(),
             'nmap_scan_profile': profile,
-            'device_type': 'Unknown'
+            'name': nmap_host.hostname() or f"Device-{host}",
+            'dns_hostname': nmap_host.hostname(),
+            '_source': 'nmap',
+            # We will populate these fields if the data exists.
+            'mac_addresses': None,
+            'manufacturer': None,
+            'os_platform': None,
+            'nmap_os_guess': None,
+            'os_accuracy': None,
+            'nmap_open_ports': None,
+            'open_ports_hash': None,
+            'nmap_services': [],
         }
-        
-        # Get hostname
-        if self.nm[host].hostname():
-            asset['dns_hostname'] = self.nm[host].hostname()
-            asset['name'] = self.nm[host].hostname()
-        else:
-            asset['name'] = f"Device-{host}"
-        
-        # Get MAC address
-        if 'mac' in self.nm[host]['addresses']:
-            asset['mac_addresses'] = self.nm[host]['addresses']['mac']
-            
-            # Get vendor if available
-            if 'vendor' in self.nm[host] and self.nm[host]['vendor']:
-                vendors = list(self.nm[host]['vendor'].values())
-                if vendors:
-                    asset['manufacturer'] = vendors[0]
-        
-        # OS detection (for non-discovery scans)
-        if profile != 'discovery' and 'osmatch' in self.nm[host]:
-            for osmatch in self.nm[host]['osmatch']:
-                asset['nmap_os_guess'] = osmatch['name']
-                asset['os_accuracy'] = osmatch['accuracy']
-                asset['device_type'] = self._determine_device_type(osmatch['name'], asset)
-                break
-        
-        # Port information
+
+        # Get MAC and Manufacturer from MAC Vendor
+        if 'mac' in nmap_host.get('addresses', {}):
+            asset['mac_addresses'] = nmap_host['addresses']['mac']
+            if 'vendor' in nmap_host and nmap_host['vendor']:
+                asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
+
+        # Get OS Guess (take the first, most accurate match)
+        if profile != 'discovery' and 'osmatch' in nmap_host and nmap_host['osmatch']:
+            os_match = nmap_host['osmatch'][0]
+            asset['nmap_os_guess'] = os_match.get('name', '')
+            asset['os_accuracy'] = os_match.get('accuracy')
+            asset['os_platform'] = os_match.get('name', '') # Crucial for the categorizer
+
+        # Get Port and Service Information
         if profile != 'discovery':
-            ports = []
-            services = []
+            open_ports_list = []
+            service_names = []
             
-            for proto in self.nm[host].all_protocols():
-                for port in self.nm[host][proto].keys():
-                    port_info = self.nm[host][proto][port]
-                    if port_info['state'] == 'open':
-                        service = port_info.get('name', 'unknown')
+            for proto in nmap_host.all_protocols():
+                for port, port_info in nmap_host[proto].items():
+                    if port_info.get('state') == 'open':
+                        service_name = port_info.get('name', 'unknown')
+                        service_names.append(service_name)
+                        
+                        # Build the descriptive port string for storage
                         product = port_info.get('product', '')
                         version = port_info.get('version', '')
-                        
-                        port_str = f"{port}/{proto}/{service}"
-                        if product:
-                            port_str += f" ({product}"
-                            if version:
-                                port_str += f" {version}"
-                            port_str += ")"
-                        
-                        ports.append(port_str)
-                        services.append(service)
+                        port_str = f"{port}/{proto}/{service_name} ({product} {version})".strip()
+                        open_ports_list.append(port_str)
             
-            if ports:
-                asset['nmap_open_ports'] = '\n'.join(ports)
-                asset['open_ports_hash'] = hashlib.md5(
-                    ','.join(sorted(ports)).encode()
-                ).hexdigest()
-                
-                # Refine device type based on services
-                if services:
-                    asset['device_type'] = self._refine_device_type_by_services(
-                    asset.get('device_type', 'Unknown'),
-                    services,
-                    asset
-                )
+            if open_ports_list:
+                asset['nmap_open_ports'] = '\n'.join(sorted(open_ports_list))
+                asset['open_ports_hash'] = hashlib.md5(asset['nmap_open_ports'].encode()).hexdigest()
+                asset['nmap_services'] = service_names
+
+        # Set first seen timestamp
+        asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
         
-        # Set first seen if new
-        if not asset.get('first_seen_date'):
-            asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
-        
-        return asset
-    
-    def _determine_device_type(self, os_string: str, host_data: Dict = None) -> str:
-        """Determine device type using centralized categorizer"""
-        # Build a data dict compatible with DeviceCategorizer
-        device_data = {
-            'os_platform': os_string,
-            'manufacturer': host_data.get('manufacturer', '') if host_data else '',
-            'model': '',  # Nmap doesn't give us model info
-            'name': host_data.get('name', '') if host_data else ''
-        }
-    
-        result = AssetCategorizer.categorize(device_data)
-        return result.get('device_type', 'Network Device')
-    
-    def _refine_device_type_by_services(self, current_type: str, services: List[str], host_data: Dict = None) -> str:
-        """Refine device type based on services"""
-        service_str = ' '.join(services).lower()
-        
-        # Special service-based detection
-        if 'domain' in service_str and 'ldap' in service_str:
-            return 'Domain Controller'
-        elif 'http' in service_str and 'printer' in service_str:
-            return 'Printer'
-        elif any(db in service_str for db in ['mysql', 'mssql', 'postgresql', 'oracle']):
-            return 'Database Server'
-        elif 'http' in service_str or 'https' in service_str:
-            if 'nginx' in service_str or 'apache' in service_str:
-                return 'Web Server'
-        
-        return current_type
+        # Return a clean dictionary with no None values
+        return {k: v for k, v in asset.items() if v is not None and v != '' and v != []}
     
     def sync_to_snipeit(self, profile: str = 'discovery') -> Dict:
         """Run scan and sync to Snipe-IT"""
