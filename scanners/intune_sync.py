@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Intune Integration for Snipe-IT
-Syncs devices from Microsoft Intune to Snipe-IT
+Syncs assets from Microsoft Intune to Snipe-IT
 """
 
 import os
@@ -64,8 +64,8 @@ class IntuneSync:
             print(f"Authentication error: {e}")
             return False
     
-    def get_managed_devices(self) -> List[Dict]:
-        """Fetch all managed devices from Intune"""
+    def get_managed_assets(self) -> List[Dict]:
+        """Fetch all managed assets from Intune"""
         if not self.access_token:
             if not self.authenticate():
                 return []
@@ -75,7 +75,7 @@ class IntuneSync:
             'Content-Type': 'application/json'
         }
         
-        devices = []
+        assets = []
         url = f"{self.graph_url}/deviceManagement/managedDevices"
         
         while url:
@@ -84,17 +84,17 @@ class IntuneSync:
                 response.raise_for_status()
                 data = response.json()
                 
-                devices.extend(data.get('value', []))
+                assets.extend(data.get('value', []))
                 url = data.get('@odata.nextLink')  # Handle pagination
                 
             except requests.exceptions.RequestException as e:
-                print(f"Error fetching devices: {e}")
+                print(f"Error fetching assets: {e}")
                 break
         
-        return devices
+        return assets
     
-    def get_device_details(self, device_id: str) -> Optional[Dict]:
-        """Get detailed information for a specific device"""
+    def get_asset_details(self, asset_id: str) -> Optional[Dict]:
+        """Get detailed information for a specific asset"""
         if not self.access_token:
             return None
         
@@ -104,126 +104,126 @@ class IntuneSync:
         }
         
         try:
-            # Get additional device details
-            url = f"{self.graph_url}/deviceManagement/managedDevices/{device_id}"
+            # Get additional asset details
+            url = f"{self.graph_url}/assetManagement/managedDevices/{asset_id}"
             response = requests.get(url, headers=headers)
             response.raise_for_status()
             return response.json()
             
         except requests.exceptions.RequestException as e:
-            print(f"Error fetching device details for {device_id}: {e}")
+            print(f"Error fetching asset details for {asset_id}: {e}")
             return None
     
-    def transform_intune_to_snipeit(self, intune_device: Dict) -> Dict:
-        """Transform Intune device data to Snipe-IT format"""
+    def transform_intune_to_snipeit(self, intune_asset: Dict) -> Dict:
+        """Transform Intune asset data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
         
         # Map Intune fields to Snipe-IT custom fields
         transformed = {
             # Identity
-            'name': intune_device.get('deviceName'),
-            'serial': intune_device.get('serialNumber'),
-            'azure_ad_id': intune_device.get('azureADDeviceId'),
-            'intune_device_id': intune_device.get('id'),
-            'device_enrollment_type': intune_device.get('deviceEnrollmentType'),
-            'device_registration_state': intune_device.get('deviceRegistrationState'),
-            'device_category_display_name': intune_device.get('deviceCategoryDisplayName'),
-            'udid': intune_device.get('udid'),
+            'name': intune_asset.get('deviceName'),
+            'serial': intune_asset.get('serialNumber'),
+            'azure_ad_id': intune_asset.get('azureADDeviceId'),
+            'intune_device_id': intune_asset.get('id'),
+            'device_enrollment_type': intune_asset.get('deviceEnrollmentType'),
+            'device_registration_state': intune_asset.get('deviceRegistrationState'),
+            'device_category_display_name': intune_asset.get('deviceCategoryDisplayName'),
+            'udid': intune_asset.get('udid'),
             
             # Management
             'intune_managed': True,
-            'intune_registered': intune_device.get('azureADRegistered', False),
-            'intune_enrollment_date': intune_device.get('enrolledDateTime'),
-            'intune_last_sync': intune_device.get('lastSyncDateTime'),
-            'managed_by': intune_device.get('managementAgent'),
-            'intune_category': intune_device.get('deviceCategoryDisplayName'),
-            'ownership': intune_device.get('managedDeviceOwnerType'),
-            'device_state': intune_device.get('deviceRegistrationState'),
-            'intune_compliance': intune_device.get('complianceState'),
-            'compliance_grace_expiration': intune_device.get('complianceGracePeriodExpirationDateTime'),
-            'management_cert_expiration': intune_device.get('managementCertificateExpirationDate'),
-            'enrollment_profile_name': intune_device.get('enrollmentProfileName'),
-            'require_user_enrollment_approval': intune_device.get('requireUserEnrollmentApproval'),
-            'activation_lock_bypass_code': intune_device.get('activationLockBypassCode'),
+            'intune_registered': intune_asset.get('azureADRegistered', False),
+            'intune_enrollment_date': intune_asset.get('enrolledDateTime'),
+            'intune_last_sync': intune_asset.get('lastSyncDateTime'),
+            'managed_by': intune_asset.get('managementAgent'),
+            'intune_category': intune_asset.get('deviceCategoryDisplayName'),
+            'ownership': intune_asset.get('managedDeviceOwnerType'),
+            'device_state': intune_asset.get('deviceRegistrationState'),
+            'intune_compliance': intune_asset.get('complianceState'),
+            'compliance_grace_expiration': intune_asset.get('complianceGracePeriodExpirationDateTime'),
+            'management_cert_expiration': intune_asset.get('managementCertificateExpirationDate'),
+            'enrollment_profile_name': intune_asset.get('enrollmentProfileName'),
+            'require_user_enrollment_approval': intune_asset.get('requireUserEnrollmentApproval'),
+            'activation_lock_bypass_code': intune_asset.get('activationLockBypassCode'),
             'last_update_source': 'intune',
             'last_update_at': current_time,
             
             # OS Information
-            'os_platform': intune_device.get('operatingSystem'),
-            'os_version': intune_device.get('osVersion'),
-            'sku_family': intune_device.get('skuFamily'),
-            'join_type': intune_device.get('deviceEnrollmentType'),
-            'product_name': intune_device.get('model'),
-            'android_security_patch_level': intune_device.get('androidSecurityPatchLevel'),
+            'os_platform': intune_asset.get('operatingSystem'),
+            'os_version': intune_asset.get('osVersion'),
+            'sku_family': intune_asset.get('skuFamily'),
+            'join_type': intune_asset.get('deviceEnrollmentType'),
+            'product_name': intune_asset.get('model'),
+            'android_security_patch_level': intune_asset.get('androidSecurityPatchLevel'),
             
             # Hardware
-            'manufacturer': intune_device.get('manufacturer'),
-            'model': intune_device.get('model'),
-            'total_storage': intune_device.get('totalStorageSpaceInBytes'),
-            'free_storage': intune_device.get('freeStorageSpaceInBytes'),
-            'processor_architecture': intune_device.get('processorArchitecture'),
-            'physical_memory_in_bytes': intune_device.get('physicalMemoryInBytes'),
+            'manufacturer': intune_asset.get('manufacturer'),
+            'model': intune_asset.get('model'),
+            'total_storage': intune_asset.get('totalStorageSpaceInBytes'),
+            'free_storage': intune_asset.get('freeStorageSpaceInBytes'),
+            'processor_architecture': intune_asset.get('processorArchitecture'),
+            'physical_memory_in_bytes': intune_asset.get('physicalMemoryInBytes'),
             
             # User
-            'primary_user_upn': intune_device.get('userPrincipalName'),
-            'primary_user_email': intune_device.get('emailAddress'),
-            'primary_user_display_name': intune_device.get('userDisplayName'),
-            'primary_user_id': intune_device.get('userId'),
-            'user_display_name': intune_device.get('userDisplayName'),
+            'primary_user_upn': intune_asset.get('userPrincipalName'),
+            'primary_user_email': intune_asset.get('emailAddress'),
+            'primary_user_display_name': intune_asset.get('userDisplayName'),
+            'primary_user_id': intune_asset.get('userId'),
+            'user_display_name': intune_asset.get('userDisplayName'),
             
             # Network
-            'wifi_mac': intune_device.get('wiFiMacAddress'),
-            'ethernet_mac': intune_device.get('ethernetMacAddress'),
-            'mac_addresses': self._combine_mac_addresses(intune_device),
+            'wifi_mac': intune_asset.get('wiFiMacAddress'),
+            'ethernet_mac': intune_asset.get('ethernetMacAddress'),
+            'mac_addresses': self._combine_mac_addresses(intune_asset),
             
             # Mobile specific
-            'imei': intune_device.get('imei'),
-            'meid': intune_device.get('meid'),
-            'phone_number': intune_device.get('phoneNumber'),
-            'subscriber_carrier': intune_device.get('subscriberCarrier'),
-            'cellular_technology': intune_device.get('cellularTechnology'),
-            'iccid': intune_device.get('iccid'),
+            'imei': intune_asset.get('imei'),
+            'meid': intune_asset.get('meid'),
+            'phone_number': intune_asset.get('phoneNumber'),
+            'subscriber_carrier': intune_asset.get('subscriberCarrier'),
+            'cellular_technology': intune_asset.get('cellularTechnology'),
+            'iccid': intune_asset.get('iccid'),
             
             # Security
-            'encrypted': intune_device.get('isEncrypted', False),
-            'supervised': intune_device.get('isSupervised', False),
-            'jailbroken': intune_device.get('jailBroken', False),
+            'encrypted': intune_asset.get('isEncrypted', False),
+            'supervised': intune_asset.get('isSupervised', False),
+            'jailbroken': intune_asset.get('jailBroken', False),
             
             # EAS
-            'eas_activated': intune_device.get('easActivated', False),
-            'eas_activation_id': intune_device.get('easDeviceId'),
-            'eas_last_sync': intune_device.get('exchangeLastSuccessfulSyncDateTime'),
-            'exchange_access_state': intune_device.get('exchangeAccessState'),
-            'exchange_access_state_reason': intune_device.get('exchangeAccessStateReason'),
-            'remote_assistance_session_url': intune_device.get('remoteAssistanceSessionUrl'),
-            'remote_assistance_session_error_details': intune_device.get('remoteAssistanceSessionErrorDetails'),
+            'eas_activated': intune_asset.get('easActivated', False),
+            'eas_activation_id': intune_asset.get('easDeviceId'),
+            'eas_last_sync': intune_asset.get('exchangeLastSuccessfulSyncDateTime'),
+            'exchange_access_state': intune_asset.get('exchangeAccessState'),
+            'exchange_access_state_reason': intune_asset.get('exchangeAccessStateReason'),
+            'remote_assistance_session_url': intune_asset.get('remoteAssistanceSessionUrl'),
+            'remote_assistance_session_error_details': intune_asset.get('remoteAssistanceSessionErrorDetails'),
             
             # Device type determination
-            'device_health_attestation_state': intune_device.get('deviceHealthAttestationState'),
-            'partner_reported_threat_state': intune_device.get('partnerReportedThreatState'),
-            'notes': intune_device.get('notes'),
+            'device_health_attestation_state': intune_asset.get('deviceHealthAttestationState'),
+            'partner_reported_threat_state': intune_asset.get('partnerReportedThreatState'),
+            'notes': intune_asset.get('notes'),
             
             # Software Inventory
-            'configuration_manager_client_enabled_features': intune_device.get('configurationManagerClientEnabledFeatures'),
+            'configuration_manager_client_enabled_features': intune_asset.get('configurationManagerClientEnabledFeatures'),
             
             # Cloud Resource Information       
-            'azure_resource_id': intune_device.get('azureResourceId'),
-            'azure_subscription_id': intune_device.get('azureSubscriptionId'),
-            'azure_resource_group': intune_device.get('azureResourceGroup'),
-            'azure_region': intune_device.get('azureRegion'),
-            'azure_tags_json': intune_device.get('azureTagsJson'),
+            'azure_resource_id': intune_asset.get('azureResourceId'),
+            'azure_subscription_id': intune_asset.get('azureSubscriptionId'),
+            'azure_resource_group': intune_asset.get('azureResourceGroup'),
+            'azure_region': intune_asset.get('azureRegion'),
+            'azure_tags_json': intune_asset.get('azureTagsJson'),
         }
 
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
     
-    def _combine_mac_addresses(self, device: Dict) -> str:
+    def _combine_mac_addresses(self, asset: Dict) -> str:
         """Combine all MAC addresses into a single field"""
         macs = []
-        if device.get('wiFiMacAddress'):
-            macs.append(device['wiFiMacAddress'])
-        if device.get('ethernetMacAddress'):
-            macs.append(device['ethernetMacAddress'])
+        if asset.get('wiFiMacAddress'):
+            macs.append(asset['wiFiMacAddress'])
+        if asset.get('ethernetMacAddress'):
+            macs.append(asset['ethernetMacAddress'])
          
         # Remove duplicates while preserving order
         unique_macs = []
@@ -242,46 +242,46 @@ class IntuneSync:
         
         self.asset_matcher.clear_all_caches()
         
-        # Fetch devices from Intune
-        intune_devices = self.get_managed_devices()
-        print(f"Found {len(intune_devices)} devices in Intune")
+        # Fetch assets from Intune
+        intune_assets = self.get_managed_assets()
+        print(f"Found {len(intune_assets)} assets in Intune")
         
         # DEBUG: Clear existing logs once if debug
         if debug_logger.debug:
             debug_logger._clear_all_debug_logs()
         
-        # --- DEBUG: Print raw devices ---
-        if intune_devices and debug_logger.debug:
-            for device in intune_devices:
+        # --- DEBUG: Print raw assets ---
+        if intune_assets and debug_logger.debug:
+            for asset in intune_assets:
                 raw_message = "\n--- RAW INTUNE DEVICE ---\n" + \
-                    json.dumps(device, indent=2) + \
+                    json.dumps(asset, indent=2) + \
                         "\n----------------------------------------\n"
                 debug_logger._raw_data_log(raw_message)     
             
         # Transform and prepare for Snipe-IT
-        transformed_devices = []
-        for device in intune_devices:
-            transformed = self.transform_intune_to_snipeit(device)
-            transformed_devices.append(transformed)
+        transformed_assets = []
+        for asset in intune_assets:
+            transformed = self.transform_intune_to_snipeit(asset)
+            transformed_assets.append(transformed)
         
-        # --- DEBUG: Print transformed devices ---
-        if transformed_devices and debug_logger.debug:
-            for transformed_device in transformed_devices:
+        # --- DEBUG: Print transformed assets ---
+        if transformed_assets and debug_logger.debug:
+            for transformed_asset in transformed_assets:
                 transformed_message = "\n--- TRANSFORMED DEVICE ---\n" + \
-                    json.dumps(transformed_device, indent=2) + \
+                    json.dumps(transformed_asset, indent=2) + \
                         "\n----------------------------------------\n"
                 debug_logger._transformed_data_log(transformed_message)
         
         # Send to asset matcher for processing
-        results = self.asset_matcher.process_scan_data('intune', transformed_devices)
+        results = self.asset_matcher.process_scan_data('intune', transformed_assets)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 
 if __name__ == "__main__":
     if debug_categorization.debug:
-        debug_categorization.get_managed_devices()
-        debug_categorization.write_managed_devices_to_logfile()
+        debug_categorization.get_managed_assets()
+        debug_categorization.write_managed_assets_to_logfile()
     else:
         sync = IntuneSync()
         sync.sync_to_snipeit()

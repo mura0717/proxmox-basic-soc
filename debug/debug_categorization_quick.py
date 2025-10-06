@@ -10,10 +10,10 @@ import json
 from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from lib.asset_categorizer import DeviceCategorizer
+from lib.asset_categorizer import AssetCategorizer
 
 class DebugCategorization:
-    """Determines device type and category based on attributes.""" 
+    """Determines asset type and category based on attributes.""" 
     def __init__(self):
         self.debug = os.getenv('CATEGORIZATION_DEBUG', '0') == '1'
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -23,10 +23,10 @@ class DebugCategorization:
         self.raw_log_path = os.path.join(self.log_dir, "raw_intune_log.txt")
 
     
-    def get_managed_devices(self) -> List[Dict]:
-        """Fetch all managed devices from raw_intune_log.txt"""
+    def get_managed_assets(self) -> List[Dict]:
+        """Fetch all managed assets from raw_intune_log.txt"""
         raw_log_path = self.raw_log_path
-        devices = []
+        assets = []
         try:
             with open(raw_log_path, 'r') as file:
                 raw_data = file.read()
@@ -40,25 +40,25 @@ class DebugCategorization:
                         continue
                     json_text = chunk[start:end+1].strip()
                     try:
-                        devices.append(json.loads(json_text))
+                        assets.append(json.loads(json_text))
                     except Exception as e:
                         print(f"JSON decode error: {e} | chunk: {json_text[:80]!r}")
         except Exception as e:
             print(f"Error reading raw_intune_log.txt: {e}")
-        return devices
+        return assets
     
-    def write_managed_devices_to_logfile(self):
+    def write_managed_assets_to_logfile(self):
         from scanners.intune_sync import IntuneSync
         sync = IntuneSync()
-        raw_devices = self.get_managed_devices()
-        print(f"Loaded {len(raw_devices)} raw devices from log.")
+        raw_assets = self.get_managed_assets()
+        print(f"Loaded {len(raw_assets)} raw assets from log.")
 
-        # Transform and categorize each device
+        # Transform and categorize each asset
         output_path = self.categorized_assets_log
         with open(output_path, 'w', encoding='utf-8') as f:
-            for device in raw_devices:
-                transformed = sync.transform_intune_to_snipeit(device)
-                categorization = DeviceCategorizer.categorize(transformed)
+            for asset in raw_assets:
+                transformed = sync.transform_intune_to_snipeit(asset)
+                categorization = AssetCategorizer.categorize(transformed)
                 out = {
                     "name": transformed.get("name"),
                     'serial': transformed.get('serial'),

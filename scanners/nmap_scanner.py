@@ -23,7 +23,7 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
-from lib.asset_categorizer import DeviceCategorizer
+from lib.asset_categorizer import AssetCategorizer
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
@@ -219,7 +219,7 @@ class NmapScanner:
             'name': host_data.get('name', '') if host_data else ''
         }
     
-        result = DeviceCategorizer.categorize(device_data)
+        result = AssetCategorizer.categorize(device_data)
         return result.get('device_type', 'Network Device')
     
     def _refine_device_type_by_services(self, current_type: str, services: List[str], host_data: Dict = None) -> str:
