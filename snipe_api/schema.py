@@ -324,12 +324,6 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
     },
-    "Workstations": {
-        "category_type": "asset", 
-        "use_default_eula": False,
-        "require_acceptance": False,
-        "checkin_email": False
-    },
     "Laptops" : {
         "category_type": "asset", 
         "use_default_eula": False,
@@ -414,7 +408,6 @@ CATEGORIES = {
 MODELS = [
     {'name': 'Generic Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
-    {'name': 'Generic Workstation', 'category': 'Workstations', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
     {'name': 'Generic Server', 'category': 'Servers', 'manufacturer': 'Generic'},
     {'name': 'Generic Network Device', 'category': 'Network Devices', 'manufacturer': 'Generic'},

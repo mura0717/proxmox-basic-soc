@@ -1,0 +1,2140 @@
+{
+  "name": "TSO-PC2",
+  "serial": "PC0QEHHC",
+  "manufacturer": "LENOVO",
+  "model": "10MR000YMT",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "LTVQ9DPGQ2",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "F17DG9ZC0F11",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "christina christensens iPhone 16",
+  "serial": "KWLR2CVD7M",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "White_AndroidAOSP_8/6/2025_2:03 PM",
+  "serial": "803153D020000128",
+  "manufacturer": "Yealink",
+  "model": "CTP18",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "MRK-LAPTOP1",
+  "serial": "PF4QVWAL",
+  "manufacturer": "LENOVO",
+  "model": "21HNS8AX00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Mia - iPhone",
+  "serial": "CNPMH6GT9W",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Bettina Zinckernagels iPhone (2)",
+  "serial": "MR9HYV7VXT",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "S7N0CX03P89328A",
+  "serial": "S7N0CX03P89328A",
+  "manufacturer": "ASUSTeK COMPUTER INC.",
+  "model": "ProArt P16 H7606WV_H7606WV",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Mac mini tilh\u00f8rende admin",
+  "serial": "C07DT1RZQ6NW",
+  "manufacturer": "Apple",
+  "model": "Mac mini",
+  "os_platform": "macOS",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC0Z3WUH",
+  "serial": "PC0Z3WUH",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Richter (2)",
+  "serial": "G21VYJ7G4K",
+  "manufacturer": "Apple",
+  "model": "iPhone 15 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LMA-LAPTOP3",
+  "serial": "PF36V7CR",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B8MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Pernilles iPhone",
+  "serial": "FK1D5P8JN735",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R738H",
+  "serial": "GM0R738H",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "YJ01RAY8",
+  "serial": "YJ01RAY8",
+  "manufacturer": "LENOVO",
+  "model": "12LN002YMX",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone 13 Pro",
+  "serial": "V02F6G2HWC",
+  "manufacturer": "Apple",
+  "model": "iPhone 13 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "EKSTRA-T470S2",
+  "serial": "PC0L0347",
+  "manufacturer": "LENOVO",
+  "model": "20HF0000MD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R736X",
+  "serial": "GM0R736X",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Jari iPhone",
+  "serial": "D62MD9LWH9",
+  "manufacturer": "Apple",
+  "model": "iPhone 15 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "sbs iPhone",
+  "serial": "G6Q9Y2YKKV",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "R90RJ2EZ",
+  "serial": "R90RJ2EZ",
+  "manufacturer": "LENOVO",
+  "model": "20LA0026MD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "STUD-MARK1",
+  "serial": "PC1WH9KB",
+  "manufacturer": "LENOVO",
+  "model": "20T00055MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Thyr\u00e9s mobil 2024",
+  "serial": "D3RH9T7DHN",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "H4YLK5B00F0N",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MacBook Air tilh\u00f8rende Gitte",
+  "serial": "M9MK3KG0FX",
+  "manufacturer": "Apple",
+  "model": "MacBook Air (13-inch, M4, 2025)",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC186SEF",
+  "serial": "PC186SEF",
+  "manufacturer": "LENOVO",
+  "model": "20NX0056MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC0XQ0HU",
+  "serial": "PC0XQ0HU",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R735X",
+  "serial": "GM0R735X",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "DX3D2A5RN73D",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF36VBXK",
+  "serial": "PF36VBXK",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B8MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "White_AndroidAOSP_5/20/2025_10:29 AM",
+  "serial": "803029D056000612",
+  "manufacturer": "Yealink",
+  "model": "MeetingBar A20",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "MacBookProM1SHS",
+  "serial": "LLFGQJ0FX1",
+  "manufacturer": "Apple",
+  "model": "MacBook Pro",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF29G8GL",
+  "serial": "PF29G8GL",
+  "manufacturer": "LENOVO",
+  "model": "20T0001NMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LRC-LAPTOP2",
+  "serial": "PF2BF96W",
+  "manufacturer": "LENOVO",
+  "model": "20T0001JMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lisbeths iPhone",
+  "serial": "HF2L6LR2RC",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1Q4TNF",
+  "serial": "PC1Q4TNF",
+  "manufacturer": "LENOVO",
+  "model": "20T00055MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "SRA-LAPTOP1",
+  "serial": "PC27YG24",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MacBook Air tilh\u00f8rende Sofie",
+  "serial": "MW1KH70VTK",
+  "manufacturer": "Apple",
+  "model": "MacBook Air (M2, 2022)",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R734K",
+  "serial": "GM0R734K",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "krogh_AndroidAOSP_8/8/2025_1:17 AM",
+  "serial": "803153D020000376",
+  "manufacturer": "Yealink",
+  "model": "CTP18",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "NCM-LAPTOP3",
+  "serial": "PF372W5H",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B8MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone tilh\u00f8rende admin",
+  "serial": "GWVH81T3PLJQ",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0EFXEE",
+  "serial": "GM0EFXEE",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LOGISTIK-PC2",
+  "serial": "PC05X7M0",
+  "manufacturer": "LENOVO",
+  "model": "10DU000BMD",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Sussies iPhone",
+  "serial": "DQ6C3YDR4J",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lars\u2019s iPhone",
+  "serial": "G0ND75D0N73D",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "NS-PC3",
+  "serial": "PC0PLT3U",
+  "manufacturer": "LENOVO",
+  "model": "10MR0052MT",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "NBO-LAPTOP1",
+  "serial": "PF3ZSJ2R",
+  "manufacturer": "LENOVO",
+  "model": "21BV009VMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone XS",
+  "serial": "C7CZHLFLN737",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC13RTJ2",
+  "serial": "PC13RTJ2",
+  "manufacturer": "LENOVO",
+  "model": "20L8S3BL00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Karstens iphone",
+  "serial": "J2YQ2TW3TH",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "SDE-LAPTOP1",
+  "serial": "PF2W592R",
+  "manufacturer": "LENOVO",
+  "model": "20WM003KMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R737N",
+  "serial": "GM0R737N",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Anders - iPhone",
+  "serial": "DX3FPN0JPLJQ",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Marias iPhone",
+  "serial": "K9FJXCV06Y",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF2WJ1WT",
+  "serial": "PF2WJ1WT",
+  "manufacturer": "LENOVO",
+  "model": "20WM003KMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Signes iPhone (2)",
+  "serial": "V49MW13QL6",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7374",
+  "serial": "GM0R7374",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone tilh\u00f8rende admin",
+  "serial": "F4GZ97S7N736",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Theresa S\u00f8rensens iPhone",
+  "serial": "K253332Q3V",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1872XA",
+  "serial": "PC1872XA",
+  "manufacturer": "LENOVO",
+  "model": "20NX0056MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R245F",
+  "serial": "GM0R245F",
+  "manufacturer": "LENOVO",
+  "model": "21LS002DMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPad",
+  "serial": "JLJ1YFHNQM",
+  "manufacturer": "Apple",
+  "model": "iPad Pro 11-inch (M4)",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MDL-PC3",
+  "serial": "S4PK0301",
+  "manufacturer": "LENOVO",
+  "model": "10RS003PMX",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LJ-LAPTOP6",
+  "serial": "PF288Z5E",
+  "manufacturer": "LENOVO",
+  "model": "20T0001YMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R735S",
+  "serial": "GM0R735S",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73VM",
+  "serial": "GM0R73VM",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC227PN4",
+  "serial": "PC227PN4",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B6MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1N63BN",
+  "serial": "PC1N63BN",
+  "manufacturer": "LENOVO",
+  "model": "20T0001JMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC2GT29C",
+  "serial": "PC2GT29C",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MacBookProM1ANN",
+  "serial": "LD2LQ7W172",
+  "manufacturer": "Apple",
+  "model": "MacBook Pro",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "F17F6H300D8X",
+  "manufacturer": "Apple",
+  "model": "iPhone 12 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "STUD-MEDLEM1",
+  "serial": "PF15L22S",
+  "manufacturer": "LENOVO",
+  "model": "20KH006JMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Sebastian Erbo - iPhone",
+  "serial": "C41XV20F2K",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "DNPDF2AL0F11",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73VF",
+  "serial": "GM0R73VF",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "FHQ6K0XF00",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LOGISTIK-Print-PC1",
+  "serial": "PC005HQZ",
+  "manufacturer": "LENOVO",
+  "model": "10AW008RMX",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "HB-Lokale_AndroidAOSP_8/4/2025_11:16 PM",
+  "serial": "203047F100001409",
+  "manufacturer": "Yealink",
+  "model": "CTP18",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "PC0XQ0LY",
+  "serial": "PC0XQ0LY",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Hagedorn_AndroidAOSP_5/1/2025_2:53 PM",
+  "serial": "803110D072402143",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "Nuri - iPhone",
+  "serial": "C8PXQWWWKXK1",
+  "manufacturer": "Apple",
+  "model": "iPhone XR",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Susannes\u2019s iPhone",
+  "serial": "FFMH7FENPLJQ",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LA-LAPTOP3",
+  "serial": "GM0EFXEF",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC0XQ2CR",
+  "serial": "PC0XQ2CR",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "KLW-PC1",
+  "serial": "PC0PLSZN",
+  "manufacturer": "LENOVO",
+  "model": "10MR0052MT",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7384",
+  "serial": "GM0R7384",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC27ZK9Z",
+  "serial": "PC27ZK9Z",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B6MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "White_AndroidAOSP_3/19/2025_9:44 AM",
+  "serial": "803110D072402899",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "SEH-LAPTOP5",
+  "serial": "PF5070Z9",
+  "manufacturer": "LENOVO",
+  "model": "21KDS68A00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "IT - iPhone",
+  "serial": "F4GCV20MN73D",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lisa Heidis iPhone",
+  "serial": "CD47VKY7CN",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM00BZR1",
+  "serial": "GM00BZR1",
+  "manufacturer": "LENOVO",
+  "model": "21BR00EXMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Marias iPhone",
+  "serial": "F17DG9ZC0F11",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPad",
+  "serial": "FV1XHWYG6K",
+  "manufacturer": "Apple",
+  "model": "iPad Pro 11-inch (M4)",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Michaels iPad",
+  "serial": "DMPW48G4J2D1",
+  "manufacturer": "Apple",
+  "model": "iPad Pro (10.5\")",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Saras iPhone",
+  "serial": "MW9K647G62",
+  "manufacturer": "Apple",
+  "model": "iPhone 14 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "EKSTRA-T480S2",
+  "serial": "PC0XQ2D0",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1B9XKS",
+  "serial": "PC1B9XKS",
+  "manufacturer": "LENOVO",
+  "model": "20NX006SMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73V8",
+  "serial": "GM0R73V8",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7357",
+  "serial": "GM0R7357",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "krogh_AndroidAOSP_5/14/2025_10:25 AM",
+  "serial": "803029D056000729",
+  "manufacturer": "Yealink",
+  "model": "MeetingBar A20",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "JMR-PC2",
+  "serial": "PC1F8CKZ",
+  "manufacturer": "LENOVO",
+  "model": "10T700AMMT",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0HM7D6",
+  "serial": "GM0HM7D6",
+  "manufacturer": "LENOVO",
+  "model": "21F6002NMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "JKJ-LAPTOP2",
+  "serial": "PF3X8ZR4",
+  "manufacturer": "LENOVO",
+  "model": "21BV009VMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone TTH (2)",
+  "serial": "C416RYCYKL",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Diabetesforeningen T4",
+  "serial": "F9FTGYBNHLF9",
+  "manufacturer": "Apple",
+  "model": "iPad (5th generation)",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "CR-LAPTOP3",
+  "serial": "PC2GT49Z",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "NRB-LAPTOP2",
+  "serial": "PC1N63BB",
+  "manufacturer": "LENOVO",
+  "model": "20T0001JMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Klaus - iPhone",
+  "serial": "F2XVX1YX40",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "ulla - iPhone",
+  "serial": "V3VM40V73K",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1PW888",
+  "serial": "PC1PW888",
+  "manufacturer": "LENOVO",
+  "model": "20T0001SMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73WE",
+  "serial": "GM0R73WE",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "GWVH828WPLJQ",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Claus - iPad",
+  "serial": "DMPDG4VGPV13",
+  "manufacturer": "Apple",
+  "model": "iPad Pro (11\")(2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73V0",
+  "serial": "GM0R73V0",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF4R8A1K",
+  "serial": "PF4R8A1K",
+  "manufacturer": "LENOVO",
+  "model": "21HES69W00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC0XQ2DM",
+  "serial": "PC0XQ2DM",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GTL-LAPTOP5",
+  "serial": "PF283JSP",
+  "manufacturer": "LENOVO",
+  "model": "20T0001YMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Hagedorn_AndroidAOSP_8/6/2025_12:06 AM",
+  "serial": "803153D040000640",
+  "manufacturer": "Yealink",
+  "model": "CTP18",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "GM0R737T",
+  "serial": "GM0R737T",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LPM934356N-iPhone",
+  "serial": "FW5J6W2QVQ",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1ATME4",
+  "serial": "PC1ATME4",
+  "manufacturer": "LENOVO",
+  "model": "20NX0056MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0DLB0K",
+  "serial": "GM0DLB0K",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "HB-Lokale_AndroidAOSP_5/14/2025_10:45 AM",
+  "serial": "803110D092400727",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "KANTINE-LAPTOP3",
+  "serial": "PC0XQ2E9",
+  "manufacturer": "LENOVO",
+  "model": "20L8002WMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "TTH-LAPTOP2",
+  "serial": "PF2W5931",
+  "manufacturer": "LENOVO",
+  "model": "20WM003KMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lene K\u00f8lle - iPhone",
+  "serial": "GWVH8031PLJQ",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Peters iPhone (2)",
+  "serial": "W532L32D14",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "CBS-LAPTOP2",
+  "serial": "GM0DLB0N",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "krogh_AndroidAOSP_5/1/2025_2:57 PM",
+  "serial": "803110D072401306",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "Hodgkin_AndroidAOSP_5/2/2025_11:55 AM",
+  "serial": "803110D072401885",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "ICH-LAPTOP2",
+  "serial": "PC2GT2BK",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "It - iPad",
+  "serial": "DMPQH1WEG5YL",
+  "manufacturer": "Apple",
+  "model": "iPad Air 2",
+  "os_platform": "iOS",
+  "device_type": "Tablet",
+  "category": "Tablets",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R737X",
+  "serial": "GM0R737X",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF4QVWAC",
+  "serial": "PF4QVWAC",
+  "manufacturer": "LENOVO",
+  "model": "21HNS8AX00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MDL-PC2",
+  "serial": "PC0PLT43",
+  "manufacturer": "LENOVO",
+  "model": "10MR0052MT",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "R90R0GNP",
+  "serial": "R90R0GNP",
+  "manufacturer": "LENOVO",
+  "model": "20L90020MD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "CSA-LAPTOP2",
+  "serial": "PC24DW3N",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Mia - iPhone",
+  "serial": "DX3FP36G0F11",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7364",
+  "serial": "GM0R7364",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MacBook Air tilh\u00f8rende Jari",
+  "serial": "G0F6VXG9N3",
+  "manufacturer": "Apple",
+  "model": "MacBook Air (13-inch, M4, 2025)",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R734A",
+  "serial": "GM0R734A",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lones iPhone",
+  "serial": "X7PNHJ639K",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Claus - iPhone",
+  "serial": "H2Y314G9V1",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC10X0MH",
+  "serial": "PC10X0MH",
+  "manufacturer": "LENOVO",
+  "model": "20L7S25N00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC1872Z9",
+  "serial": "PC1872Z9",
+  "manufacturer": "LENOVO",
+  "model": "20NX0056MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Sophie - iPhone",
+  "serial": "DX3D2A5RN73D",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MDL-LAPTOP10",
+  "serial": "PF3WSTBC",
+  "manufacturer": "LENOVO",
+  "model": "21BR002DMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC2DMK2N",
+  "serial": "PC2DMK2N",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B5MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MacBook Air tilh\u00f8rende Anne-Marie",
+  "serial": "CMVN7XHY5H",
+  "manufacturer": "Apple",
+  "model": "MacBook Air (13-inch, M3, 2024)",
+  "os_platform": "macOS",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "ATW-LAPTOP6",
+  "serial": "PF305ZWX",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B7MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "DESKTOP-FUO7G1S",
+  "serial": "PF2WJG07",
+  "manufacturer": "LENOVO",
+  "model": "20WM003KMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73W0",
+  "serial": "GM0R73W0",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "TBU-LAPTOP3",
+  "serial": "GM01VNWV",
+  "manufacturer": "LENOVO",
+  "model": "21BR00EXMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73TQ",
+  "serial": "GM0R73TQ",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7388",
+  "serial": "GM0R7388",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Mariannes iPhone",
+  "serial": "K3K2GV9X9L",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "WIN10TEST",
+  "serial": "VMware-421885d0cfdc374c-f5e756a20f7d9a5a",
+  "manufacturer": "VMware, Inc.",
+  "model": "VMware7,1",
+  "os_platform": "Windows",
+  "device_type": "Virtual Machine",
+  "category": "Virtual Machines (On-Premises)",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "kantine_AndroidAOSP_5/1/2025_2:56 PM",
+  "serial": "803110D072402058",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "iPhone",
+  "serial": "FFMGH2ZJPLJT",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "CHC-LAPTOP2",
+  "serial": "PF3Z7L24",
+  "manufacturer": "LENOVO",
+  "model": "21BV00APMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone SE (2nd generation)",
+  "serial": "FFMGH36ZPLJT",
+  "manufacturer": "Apple",
+  "model": "iPhone SE (2nd generation)",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "ANJ-LAPTOP5",
+  "serial": "PC2GT9Z2",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "EVA-LAPTOP2",
+  "serial": "PF40LS5N",
+  "manufacturer": "LENOVO",
+  "model": "21BR00EXMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "OLP-LAPTOP1",
+  "serial": "R910Y66S",
+  "manufacturer": "LENOVO",
+  "model": "20TH004HMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "JDJ-LAPTOP1",
+  "serial": "GM0ASDVD",
+  "manufacturer": "LENOVO",
+  "model": "21F60054MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "THN-LAPTOP2",
+  "serial": "PF3XB36B",
+  "manufacturer": "LENOVO",
+  "model": "21BV00ADMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "KAP-LAPTOP3",
+  "serial": "PF3WYMYP",
+  "manufacturer": "LENOVO",
+  "model": "21BR002AMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Hagedorn_AndroidAOSP_6/23/2025_8:17 AM",
+  "serial": "803029D056000306",
+  "manufacturer": "Yealink",
+  "model": "MeetingBar A20",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "PC1AQE5Y",
+  "serial": "PC1AQE5Y",
+  "manufacturer": "LENOVO",
+  "model": "20NX006SMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "CAR-LAPTOP2",
+  "serial": "GM0CJ5JF",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "YJ01RASS",
+  "serial": "YJ01RASS",
+  "manufacturer": "LENOVO",
+  "model": "12LN002YMX",
+  "os_platform": "Windows",
+  "device_type": "Desktop",
+  "category": "Desktops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0DLB0J",
+  "serial": "GM0DLB0J",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Steensen_AndroidAOSP_5/8/2025_7:49 AM",
+  "serial": "803110D072402088",
+  "manufacturer": "Yealink",
+  "model": "RoomPanel",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "LW-LAPTOP7",
+  "serial": "PC288B1J",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73VC",
+  "serial": "GM0R73VC",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "ann-britt - iPhone",
+  "serial": "GJCP4VW7JN",
+  "manufacturer": "Apple",
+  "model": "iPhone 15",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "THE-LAPTOP1",
+  "serial": "GM0EFXEH",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PPE-LAPTOP3",
+  "serial": "R9116CYB",
+  "manufacturer": "LENOVO",
+  "model": "20TK002EMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Kim Thines iPhone",
+  "serial": "H6YXP2V7YM",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC24DMX3",
+  "serial": "PC24DMX3",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "EKSTRA-T460S1",
+  "serial": "PC0H57N5",
+  "manufacturer": "LENOVO",
+  "model": "20F9005CMD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R732Y",
+  "serial": "GM0R732Y",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PC2GT9ZN",
+  "serial": "PC2GT9ZN",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R7367",
+  "serial": "GM0R7367",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LKJ-LAPTOP3",
+  "serial": "PC2GT28R",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B9MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Steensen_AndroidAOSP_5/8/2025_6:44 AM",
+  "serial": "803029D056000168",
+  "manufacturer": "Yealink",
+  "model": "MeetingBar A20",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "SUD-LAPTOP2",
+  "serial": "PF2ZPWYM",
+  "manufacturer": "LENOVO",
+  "model": "20WM003FMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Gitte's iPhone",
+  "serial": "L0GWX1VXH7",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "iPhone",
+  "serial": "F71XQPPQKXK7",
+  "manufacturer": "Apple",
+  "model": "iPhone XR",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "HB-Lokale_AndroidAOSP_7/2/2025_12:01 PM",
+  "serial": "803032F100002448",
+  "manufacturer": "Yealink",
+  "model": "MeetingBar A30",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "Steensen_AndroidAOSP_6/20/2025_1:16 AM",
+  "serial": "803153C120001164",
+  "manufacturer": "Yealink",
+  "model": "CTP18",
+  "os_platform": "Android",
+  "device_type": "IoT Devices",
+  "category": "IoT Devices",
+  "cloud_provider": null
+}
+{
+  "name": "iPhone ET",
+  "serial": "FLWG7YC9FT",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Nadja Stine Aagaard-Christensen\u2019s iPhone",
+  "serial": "MN215X2RLX",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "JJA-LAPTOP1",
+  "serial": "PC1AQE6G",
+  "manufacturer": "LENOVO",
+  "model": "20NX006SMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "EKSTRA-T490S1",
+  "serial": "PC1872ZB",
+  "manufacturer": "LENOVO",
+  "model": "20NX0056MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Louises iPhone",
+  "serial": "K7DC67VDJ6",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R737M",
+  "serial": "GM0R737M",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Anna Thyra - iPhone",
+  "serial": "F17ZT2Z3N6Y9",
+  "manufacturer": "Apple",
+  "model": "iPhone 11 Pro",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Clauss iPhone (2)",
+  "serial": "JD2WMYYY7H",
+  "manufacturer": "Apple",
+  "model": "iPhone 13",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "MFR-LAPTOP1",
+  "serial": "GM0EFXEJ",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Julia",
+  "serial": "FVYQ3K9QV6",
+  "manufacturer": "Apple",
+  "model": "iPhone 16",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0DLB0L",
+  "serial": "GM0DLB0L",
+  "manufacturer": "LENOVO",
+  "model": "21F7S1T20B",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Lene - iPhone",
+  "serial": "C8PZ9DHPN737",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "PF2BF09G",
+  "serial": "PF2BF09G",
+  "manufacturer": "LENOVO",
+  "model": "20T0001JMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "LHJ-LAPTOP1",
+  "serial": "PF4RESZS",
+  "manufacturer": "LENOVO",
+  "model": "21HNS8AX00",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Louises iPhone",
+  "serial": "DNPDF2AL0F11",
+  "manufacturer": "Apple",
+  "model": "iPhone 12",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "GM0R73TT",
+  "serial": "GM0R73TT",
+  "manufacturer": "LENOVO",
+  "model": "21LS001UMX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Diabetes - iPhone (2)",
+  "serial": "C7DC8BS4N735",
+  "manufacturer": "Apple",
+  "model": "iPhone 11",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "Anne-Maries iPhone",
+  "serial": "JX70M944QQ",
+  "manufacturer": "Apple",
+  "model": "iPhone 13 mini",
+  "os_platform": "iOS",
+  "device_type": "Mobile Phone",
+  "category": "Mobile Phones",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "ULN-LAPTOP3",
+  "serial": "PF3063XP",
+  "manufacturer": "LENOVO",
+  "model": "20WM00B7MX",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}
+{
+  "name": "R90RJ2EK",
+  "serial": "R90RJ2EK",
+  "manufacturer": "LENOVO",
+  "model": "20LA0026MD",
+  "os_platform": "Windows",
+  "device_type": "Laptop",
+  "category": "Laptops",
+  "cloud_provider": "On-Premise"
+}

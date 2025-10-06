@@ -16,6 +16,7 @@ from msal import ConfidentialClientApplication
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from lib.asset_matcher import AssetMatcher
 from debug.device_debug_logger import debug_logger
+from debug.debug_categorization import debug_categorization
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -277,6 +278,10 @@ class IntuneSync:
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 
-if __name__ == "__main__":   
-    sync = IntuneSync()
-    sync.sync_to_snipeit()
+if __name__ == "__main__":
+    if debug_categorization.debug:
+        debug_categorization.get_managed_devices()
+        debug_categorization.write_managed_devices_to_logfile()
+    else:
+        sync = IntuneSync()
+        sync.sync_to_snipeit()

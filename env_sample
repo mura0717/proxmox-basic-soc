@@ -11,6 +11,12 @@ AZURE_CLIENT_ID=
 AZURE_CLIENT_SECRET=
 INTUNE_DEBUG= 0
 
+#Asset Matcher Configuration
+ASSET_DEBUG=0
+
+#Asset Matcher Configuration
+CATEGORIZATION_DEBUG=0
+
 # Network Configuration
 # Networks to scan
 NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24” 
