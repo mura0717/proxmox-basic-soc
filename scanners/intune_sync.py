@@ -15,8 +15,8 @@ from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from lib.asset_matcher import AssetMatcher
-from debug.device_debug_logger import debug_logger
-from debug.debug_categorization import debug_categorization
+from debug.asset_debug_logger import debug_logger
+from debug.debug_categorization_quick import debug_categorization
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -215,7 +215,7 @@ class IntuneSync:
         }
 
         # Remove None values
-        return {k: v for k, v in transformed.items() if v is not None}
+        return {k: v for k, v in transformed.items() if v is not None and v != ""}
     
     def _combine_mac_addresses(self, device: Dict) -> str:
         """Combine all MAC addresses into a single field"""

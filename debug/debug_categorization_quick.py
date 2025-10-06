@@ -1,10 +1,16 @@
+#!/usr/bin/env python3
+"""
+Debug script to quickly check if assets are categorized correctly 
+It doesn't need to Intune or Snipe-It via API since it uses raw_intune_log.txt file.
+"""
+
 import os
 import sys
 import json
 from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from lib.device_categorizer import DeviceCategorizer
+from lib.asset_categorizer import DeviceCategorizer
 
 class DebugCategorization:
     """Determines device type and category based on attributes.""" 
@@ -65,6 +71,5 @@ class DebugCategorization:
                 }
                 f.write(json.dumps(out, indent=2) + "\n")
         print(f"Wrote categorized results to {output_path}")
-        
 
 debug_categorization = DebugCategorization()

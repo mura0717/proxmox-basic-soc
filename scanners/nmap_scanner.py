@@ -23,7 +23,7 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
-from lib.device_categorizer import DeviceCategorizer
+from lib.asset_categorizer import DeviceCategorizer
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
