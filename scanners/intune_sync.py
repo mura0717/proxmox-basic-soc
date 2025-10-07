@@ -225,16 +225,16 @@ class IntuneSync:
         print(f"Found {len(intune_assets)} assets in Intune")
         
         # DEBUG: Clear existing logs once if debug
-        if debug_logger.debug:
+        if debug_logger.intune_debug:
             debug_logger._clear_all_debug_logs()
         
         # --- DEBUG: Print raw assets ---
-        if intune_assets and debug_logger.debug:
+        if intune_assets and debug_logger.intune_debug:
             for asset in intune_assets:
                 raw_message = "\n--- RAW INTUNE DEVICE ---\n" + \
                     json.dumps(asset, indent=2) + \
                         "\n----------------------------------------\n"
-                debug_logger._raw_data_log(raw_message)     
+                debug_logger._intune_raw_data_log(raw_message)     
             
         # Transform and prepare for Snipe-IT
         transformed_assets = []
@@ -243,12 +243,12 @@ class IntuneSync:
             transformed_assets.append(transformed)
         
         # --- DEBUG: Print transformed assets ---
-        if transformed_assets and debug_logger.debug:
+        if transformed_assets and debug_logger.intune_debug:
             for transformed_asset in transformed_assets:
                 transformed_message = "\n--- TRANSFORMED DEVICE ---\n" + \
                     json.dumps(transformed_asset, indent=2) + \
                         "\n----------------------------------------\n"
-                debug_logger._transformed_data_log(transformed_message)
+                debug_logger._intune_transformed_data_log(transformed_message)
         
         # Send to asset matcher for processing
         results = self.asset_matcher.process_scan_data('intune', transformed_assets)

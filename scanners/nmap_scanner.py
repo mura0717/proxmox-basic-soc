@@ -20,10 +20,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import nmap
 import hashlib
+import json
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
-from lib.asset_categorizer import AssetCategorizer
+from debug.asset_debug_logger import debug_logger
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
@@ -45,6 +46,13 @@ class NmapScanner:
     },
     
     # LEVEL 3: Basic Inventory (Standard scan)
+    'cybersec-inventory': {
+        'args': '-sn -sS --top-ports 50 -T5 --open',  # Fast but gets some service info
+        'description': 'Cybersecurity inventory - fast scan with basic service detection',
+        'frequency': 'hourly',
+        'timeout': 900  # 15 minutes
+    },
+    
     'basic': {
         'args': '-sS -sV --top-ports 1000 -T4',
         'description': 'Basic service detection - top 1000 ports',
@@ -202,13 +210,36 @@ class NmapScanner:
     def sync_to_snipeit(self, profile: str = 'discovery') -> Dict:
         """Run scan and sync to Snipe-IT"""
         print(f"Starting {profile} scan...")
+        
+        if debug_logger.nmap_debug:
+            debug_logger._clear_all_debug_logs()
+            debug_logger._debug_log(
+                f"=== NMAP SCAN SESSION STARTED ===\nProfile: {profile}\nNetwork: {self.network_range}\n",
+                debug_logger.raw_nmap_log_file
+        )
+        
         assets = self.run_scan(profile)
         
         if not assets:
+            if debug_logger.nmap_debug:
+                debug_logger._debug_log("No assets discovered in scan", debug_logger.raw_nmap_log_file)
             return {'created': 0, 'updated': 0, 'failed': 0}
         
         print(f"Found {len(assets)} hosts")
+        
+        if debug_logger.nmap_debug:
+            for asset in assets:
+                debug_logger._nmap_raw_data_log(
+                    f"\n--- ASSET TO SYNC: {asset.get('name')} ---\n{json.dumps(asset, indent=2)}\n{'-'*50}\n"
+                )
+        
         results = self.asset_matcher.process_scan_data('nmap', assets)
+        
+        if debug_logger.nmap_debug:
+            for result in results:
+                debug_logger._nmap_transformed_data_log(
+                    f"\n=== SYNC RESULTS ===\nCreated: {result['created']}\nUpdated: {result['updated']}\nFailed: {result['failed']}\n{'='*50}\n"
+                    )
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated")
         return results
@@ -230,7 +261,7 @@ def main():
                 print(f"  {name:12} - {config['description']}")
         else:
             print(f"Unknown command: {command}")
-            print("Usage: nmap_scanner.py [discovery|quick|basic|detailed|vulnerability|full|web|network|list]")
+            print("Usage: nmap_scanner.py [discovery|quick|cybcersec_inventory|basic|detailed|vulnerability|full|web|network|list]")
     else:
         scanner.sync_to_snipeit('discovery')
 

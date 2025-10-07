@@ -143,6 +143,11 @@ CUSTOM_FIELDS = {
     'azure_resource_group': {"name": "Azure Resource Group", "element": "text", "help_text": "Resource group name"},
     'azure_region': {"name": "Azure Region", "element": "text", "help_text": "Azure location/region"},
     'azure_tags_json': {"name": "Azure Tags (JSON)", "element": "textarea", "help_text": "JSON-encoded Azure tags"},
+    
+    # Cybersec Tags
+    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'select', 'values': 'Low,Medium,High,Critical'},
+    'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'checkbox'},
+    'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text'}
 }
 
 # Define which fields belong to which fieldset, using our reference keys
