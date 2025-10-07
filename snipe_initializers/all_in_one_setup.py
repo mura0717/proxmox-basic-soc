@@ -478,6 +478,9 @@ MODELS = [
     {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines (On-Premises)', 'manufacturer': 'Generic'},
     {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},
     {'name': 'Generic Software License', 'category': 'Software Licenses', 'manufacturer': 'Generic'},
+    {'name': 'Generic Domain Controller', 'category': 'Servers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Database Server', 'category': 'Servers', 'manufacturer': 'Generic'},
+    {'name': 'Generic Web Server', 'category': 'Servers', 'manufacturer': 'Generic'},
 ]
 
 #Define Manufacturers
