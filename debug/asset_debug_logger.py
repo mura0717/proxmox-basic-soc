@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from datetime import datetime 
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,6 +15,7 @@ class AssetDebugLogger:
         self.asset_log_file = os.path.join(self.log_dir, "asset_data_log.txt")
         self.raw_log_file = os.path.join(self.log_dir, "raw_intune_log.txt")
         self.transformed_log_file = os.path.join(self.log_dir, "transformed_log.txt")
+        self.asset_all_details_log_file = os.path.join(self.log_dir, "all_intune_asset_details_log.txt")
         self._asset_log_count = 0
         self._raw_log_count = 0
         self._transformed_log_count = 0
@@ -28,10 +30,12 @@ class AssetDebugLogger:
         self._clear_log_file(self.asset_log_file)
         self._clear_log_file(self.raw_log_file)
         self._clear_log_file(self.transformed_log_file)
+        self._clear_log_file(self.asset_all_details_log_file)
         self._asset_log_count = 0
         self._raw_log_count = 0
         self._transformed_log_count = 0
-
+        self._asset_all_details_log_count = 0
+        
     def _debug_log(self, message: str, log_file: str, print_terminal: bool = True):
         """Centralized debug logging to file and optionally to terminal."""
         timestamp = datetime.now().isoformat()
@@ -47,19 +51,27 @@ class AssetDebugLogger:
         else:
             return
 
-    def _asset_data_log(self, message: str, print_terminal: bool = True):
-        print_terminal = self._asset_log_count < 3
+    def _asset_data_log(self, message: str, print_terminal: bool = False):
+        #print_terminal = self._asset_log_count < 3
         self._asset_log_count += 1
         self._debug_log(message, self.asset_log_file, print_terminal=print_terminal)
 
-    def _raw_data_log(self, message: str, print_terminal: bool = True):
-        print_terminal = self._raw_log_count < 3
+    def _raw_data_log(self, message: str, print_terminal: bool = False):
+        #print_terminal = self._raw_log_count < 3
         self._raw_log_count += 1
         self._debug_log(message, self.raw_log_file, print_terminal=print_terminal)
 
-    def _transformed_data_log(self, message: str, print_terminal: bool = True):
-        print_terminal = self._transformed_log_count < 3
+    def _transformed_data_log(self, message: str, print_terminal: bool = False):
+        #print_terminal = self._transformed_log_count < 3
         self._transformed_log_count += 1
         self._debug_log(message, self.transformed_log_file, print_terminal=print_terminal)
+    
+    def _log_asset_full_details (self, details: dict, label: str, print_terminal: bool = True):
+        formatted_message = f"\n--- {label} ---\n" + \
+                            json.dumps(details, indent=2) + \
+                            "\n----------------------------------------\n"
+        print_terminal = self._asset_all_details_log_count < 3
+        self._asset_all_details_log_count += 1
+        self._debug_log(formatted_message, self.asset_all_details_log_file, print_terminal=print_terminal)
         
 debug_logger = AssetDebugLogger()

@@ -9,7 +9,7 @@ import sys
 import requests
 import json
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List
 from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -91,27 +91,6 @@ class IntuneSync:
                 break
         
         return assets
-    
-    def get_asset_details(self, asset_id: str) -> Optional[Dict]:
-        """Get detailed information for a specific asset"""
-        if not self.access_token:
-            return None
-        
-        headers = {
-            'Authorization': f'Bearer {self.access_token}',
-            'Content-Type': 'application/json'
-        }
-        
-        try:
-            # Get additional asset details
-            url = f"{self.graph_url}/assetManagement/managedDevices/{asset_id}"
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            return response.json()
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching asset details for {asset_id}: {e}")
-            return None
     
     def transform_intune_to_snipeit(self, intune_asset: Dict) -> Dict:
         """Transform Intune asset data to Snipe-IT format"""

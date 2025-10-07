@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Debug script to check Snipe-IT assets and API responses
+Verifies Snipe-IT API connectivity, lists recent assets and inspects custom-field setup; 
+Useful for quick troubleshooting of the Snipe-IT integration.
 """
 
 import os
@@ -11,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from snipe_api.config import SNIPE_URL, HEADERS, VERIFY_SSL
 
-def debug_assets():
+def snipeit_api_debug():
     print("=== Snipe-IT Asset Debug ===")
     
     # Test API connection
@@ -79,4 +81,4 @@ def debug_assets():
         print(f"Error checking custom fields: {e}")
 
 if __name__ == "__main__":
-    debug_assets()
+    snipeit_api_debug()
