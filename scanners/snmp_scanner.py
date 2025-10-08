@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from lib.asset_matcher import AssetMatcher
+from assets_sync_library.asset_matcher import AssetMatcher
 from pysnmp.hlapi import (
     getCmd,
     SnmpEngine,

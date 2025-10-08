@@ -12,7 +12,7 @@ from typing import List, Dict
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from lib.asset_categorizer import AssetCategorizer
+from assets_sync_library.asset_categorizer import AssetCategorizer
 
 class NmapDebugCategorization:
     """Test categorization logic for Nmap assets without needing live scans"""

@@ -22,7 +22,7 @@ if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
 # Ensure parent directory is in sys.path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from lib.asset_matcher import AssetMatcher
+from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
 

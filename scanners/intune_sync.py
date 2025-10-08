@@ -13,7 +13,7 @@ from typing import Dict, List, Optional
 from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from lib.asset_matcher import AssetMatcher
+from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.intune_categorize_from_logs import intune_debug_categorization
 

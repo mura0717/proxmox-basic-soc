@@ -1,4 +1,0 @@
-{
-    "python.autoComplete.extraPaths": ["./lib"],
-    "python.languageServer": "Pylance"
-}

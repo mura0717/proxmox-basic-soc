@@ -10,7 +10,7 @@ from typing import List, Dict, Optional
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import Gmp
 from gvm.transforms import EtreeTransform
-from ..lib.asset_matcher import AssetMatcher
+from ..assets_sync_library.asset_matcher import AssetMatcher
 
 class OpenVASScanner:
     """OpenVAS/GVM vulnerability scanner integration"""
