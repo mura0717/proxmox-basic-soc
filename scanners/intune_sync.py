@@ -9,13 +9,13 @@ import sys
 import requests
 import json
 from datetime import datetime, timezone
-from typing import Dict, List
+from typing import Dict, List, Optional
 from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from lib.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
-from debug.debug_categorization_quick import debug_categorization
+from debug.categorize_from_logs import debug_categorization
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -63,10 +63,16 @@ class IntuneSync:
             print(f"Authentication error: {e}")
             return False
     
+    def get_access_token(self) -> Optional[str]:
+        """Ensure a valid access token is available and return it."""
+        if not self.access_token:
+            self.authenticate()
+        return self.access_token
+    
     def get_managed_assets(self) -> List[Dict]:
         """Fetch all managed assets from Intune"""
         if not self.access_token:
-            if not self.authenticate():
+            if not self.get_access_token():
                 return []
         
         headers = {
@@ -248,7 +254,8 @@ class IntuneSync:
         return results
 
 if __name__ == "__main__":
-    debug_logger.clear_logs()
+    if debug_logger.intune_debug:
+        debug_logger.clear_logs()
     
     if debug_categorization.debug:
         debug_categorization.get_managed_assets()

@@ -225,7 +225,9 @@ class NmapScanner:
     
     def sync_to_snipeit(self, profile: str = 'discovery') -> Dict:
         """Run scan and sync to Snipe-IT"""
-        print(f"Starting {profile} scan...")
+        print(f"Starting Nmap {profile} scan...")
+        
+        self.asset_matcher.clear_all_caches()
         
         assets = self.run_scan(profile)
         
@@ -246,7 +248,8 @@ class NmapScanner:
 
 def main():
     """Command-line interface"""
-    debug_logger.clear_logs()
+    if debug_logger.nmap_debug:
+        debug_logger.clear_logs()
     
     scanner = NmapScanner()
     

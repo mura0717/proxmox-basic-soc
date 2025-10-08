@@ -1,53 +1,62 @@
 #!/usr/bin/env python3
 """
-Test creating a single asset via API with default valid values
+Quick utility to fetch and display a single Intune device's raw data
+Useful for: Testing API access, inspecting specific device fields
 """
 
 import os
 import sys
 import requests
 import json
-from typing import Dict, Optional
-from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from snipe_api.config import SNIPE_URL, HEADERS, VERIFY_SSL
-from debug.asset_debug_logger import debug_logger
+from scanners.intune_sync import IntuneSync
 
 GRAPH_URL = "https://graph.microsoft.com/v1.0"
-BEARER_TOKEN = "???" 
 
-class GetAssetDetailsTest:
-    """Microsoft Intune synchronization service"""
-    
-    def __init__(self, bearer_token: str):
-        if not bearer_token:
-            raise ValueError("Provide AZURE_BEARER_TOKEN env var with a valid Graph API token")
-        self.bearer_token = bearer_token
-            
-    def get_asset_details(self, asset_id: str) -> Optional[Dict]:
-        headers = {
-            'Authorization': f'Bearer {self.bearer_token}',
-            'Content-Type': 'application/json'
-        }
-        
-        try:
-            # Get additional asset details
-            url = f"{GRAPH_URL}/deviceManagement/managedDevices/{asset_id}"
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            return response.json()
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching asset details for {asset_id}: {e}")
-            return None
-    
+def get_device(device_id: str, token: str):
+    """Fetch single device from Intune"""
+    headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+    try:
+        response = requests.get(
+            f"{GRAPH_URL}/deviceManagement/managedDevices/{device_id}", 
+            headers=headers
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
 if __name__ == "__main__":
-    device_id = sys.argv[1]
-    token = os.getenv("AZURE_BEARER_TOKEN")
-    tester = GetAssetDetailsTest(token)
-    details = tester.get_asset_details(device_id)
-    if details:
-        debug_logger.log_full_details(details, label=f"RAW INTUNE DEVICE {device_id}")
-        print(f"Wrote details for {device_id} to {debug_logger.asset_all_details_log_file}")
+    sync = IntuneSync()
+    token = sync.get_access_token()
+    
+    if not token:
+        print("ERROR: Set AZURE_BEARER_TOKEN environment variable")
+        sys.exit(1)
+    
+    device_id = None
+    if len(sys.argv) >= 2:
+        device_id = sys.argv[1]
+    else:
+        print("No device id provided on command line — attempting to fetch managed devices and auto-select the first one...")
+        try:
+            managed = sync.get_managed_assets()
+        except Exception:
+            managed = None
+
+        if managed and isinstance(managed, list) and len(managed) > 0:
+            # common Intune field is 'id'
+            device_id = managed[0].get('id') or managed[0].get('deviceId') or managed[0].get('intune_device_id')
+            if device_id:
+                print(f"Auto-selected device id: {device_id}")
+        if not device_id:
+            print("Usage: python debug/get_intune_device.py <device_id>")
+            print("Or run after ensuring IntuneSync.get_managed_assets() returns devices.")
+            sys.exit(1)
+    
+    device = get_device(device_id, token)
+    if device:
+        print(json.dumps(device, indent=2))

@@ -19,12 +19,12 @@ class DebugCategorization:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.log_dir = os.path.join(base_dir, "../logs/debug_logs")
         os.makedirs(self.log_dir, exist_ok=True)
-        self.categorized_assets_log = os.path.join(self.log_dir, "categorized_assets_log.txt")
-        self.raw_log_path = os.path.join(self.log_dir, "raw_intune_log.txt")
+        self.categorized_assets_log = os.path.join(self.log_dir, "categorized_assets.log")
+        self.raw_log_path = os.path.join(self.log_dir, "raw_unparsed_data.log")
 
     
     def get_managed_assets(self) -> List[Dict]:
-        """Fetch all managed assets from raw_intune_log.txt"""
+        """Fetch all managed assets from raw_unparsed_data.log"""
         raw_log_path = self.raw_log_path
         assets = []
         try:
@@ -67,7 +67,8 @@ class DebugCategorization:
                     "os_platform": transformed.get("os_platform"),
                     "device_type": categorization.get("device_type"),
                     "category": categorization.get("category"),
-                    "cloud_provider": categorization.get("cloud_provider"),
+                    "nmap services": categorization.get("nmap_services"),
+                    "cloud provider": categorization.get("cloud_provider"),
                 }
                 f.write(json.dumps(out, indent=2) + "\n")
         print(f"Wrote categorized results to {output_path}")
