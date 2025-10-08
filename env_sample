@@ -1,28 +1,33 @@
-#SNIPE-IT Configuration
+# SNIPE-IT Configuration
 SNIPE_URL = 
 SNIPE_API_TOKEN = 
 
-#Verification of SSL certs
+# Verification of SSL certs
 SSL_VERIFY=False
 
 # Azure/Intune Configuration
 AZURE_TENANT_ID=
 AZURE_CLIENT_ID=
 AZURE_CLIENT_SECRET=
-INTUNE_DEBUG= 0
+
+# Intune debugging flag
+INTUNE_DEBUG=0
 
 #Asset Matcher Configuration
-ASSET_DEBUG=0
+ASSET_MATCHER_DEBUG=0
 
 #Asset Matcher Configuration
 CATEGORIZATION_DEBUG=0
 
 # Network Configuration
 # Networks to scan
-NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24” 
+NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24”
 
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
+
+# Nmap debugging flag
+NMAP_DEBUG=0  
 
 #SNMP Configuration
 SNMP_COMMUNITY=public

@@ -224,17 +224,10 @@ class IntuneSync:
         intune_assets = self.get_managed_assets()
         print(f"Found {len(intune_assets)} assets in Intune")
         
-        # DEBUG: Clear existing logs once if debug
-        if debug_logger.intune_debug:
-            debug_logger._clear_all_debug_logs()
-        
-        # --- DEBUG: Print raw assets ---
-        if intune_assets and debug_logger.intune_debug:
-            for asset in intune_assets:
-                raw_message = "\n--- RAW INTUNE DEVICE ---\n" + \
-                    json.dumps(asset, indent=2) + \
-                        "\n----------------------------------------\n"
-                debug_logger._intune_raw_data_log(raw_message)     
+        # DEBUG: Log raw Intune API responses
+        for asset in intune_assets:
+            device_id = asset.get('id', 'unknown')
+            debug_logger.log_raw_host_data('intune', device_id, asset)  
             
         # Transform and prepare for Snipe-IT
         transformed_assets = []
@@ -242,21 +235,21 @@ class IntuneSync:
             transformed = self.transform_intune_to_snipeit(asset)
             transformed_assets.append(transformed)
         
-        # --- DEBUG: Print transformed assets ---
-        if transformed_assets and debug_logger.intune_debug:
-            for transformed_asset in transformed_assets:
-                transformed_message = "\n--- TRANSFORMED DEVICE ---\n" + \
-                    json.dumps(transformed_asset, indent=2) + \
-                        "\n----------------------------------------\n"
-                debug_logger._intune_transformed_data_log(transformed_message)
+        # DEBUG: Log transformed data
+        debug_logger.log_parsed_asset_data('intune', transformed_assets)
         
         # Send to asset matcher for processing
         results = self.asset_matcher.process_scan_data('intune', transformed_assets)
+        
+        # DEBUG: Log sync results
+        debug_logger.log_sync_summary('intune', results)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 
 if __name__ == "__main__":
+    debug_logger.clear_logs()
+    
     if debug_categorization.debug:
         debug_categorization.get_managed_assets()
         debug_categorization.write_managed_assets_to_logfile()

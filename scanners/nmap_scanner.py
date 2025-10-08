@@ -20,7 +20,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import nmap
 import hashlib
-import json
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
@@ -143,11 +142,28 @@ class NmapScanner:
         """
         Parse single host results - DATA COLLECTION ONLY.
         This method's only job is to extract raw data from Nmap.
-        All categorization logic is handled by the AssetMatcher/AssetCategorizer.
+        All categorization logic is handled by the AssetCategorizer.
         """
         nmap_host = self.nm[host]
+        
+        # DEBUG: Log raw nmap data BEFORE parsing
+        raw_host_data = {
+            'host': host,
+            'hostname': nmap_host.hostname(),
+            'state': nmap_host.state(),
+            'addresses': nmap_host.get('addresses', {}),
+            'vendor': nmap_host.get('vendor', {}),
+            'osmatch': nmap_host.get('osmatch', []),
+            'protocols': {}
+        }
+        
+        # Add protocol/port info if available
+        for proto in nmap_host.all_protocols():
+            raw_host_data['protocols'][proto] = nmap_host[proto]
+        
+        debug_logger.log_raw_host_data('nmap', host, raw_host_data)
 
-        # This dictionary holds all the raw data we can find.
+        # Parse all the raw data found.
         asset = {
             'last_seen_ip': host,
             'nmap_last_scan': datetime.now(timezone.utc).isoformat(),
@@ -155,7 +171,7 @@ class NmapScanner:
             'name': nmap_host.hostname() or f"Device-{host}",
             'dns_hostname': nmap_host.hostname(),
             '_source': 'nmap',
-            # We will populate these fields if the data exists.
+            # Will populate these fields if the data exists.
             'mac_addresses': None,
             'manufacturer': None,
             'os_platform': None,
@@ -177,7 +193,7 @@ class NmapScanner:
             os_match = nmap_host['osmatch'][0]
             asset['nmap_os_guess'] = os_match.get('name', '')
             asset['os_accuracy'] = os_match.get('accuracy')
-            asset['os_platform'] = os_match.get('name', '') # Crucial for the categorizer
+            asset['os_platform'] = os_match.get('name', '')
 
         # Get Port and Service Information
         if profile != 'discovery':
@@ -211,42 +227,26 @@ class NmapScanner:
         """Run scan and sync to Snipe-IT"""
         print(f"Starting {profile} scan...")
         
-        if debug_logger.nmap_debug:
-            debug_logger._clear_all_debug_logs()
-            debug_logger._debug_log(
-                f"=== NMAP SCAN SESSION STARTED ===\nProfile: {profile}\nNetwork: {self.network_range}\n",
-                debug_logger.raw_nmap_log_file
-        )
-        
         assets = self.run_scan(profile)
         
         if not assets:
-            if debug_logger.nmap_debug:
-                debug_logger._debug_log("No assets discovered in scan", debug_logger.raw_nmap_log_file)
-            return {'created': 0, 'updated': 0, 'failed': 0}
+            print("No hosts found.")
+            print(f"Found {len(assets)} hosts")
         
-        print(f"Found {len(assets)} hosts")
-        
-        if debug_logger.nmap_debug:
-            for asset in assets:
-                debug_logger._nmap_raw_data_log(
-                    f"\n--- ASSET TO SYNC: {asset.get('name')} ---\n{json.dumps(asset, indent=2)}\n{'-'*50}\n"
-                )
+        # DEBUG: Log parsed asset data
+        debug_logger.log_parsed_asset_data('nmap', assets)
         
         results = self.asset_matcher.process_scan_data('nmap', assets)
         
-        if debug_logger.nmap_debug:
-            for result in results:
-                debug_logger._nmap_transformed_data_log(
-                    f"\n=== SYNC RESULTS ===\nCreated: {result['created']}\nUpdated: {result['updated']}\nFailed: {result['failed']}\n{'='*50}\n"
-                    )
+        # DEBUG: Log sync results
+        debug_logger.log_sync_summary('nmap', results)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated")
         return results
 
 def main():
     """Command-line interface"""
-    import sys
+    debug_logger.clear_logs()
     
     scanner = NmapScanner()
     
