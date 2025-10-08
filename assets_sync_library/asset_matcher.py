@@ -84,7 +84,7 @@ class AssetMatcher:
         
         print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
         
-        # Try primary identifiers first
+        # STEP 1: Try exact matches (serial, device IDs)
         for identifier in self.match_rules['primary']:
             if identifier in asset_data and asset_data[identifier]:
                 if identifier == 'serial':
@@ -93,7 +93,7 @@ class AssetMatcher:
                         print(f"Found existing asset by serial: {existing.get('id')}")
                         return existing
         
-        # Try secondary identifiers
+        # STEP 2: Try secondary identifiers (MAC, IMEI, asset tag)
         for identifier in self.match_rules['secondary']:
             if identifier in asset_data and asset_data[identifier]:
                 if identifier == 'asset_tag':
@@ -101,6 +101,38 @@ class AssetMatcher:
                     if existing:
                         print(f"Found existing asset by asset_tag: {existing.get('id')}")
                         return existing
+        
+        # STEP 3: Try hostname matching (crucial for Nmap → Intune correlation)
+        dns_hostname = asset_data.get('dns_hostname') or asset_data.get('name')
+        if isinstance(dns_hostname, str) and not dns_hostname.startswith('Device-'):
+            # Clean hostname (remove domain suffix for comparison)
+            clean_hostname = dns_hostname.split('.')[0].lower()
+            
+            all_assets = self.asset_service.get_all()
+            for existing_asset in all_assets:
+                # Check asset name
+                asset_name = existing_asset.get('name')
+                if isinstance(asset_name, str) and clean_hostname in asset_name.lower():
+                    print(f"✓ Found by hostname match: '{dns_hostname}' → '{existing_asset.get('name')}' (ID: {existing_asset.get('id')})")
+                    return existing_asset
+
+                # Check custom field dns_hostname
+                existing_hostname = existing_asset.get('custom_fields', {}).get('dns_hostname', {}).get('value')
+                if isinstance(existing_hostname, str):
+                    existing_clean = existing_hostname.split('.')[0].lower()
+                    if clean_hostname == existing_clean:
+                        print(f"✓ Found by DNS hostname: {dns_hostname} (ID: {existing_asset.get('id')})")
+                        return existing_asset
+        
+        # STEP 4: Try IP matching (last resort for Nmap data)
+        last_seen_ip = asset_data.get('last_seen_ip')
+        if last_seen_ip:
+            all_assets = self.asset_service.get_all()
+            for existing_asset in all_assets:
+                existing_ip = existing_asset.get('custom_fields', {}).get('last_seen_ip', {}).get('value')
+                if existing_ip and existing_ip == last_seen_ip:
+                    print(f"✓ Found by IP: {existing_ip} (ID: {existing_asset.get('id')})")
+                    return existing_asset
         
         # Search through all assets for other matches
         all_assets = self.asset_service.get_all()
@@ -130,6 +162,7 @@ class AssetMatcher:
         """
         merged = {}
         highest_priority_source = 'unknown'
+        
         # Source priorities for conflict resolution - higher number = higher priority
         source_priority = {
             'intune': 4,
@@ -141,6 +174,7 @@ class AssetMatcher:
         for source_data in data_sources:
             source = source_data.get('_source', 'unknown')
             
+            #_source is passed before removal so will be available in the categorizer whether the asset is being created or updated!
             if source_priority.get(source, 0) > source_priority.get(highest_priority_source, 0):
                 highest_priority_source = source
             

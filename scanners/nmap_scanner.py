@@ -47,7 +47,7 @@ class NmapScanner:
     
     # LEVEL 3: Basic Inventory (Standard scan)
     'cybersec-inventory': {
-        'args': '-sn -sS --top-ports 50 -T5 --open',  # Fast but gets some service info
+        'args': '-sn -sS --top-ports 50 -T5 --open',
         'description': 'Cybersecurity inventory - fast scan with basic service detection',
         'frequency': 'hourly',
         'timeout': 900  # 15 minutes
