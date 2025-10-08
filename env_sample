@@ -10,14 +10,12 @@ AZURE_TENANT_ID=
 AZURE_CLIENT_ID=
 AZURE_CLIENT_SECRET=
 
-# Intune debugging flag
+# Intune debugging flags
 INTUNE_DEBUG=0
+INTUNE_CATEGORIZATION_DEBUG=1
 
 #Asset Matcher Configuration
 ASSET_MATCHER_DEBUG=0
-
-#Asset Matcher Configuration
-CATEGORIZATION_DEBUG=0
 
 # Network Configuration
 # Networks to scan
@@ -26,8 +24,9 @@ NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24”
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
 
-# Nmap debugging flag
+# Nmap debugging flags
 NMAP_DEBUG=0  
+NMAP_CATEGORIZATION_DEBUG=0
 
 #SNMP Configuration
 SNMP_COMMUNITY=public

@@ -8,43 +8,47 @@ import os
 import sys
 import json
 from typing import List, Dict
+import re
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from lib.asset_categorizer import AssetCategorizer
 
-class DebugCategorization:
+class IntuneDebugCategorization:
     """Determines asset type and category based on attributes.""" 
     def __init__(self):
-        self.debug = os.getenv('CATEGORIZATION_DEBUG', '0') == '1'
+        self.debug = os.getenv('INTUNE_CATEGORIZATION_DEBUG', '0') == '1'
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.log_dir = os.path.join(base_dir, "../logs/debug_logs")
         os.makedirs(self.log_dir, exist_ok=True)
-        self.categorized_assets_log = os.path.join(self.log_dir, "categorized_assets.log")
-        self.raw_log_path = os.path.join(self.log_dir, "raw_unparsed_data.log")
+        self.intune_categorized_assets_from_log = os.path.join(self.log_dir, "intune_categorized_assets_from.log")
+        self.raw_log_path = os.path.join(self.log_dir, "intune_raw_unparsed_data.log")
 
-    
-    def get_managed_assets(self) -> List[Dict]:
-        """Fetch all managed assets from raw_unparsed_data.log"""
-        raw_log_path = self.raw_log_path
+    def get_raw_intune_assets_from_log(self) -> List[Dict]:
+        """Fetches all Intune assets from its specific raw log file."""
+        if not os.path.exists(self.raw_log_path):
+            print(f"Error: Log file not found at {self.raw_log_path}")
+            print("Please run an Intune sync with INTUNE_DEBUG=1 first.")
+            return []
+            
         assets = []
         try:
-            with open(raw_log_path, 'r') as file:
-                raw_data = file.read()
-                for chunk in raw_data.split('--- RAW INTUNE DEVICE ---'):
-                    chunk = chunk.strip()
-                    if not chunk:
-                        continue
-                    start = chunk.find('{')
-                    end = chunk.rfind('}')
-                    if start == -1 or end == -1 or end <= start:
-                        continue
-                    json_text = chunk[start:end+1].strip()
-                    try:
-                        assets.append(json.loads(json_text))
-                    except Exception as e:
-                        print(f"JSON decode error: {e} | chunk: {json_text[:80]!r}")
+            with open(self.raw_log_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            chunks = content.split('--- RAW DATA | Host:')
+            
+            for chunk in chunks[1:]: # Skip the first item
+                try:
+                    json_start = chunk.find('{')
+                    if json_start == -1: continue
+                    json_text = chunk[json_start:] # JSON is the rest of the chunk
+                    assets.append(json.loads(json_text))
+                except json.JSONDecodeError as e:
+                    print(f"Warning: Failed to decode a JSON chunk. Error: {e}")
+                    continue
         except Exception as e:
-            print(f"Error reading raw_intune_log.txt: {e}")
+            print(f"Error reading or parsing log file: {e}")
+        
         return assets
     
     def write_managed_assets_to_logfile(self):
@@ -54,7 +58,7 @@ class DebugCategorization:
         print(f"Loaded {len(raw_assets)} raw assets from log.")
 
         # Transform and categorize each asset
-        output_path = self.categorized_assets_log
+        output_path = self.intune_categorized_assets_from_log
         with open(output_path, 'w', encoding='utf-8') as f:
             for asset in raw_assets:
                 transformed = sync.transform_intune_to_snipeit(asset)
@@ -73,4 +77,4 @@ class DebugCategorization:
                 f.write(json.dumps(out, indent=2) + "\n")
         print(f"Wrote categorized results to {output_path}")
 
-debug_categorization = DebugCategorization()
+intune_debug_categorization = IntuneDebugCategorization()

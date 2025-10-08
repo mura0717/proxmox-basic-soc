@@ -5,6 +5,10 @@ Nmap scanner with integrated sudo handling
 import os
 import sys
 import subprocess
+import nmap
+import hashlib
+from datetime import datetime, timezone
+from typing import List, Dict, Optional
 
 NO_ROOT_COMMANDS = ['discovery', 'web', 'list', 'help']
 
@@ -18,12 +22,9 @@ if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
 # Ensure parent directory is in sys.path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import nmap
-import hashlib
-from datetime import datetime, timezone
-from typing import List, Dict, Optional
 from lib.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
+from debug.nmap_categorize_from_logs import nmap_debug_categorization
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
@@ -248,8 +249,11 @@ class NmapScanner:
 
 def main():
     """Command-line interface"""
-    if debug_logger.nmap_debug:
-        debug_logger.clear_logs()
+    debug_logger.clear_logs('nmap')
+        
+    if nmap_debug_categorization.debug:
+        nmap_debug_categorization.get_nmap_assets()
+        nmap_debug_categorization.write_nmap_assets_to_logfile()
     
     scanner = NmapScanner()
     
