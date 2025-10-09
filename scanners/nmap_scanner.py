@@ -16,7 +16,7 @@ from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
 from assets_sync_library.mac_utils import normalize_mac
 
-DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '192.168.1.229')
+DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
 
 NO_ROOT_COMMANDS = ['web', 'list', 'help']
@@ -33,7 +33,8 @@ class NmapScanner:
     SCAN_PROFILES = {
     # LEVEL 1: Discovery (No root, fastest)
     'discovery': {
-        'args': f'-sn -PR -T4',
+        'args': '-sn -PR -T4',
+        'use_dns': False,
         'description': 'Fast ping sweep with MAC - finds live hosts',
         'frequency': 'hourly',
         'timeout': 300  # 5 minutes
@@ -41,7 +42,8 @@ class NmapScanner:
     
     # LEVEL 2: Quick Check (Basic ports)
     'quick': {
-        'args': '-sS --top-ports 100 -T5 --open',
+        'args': '-sS --top-ports 100 -T5 --open -PR',
+        'use_dns': False,
         'description': 'Quick port check - top 100 ports only',
         'frequency': 'daily',
         'timeout': 600  # 10 minutes
@@ -49,7 +51,8 @@ class NmapScanner:
     
     # LEVEL 3: Basic Inventory (Standard scan)
     'inventory': { 
-        'args': '-sS --top-ports 10 -T5 --open',
+        'args': '-sS --top-ports 10 -T5 --open -PR',
+        'use_dns': True,
         'description': 'Lightweight inventory - gets MAC and top 10 ports',
         'frequency': 'hourly',
         'timeout': 600  # 10 minutes
@@ -57,6 +60,7 @@ class NmapScanner:
     
     'basic': {
         'args': '-sS -sV --top-ports 1000 -T4',
+        'use_dns': False,
         'description': 'Basic service detection - top 1000 ports',
         'frequency': 'daily_offhours',
         'timeout': 1800  # 30 minutes
@@ -65,6 +69,7 @@ class NmapScanner:
     # LEVEL 4: Detailed Inventory (With OS detection)
     'detailed': {
         'args': '-sS -sV -O --osscan-guess --top-ports 1000 -T4',
+        'use_dns': False,
         'description': 'Service + OS detection',
         'frequency': 'weekly',
         'timeout': 3600  # 1 hour
@@ -73,6 +78,7 @@ class NmapScanner:
     # LEVEL 5: Vulnerability Scan
     'vulnerability': {
         'args': '-sS -sV --script vuln,exploit -T3',
+        'use_dns': False,
         'description': 'Security vulnerability detection',
         'frequency': 'weekly_weekend',
         'timeout': 7200  # 2 hours
@@ -81,6 +87,7 @@ class NmapScanner:
     # LEVEL 6: Full Audit (Comprehensive)
     'full': {
         'args': '-sS -sV -O -A --script default,discovery -p- -T4',
+        'use_dns': False,
         'description': 'Complete port and service audit - ALL ports',
         'frequency': 'monthly',
         'timeout': 14400  # 4 hours
@@ -89,6 +96,7 @@ class NmapScanner:
     # SPECIAL: Web Applications
     'web': {
         'args': '-sV -p80,443,8080,8443 --script http-enum,http-title',
+        'use_dns': True,
         'description': 'Web application discovery',
         'frequency': 'daily',
         'timeout': 900  # 15 minutes
@@ -97,6 +105,7 @@ class NmapScanner:
     # SPECIAL: Network Devices (SNMP/SSH)
     'network': {
         'args': '-sU -sS -p161,22,23 --script snmp-info',
+        'use_dns': True,
         'description': 'Network device identification',
         'frequency': 'daily',
         'timeout': 1200  # 20 minutes
@@ -116,6 +125,9 @@ class NmapScanner:
             return []
         
         scan_config = self.SCAN_PROFILES[profile]
+        args = scan_config['args']
+        if scan_config.get('use_dns'):
+            args = f"{args} {DNS_ARGS}"
         scan_targets = ' '.join(targets) if targets else self.network_range
         
         print(f"Running {profile} scan: {scan_config['description']}")
@@ -186,11 +198,15 @@ class NmapScanner:
         }
 
         # Get MAC and Manufacturer from MAC Vendor
+        mac_addresses = []
         if 'mac' in nmap_host.get('addresses', {}):
             raw_mac = nmap_host['addresses']['mac']
-            asset['mac_addresses'] = normalize_mac(raw_mac)
-            if 'vendor' in nmap_host and nmap_host['vendor']:
-                asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
+            normalized_mac = normalize_mac(raw_mac)
+            if normalized_mac:
+                mac_addresses.append(normalized_mac)
+                asset['mac_addresses'] = normalized_mac
+                if 'vendor' in nmap_host and nmap_host['vendor']:
+                    asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
 
         # Get OS Guess (take the first, most accurate match)
         if profile != 'discovery' and 'osmatch' in nmap_host and nmap_host['osmatch']:
