@@ -10,7 +10,16 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
-NO_ROOT_COMMANDS = ['discovery', 'web', 'list', 'help']
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from assets_sync_library.asset_matcher import AssetMatcher
+from debug.asset_debug_logger import debug_logger
+from debug.nmap_categorize_from_logs import nmap_debug_categorization
+from assets_sync_library.mac_utils import normalize_mac
+
+DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '192.168.1.229')
+DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
+
+NO_ROOT_COMMANDS = ['web', 'list', 'help']
 
 # Auto-elevate to root if needed
 if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
@@ -19,20 +28,13 @@ if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
         subprocess.call(['sudo', sys.executable] + sys.argv)
         sys.exit()
 
-# Ensure parent directory is in sys.path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from assets_sync_library.asset_matcher import AssetMatcher
-from debug.asset_debug_logger import debug_logger
-from debug.nmap_categorize_from_logs import nmap_debug_categorization
-
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
     SCAN_PROFILES = {
     # LEVEL 1: Discovery (No root, fastest)
     'discovery': {
-        'args': '-sn -T4',
-        'description': 'Fast ping sweep - finds live hosts',
+        'args': f'-sn -PR -T4',
+        'description': 'Fast ping sweep with MAC - finds live hosts',
         'frequency': 'hourly',
         'timeout': 300  # 5 minutes
     },
@@ -46,11 +48,11 @@ class NmapScanner:
     },
     
     # LEVEL 3: Basic Inventory (Standard scan)
-    'cybersec-inventory': {
-        'args': '-sn -sS --top-ports 50 -T5 --open',
-        'description': 'Cybersecurity inventory - fast scan with basic service detection',
+    'inventory': { 
+        'args': '-sS --top-ports 10 -T5 --open',
+        'description': 'Lightweight inventory - gets MAC and top 10 ports',
         'frequency': 'hourly',
-        'timeout': 900  # 15 minutes
+        'timeout': 600  # 10 minutes
     },
     
     'basic': {
@@ -185,7 +187,8 @@ class NmapScanner:
 
         # Get MAC and Manufacturer from MAC Vendor
         if 'mac' in nmap_host.get('addresses', {}):
-            asset['mac_addresses'] = nmap_host['addresses']['mac']
+            raw_mac = nmap_host['addresses']['mac']
+            asset['mac_addresses'] = normalize_mac(raw_mac)
             if 'vendor' in nmap_host and nmap_host['vendor']:
                 asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
 
@@ -268,7 +271,7 @@ def main():
                 print(f"  {name:12} - {config['description']}")
         else:
             print(f"Unknown command: {command}")
-            print("Usage: nmap_scanner.py [discovery|quick|cybcersec_inventory|basic|detailed|vulnerability|full|web|network|list]")
+            print("Usage: nmap_scanner.py [discovery|quick|inventory|basic|detailed|vulnerability|full|web|network|list]")
     else:
         scanner.sync_to_snipeit('discovery')
 

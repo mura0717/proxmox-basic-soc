@@ -17,29 +17,12 @@ from crud.status_labels import StatusLabelService
 from crud.categories import CategoryService
 from crud.manufacturers import ManufacturerService
 from crud.models import ModelService
+from snipe_api.schema import CUSTOM_FIELDS
 from assets_sync_library.asset_categorizer import AssetCategorizer
-
-class AssetService(BaseCRUDService):
-    """Service for managing assets"""
-    
-    def __init__(self):
-        super().__init__('/api/v1/hardware', 'asset')
-    
-    def search_by_serial(self, serial: str) -> Optional[Dict]:
-        """Search for asset by serial number"""
-        from snipe_api.api_client import make_api_request
-        response = make_api_request("GET", f"{self.endpoint}/byserial/{serial}")
-        if response and response.json().get("rows"):
-            return response.json()["rows"][0]
-        return None
-    
-    def search_by_asset_tag(self, asset_tag: str) -> Optional[Dict]:
-        """Search for asset by asset tag"""
-        from snipe_api.api_client import make_api_request
-        response = make_api_request("GET", f"{self.endpoint}/bytag/{asset_tag}")
-        if response and response.json().get("id"):
-            return response.json()
-        return None
+from crud.assets import AssetService
+from assets_sync_library.mac_utils import (
+    macs_from_keys, macs_from_any, intersect_mac_sets, normalize_mac
+) 
 
 class AssetMatcher:
     """
@@ -65,94 +48,122 @@ class AssetMatcher:
         self.model_service._cache.clear()    
         
     def _initialize_match_rules(self) -> Dict:
-        """Define matching rules for different data sources"""
+        """Define matching rules for different data sources with clear priorities"""
         return {
-            'primary': ['serial', 'intune_device_id', 'azure_ad_id'],
-            'secondary': ['mac_addresses', 'imei', 'asset_tag'],
-            'tertiary': ['name', 'primary_user_upn']
+            'exact': ['serial', 'intune_device_id', 'azure_ad_id'],
+            'hardware': ['mac_addresses'],
+            'administrative': ['asset_tag'], 
+            'network': ['dns_hostname', 'last_seen_ip']
         }
+    
+    def _get_custom_field(self, existing_asset: Dict, key: str) -> Optional[str]:
+        field_def = CUSTOM_FIELDS.get(key)
+        if not field_def:
+            return None
+        label = field_def['name']
+        return (existing_asset.get('custom_fields', {})
+                            .get(label, {})
+                            .get('value')) 
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
         """Generate unique hash for asset identification"""
         hash_string = json.dumps(identifiers, sort_keys=True)
         return hashlib.md5(hash_string.encode()).hexdigest()
     
+    def _ensure_all_assets_fetched(self, all_assets: Optional[List[Dict]]) -> List[Dict]:
+        """Lazily fetches all assets from the API, only if the list is not already populated."""
+        if all_assets is None:
+            print("  -> Lazily fetching all assets for deep matching...")
+            return self.asset_service.get_all()
+        return all_assets
+
     def find_existing_asset(self, asset_data: Dict) -> Optional[Dict]:
         """
         Find existing asset in Snipe-IT using multiple matching strategies
         """
-        
+    
         print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
+        all_assets = None
         
-        # STEP 1: Try exact matches (serial, device IDs)
-        for identifier in self.match_rules['primary']:
-            if identifier in asset_data and asset_data[identifier]:
-                if identifier == 'serial':
-                    existing = self.asset_service.search_by_serial(asset_data[identifier])
-                    if existing:
-                        print(f"Found existing asset by serial: {existing.get('id')}")
-                        return existing
+        # STRATEGY 1: Fast API searches
+        # Serial search
+        if asset_data.get('serial'):
+            existing = self.asset_service.search_by_serial(asset_data['serial'])
+            if existing:
+                print(f"  ✓ Found by serial: {asset_data['serial']} (ID: {existing.get('id')})")
+                return existing
         
-        # STEP 2: Try secondary identifiers (MAC, IMEI, asset tag)
-        for identifier in self.match_rules['secondary']:
-            if identifier in asset_data and asset_data[identifier]:
-                if identifier == 'asset_tag':
-                    existing = self.asset_service.search_by_asset_tag(asset_data[identifier])
-                    if existing:
-                        print(f"Found existing asset by asset_tag: {existing.get('id')}")
-                        return existing
+        # Asset tag search  
+        if asset_data.get('asset_tag'):
+            existing = self.asset_service.search_by_asset_tag(asset_data['asset_tag'])
+            if existing:
+                print(f"  ✓ Found by asset_tag: {asset_data['asset_tag']} (ID: {existing.get('id')})")
+                return existing
         
-        # STEP 3: Try hostname matching (crucial for Nmap → Intune correlation)
+        # STRATEGY 2: MAC Address searches
+        MAC_FIELDS = ('mac_addresses', 'wifi_mac', 'ethernet_mac', 'mac_address')        
+        new_macs = macs_from_keys(asset_data, MAC_FIELDS)
+
+        if new_macs:
+            all_assets = self._ensure_all_assets_fetched(all_assets)
+            for asset in all_assets:
+                # Built-in MAC
+                existing_set = macs_from_any(asset.get('mac_address'))
+                # Custom field MACs (schema-aware)
+                custom = self._get_custom_field(asset, 'mac_addresses')
+                existing_set |= macs_from_any(custom)
+
+                hit = intersect_mac_sets(new_macs, existing_set)
+                if hit:
+                    print(f"  ✓ Found by MAC: {hit} (ID: {asset.get('id')})")
+                    return asset
+
+        # STRATEGY 3: Hostname searches
         dns_hostname = asset_data.get('dns_hostname') or asset_data.get('name')
         if isinstance(dns_hostname, str) and not dns_hostname.startswith('Device-'):
-            # Clean hostname (remove domain suffix for comparison)
-            clean_hostname = dns_hostname.split('.')[0].lower()
-            
-            all_assets = self.asset_service.get_all()
-            for existing_asset in all_assets:
-                # Check asset name
-                asset_name = existing_asset.get('name')
-                if isinstance(asset_name, str) and clean_hostname in asset_name.lower():
-                    print(f"✓ Found by hostname match: '{dns_hostname}' → '{existing_asset.get('name')}' (ID: {existing_asset.get('id')})")
-                    return existing_asset
+            all_assets = self._ensure_all_assets_fetched(all_assets)
+            clean = dns_hostname.split('.')[0].lower()
+            for asset in all_assets:
+                name = asset.get('name')
+                if isinstance(name, str) and clean == name.split('.')[0].lower():
+                    print(f"  ✓ Found by hostname: '{dns_hostname}' → '{name}' (ID: {asset.get('id')})")
+                    return asset
+                cf_host = self._get_custom_field(asset, 'dns_hostname')
+                if isinstance(cf_host, str) and clean == cf_host.split('.')[0].lower():
+                    print(f"  ✓ Found by DNS hostname: {dns_hostname} (ID: {asset.get('id')})")
+                    return asset
 
-                # Check custom field dns_hostname
-                existing_hostname = existing_asset.get('custom_fields', {}).get('dns_hostname', {}).get('value')
-                if isinstance(existing_hostname, str):
-                    existing_clean = existing_hostname.split('.')[0].lower()
-                    if clean_hostname == existing_clean:
-                        print(f"✓ Found by DNS hostname: {dns_hostname} (ID: {existing_asset.get('id')})")
-                        return existing_asset
-        
-        # STEP 4: Try IP matching (last resort for Nmap data)
-        last_seen_ip = asset_data.get('last_seen_ip')
-        if last_seen_ip:
-            all_assets = self.asset_service.get_all()
-            for existing_asset in all_assets:
-                existing_ip = existing_asset.get('custom_fields', {}).get('last_seen_ip', {}).get('value')
-                if existing_ip and existing_ip == last_seen_ip:
-                    print(f"✓ Found by IP: {existing_ip} (ID: {existing_asset.get('id')})")
-                    return existing_asset
-        
-        # Search through all assets for other matches
-        all_assets = self.asset_service.get_all()
+        # STRATEGY 4: IP searches
+        if asset_data.get('last_seen_ip'):
+            all_assets = self._ensure_all_assets_fetched(all_assets)
+            for asset in all_assets:
+                if self._get_custom_field(asset, 'last_seen_ip') == asset_data['last_seen_ip']:
+                    print(f"  ✓ Found by IP: {asset_data['last_seen_ip']} (ID: {asset.get('id')})")
+                    return asset
+
+        # STRATEGY 5: Fallback custom fields
+        all_assets = self._ensure_all_assets_fetched(all_assets)
         for asset in all_assets:
             if self._matches_asset(asset, asset_data):
+                print(f"  ✓ Found by custom field match (ID: {asset.get('id')})")
                 return asset
-        
+
         print("No existing asset found")
         return None
     
     def _matches_asset(self, existing_asset: Dict, new_data: Dict) -> bool:
-        """Check if existing asset matches new data"""
-        # Check custom fields for matches
-        for identifier in self.match_rules['primary'] + self.match_rules['secondary']:
-            existing_value = existing_asset.get('custom_fields', {}).get(identifier, {}).get('value')
+        for identifier in (self.match_rules['exact'] + 
+                        self.match_rules['hardware'] + 
+                        self.match_rules['administrative']):
+            if identifier == 'mac_addresses':
+                continue
+            existing_value = self._get_custom_field(existing_asset, identifier)
             new_value = new_data.get(identifier)
-            
-            if existing_value and new_value and existing_value == new_value:
+            if isinstance(existing_value, str) and isinstance(new_value, str):
+                if existing_value.strip().lower() == new_value.strip().lower():
+                    return True
+            elif existing_value == new_value:
                 return True
-        
         return False
     
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
@@ -162,6 +173,7 @@ class AssetMatcher:
         """
         merged = {}
         highest_priority_source = 'unknown'
+        last_event_source = None
         
         # Source priorities for conflict resolution - higher number = higher priority
         source_priority = {
@@ -173,6 +185,7 @@ class AssetMatcher:
         
         for source_data in data_sources:
             source = source_data.get('_source', 'unknown')
+            last_event_source = source
             
             #_source is passed before removal so will be available in the categorizer whether the asset is being created or updated!
             if source_priority.get(source, 0) > source_priority.get(highest_priority_source, 0):
@@ -198,19 +211,35 @@ class AssetMatcher:
         merged['_source'] = highest_priority_source
         
         # Update metadata
-        merged['last_update_source'] = source
+        merged['last_update_source'] = last_event_source
         merged['last_update_at'] = datetime.now(timezone.utc).isoformat()
         
         return merged
     
+    def _has_sufficient_data(self, asset_data: Dict) -> bool:
+        """
+        Determine if we have enough data to confidently create a new asset.
+        """
+        if asset_data.get('serial'):
+            return True
+        if asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac'):
+            return True
+        if asset_data.get('intune_device_id'):
+            return True
+
+        # Real hostname (not generic)
+        dns_hostname = asset_data.get('dns_hostname', '')
+        if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
+            return True
+        return False
+    
     def process_scan_data(self, scan_type: str, scan_data: List[Dict]) -> Dict:
         """
         Process scan data from various sources
-        
+        Only creates assets with sufficient identifying data
         Args:
             scan_type: Type of scan (nmap, snmp, intune, etc.)
             scan_data: List of discovered assets
-        
         Returns:
             Dictionary with processing results
         """
@@ -218,11 +247,15 @@ class AssetMatcher:
             'created': 0,
             'updated': 0,
             'failed': 0,
+            'skipped_insufficient_data': 0,
             'assets': []
         }
         
         for asset_data in scan_data:
             asset_data['_source'] = scan_type
+            
+            # Check if we have sufficient data to confidently create an asset
+            can_create = self._has_sufficient_data(asset_data)
             
             # Find existing asset
             existing = self.find_existing_asset(asset_data)
@@ -246,16 +279,21 @@ class AssetMatcher:
                     results['failed'] += 1
             else:
                 # Create new asset
-                new_asset = self._create_asset(asset_data)
-                if new_asset:
-                    results['created'] += 1
-                    results['assets'].append({
-                        'id': new_asset.get('id'),
-                        'action': 'created',
-                        'name': asset_data.get('name', 'Unknown')
-                    })
+                if can_create:
+                    new_asset = self._create_asset(asset_data)
+                    if new_asset:
+                        results['created'] += 1
+                        results['assets'].append({
+                            'id': new_asset.get('id'),
+                            'action': 'created',
+                            'name': asset_data.get('name', 'Unknown')
+                        })
+                    else:
+                        results['failed'] += 1
                 else:
-                    results['failed'] += 1
+                    # Skip creation - insufficient data
+                    results['skipped_insufficient_data'] += 1
+                    print(f"  ⊘ Insufficient data to create: {asset_data.get('name')} (need MAC, serial, or services)")
         
         return results
     
@@ -372,8 +410,8 @@ class AssetMatcher:
                             if debug:
                                 old_cat = (existing_model.get('category') or {}).get('name')
                                 print(f"[DEBUG] Updating model category: {existing_model.get('name')} from {old_cat} to {category['name']}")
-                                self.model_service.update(existing_model['id'], {'category_id': category['id']})
-                                self.model_service.get_all(refresh_cache=True)
+                            self.model_service.update(existing_model['id'], {'category_id': category['id']})
+                            self.model_service.get_all(refresh_cache=True)
         
         # 2. FALLBACK to generic if no specific model
         if 'model_id' not in payload:
@@ -410,28 +448,28 @@ class AssetMatcher:
                 # Take first MAC for built-in field
                 first_mac = macs.split('\n')[0] if '\n' in macs else macs
                 if first_mac:
-                    payload['mac_address'] = first_mac.strip()
+                    payload['mac_address'] = normalize_mac(first_mac.strip())
         
         # 5. AUTO-GENERATE ASSET TAG
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)
         
         # 6. STATUS
+        
+        status_name = None
         if 'status_id' not in payload:
-            source = (asset_data.get('_source') or asset_data.get('last_update_source') or 'unknown')
+            source_for_status = (asset_data.get('_source') or asset_data.get('last_update_source') or 'unknown')
             status_map = {
                 'intune': 'Managed (Intune)',
                 'nmap': 'Discovered (Nmap)',
                 'snmp': 'On-Premise',
             }
-            status_name = status_map.get(source, 'Unknown')
+            status_name = status_map.get(source_for_status, 'Unknown')
             status = self.status_service.get_by_name(status_name)
             if status:
                 payload['status_id'] = status['id']
         
-        # 7. CUSTOM FIELDS (corrected format)
-        from snipe_api.schema import CUSTOM_FIELDS
-        
+        # 7. CUSTOM FIELDS (corrected format)        
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
                 field_name = field_def['name']

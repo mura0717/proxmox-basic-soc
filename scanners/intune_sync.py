@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.intune_categorize_from_logs import intune_debug_categorization
+from assets_sync_library.mac_utils import combine_macs
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -97,6 +98,15 @@ class IntuneSync:
                 break
         
         return assets
+    
+    def _combine_mac_addresses(self, asset: Dict) -> str:
+        """Combine all MAC addresses into a single field"""
+        macs = []
+        if asset.get('wiFiMacAddress'):
+            macs.append(asset['wiFiMacAddress'])
+        if asset.get('ethernetMacAddress'):
+            macs.append(asset['ethernetMacAddress'])
+        return combine_macs(macs)
     
     def transform_intune_to_snipeit(self, intune_asset: Dict) -> Dict:
         """Transform Intune asset data to Snipe-IT format"""
@@ -200,22 +210,6 @@ class IntuneSync:
 
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
-    
-    def _combine_mac_addresses(self, asset: Dict) -> str:
-        """Combine all MAC addresses into a single field"""
-        macs = []
-        if asset.get('wiFiMacAddress'):
-            macs.append(asset['wiFiMacAddress'])
-        if asset.get('ethernetMacAddress'):
-            macs.append(asset['ethernetMacAddress'])
-         
-        # Remove duplicates while preserving order
-        unique_macs = []
-        for mac in macs:
-            if mac not in unique_macs:
-                unique_macs.append(mac)
-        
-        return '\n'.join(unique_macs) if unique_macs else None
 
     def sync_to_snipeit(self) -> Dict:
         """Main sync function"""
