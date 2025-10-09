@@ -114,8 +114,16 @@ class AssetCategorizer:
     @classmethod
     def _determine_cloud_provider(self, intune_device: Dict) -> str | None: 
         """ Determines the cloud provider based on device manufacturer and model. """ 
-        manufacturer = (intune_device.get('manufacturer') or '').lower() 
-        model =  (intune_device.get('model') or '').lower()
+        raw_manufacturer = intune_device.get('manufacturer') or ''
+        if isinstance(raw_manufacturer, dict):
+            raw_manufacturer = raw_manufacturer.get('name', '') or ''
+        manufacturer = raw_manufacturer.lower()
+    
+    # Handle model field - can be dict or string
+        raw_model = intune_device.get('model') or ''
+        if isinstance(raw_model, dict):
+            raw_model = raw_model.get('name', '') or raw_model.get('model_number', '') or ''
+        model = raw_model.lower()
         if 'yealink' in manufacturer:
             return None
         if 'microsoft corporation' in manufacturer and 'virtual machine' in model: 
@@ -134,8 +142,14 @@ class AssetCategorizer:
         # Raw for Debug only
         raw_name = (device_data.get('name') or device_data.get('deviceName') or '')
         raw_os = (device_data.get('os_platform') or device_data.get('operatingSystem') or '')
-        raw_model = (device_data.get('model') or '')
-        raw_mfr = (device_data.get('manufacturer') or '')
+        raw_model = device_data.get('model') or ''
+        if isinstance(raw_model, dict):
+        # Extract name from Snipe-IT model object
+            raw_model = raw_model.get('name', '') or raw_model.get('model_number', '') or ''
+        raw_mfr = device_data.get('manufacturer') or ''
+        if isinstance(raw_mfr, dict):
+            # Extract name from Snipe-IT manufacturer object
+            raw_mfr = raw_mfr.get('name', '') or ''
         raw_serial = (device_data.get('serial') or '') # To easily search in log files / only present in debugging
         nmap_services = device_data.get('nmap_services', [])
         

@@ -7,13 +7,14 @@ Reads from parsed_asset_data.log (requires prior run with NMAP_DEBUG=1)
 import os
 import sys
 import json
-import re
 from typing import List, Dict
 from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from assets_sync_library.asset_categorizer import AssetCategorizer
-from scanners.nmap_scanner import NmapScanner
+from assets_sync_library.mac_utils import normalize_mac
+
 
 class NmapDebugCategorization:
     """Test categorization logic for Nmap assets without needing live scans"""
@@ -61,7 +62,6 @@ class NmapDebugCategorization:
     
     def write_nmap_assets_to_logfile(self):
         """Process and categorize Nmap assets from parsed log"""
-        scanner = NmapScanner()
         raw_assets = self.get_raw_nmap_assets_from_log()
         
         if not raw_assets:
@@ -169,8 +169,8 @@ class NmapDebugCategorization:
         
 nmap_debug_categorization = NmapDebugCategorization()
 
-if __name__ == "__main__":
-    if nmap_debug_categorization.debug:
-        nmap_debug_categorization.write_nmap_assets_to_logfile()
-    else:
-        print("Set NMAP_CATEGORIZATION_DEBUG=1 to run this script.")
+# if __name__ == "__main__":
+#     if nmap_debug_categorization.debug:
+#         nmap_debug_categorization.write_nmap_assets_to_logfile()
+#     else:
+#         print("Set NMAP_CATEGORIZATION_DEBUG=1 to run this script.")

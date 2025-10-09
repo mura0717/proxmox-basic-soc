@@ -7,7 +7,6 @@ Syncs assets from Microsoft Intune to Snipe-IT
 import os
 import sys
 import requests
-import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from msal import ConfidentialClientApplication
@@ -251,7 +250,7 @@ if __name__ == "__main__":
     debug_logger.clear_logs('intune')
     
     if intune_debug_categorization.debug:
-        intune_debug_categorization.get_managed_assets()
+        intune_debug_categorization.get_raw_intune_assets_from_log()
         intune_debug_categorization.write_managed_assets_to_logfile()
     else:
         sync = IntuneSync()

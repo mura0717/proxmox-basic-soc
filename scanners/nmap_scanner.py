@@ -161,7 +161,10 @@ class NmapScanner:
         """
         nmap_host = self.nm[host]
         
-        # DEBUG: Log raw nmap data BEFORE parsing
+        # ----------- DEBUG -----------
+        print(f"DEBUG: Parsing host {host}, MAC: {nmap_host.get('addresses', {}).get('mac', 'NO MAC')}") 
+        
+        # Log raw nmap data BEFORE parsing
         raw_host_data = {
             'host': host,
             'hostname': nmap_host.hostname(),
@@ -269,9 +272,12 @@ class NmapScanner:
 def main():
     """Command-line interface"""
     debug_logger.clear_logs('nmap')
-        
+    
+    if os.geteuid() != 0:
+        print("WARNING: Not running as root - MAC addresses will not be collected!") 
+    
     if nmap_debug_categorization.debug:
-        nmap_debug_categorization.get_nmap_assets()
+        nmap_debug_categorization.get_raw_nmap_assets_from_log()
         nmap_debug_categorization.write_nmap_assets_to_logfile()
     
     scanner = NmapScanner()

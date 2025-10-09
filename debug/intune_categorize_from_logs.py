@@ -8,9 +8,9 @@ import os
 import sys
 import json
 from typing import List, Dict
-import re
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from assets_sync_library.asset_categorizer import AssetCategorizer
 
 class IntuneDebugCategorization:
