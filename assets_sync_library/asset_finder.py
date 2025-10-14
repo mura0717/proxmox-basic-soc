@@ -1,0 +1,122 @@
+"""
+Utility for finding existing assets in Snipe-IT using various strategies.
+"""
+import os
+import sys
+from typing import Dict, List, Optional
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from crud.assets import AssetService
+from snipe_api.schema import CUSTOM_FIELDS
+from .mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
+
+class AssetFinder:
+    """
+    A helper class to find assets in Snipe-IT using a prioritized set of matching strategies.
+    """
+    def __init__(self, asset_service: AssetService):
+        self.asset_service = asset_service
+        self._all_assets_cache: Optional[List[Dict]] = None
+
+    def _get_all_assets(self) -> List[Dict]:
+        """Lazily fetches all assets from the API, caching the result for the lifetime of the instance."""
+        if self._all_assets_cache is None:
+            print("  -> Lazily fetching all assets for deep matching...")
+            self._all_assets_cache = self.asset_service.get_all()
+        return self._all_assets_cache
+
+    def _get_custom_field(self, existing_asset: Dict, key: str) -> Optional[str]:
+        """Helper to safely retrieve a custom field value from an asset dictionary."""
+        field_def = CUSTOM_FIELDS.get(key)
+        if not field_def:
+            return None
+        label = field_def['name']
+        return (existing_asset.get('custom_fields', {})
+                            .get(label, {})
+                            .get('value'))
+
+    def by_serial(self, serial: Optional[str]) -> Optional[Dict]:
+        """Strategy 1: Find by serial number (fast API search)."""
+        if not serial:
+            return None
+        existing = self.asset_service.search_by_serial(serial)
+        if existing:
+            print(f"  ✓ Found by serial: {serial} (ID: {existing.get('id')})")
+        return existing
+
+    def by_asset_tag(self, asset_tag: Optional[str]) -> Optional[Dict]:
+        """Strategy 2: Find by asset tag (fast API search)."""
+        if not asset_tag:
+            return None
+        existing = self.asset_service.search_by_asset_tag(asset_tag)
+        if existing:
+            print(f"  ✓ Found by asset_tag: {asset_tag} (ID: {existing.get('id')})")
+        return existing
+
+    def by_mac_address(self, asset_data: Dict) -> Optional[Dict]:
+        """Strategy 3: Find by MAC address (requires full asset list)."""
+        mac_fields = ('mac_addresses', 'wifi_mac', 'ethernet_mac', 'mac_address')
+        new_macs = macs_from_keys(asset_data, mac_fields)
+
+        if not new_macs:
+            return None
+
+        for asset in self._get_all_assets():
+            # Check built-in MAC field
+            existing_set = macs_from_any(asset.get('mac_address'))
+            # Check custom field for MACs
+            custom_macs = self._get_custom_field(asset, 'mac_addresses')
+            existing_set |= macs_from_any(custom_macs)
+
+            hit = intersect_mac_sets(new_macs, existing_set)
+            if hit:
+                print(f"  ✓ Found by MAC: {hit} (ID: {asset.get('id')})")
+                return asset
+        return None
+
+    def by_hostname(self, asset_data: Dict) -> Optional[Dict]:
+        """Strategy 4: Find by hostname (requires full asset list)."""
+        dns_hostname = asset_data.get('dns_hostname') or asset_data.get('name')
+        if not isinstance(dns_hostname, str) or dns_hostname.startswith('Device-'):
+            return None
+
+        clean_hostname = dns_hostname.split('.')[0].lower()
+        for asset in self._get_all_assets():
+            # Check asset name
+            asset_name = asset.get('name')
+            if isinstance(asset_name, str) and clean_hostname == asset_name.split('.')[0].lower():
+                print(f"  ✓ Found by hostname: '{dns_hostname}' -> '{asset_name}' (ID: {asset.get('id')})")
+                return asset
+            # Check custom field for hostname
+            cf_host = self._get_custom_field(asset, 'dns_hostname')
+            if isinstance(cf_host, str) and clean_hostname == cf_host.split('.')[0].lower():
+                print(f"  ✓ Found by DNS hostname custom field: {dns_hostname} (ID: {asset.get('id')})")
+                return asset
+        return None
+
+    def by_ip_address(self, ip_address: Optional[str]) -> Optional[Dict]:
+        """Strategy 5: Find by last seen IP address (requires full asset list)."""
+        if not ip_address:
+            return None
+
+        for asset in self._get_all_assets():
+            if self._get_custom_field(asset, 'last_seen_ip') == ip_address:
+                print(f"  ✓ Found by IP: {ip_address} (ID: {asset.get('id')})")
+                return asset
+        return None
+
+    def by_fallback_identifiers(self, asset_data: Dict) -> Optional[Dict]:
+        """Strategy 6: Find by other unique identifiers in custom fields."""
+        identifiers_to_check = ['intune_device_id', 'azure_ad_id']
+        for key in identifiers_to_check:
+            new_value = asset_data.get(key)
+            if not new_value:
+                continue
+
+            for asset in self._get_all_assets():
+                existing_value = self._get_custom_field(asset, key)
+                if existing_value and existing_value.strip().lower() == str(new_value).strip().lower():
+                    print(f"  ✓ Found by fallback identifier '{key}': {new_value} (ID: {asset.get('id')})")
+                    return asset
+        return None

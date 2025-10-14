@@ -4,30 +4,12 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
+from . import categorization_rules as rules
 
 class AssetCategorizer:
     """Determines device type and category based on attributes."""
     def __init__(self):
         pass
-    
-    NETWORK_DEVICE_RULES = {
-        'Firewall': {
-            'vendors': ['cisco', 'meraki', 'fortinet', 'palo alto', 'sonicwall', 'juniper', 'checkpoint'],
-            'model_keywords': ['firewall', 'asa', 'srx', 'pa-', 'mx', 'security gateway', 'firepower']
-        },
-        'Switch': {
-            'vendors': ['cisco', 'juniper', 'aruba', 'hp', 'dell', 'meraki', 'ubiquiti'],
-            'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch']
-        },
-        'Router': {
-            'vendors': ['cisco', 'juniper', 'mikrotik', 'ubiquiti'],
-            'model_keywords': ['router', 'isr', 'asr', 'edgerouter']
-        },
-        'Access Point': {
-            'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus'],
-            'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr']
-        }
-    }
     
     @classmethod
     def _categorize_network_device(cls, model: str, manufacturer: str) -> str | None:
@@ -35,10 +17,10 @@ class AssetCategorizer:
         device_type_priority = ['Firewall', 'Switch', 'Router', 'Access Point']
 
         for device_type in device_type_priority:
-            rules = cls.NETWORK_DEVICE_RULES.get(device_type, {})
+            rule_set = rules.NETWORK_DEVICE_RULES.get(device_type, {})
             
-            if any(vendor in manufacturer for vendor in rules.get('vendors', [])):
-                if any(keyword in model for keyword in rules.get('model_keywords', [])):
+            if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])):
+                if any(keyword in model for keyword in rule_set.get('model_keywords', [])):
                     return device_type
         return None
     
@@ -65,51 +47,74 @@ class AssetCategorizer:
         return None
     
     @classmethod
-    def _is_laptop(cls, model: str, manufacturer: str) -> bool:
-        """Check if device is a laptop, including Mac laptops"""
-        laptop_markers = {
-            'laptop', 'notebook', 'book', 'zenbook', 'vivobook',
-            'thinkpad', 'latitude', 'xps', 'precision', 'elitebook',
-            'probook', 'spectre', 'envy', 'surface laptop', 'studiobook',
-            'proart', 'macbook', 'macbook pro', 'macbook air'
-        }
-        if any(marker in model for marker in laptop_markers):
-            return True
-        # Lenovo specific model numbers
-        if manufacturer == 'lenovo' and any(model.startswith(prefix) for prefix in ['20', '21', '40']):
-            return True
+    def _categorize_vm(cls, manufacturer: str, model: str) -> Optional[str]:
+        """Categorize a device as a Virtual Machine."""
+        if any(vendor in manufacturer for vendor in rules.VIRTUAL_MACHINE_RULES['vendors']) and \
+           any(kw in model for kw in rules.VIRTUAL_MACHINE_RULES['model_keywords']):
+            return 'Virtual Machine'
+        return None
 
-        return False
-    
     @classmethod
-    def _is_desktop(cls, model: str, manufacturer: str, os_type: str) -> bool:
-        """Check if device is a desktop (includes workstations and Mac desktops)"""
-        desktop_markers = {
-            # General markers
-            'desktop', 'workstation', 'station', 'studio',
+    def _categorize_server(cls, os_type: str, model: str) -> Optional[str]:
+        """Categorize a device as a Server."""
+        if any(kw in os_type for kw in rules.SERVER_RULES['os_keywords']) or \
+           any(kw in model for kw in rules.SERVER_RULES['model_keywords']):
+            return 'Server'
+        return None
 
-            # Lenovo Specific Markers (from your list)
-            'thinkcentre', 'ideacentre', 'thinkstation', 'neo', 'tower', 
-            'sff', 'tiny', 'all-in-one', 'aio',
-            # Adding specific model series can help too
-            'm70s', 'm70t', 'm70q', 'm90s', 'm90t', 'm90q', 
-            'm75s', 'm75t', 'm75q', 'p320', 'p520', 'p360', 'p340',
+    @classmethod
+    def _categorize_ios(cls, os_type: str, model: str, device_name: str) -> Optional[str]:
+        """Categorize an iOS device as a Tablet or Mobile Phone."""
+        if 'ios' not in os_type:
+            return None
+        if any(kw in model or kw in device_name for kw in rules.IOS_RULES['tablet_keywords']):
+            return 'Tablet'
+        return 'Mobile Phone'
 
-            # Mac specific
-            'imac', 'mac mini', 'mac studio', 'mac pro',
+    @classmethod
+    def _categorize_android(cls, os_type: str, model: str, manufacturer: str) -> Optional[str]:
+        """Categorize an Android device as a Tablet, IoT, or Mobile Phone."""
+        if 'android' not in os_type:
+            return None
+            
+        if any(kw in model for kw in rules.ANDROID_RULES['iot_keywords']):
+            return 'IoT Devices'
+        if any(kw in model for kw in rules.ANDROID_RULES['tablet_keywords']) or \
+           any(vendor in manufacturer for vendor in rules.ANDROID_RULES['tablet_vendors']):
+            return 'Tablet'
+        return 'Mobile Phone'
 
-            # Other OEM Workstations
-            'zbook', 'z840', 'z640', 'z440', 'z240', 'z620', # HP
-            'precision', # Dell (can be ambiguous, but often desktop workstations)
-            'proart station' # Asus
-        }
-        if any(marker in model for marker in desktop_markers):
-            return True
-        if manufacturer == 'lenovo' and any(model.startswith(prefix) for prefix in ['10', '11', '12', '30']):
-            return True
-        if 'desktop' in os_type:
-            return True
-        return False
+    @classmethod
+    def _categorize_computer(cls, os_type: str, model: str, manufacturer: str) -> Optional[str]:
+        """Categorize a computer as a Laptop or Desktop."""
+        if 'windows' not in os_type and 'mac' not in os_type:
+            return None
+
+        # Check for Laptop
+        if any(marker in model for marker in rules.COMPUTER_RULES['laptop_keywords']):
+            return 'Laptop'
+        if manufacturer in rules.COMPUTER_RULES['laptop_vendor_prefixes'] and \
+           any(model.startswith(p) for p in rules.COMPUTER_RULES['laptop_vendor_prefixes'][manufacturer]):
+            return 'Laptop'
+
+        # Check for Desktop
+        if any(marker in model for marker in rules.COMPUTER_RULES['desktop_keywords']):
+            return 'Desktop'
+        if manufacturer in rules.COMPUTER_RULES['desktop_vendor_prefixes'] and \
+           any(model.startswith(p) for p in rules.COMPUTER_RULES['desktop_vendor_prefixes'][manufacturer]):
+            return 'Desktop'
+        if any(kw in os_type for kw in rules.COMPUTER_RULES['desktop_os_keywords']):
+            return 'Desktop'
+            
+        return 'Desktop' # Default for a computer
+
+    @classmethod
+    def _categorize_iot(cls, model: str, os_type: str) -> Optional[str]:
+        """Categorize a device as IoT."""
+        if any(kw in model for kw in rules.IOT_RULES['model_keywords']) or \
+           any(kw in os_type for kw in rules.IOT_RULES['os_keywords']):
+            return 'IoT Devices'
+        return None
 
     @classmethod
     def _determine_cloud_provider(self, intune_device: Dict) -> str | None: 
@@ -168,91 +173,47 @@ class AssetCategorizer:
             f"  OS Type:      {raw_os}\n"
             f"  Model:        {raw_model}\n"
             f"  Manufacturer: {raw_mfr}\n"
-            f"  Services:     {', '.join(nmap_services) if nmap_services else 'None'}\n"
+            f"  Nmap Services:     {', '.join(nmap_services) if nmap_services else 'None'}\n"
             f"  Cloud Provider: {cloud_provider}\n"
             f"{'-'*50}\n"
         )
         debug_logger.log_categorization(source, log_entry)
         
-        # Default device type
-        device_type = 'Other Device'
-        
-        # PRIORITY 1: Network devices
-        service_type = cls._categorize_by_services(nmap_services)
-        if service_type and service_type not in ['Web Server', 'Network Device', 'Storage Device']:
-            device_type = service_type
+        # --- Categorization Priority Chain ---
+        device_type = (
+            # 1. By specific services (e.g., Domain Controller, Printer)
+            cls._categorize_by_services(nmap_services) or
             
-        # Priority 2: Specific network hardware
-        elif cls._categorize_network_device(model, manufacturer):
-            device_type = cls._categorize_network_device(model, manufacturer)
-                            
-        # PRIORITY 3: Virtual Machines
-        elif any(m in manufacturer for m in ['vmware', 'virtualbox', 'qemu', 'microsoft corporation']) and ('virtual machine' in model or 'vm' in model):
-            device_type = 'Virtual Machine'
+            # 2. By specific network hardware rules
+            cls._categorize_network_device(model, manufacturer) or
             
-        # PRIORITY 4: Servers
-        elif 'server' in os_type or 'server' in model:
-            device_type = 'Server'
+            # 3. Virtual Machines
+            cls._categorize_vm(manufacturer, model) or
             
-        # PRIORITY 5: iOS devices
-        elif 'ios' in os_type:
-            if any(kw in model or kw in device_name for kw in ['ipad', 'ipad pro', 'ipad air', 'ipad mini']):
-                device_type = 'Tablet'
-            else:
-                device_type = 'Mobile Phone'
-        
-        # PRIORITY 6: Android devices
-        elif 'android' in os_type:
-            if 'tablet' in model or 'tab' in model or manufacturer in ['samsung', 'lenovo', 'huawei']:
-                device_type = 'Tablet'
-            elif any(kw in model for kw in ['meetingbar', 'roompanel', 'ctp']):
-                device_type = 'IoT Devices'
-            else:
-                device_type = 'Mobile Phone'
-        
-        # PRIORITY 7: Computers
-        elif 'windows' in os_type or 'mac' in os_type:
-            if cls._is_desktop(model, manufacturer, os_type):
-                device_type = 'Desktop'
-            elif cls._is_laptop(model, manufacturer):
-                device_type = 'Laptop'
-            else:
-                device_type = 'Desktop'
-        
-        # PRIORITY 8: IoT Devices
-        elif 'iot' in model or 'iot' in os_type:
-            device_type = 'IoT Devices'
-        else:
-            device_type = device_type
+            # 4. Servers
+            cls._categorize_server(os_type, model) or
+            
+            # 5. iOS Devices
+            cls._categorize_ios(os_type, model, device_name) or
+            
+            # 6. Android Devices
+            cls._categorize_android(os_type, model, manufacturer) or
+            
+            # 7. Computers (Laptops/Desktops)
+            cls._categorize_computer(os_type, model, manufacturer) or
+            
+            # 8. IoT Devices
+            cls._categorize_iot(model, os_type) or
+            
+            # 9. Default fallback
+            'Other Device'
+        )
 
-        # Determine category (based on device_type and other attrs)
-        if ('yealink' in manufacturer and any(x in model for x in ['roompanel', 'meetingbar', 'ctp', 'a20', 'a30'])) or 'iot' in device_type.lower():
+        # --- Category Mapping ---
+        category = rules.CATEGORY_MAP.get(device_type, 'Other Assets')
+        if 'yealink' in manufacturer and any(x in model for x in ['roompanel', 'meetingbar', 'ctp', 'a20', 'a30']):
             category = 'IoT Devices'
-        elif 'server' in device_type.lower():
-            category = 'Servers'
-        elif 'switch' in device_type.lower():
-            category = 'Switches'
-        elif 'router' in device_type.lower():
-            category = 'Routers'
-        elif 'firewall' in device_type.lower():
-            category = 'Firewalls'
-        elif 'access point' in device_type.lower():
-            category = 'Access Points'
-        elif 'printer' in device_type.lower():
-            category = 'Printers'
-        elif 'laptop' in device_type.lower():
-            category = 'Laptops'
-        elif 'desktop' in device_type.lower():
-            category = 'Desktops'
-        elif 'tablet' in device_type.lower():
-            category = 'Tablets'
-        elif 'mobile phone' in device_type.lower() or 'mobile' in device_type.lower():
-            category = 'Mobile Phones'
-        elif 'virtual machine' in device_type.lower() or 'virtual' in device_type.lower() or 'vm' in device_type.lower():
-            category = 'Virtual Machines (On-Premises)'
         elif cloud_provider in ['Azure', 'AWS', 'GCP']:
             category = 'Cloud Resources'
-        else:
-            category = 'Other Assets'
 
         return {'device_type': device_type, 'category': category, 'cloud_provider': cloud_provider}

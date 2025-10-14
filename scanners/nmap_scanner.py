@@ -11,10 +11,12 @@ from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
 from assets_sync_library.mac_utils import normalize_mac
+from .nmap_profiles import SCAN_PROFILES
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
@@ -23,94 +25,22 @@ NO_ROOT_COMMANDS = ['web', 'list', 'help']
 
 # Auto-elevate to root if needed
 if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
-    if os.geteuid() != 0:
-        print("Elevating to root privileges...")
-        subprocess.call(['sudo', sys.executable] + sys.argv)
-        sys.exit()
+    if os.geteuid() != 0: # Check if not already root
+        try:
+            print("Attempting to elevate to root privileges for scan...")
+            result = subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
+            print("Privileges successfully elevated to root.")
+            sys.exit(0)
+        except FileNotFoundError:
+            print("ERROR: 'sudo' command not found. Please run this script as root.")
+            sys.exit(1)
+        except subprocess.CalledProcessError:
+            print("\nERROR: Failed to elevate to root. This scan requires root privileges.")
+            print("Please ensure you can run this script with 'sudo' or have a passwordless sudoers entry configured.")
+            sys.exit(1)
 
 class NmapScanner:
-    """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""    
-    SCAN_PROFILES = {
-    # LEVEL 1: Discovery (No root, fastest)
-    'discovery': {
-        'args': '-sn -PR -T4',
-        'use_dns': False,
-        'description': 'Fast ping sweep with MAC - finds live hosts',
-        'frequency': 'hourly',
-        'timeout': 300  # 5 minutes
-    },
-    
-    # LEVEL 2: Quick Check (Basic ports)
-    'quick': {
-        'args': '-sS --top-ports 100 -T5 --open -PR',
-        'use_dns': False,
-        'description': 'Quick port check - top 100 ports only',
-        'frequency': 'daily',
-        'timeout': 600  # 10 minutes
-    },
-    
-    # LEVEL 3: Basic Inventory (Standard scan)
-    'inventory': { 
-        'args': '-sS --top-ports 10 -T5 --open -PR',
-        'use_dns': True,
-        'description': 'Lightweight inventory - gets MAC and top 10 ports',
-        'frequency': 'hourly',
-        'timeout': 600  # 10 minutes
-    },
-    
-    'basic': {
-        'args': '-sS -sV --top-ports 1000 -T4',
-        'use_dns': False,
-        'description': 'Basic service detection - top 1000 ports',
-        'frequency': 'daily_offhours',
-        'timeout': 1800  # 30 minutes
-    },
-    
-    # LEVEL 4: Detailed Inventory (With OS detection)
-    'detailed': {
-        'args': '-sS -sV -O --osscan-guess --top-ports 1000 -T4',
-        'use_dns': False,
-        'description': 'Service + OS detection',
-        'frequency': 'weekly',
-        'timeout': 3600  # 1 hour
-    },
-    
-    # LEVEL 5: Vulnerability Scan
-    'vulnerability': {
-        'args': '-sS -sV --script vuln,exploit -T3',
-        'use_dns': False,
-        'description': 'Security vulnerability detection',
-        'frequency': 'weekly_weekend',
-        'timeout': 7200  # 2 hours
-    },
-    
-    # LEVEL 6: Full Audit (Comprehensive)
-    'full': {
-        'args': '-sS -sV -O -A --script default,discovery -p- -T4',
-        'use_dns': False,
-        'description': 'Complete port and service audit - ALL ports',
-        'frequency': 'monthly',
-        'timeout': 14400  # 4 hours
-    },
-    
-    # SPECIAL: Web Applications
-    'web': {
-        'args': '-sV -p80,443,8080,8443 --script http-enum,http-title',
-        'use_dns': True,
-        'description': 'Web application discovery',
-        'frequency': 'daily',
-        'timeout': 900  # 15 minutes
-    },
-    
-    # SPECIAL: Network Devices (SNMP/SSH)
-    'network': {
-        'args': '-sU -sS -p161,22,23 --script snmp-info',
-        'use_dns': True,
-        'description': 'Network device identification',
-        'frequency': 'daily',
-        'timeout': 1200  # 20 minutes
-    }
-}
+    """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""
     
     def __init__(self, network_range: str = "192.168.1.0/24"):
         self.network_range = network_range
@@ -120,11 +50,11 @@ class NmapScanner:
     def run_scan(self, profile: str = 'discovery', targets: Optional[List[str]] = None) -> List[Dict]:
         """Run Nmap scan with specified profile"""
         
-        if profile not in self.SCAN_PROFILES:
+        if profile not in SCAN_PROFILES:
             print(f"Unknown profile: {profile}")
             return []
         
-        scan_config = self.SCAN_PROFILES[profile]
+        scan_config = SCAN_PROFILES[profile]
         args = scan_config['args']
         if scan_config.get('use_dns'):
             args = f"{args} {DNS_ARGS}"
@@ -137,11 +67,11 @@ class NmapScanner:
             # Run the scan
             self.nm.scan(hosts=scan_targets, arguments=scan_config['args'])
             
-            # Parse results
+            # Parse results, passing the full scan config
             assets = []
             for host in self.nm.all_hosts():
                 if self.nm[host].state() == 'up':
-                    asset = self._parse_host(host, profile)
+                    asset = self._parse_host(host, profile, scan_config)
                     assets.append(asset)
             
             return assets
@@ -153,7 +83,7 @@ class NmapScanner:
             print(f"Scan failed: {e}")
             return []
     
-    def _parse_host(self, host: str, profile: str) -> Dict:
+    def _parse_host(self, host: str, profile: str, scan_config: Dict) -> Dict:
         """
         Parse single host results - DATA COLLECTION ONLY.
         This method's only job is to extract raw data from Nmap.
@@ -212,14 +142,14 @@ class NmapScanner:
                     asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
 
         # Get OS Guess (take the first, most accurate match)
-        if profile != 'discovery' and 'osmatch' in nmap_host and nmap_host['osmatch']:
+        if scan_config.get('collects_ports') and 'osmatch' in nmap_host and nmap_host['osmatch']:
             os_match = nmap_host['osmatch'][0]
             asset['nmap_os_guess'] = os_match.get('name', '')
             asset['os_accuracy'] = os_match.get('accuracy')
             asset['os_platform'] = os_match.get('name', '')
 
         # Get Port and Service Information
-        if profile != 'discovery':
+        if scan_config.get('collects_ports'):
             open_ports_list = []
             service_names = []
             
@@ -285,11 +215,11 @@ def main():
     if len(sys.argv) > 1:
         command = sys.argv[1]
         
-        if command in scanner.SCAN_PROFILES:
+        if command in SCAN_PROFILES:
             scanner.sync_to_snipeit(command)
         elif command == 'list':
             print("\nAvailable scan profiles:")
-            for name, config in scanner.SCAN_PROFILES.items():
+            for name, config in SCAN_PROFILES.items():
                 print(f"  {name:12} - {config['description']}")
         else:
             print(f"Unknown command: {command}")
