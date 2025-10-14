@@ -5,12 +5,20 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
 from . import categorization_rules as rules
+from . import static_ip_mappings
 
 class AssetCategorizer:
     """Determines device type and category based on attributes."""
     def __init__(self):
         pass
     
+    @classmethod
+    def _categorize_by_static_ip(cls, ip_address: Optional[str]) -> Optional[Dict]:
+        """Looks up a device in the hardcoded static IP map."""
+        if not ip_address:
+            return None
+        return static_ip_mappings.STATIC_IP_MAP.get(ip_address)
+
     @classmethod
     def _categorize_network_device(cls, model: str, manufacturer: str) -> str | None:
         """Categorizes network devices using a structured rule set."""
@@ -144,6 +152,13 @@ class AssetCategorizer:
         # Extract source for logging
         source = device_data.get('_source', 'unknown')
         
+        # Check for a static IP match first (highest priority)
+        static_info = cls._categorize_by_static_ip(device_data.get('last_seen_ip'))
+        if static_info:
+            # If a static entry is found, merge its data into the device data
+            # This allows the static name to be used and ensures correct categorization
+            device_data.update(static_info)
+
         # Raw for Debug only
         raw_name = (device_data.get('name') or device_data.get('deviceName') or '')
         raw_os = (device_data.get('os_platform') or device_data.get('operatingSystem') or '')
@@ -180,37 +195,41 @@ class AssetCategorizer:
         debug_logger.log_categorization(source, log_entry)
         
         # --- Categorization Priority Chain ---
-        device_type = (
-            # 1. By specific services (e.g., Domain Controller, Printer)
-            cls._categorize_by_services(nmap_services) or
-            
-            # 2. By specific network hardware rules
-            cls._categorize_network_device(model, manufacturer) or
-            
-            # 3. Virtual Machines
-            cls._categorize_vm(manufacturer, model) or
-            
-            # 4. Servers
-            cls._categorize_server(os_type, model) or
-            
-            # 5. iOS Devices
-            cls._categorize_ios(os_type, model, device_name) or
-            
-            # 6. Android Devices
-            cls._categorize_android(os_type, model, manufacturer) or
-            
-            # 7. Computers (Laptops/Desktops)
-            cls._categorize_computer(os_type, model, manufacturer) or
-            
-            # 8. IoT Devices
-            cls._categorize_iot(model, os_type) or
-            
-            # 9. Default fallback
-            'Other Device'
-        )
+        # If a device_type was provided by the static map, use it. Otherwise, run the chain.
+        device_type = device_data.get('device_type')
+        if not device_type:
+            device_type = (
+                # 1. By specific services (e.g., Domain Controller, Printer)
+                cls._categorize_by_services(nmap_services) or
+                
+                # 2. By specific network hardware rules
+                cls._categorize_network_device(model, manufacturer) or
+                
+                # 3. Virtual Machines
+                cls._categorize_vm(manufacturer, model) or
+                
+                # 4. Servers
+                cls._categorize_server(os_type, model) or
+                
+                # 5. iOS Devices
+                cls._categorize_ios(os_type, model, device_name) or
+                
+                # 6. Android Devices
+                cls._categorize_android(os_type, model, manufacturer) or
+                
+                # 7. Computers (Laptops/Desktops)
+                cls._categorize_computer(os_type, model, manufacturer) or
+                
+                # 8. IoT Devices
+                cls._categorize_iot(model, os_type) or
+                
+                # 9. Default fallback
+                'Other Device'
+            )
 
         # --- Category Mapping ---
-        category = rules.CATEGORY_MAP.get(device_type, 'Other Assets')
+        # Use the category from the static map if available, otherwise map the device type.
+        category = device_data.get('category') or rules.CATEGORY_MAP.get(device_type, 'Other Assets')
         if 'yealink' in manufacturer and any(x in model for x in ['roompanel', 'meetingbar', 'ctp', 'a20', 'a30']):
             category = 'IoT Devices'
         elif cloud_provider in ['Azure', 'AWS', 'GCP']:
