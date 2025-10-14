@@ -20,23 +20,26 @@ from .nmap_profiles import SCAN_PROFILES
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
-
 NO_ROOT_COMMANDS = ['web', 'list', 'help']
 
 # Auto-elevate to root if needed
 if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
     if os.geteuid() != 0: # Check if not already root
-        try:
-            print("Attempting to elevate to root privileges for scan...")
-            result = subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
-            print("Privileges successfully elevated to root.")
-            sys.exit(0)
-        except FileNotFoundError:
-            print("ERROR: 'sudo' command not found. Please run this script as root.")
-            sys.exit(1)
-        except subprocess.CalledProcessError:
-            print("\nERROR: Failed to elevate to root. This scan requires root privileges.")
-            print("Please ensure you can run this script with 'sudo' or have a passwordless sudoers entry configured.")
+        # Check if we can sudo without a password
+        can_sudo = subprocess.run(['sudo', '-n', 'true'], capture_output=True).returncode == 0
+
+        if can_sudo:
+            try:
+                print("Attempting to elevate to root privileges for scan...")
+                subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
+                sys.exit(0) # Exit after the elevated process finishes
+            except (FileNotFoundError, subprocess.CalledProcessError) as e:
+                print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
+                sys.exit(1)
+        else:
+            print("\nERROR: Root privileges are required for this scan.")
+            print("This script cannot auto-elevate because 'sudo' requires a password.")
+            print(f"Please run it manually with: sudo {sys.executable} {' '.join(sys.argv)}")
             sys.exit(1)
 
 class NmapScanner:

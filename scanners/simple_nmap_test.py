@@ -5,11 +5,24 @@ import sys
 import subprocess
 import nmap
 
+# Auto-elevate to root if needed, using the robust logic from nmap_scanner.py
 if os.geteuid() != 0:
-    print("Elevating to root privileges...")
-    subprocess.call(['sudo', sys.executable] + sys.argv)
-    #result = subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
-    sys.exit()
+    # Check if we can sudo without a password
+    can_sudo = subprocess.run(['sudo', '-n', 'true'], capture_output=True).returncode == 0
+
+    if can_sudo:
+        try:
+            print("Attempting to elevate to root privileges for scan...")
+            subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
+            sys.exit(0) # Exit after the elevated process finishes
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
+            sys.exit(1)
+    else:
+        print("\nERROR: Root privileges are required for this scan.")
+        print("This script cannot auto-elevate because 'sudo' requires a password.")
+        print(f"Please run it manually with: sudo {sys.executable} {' '.join(sys.argv)}")
+        sys.exit(1)
 
 nm = nmap.PortScanner()
 

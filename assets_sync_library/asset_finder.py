@@ -36,6 +36,24 @@ class AssetFinder:
                             .get(label, {})
                             .get('value'))
 
+    def _has_sufficient_match_data(self, asset_data: Dict) -> bool:
+        """
+        Internal check to ensure incoming data has at least one strong identifier
+        before attempting to match against existing assets. This prevents updates
+        based on low-quality data.
+        """
+        if asset_data.get('serial'):
+            return True
+        if asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac'):
+            return True
+        if asset_data.get('intune_device_id') or asset_data.get('azure_ad_id'):
+            return True
+        dns_hostname = asset_data.get('dns_hostname', '')
+        if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
+            return True
+        # Allow matching by asset_tag even if other data is weak
+        return bool(asset_data.get('asset_tag'))
+
     def by_serial(self, serial: Optional[str]) -> Optional[Dict]:
         """Strategy 1: Find by serial number (fast API search)."""
         if not serial:
@@ -56,6 +74,9 @@ class AssetFinder:
 
     def by_mac_address(self, asset_data: Dict) -> Optional[Dict]:
         """Strategy 3: Find by MAC address (requires full asset list)."""
+        if not self._has_sufficient_match_data(asset_data):
+            return None
+
         mac_fields = ('mac_addresses', 'wifi_mac', 'ethernet_mac', 'mac_address')
         new_macs = macs_from_keys(asset_data, mac_fields)
 
@@ -63,6 +84,11 @@ class AssetFinder:
             return None
 
         for asset in self._get_all_assets():
+            # Also check wifi_mac and ethernet_mac custom fields on existing assets
+            existing_set = macs_from_any(asset.get('mac_address'))
+            existing_set |= macs_from_any(self._get_custom_field(asset, 'mac_addresses'))
+            existing_set |= macs_from_any(self._get_custom_field(asset, 'wifi_mac'))
+            existing_set |= macs_from_any(self._get_custom_field(asset, 'ethernet_mac'))
             # Check built-in MAC field
             existing_set = macs_from_any(asset.get('mac_address'))
             # Check custom field for MACs
@@ -77,6 +103,9 @@ class AssetFinder:
 
     def by_hostname(self, asset_data: Dict) -> Optional[Dict]:
         """Strategy 4: Find by hostname (requires full asset list)."""
+        if not self._has_sufficient_match_data(asset_data):
+            return None
+
         dns_hostname = asset_data.get('dns_hostname') or asset_data.get('name')
         if not isinstance(dns_hostname, str) or dns_hostname.startswith('Device-'):
             return None
@@ -97,7 +126,7 @@ class AssetFinder:
 
     def by_ip_address(self, ip_address: Optional[str]) -> Optional[Dict]:
         """Strategy 5: Find by last seen IP address (requires full asset list)."""
-        if not ip_address:
+        if not ip_address: # IP is considered a weak identifier, so we don't check for sufficient data
             return None
 
         for asset in self._get_all_assets():
@@ -108,6 +137,9 @@ class AssetFinder:
 
     def by_fallback_identifiers(self, asset_data: Dict) -> Optional[Dict]:
         """Strategy 6: Find by other unique identifiers in custom fields."""
+        if not self._has_sufficient_match_data(asset_data):
+            return None
+
         identifiers_to_check = ['intune_device_id', 'azure_ad_id']
         for key in identifiers_to_check:
             new_value = asset_data.get(key)
