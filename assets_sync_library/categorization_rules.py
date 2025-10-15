@@ -33,7 +33,7 @@ SERVER_RULES = {
 
 IOS_RULES = {
     'tablet_keywords': ['ipad', 'ipad pro', 'ipad air', 'ipad mini'],
-    'phone_keywords': ['iphone'] # Default if not a tablet
+    'phone_keywords': ['iphone']
 }
 
 ANDROID_RULES = {

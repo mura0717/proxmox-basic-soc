@@ -76,10 +76,11 @@ class AssetMatcher:
         found_asset = (
             finder.by_serial(asset_data.get('serial')) or
             finder.by_asset_tag(asset_data.get('asset_tag')) or
-            finder.by_fallback_identifiers(asset_data) or # High-confidence identifiers like Intune ID
+            finder.by_static_mapping(asset_data.get('last_seen_ip')) or
             finder.by_mac_address(asset_data) or
             finder.by_hostname(asset_data) or
-            finder.by_ip_address(asset_data.get('last_seen_ip'))
+            finder.by_ip_address(asset_data.get('last_seen_ip')) or
+            finder.by_fallback_identifiers(asset_data)
         )
 
         if found_asset:
@@ -185,6 +186,11 @@ class AssetMatcher:
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
         payload = {}
+        
+        # Priority for host names coming from static ip mappings.
+        if asset_data.get('host_name'):
+            asset_data['name'] = asset_data['host_name']
+        
         self._handle_model_and_category(payload, asset_data)
         self._populate_standard_fields(payload, asset_data, is_update)
         self._populate_custom_fields(payload, asset_data)

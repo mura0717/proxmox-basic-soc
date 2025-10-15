@@ -8,8 +8,9 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.assets import AssetService
+from assets_sync_library import static_ip_mappings
 from snipe_api.schema import CUSTOM_FIELDS
-from .mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
+from assets_sync_library.mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
 
 class AssetFinder:
     """
@@ -71,9 +72,29 @@ class AssetFinder:
         if existing:
             print(f"  ✓ Found by asset_tag: {asset_tag} (ID: {existing.get('id')})")
         return existing
+    
+    def by_static_mapping(self, ip_address: Optional[str]) -> Optional[Dict]:
+        """Strategy 3: Find by trusted hostname from the static IP map."""
+        if not ip_address:
+            return None
 
+        static_info = static_ip_mappings.STATIC_IP_MAP.get(ip_address)
+        if not static_info or not static_info.get('host_name'):
+            return None
+        
+        trusted_hostname = static_info['host_name']
+        print(f"  Static IP mapping found for {ip_address}. Searching for trusted hostname: '{trusted_hostname}'")
+
+        # Search for an asset with this exact name
+        for asset in self._get_all_assets():
+            asset_name = asset.get('name')
+            if isinstance(asset_name, str) and trusted_hostname.lower() == asset_name.lower():
+                print(f"  ✓ Found by static map hostname: '{trusted_hostname}' (ID: {asset.get('id')})")
+                return asset
+        return None
+    
     def by_mac_address(self, asset_data: Dict) -> Optional[Dict]:
-        """Strategy 3: Find by MAC address (requires full asset list)."""
+        """Strategy 4: Find by MAC address (requires full asset list)."""
         if not self._has_sufficient_match_data(asset_data):
             return None
 
@@ -102,7 +123,7 @@ class AssetFinder:
         return None
 
     def by_hostname(self, asset_data: Dict) -> Optional[Dict]:
-        """Strategy 4: Find by hostname (requires full asset list)."""
+        """Strategy 5: Find by hostname (requires full asset list)."""
         if not self._has_sufficient_match_data(asset_data):
             return None
 
@@ -125,7 +146,7 @@ class AssetFinder:
         return None
 
     def by_ip_address(self, ip_address: Optional[str]) -> Optional[Dict]:
-        """Strategy 5: Find by last seen IP address (requires full asset list)."""
+        """Strategy 6: Find by last seen IP address (requires full asset list)."""
         if not ip_address: # IP is considered a weak identifier, so we don't check for sufficient data
             return None
 
@@ -136,7 +157,7 @@ class AssetFinder:
         return None
 
     def by_fallback_identifiers(self, asset_data: Dict) -> Optional[Dict]:
-        """Strategy 6: Find by other unique identifiers in custom fields."""
+        """Strategy 7: Find by other unique identifiers in custom fields."""
         if not self._has_sufficient_match_data(asset_data):
             return None
 
