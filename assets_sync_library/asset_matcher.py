@@ -21,6 +21,7 @@ from crud.locations import LocationService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from snipe_api.schema import CUSTOM_FIELDS
+from assets_sync_library.static_ip_mappings import STATIC_IP_MAP
 from assets_sync_library.mac_utils import normalize_mac
 
 class AssetMatcher:
@@ -146,6 +147,12 @@ class AssetMatcher:
     def _process_assets(self, scan_type: str, scan_data: List[Dict], results: Dict) -> Dict:
         """Iterate through scan data and process each asset."""
         for asset_data in scan_data:
+            # --- Static IP Override (Highest Priority) ---
+            # Apply static mapping data at the very beginning to enrich the incoming data.
+            ip_address = asset_data.get('last_seen_ip')
+            if ip_address and ip_address in STATIC_IP_MAP:
+                asset_data.update(STATIC_IP_MAP[ip_address])
+
             asset_data['_source'] = scan_type
             
             existing = self.find_existing_asset(asset_data)
@@ -188,11 +195,12 @@ class AssetMatcher:
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
         payload = {}
-        
-        # Priority for host names coming from static ip mappings.
+
+        # --- Step 1: Set the definitive asset name (Highest Priority) ---
+        # Use the trusted hostname from the static map if it exists. This must happen first.
         if asset_data.get('host_name'):
             asset_data['name'] = asset_data['host_name']
-        
+
         self._handle_model_and_category(payload, asset_data)
         self._populate_standard_fields(payload, asset_data, is_update)
         self._populate_custom_fields(payload, asset_data)
@@ -357,6 +365,10 @@ class AssetMatcher:
         # 4. LOCATION
         location_name = asset_data.get('location')
         if location_name:
+            # Ensure location_name is a string, not a dictionary
+            if isinstance(location_name, dict):
+                location_name = location_name.get('name')
+
             location = self.location_service.get_by_name(location_name)
             if not location:
                 print(f"  -> Location '{location_name}' not found. Creating it now...")

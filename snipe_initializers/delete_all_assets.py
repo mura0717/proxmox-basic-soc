@@ -1,4 +1,4 @@
-""" Removes all assets for clean start. """
+""" Removes all assets for a clean start. """
 
 import os
 import sys
@@ -19,10 +19,11 @@ asset_service = AssetService()
 assets = asset_service.get_all(limit=10000, refresh_cache=True)
 
 if assets != []:
-    print("All assets are being deleted...")
+    print("Asset deletion started...")
     for asset in assets:
         asset_service.delete_by_name(asset['name'])
-    print("Asset deletion completed. But might need to rerun due to Rate Limiting.")
+        print(f"Deleted asset: {asset['name']}")
+    print("Asset deletion completed.")
 else:
     print("There are no assets to delete.")
  

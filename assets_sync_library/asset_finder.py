@@ -127,7 +127,8 @@ class AssetFinder:
         if not self._has_sufficient_match_data(asset_data):
             return None
 
-        dns_hostname = asset_data.get('dns_hostname') or asset_data.get('name')
+        # Prioritize the trusted 'host_name' from static map, then fall back to others.
+        dns_hostname = asset_data.get('host_name') or asset_data.get('dns_hostname') or asset_data.get('name')
         if not isinstance(dns_hostname, str) or dns_hostname.startswith('Device-'):
             return None
 

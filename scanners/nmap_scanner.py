@@ -16,7 +16,7 @@ from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
 from assets_sync_library.mac_utils import normalize_mac
-from .nmap_profiles import SCAN_PROFILES
+from scanners.nmap_profiles import SCAN_PROFILES
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
@@ -95,7 +95,8 @@ class NmapScanner:
         nmap_host = self.nm[host]
         
         # ----------- DEBUG -----------
-        print(f"DEBUG: Parsing host {host}, MAC: {nmap_host.get('addresses', {}).get('mac', 'NO MAC')}") 
+        if debug_logger.nmap_debug:
+            print(f"DEBUG: Parsing host {host}, MAC: {nmap_host.get('addresses', {}).get('mac', 'NO MAC')}")
         
         # Log raw nmap data BEFORE parsing
         raw_host_data = {
@@ -226,9 +227,9 @@ def main():
                 print(f"  {name:12} - {config['description']}")
         else:
             print(f"Unknown command: {command}")
-            print("Usage: nmap_scanner.py [discovery|quick|inventory|basic|detailed|vulnerability|full|web|network|list]")
+            print("Usage: nmap_scanner.py [profile_name|list]")
     else:
-        scanner.sync_to_snipeit('discovery')
+        scanner.sync_to_snipeit('fast-discovery')
 
 if __name__ == "__main__":
     main()

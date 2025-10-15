@@ -112,7 +112,7 @@ class SnipeITSetup:
         print("\n--- Setting up Manufacturers ---")
         created, skipped = 0, 0
         for manufacturer_data in MANUFACTURERS:
-            result = ManufacturerService().create_if_not_exists({"name": manufacturer_data})
+            result = self.manufacture_service.create_if_not_exists({"name": manufacturer_data['name']})
             if result:
                 created += 1
             else:
@@ -129,18 +129,23 @@ class SnipeITSetup:
             mfr = self.manufacture_service.get_by_name(model_data['manufacturer'])
             cat = self.category_service.get_by_name(model_data['category'])
             
-            if mfr & cat:
+            if mfr and cat:
                 payload = {
                     "name": model_data['name'],
                     "manufacturer_id": mfr['id'],
                     "category_id": cat['id'],
                     "model_number": model_data.get('model_number', ''),
                 }
-            result = self.model_service.create_if_not_exists(payload)
-            if result:
-                created += 1
+                result = self.model_service.create_if_not_exists(payload)
+                if result:
+                    created += 1
+                else:
+                    skipped += 1
             else:
-                skipped += 1
+                if not mfr:
+                    print(f"  ✗ Manufacturer '{model_data['manufacturer']}' not found for model '{model_data['name']}'. Skipping.")
+                if not cat:
+                    print(f"  ✗ Category '{model_data['category']}' not found for model '{model_data['name']}'. Skipping.")
                 
         print(f"✓ Models: {created} created, {skipped} already existed")
     
@@ -229,8 +234,8 @@ class SnipeITSetup:
         """Delete all manufacturers"""
         print("\n--- Cleaning up Manufacturers ---")
         deleted = 0
-        for manufacturer_name in MANUFACTURERS:
-            if ManufacturerService().delete_by_name(manufacturer_name):
+        for manufacturer_data in MANUFACTURERS:
+            if self.manufacture_service.delete_by_name(manufacturer_data['name']):
                 deleted += 1
         print(f"✓ Deleted {deleted} manufacturers")
     
@@ -272,8 +277,11 @@ class SnipeITSetup:
 
 def main():
     parser = argparse.ArgumentParser(description='Snipe-IT Setup Tool')
-    parser.add_argument('action', choices=['setup', 'cleanup', 'reset'],
-                       help='Action to perform')
+    parser.add_argument('action', 
+                        choices=['setup', 'cleanup', 'reset'],
+                        nargs='?', 
+                        default='reset',
+                        help='Action to perform (defaults to "reset")')
     args = parser.parse_args()
     
     setup = SnipeITSetup()

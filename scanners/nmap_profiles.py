@@ -5,17 +5,27 @@ This file contains the configuration for different Nmap scan profiles.
 """
 
 SCAN_PROFILES = {
-    # LEVEL 1: Discovery (No root, fastest)
-    'discovery': {
+    # LEVEL 1: Fast Discovery (No DNS, fastest)
+    'fast-discovery': {
         'args': '-sn -PR -T4',
-        'use_dns': True,
+        'use_dns': False,
         'collects_ports': False,
-        'description': 'Fast ping sweep with MAC - finds live hosts',
+        'description': 'Fastest ping sweep to find live hosts and MACs (no DNS).',
         'frequency': 'hourly',
         'timeout': 300  # 5 minutes
     },
 
-    # LEVEL 2: Quick Check (Basic ports)
+    # LEVEL 2: Basic Discovery (With DNS)
+    'discovery': {
+        'args': '-sn -PR -T4',
+        'use_dns': True,
+        'collects_ports': False,
+        'description': 'Fast ping sweep with MAC and reverse DNS lookup.',
+        'frequency': 'hourly',
+        'timeout': 600  # 10 minutes (increased for DNS)
+    },
+
+    # LEVEL 3: Quick Port Check
     'quick': {
         'args': '-sS --top-ports 100 -T5 --open -PR',
         'use_dns': True,
@@ -27,7 +37,7 @@ SCAN_PROFILES = {
 
     # LEVEL 3: Basic Inventory (Standard scan)
     'inventory': {
-        'args': '-sS -O --osscan-limit --top-ports 20 -T4 --open -PR',
+        'args': '-sS -O --osscan-limit --top-ports 50 -T4 --open -PR',
         'use_dns': True,
         'collects_ports': True,
         'description': 'Lightweight inventory - gets MAC, OS, and top 20 ports',
