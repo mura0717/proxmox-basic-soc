@@ -100,3 +100,24 @@ STATIC_IP_MAP = {
     '192.168.200.212': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Zebra ZD421', 'services': 'Label Printer ', 'location': 'Odense', 'placement': ''},
     '192.168.200.213': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Brother HL-L6415DN', 'services': 'Fakturaprinter', 'location': 'Odense', 'placement': ''},
 }
+
+DHCP_SCOPES = [
+    {
+        'start_ip': '192.168.1.50',
+        'end_ip': '192.168.1.150',
+        'location': 'Glostrup',
+        'notes': 'Main client DHCP scope for the Glostrup location.'
+    },
+    {
+        'start_ip': '192.168.4.50',
+        'end_ip': '192.168.7.250',
+        'location': 'Glostrup',
+        'notes': 'Extended client DHCP scope for the Glostrup location.'
+    },
+    {
+        'start_ip': '192.168.200.50',
+        'end_ip': '192.168.200.150',
+        'location': 'Odense',
+        'notes': 'Main client DHCP scope for the Odense location.'
+    }
+]
