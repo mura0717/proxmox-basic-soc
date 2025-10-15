@@ -358,10 +358,14 @@ class AssetMatcher:
         location_name = asset_data.get('location')
         if location_name:
             location = self.location_service.get_by_name(location_name)
-            if location:
+            if not location:
+                print(f"  -> Location '{location_name}' not found. Creating it now...")
+                location = self.location_service.create({'name': location_name})
+
+            if location and location.get('id'):
                 payload['location_id'] = location['id']
             else:
-                print(f"  [WARNING] Location '{location_name}' not found in Snipe-IT. Asset will have no location.")
+                print(f"  [ERROR] Failed to find or create location '{location_name}'. Asset will have no location.")
         
         # 5. STATUS
         self._determine_status(payload, asset_data)
