@@ -24,6 +24,9 @@ if os.geteuid() != 0:
         print(f"Please run it manually with: sudo {sys.executable} {' '.join(sys.argv)}")
         sys.exit(1)
 
+if os.geteuid() != 0:
+    print("✗ Failed to run with root privilege.")
+
 nm = nmap.PortScanner()
 
 ip_addr = '192.168.1.1' 
