@@ -490,8 +490,8 @@ MANUFACTURERS = [
 
 # Define Locations
 LOCATIONS = {
-    "Glostrup Office - Home",
-    "Odense Office",
+    "Glostrup",
+    "Odense",
     "Off-site",
     "Cloud"
 }
