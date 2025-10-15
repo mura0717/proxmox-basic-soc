@@ -1,6 +1,7 @@
 import os
 import sys
 from typing import Dict, List, Optional
+from ipaddress import ip_address, AddressValueError
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
@@ -146,6 +147,27 @@ class AssetCategorizer:
         return 'On-Premise'
     
     @classmethod
+    def _get_location_from_dhcp_scope(cls, ip: Optional[str]) -> Optional[Dict]:
+        """
+        Determines the location of a device by checking if its IP falls within a DHCP scope.
+        Returns the entire scope dictionary if a match is found.
+        """
+        if not ip:
+            return None
+
+        try:
+            target_addr = ip_address(ip)
+            for scope in static_ip_mappings.DHCP_SCOPES:
+                start_addr = ip_address(scope['start_ip'])
+                end_addr = ip_address(scope['end_ip'])
+                if start_addr <= target_addr <= end_addr:
+                    return scope
+        except (AddressValueError, KeyError):
+            # Handles invalid IP strings or malformed scope dictionaries
+            return None
+        return None
+    
+    @classmethod
     def categorize(cls, device_data: Dict) -> Dict[str, str]:
         """Compute device_type and category from data."""
         
@@ -168,7 +190,13 @@ class AssetCategorizer:
                 static_services_list = [s.strip() for s in static_services_str.split(',')]
                 nmap_services = list(dict.fromkeys(static_services_list + nmap_services))
         
-        # --- 3. Normalize Data for Comparison Logic ---    
+        # --- 3. DHCP Scope Location Fallback (Medium Priority) ---        
+        if 'location' not in device_data:
+            dhcp_info = cls._get_location_from_dhcp_scope(ip_address)
+            if dhcp_info and dhcp_info.get('location'):
+                device_data['location'] = dhcp_info['location']
+        
+        # --- 4. Normalize Data for Comparison Logic ---    
         # Raw for Debug only
         raw_name = (device_data.get('name') or device_data.get('deviceName') or '')
         raw_os = (device_data.get('os_platform') or device_data.get('operatingSystem') or '')
@@ -206,7 +234,7 @@ class AssetCategorizer:
         )
         debug_logger.log_categorization(source, log_entry)
         
-        # --- 4. Categorization Priority Chain ---
+        # --- 5. Categorization Priority Chain ---
         device_type = device_data.get('device_type')
         if not device_type:
             device_type = (
@@ -238,7 +266,7 @@ class AssetCategorizer:
                 'Other Device'
             )
 
-        # --- 5. Category Mapping ---
+        # --- 6. Category Mapping ---
         # Use the category from the static map if available, otherwise map the device type.
         category = device_data.get('category') or categorization_rules.CATEGORY_MAP.get(device_type, 'Other Assets')
         if 'yealink' in manufacturer and any(x in model for x in ['roompanel', 'meetingbar', 'ctp', 'a20', 'a30']):

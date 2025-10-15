@@ -17,6 +17,7 @@ from crud.categories import CategoryService
 from crud.manufacturers import ManufacturerService
 from crud.models import ModelService
 from crud.assets import AssetService
+from crud.locations import LocationService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from snipe_api.schema import CUSTOM_FIELDS
@@ -34,6 +35,7 @@ class AssetMatcher:
         self.category_service = CategoryService()
         self.manufacturer_service = ManufacturerService()
         self.model_service = ModelService()
+        self.location_service = LocationService()
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
@@ -351,9 +353,20 @@ class AssetMatcher:
         # 3. AUTO-GENERATE ASSET TAG for new assets
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)
+       
+        # 4. LOCATION
+        location_name = asset_data.get('location')
+        if location_name:
+            location = self.location_service.get_by_name(location_name)
+            if location:
+                payload['location_id'] = location['id']
+            else:
+                print(f"  [WARNING] Location '{location_name}' not found in Snipe-IT. Asset will have no location.")
         
-        # 4. STATUS
+        # 5. STATUS
         self._determine_status(payload, asset_data)
+        
+        
 
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate all custom fields in the payload."""
