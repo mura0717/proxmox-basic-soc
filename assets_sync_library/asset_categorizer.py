@@ -252,32 +252,32 @@ class AssetCategorizer:
         device_type = device_data.get('device_type')
         if not device_type:
             device_type = (
-                # 1. By specific services (e.g., Domain Controller, Printer)
-                cls._categorize_by_services(nmap_services) or
-                
-                # 2. By specific network hardware rules
-                cls._categorize_network_device(model, manufacturer) or
-                
-                # 3. Virtual Machines
+                # --- Hardware-based Categorization (Highest Priority) ---
+                # 1. Virtual Machines (very specific)
                 cls._categorize_vm(manufacturer, model) or
                 
-                # 4. Servers
-                cls._categorize_server(os_type, model) or
+                # 2. Network Infrastructure (Switches, Routers, etc.)
+                cls._categorize_network_device(model, manufacturer) or
                 
-                # 5. iOS Devices
+                # 3. IoT Devices (Yealink, etc.)
+                cls._categorize_iot(model, os_type) or
+                
+                # 4. Mobile Devices (iOS/Android Phones/Tablets)
                 cls._categorize_ios(os_type, model, device_name) or
-                
-                # 6. Android Devices
                 cls._categorize_android(os_type, model, manufacturer) or
                 
-                # 7. Computers (Laptops/Desktops)
+                # 5. Computers (Laptops/Desktops)
                 cls._categorize_computer(os_type, model, manufacturer) or
+                
+                # --- OS & Service-based Categorization (Lower Priority) ---
+                # 6. Servers (based on OS name)
+                cls._categorize_server(os_type, model) or
+                
+                # 7. By specific services (e.g., Printer, Domain Controller)
+                cls._categorize_by_services(nmap_services) or
                 
                 # 8. Generic OS-based devices (e.g., Windows Workstation, Linux Server)
                 cls._categorize_generic_os_device(os_type, model) or
-
-                # 8. IoT Devices
-                cls._categorize_iot(model, os_type) or
                 
                 # 9. Default fallback
                 'Other Device'
@@ -286,9 +286,7 @@ class AssetCategorizer:
         # --- 6. Category Mapping ---
         # Use the category from the static map if available, otherwise map the device type.
         category = device_data.get('category') or categorization_rules.CATEGORY_MAP.get(device_type, 'Other Assets')
-        if 'yealink' in manufacturer and any(x in model for x in ['roompanel', 'meetingbar', 'ctp', 'a20', 'a30']):
-            category = 'IoT Devices'
-        elif cloud_provider in ['Azure', 'AWS', 'GCP']:
+        if cloud_provider in ['Azure', 'AWS', 'GCP']:
             category = 'Cloud Resources'
 
         return {'device_type': device_type, 'category': category, 'cloud_provider': cloud_provider}

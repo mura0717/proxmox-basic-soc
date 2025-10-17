@@ -67,8 +67,8 @@ COMPUTER_RULES = {
 }
 
 IOT_RULES = {
-    'model_keywords': ['iot'],
-    'os_keywords': ['iot']
+    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30'],
+    'os_keywords': ['iot', 'android'] # Android is often used for IoT
 }
 
 CATEGORY_MAP = {
