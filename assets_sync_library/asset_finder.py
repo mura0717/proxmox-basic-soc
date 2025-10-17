@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.assets import AssetService
 from config import network_config
-from config.schema import CUSTOM_FIELDS
+from config.snipe_schema import CUSTOM_FIELDS
 from assets_sync_library.mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
 
 class AssetFinder:

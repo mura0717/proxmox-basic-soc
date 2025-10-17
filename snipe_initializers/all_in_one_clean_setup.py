@@ -20,10 +20,6 @@ load_dotenv(dotenv_path=config_path)
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")
 SNIPE_API_TOKEN = os.getenv("SNIPE_API_TOKEN")
 
-# URL & API TOKEN debug  
-#print(f"Loaded Snipe URL: {SNIPE_URL}")
-#print(f"Loaded Snipe API TOKEN: {SNIPE_API_TOKEN}")
-
 if not SNIPE_URL or not SNIPE_API_TOKEN:
     raise RuntimeError("SNIPE_URL and SNIPE_API_TOKEN must be set.")
 
