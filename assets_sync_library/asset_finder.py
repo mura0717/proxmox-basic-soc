@@ -23,7 +23,7 @@ class AssetFinder:
     def _get_all_assets(self) -> List[Dict]:
         """Lazily fetches all assets from the API, caching the result for the lifetime of the instance."""
         if self._all_assets_cache is None:
-            print("  -> Lazily fetching all assets for deep matching...")
+            print("  -> Fetching all assets for deep matching...")
             self._all_assets_cache = self.asset_service.get_all()
         return self._all_assets_cache
 
@@ -108,13 +108,8 @@ class AssetFinder:
             # Also check wifi_mac and ethernet_mac custom fields on existing assets
             existing_set = macs_from_any(asset.get('mac_address'))
             existing_set |= macs_from_any(self._get_custom_field(asset, 'mac_addresses'))
-            existing_set |= macs_from_any(self._get_custom_field(asset, 'wifi_mac'))
-            existing_set |= macs_from_any(self._get_custom_field(asset, 'ethernet_mac'))
-            # Check built-in MAC field
-            existing_set = macs_from_any(asset.get('mac_address'))
-            # Check custom field for MACs
-            custom_macs = self._get_custom_field(asset, 'mac_addresses')
-            existing_set |= macs_from_any(custom_macs)
+            existing_set |= macs_from_any(self._get_custom_field(asset, 'wifi_mac')) # From Intune
+            existing_set |= macs_from_any(self._get_custom_field(asset, 'ethernet_mac')) # From Intune
 
             hit = intersect_mac_sets(new_macs, existing_set)
             if hit:

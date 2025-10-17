@@ -37,6 +37,7 @@ class AssetMatcher:
         self.manufacturer_service = ManufacturerService()
         self.model_service = ModelService()
         self.location_service = LocationService()
+        self.finder = AssetFinder(self.asset_service) # Instantiate finder once
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
@@ -54,6 +55,7 @@ class AssetMatcher:
         self.category_service._cache.clear()
         self.manufacturer_service._cache.clear()
         self.model_service._cache.clear()
+        self.finder._all_assets_cache = None # Clear finder's asset cache
     
     def process_scan_data(self, scan_type: str, scan_data: List[Dict]) -> Dict:
         """
@@ -73,17 +75,16 @@ class AssetMatcher:
         Find an existing asset in Snipe-IT using a prioritized chain of matching strategies.
         """
         print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
-        finder = AssetFinder(self.asset_service)
 
         # The order of these calls defines the matching priority.
-        found_asset = (
-            finder.by_serial(asset_data.get('serial')) or
-            finder.by_asset_tag(asset_data.get('asset_tag')) or
-            finder.by_static_mapping(asset_data.get('last_seen_ip')) or
-            finder.by_mac_address(asset_data) or
-            finder.by_hostname(asset_data) or
-            finder.by_ip_address(asset_data.get('last_seen_ip')) or
-            finder.by_fallback_identifiers(asset_data)
+        found_asset = ( # Use the class-level finder instance
+            self.finder.by_serial(asset_data.get('serial')) or
+            self.finder.by_asset_tag(asset_data.get('asset_tag')) or
+            self.finder.by_static_mapping(asset_data.get('last_seen_ip')) or
+            self.finder.by_mac_address(asset_data) or
+            self.finder.by_hostname(asset_data) or
+            self.finder.by_ip_address(asset_data.get('last_seen_ip')) or
+            self.finder.by_fallback_identifiers(asset_data)
         )
 
         if found_asset:
@@ -147,13 +148,13 @@ class AssetMatcher:
     def _process_assets(self, scan_type: str, scan_data: List[Dict], results: Dict) -> Dict:
         """Iterate through scan data and process each asset."""
         for asset_data in scan_data:
+            asset_data['_source'] = scan_type
+
             # --- Static IP Override (Highest Priority) ---
             # Apply static mapping data at the very beginning to enrich the incoming data.
             ip_address = asset_data.get('last_seen_ip')
             if ip_address and ip_address in STATIC_IP_MAP:
                 asset_data.update(STATIC_IP_MAP[ip_address])
-
-            asset_data['_source'] = scan_type
             
             existing = self.find_existing_asset(asset_data)
             
@@ -232,15 +233,9 @@ class AssetMatcher:
         
         # Only process if we have actual data
         if manufacturer_name and model_name:
-            # Get or create manufacturer
-            manufacturer = self.manufacturer_service.get_by_name(manufacturer_name)
-            if not manufacturer:
-                manufacturer = self.manufacturer_service.create({
-                    'name': manufacturer_name
-                })
-                if self.debug:
-                    print(f"Created manufacturer: {manufacturer_name}")
-            
+            # Use "get or create" logic to prevent errors for existing manufacturers
+            manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
+    
             if manufacturer:
                 payload['manufacturer_id'] = manufacturer['id']
                 

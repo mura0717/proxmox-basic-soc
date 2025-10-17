@@ -113,12 +113,16 @@ class BaseCRUDService:
         """Delete entity by ID"""
         response = make_api_request("DELETE", f"{self.endpoint}/{entity_id}")
         if response and response.ok:
-            self._cache.clear()
+            self.get_all(refresh_cache=True) # Force a refresh of the cache on the next 'get_all' call.
+
             return True
         return False
     
     def create_if_not_exists(self, data: Dict) -> bool:
-        """Create entity only if it doesn't exist"""
+        """
+        Create an entity only if it doesn't already exist by name.
+        Returns True if a new entity was created, False otherwise.
+        """
         name = data.get('name')
         if not name:
             print(f"Error: No name provided for {self.entity_name}")
@@ -133,6 +137,22 @@ class BaseCRUDService:
             print(f"Created {self.entity_name}: {name}")
             return True
         return False
+    
+    def get_or_create(self, data: Dict) -> Optional[Dict]:
+        """
+        Get an entity by name, or create it if it doesn't exist.
+        Returns the entity dictionary (either found or newly created).
+        """
+        name = data.get('name')
+        if not name:
+            print(f"Error: No name provided for {self.entity_name}")
+            return None
+        
+        existing = self.get_by_name(name)
+        if existing:
+            return existing
+        
+        return self.create(data)
     
     def delete_by_name(self, name: str) -> bool:
         """Delete entity by name"""

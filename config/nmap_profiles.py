@@ -17,12 +17,13 @@ SCAN_PROFILES = {
 
     # LEVEL 2: Basic Discovery (With DNS)
     'discovery': {
-        'args': '-sn -PR -T4',
+        # Changed from -sn to a proper inventory scan to get more data for matching
+        'args': '-sS -O --osscan-limit --top-ports 50 -T4 --open -PR',
         'use_dns': True,
-        'collects_ports': False,
-        'description': 'Fast ping sweep with MAC and reverse DNS lookup.',
+        'collects_ports': True,
+        'description': 'Lightweight inventory - gets MAC (local), OS, and top 50 ports.',
         'frequency': 'hourly',
-        'timeout': 600  # 10 minutes (increased for DNS)
+        'timeout': 900  # 15 minutes
     },
 
     # LEVEL 3: Quick Port Check
