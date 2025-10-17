@@ -20,8 +20,8 @@ from crud.assets import AssetService
 from crud.locations import LocationService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
-from snipe_api.schema import CUSTOM_FIELDS
-from assets_sync_library.static_ip_mappings import STATIC_IP_MAP
+from config.schema import CUSTOM_FIELDS
+from config.network_config import STATIC_IP_MAP
 from assets_sync_library.mac_utils import normalize_mac
 
 class AssetMatcher:

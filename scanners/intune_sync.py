@@ -12,8 +12,10 @@ from typing import Dict, List, Optional
 from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
+from config.intune_settings import AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 from debug.intune_categorize_from_logs import intune_debug_categorization
 from assets_sync_library.mac_utils import combine_macs
 
@@ -22,9 +24,9 @@ class IntuneSync:
     
     def __init__(self):
         # Load credentials from environment
-        self.tenant_id = os.getenv('AZURE_TENANT_ID')
-        self.client_id = os.getenv('AZURE_CLIENT_ID')
-        self.client_secret = os.getenv('AZURE_CLIENT_SECRET')
+        self.tenant_id = AZURE_TENANT_ID
+        self.client_id = AZURE_CLIENT_ID
+        self.client_secret = AZURE_CLIENT_SECRET
         
         if not all([self.tenant_id, self.client_id, self.client_secret]):
             raise ValueError("Azure credentials not configured in environment")

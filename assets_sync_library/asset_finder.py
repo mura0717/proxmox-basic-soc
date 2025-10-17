@@ -8,8 +8,8 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.assets import AssetService
-from assets_sync_library import static_ip_mappings
-from snipe_api.schema import CUSTOM_FIELDS
+from config import network_config
+from config.schema import CUSTOM_FIELDS
 from assets_sync_library.mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
 
 class AssetFinder:
@@ -78,7 +78,7 @@ class AssetFinder:
         if not ip_address:
             return None
 
-        static_info = static_ip_mappings.STATIC_IP_MAP.get(ip_address)
+        static_info = network_config.STATIC_IP_MAP.get(ip_address)
         if not static_info or not static_info.get('host_name'):
             return None
         

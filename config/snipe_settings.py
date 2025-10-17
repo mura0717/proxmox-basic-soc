@@ -11,6 +11,7 @@ load_dotenv(dotenv_path=config_path)
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")
 SNIPE_API_TOKEN = os.getenv("SNIPE_API_TOKEN")
 
+
 ssl_verify_str = os.getenv("VERIFY_SSL", "False").lower()
 VERIFY_SSL = ssl_verify_str in ['true', '1', 't', 'y', 'yes']
 

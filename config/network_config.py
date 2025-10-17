@@ -1,4 +1,42 @@
 """
+Default Nmap Scan Ranges
+A list of CIDR network ranges for the Nmap scanner to use by default.
+These should cover all subnets where assets might be found.
+"""
+NMAP_SCAN_RANGES = [
+    "192.168.1.0/24",    # Glostrup Main
+    "192.168.2.0/24",    # Glostrup DMZ
+    "192.168.4.0/22",    # Glostrup Extended (covers 192.168.4.0 - 192.168.7.255)
+    "192.168.200.0/24",  # Odense Main
+]
+
+
+"""
+DHCP Scope for both Glsotrup and Odense
+"""
+DHCP_SCOPES = [
+    {
+        'start_ip': '192.168.1.50',
+        'end_ip': '192.168.1.150',
+        'location': 'Glostrup',
+        'notes': 'Main client DHCP scope for the Glostrup location.'
+    },
+    {
+        'start_ip': '192.168.4.50',
+        'end_ip': '192.168.7.250',
+        'location': 'Glostrup',
+        'notes': 'Extended client DHCP scope for the Glostrup location.'
+    },
+    {
+        'start_ip': '192.168.200.50',
+        'end_ip': '192.168.200.150',
+        'location': 'Odense',
+        'notes': 'Main client DHCP scope for the Odense location.'
+    }
+]
+
+
+"""
 Static IP Address Mapping
 This is the highest priority mapping. If an asset's IP is found here,
 these values will be used for categorization and naming.
@@ -101,23 +139,5 @@ STATIC_IP_MAP = {
     '192.168.200.213': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Brother HL-L6415DN', 'manufacturer': 'Brother', 'model': 'HL-L6415DN', 'services': 'Fakturaprinter', 'location': 'Odense', 'placement': ''},
 }
 
-DHCP_SCOPES = [
-    {
-        'start_ip': '192.168.1.50',
-        'end_ip': '192.168.1.150',
-        'location': 'Glostrup',
-        'notes': 'Main client DHCP scope for the Glostrup location.'
-    },
-    {
-        'start_ip': '192.168.4.50',
-        'end_ip': '192.168.7.250',
-        'location': 'Glostrup',
-        'notes': 'Extended client DHCP scope for the Glostrup location.'
-    },
-    {
-        'start_ip': '192.168.200.50',
-        'end_ip': '192.168.200.150',
-        'location': 'Odense',
-        'notes': 'Main client DHCP scope for the Odense location.'
-    }
-]
+
+

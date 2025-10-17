@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Simple Nmap scan for testing purposes.
+"""
+
 import os
 import sys
 import subprocess
@@ -7,14 +11,20 @@ import nmap
 
 # Auto-elevate to root if needed, using the robust logic from nmap_scanner.py
 if os.geteuid() != 0:
-    # Check if we can sudo without a password
-    can_sudo = subprocess.run(['sudo', '-n', 'true'], capture_output=True).returncode == 0
+    #---DEBUG---
+    user_euid = os.geteuid()
+    command_to_run = ['sudo', sys.executable] + sys.argv
+    print(f"\nDEBUG: The exact command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
+    
+    test_cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
+    result = subprocess.run(test_cmd, capture_output=True, timeout=5)
+    can_sudo = result.returncode == 0
 
     if can_sudo:
         try:
             print("Attempting to elevate to root privileges for scan...")
             subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
-            sys.exit(0) # Exit after the elevated process finishes
+            sys.exit(0)
         except (FileNotFoundError, subprocess.CalledProcessError) as e:
             print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
             sys.exit(1)

@@ -5,6 +5,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from crud.base import BaseCRUDService
+from snipe_api.api_client import make_api_request
 
 class FieldService(BaseCRUDService):
     """Service for managing custom fields"""
@@ -14,7 +15,6 @@ class FieldService(BaseCRUDService):
     
     def associate_to_fieldset(self, field_id: int, fieldset_id: int) -> bool:
         """Associate field with fieldset"""
-        from ..snipe_api.api_client import make_api_request
         
         payload = {"fieldset_id": fieldset_id}
         response = make_api_request(
@@ -32,7 +32,6 @@ class FieldService(BaseCRUDService):
     
     def disassociate_from_fieldset(self, field_id: int, fieldset_id: int) -> bool:
         """Disassociate field from fieldset"""
-        from ..snipe_api.api_client import make_api_request
         
         response = make_api_request(
             "POST",

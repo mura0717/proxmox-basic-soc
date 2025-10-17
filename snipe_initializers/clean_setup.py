@@ -17,7 +17,7 @@ from crud.models import ModelService
 from crud.status_labels import StatusLabelService
 from crud.categories import CategoryService
 from crud.locations import LocationService
-from snipe_api.schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
+from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
 class SnipeITSetup:
     """Main setup class for Snipe-IT configuration"""
@@ -30,7 +30,6 @@ class SnipeITSetup:
         self.model_service = ModelService()
         self.manufacture_service = ManufacturerService()
         self.location_service = LocationService()
-    
     
     def setup_all(self):
         """Run complete setup"""

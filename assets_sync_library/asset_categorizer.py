@@ -5,8 +5,8 @@ from ipaddress import ip_address, AddressValueError
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
-from assets_sync_library import categorization_rules
-from assets_sync_library import static_ip_mappings
+from config import categorization_rules
+from config import network_config
 
 class AssetCategorizer:
     """Determines device type and category based on attributes."""
@@ -18,7 +18,7 @@ class AssetCategorizer:
         """Looks up a device in the hardcoded static IP map."""
         if not ip_address:
             return None
-        return static_ip_mappings.STATIC_IP_MAP.get(ip_address)
+        return network_config.STATIC_IP_MAP.get(ip_address)
 
     @classmethod
     def _categorize_network_device(cls, model: str, manufacturer: str) -> str | None:
@@ -157,7 +157,7 @@ class AssetCategorizer:
 
         try:
             target_addr = ip_address(ip)
-            for scope in static_ip_mappings.DHCP_SCOPES:
+            for scope in network_config.DHCP_SCOPES:
                 start_addr = ip_address(scope['start_ip'])
                 end_addr = ip_address(scope['end_ip'])
                 if start_addr <= target_addr <= end_addr:

@@ -16,23 +16,30 @@ from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
 from assets_sync_library.mac_utils import normalize_mac
-from scanners.nmap_profiles import SCAN_PROFILES
+from config.network_config import NMAP_SCAN_RANGES
+from config.nmap_profiles import SCAN_PROFILES
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
 NO_ROOT_COMMANDS = ['web', 'list', 'help']
 
+
 # Auto-elevate to root if needed
 if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
-    if os.geteuid() != 0: # Check if not already root
-        # Check if we can sudo without a password
-        can_sudo = subprocess.run(['sudo', '-n', 'true'], capture_output=True).returncode == 0
+    if os.geteuid() != 0:
+        user_euid = os.geteuid()
+        command_to_run = ['sudo', sys.executable] + sys.argv
+        print(f"\nDEBUG: The exact command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
+        
+        cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
+        result = subprocess.run(cmd, capture_output=True, timeout=5)
+        can_sudo = result.returncode == 0
 
         if can_sudo:
             try:
                 print("Attempting to elevate to root privileges for scan...")
                 subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
-                sys.exit(0) # Exit after the elevated process finishes
+                sys.exit(0)
             except (FileNotFoundError, subprocess.CalledProcessError) as e:
                 print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
                 sys.exit(1)
@@ -45,8 +52,11 @@ if len(sys.argv) > 1 and sys.argv[1] not in NO_ROOT_COMMANDS:
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""
     
-    def __init__(self, network_range: str = "192.168.1.0/24"):
-        self.network_range = network_range
+    def __init__(self, network_ranges: Optional[List[str]] = None):
+        if network_ranges is None:
+            self.network_ranges = NMAP_SCAN_RANGES
+        else:
+            self.network_ranges = network_ranges
         self.nm = nmap.PortScanner()
         self.asset_matcher = AssetMatcher()
     
@@ -61,7 +71,7 @@ class NmapScanner:
         args = scan_config['args']
         if scan_config.get('use_dns'):
             args = f"{args} {DNS_ARGS}"
-        scan_targets = ' '.join(targets) if targets else self.network_range
+        scan_targets = ' '.join(targets) if targets else ' '.join(self.network_ranges)
         
         print(f"Running {profile} scan: {scan_config['description']}")
         print(f"Targets: {scan_targets}")
@@ -206,9 +216,6 @@ class NmapScanner:
 def main():
     """Command-line interface"""
     debug_logger.clear_logs('nmap')
-    
-    if os.geteuid() != 0:
-        print("WARNING: Not running as root - MAC addresses will not be collected!") 
     
     if nmap_debug_categorization.debug:
         nmap_debug_categorization.get_raw_nmap_assets_from_log()

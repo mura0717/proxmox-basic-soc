@@ -2,11 +2,11 @@
 
 import os
 import sys
+import re
+from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from typing import Dict, List, Optional
-import re
 from snipe_api.api_client import make_api_request
 
 class BaseCRUDService:
