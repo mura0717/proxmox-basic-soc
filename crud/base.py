@@ -3,7 +3,9 @@
 import os
 import sys
 import re
+import pymysql
 from typing import Dict, List, Optional
+from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -165,3 +167,41 @@ class BaseCRUDService:
         """Get dictionary mapping of entities"""
         all_entities = self.get_all()
         return {entity.get(key): entity.get(value) for entity in all_entities}
+    
+    def purge_deleted_via_database():
+        """Directly purge soft-deleted records from database"""
+        load_dotenv()
+    
+        DB_HOST = os.getenv("DB_HOST")
+        DB_USER = os.getenv("DB_USER")
+        DB_PASS = os.getenv("DB_PASS")
+        DB_NAME = os.getenv("DB_NAME")
+        
+        try:
+            connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME)
+            with connection.cursor() as cursor:
+                tables_to_purge =[
+                'assets',
+                'categories',
+                'custom_fieldsets',
+                'custom_fields',
+                'status_labels',
+                'locations',
+                'manufacturers',
+                'models'
+                ]
+            for table in tables_to_purge:
+                    cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
+                    deleted_count = cursor.rowcount
+                    if deleted_count > 0:
+                        print(f"  ✓ Purged {deleted_count} records from {table}")
+                
+            connection.commit()
+            print("✓ Database purge complete")
+                
+        except Exception as e:
+            print(f"✗ Database connection failed: {e}")
+        finally:
+            if 'connection' in locals():
+                connection.close()        
+                    

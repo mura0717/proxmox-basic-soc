@@ -6,3 +6,4 @@ pysnmp
 python-gvm
 pyzabbix
 python-nmap
+pymysql

@@ -7,6 +7,7 @@ Initializes Snipe-IT with custom fields, fieldsets, status labels, categories, a
 import os
 import sys
 import argparse
+import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -17,6 +18,8 @@ from crud.models import ModelService
 from crud.status_labels import StatusLabelService
 from crud.categories import CategoryService
 from crud.locations import LocationService
+from crud.base import BaseCRUDService
+
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
 class SnipeITSetup:
@@ -30,6 +33,7 @@ class SnipeITSetup:
         self.model_service = ModelService()
         self.manufacture_service = ManufacturerService()
         self.location_service = LocationService()
+        self.base_service = BaseCRUDService()
     
     def setup_all(self):
         """Run complete setup"""
@@ -273,6 +277,13 @@ class SnipeITSetup:
             if self.location_service.delete_by_name(location_name):
                 deleted += 1
         print(f"✓ Deleted {deleted} locations")
+        
+    def purge_all(self):
+        """Directly purge soft-deleted records from database"""
+        print("\n--- Purging all deleted ---")
+        self.base_service.purge_deleted_via_database()
+        print(f"✓ Purged all deleted records")
+        
 
 def main():
     parser = argparse.ArgumentParser(description='Snipe-IT Setup Tool')
@@ -291,10 +302,10 @@ def main():
         setup.cleanup_all()
     elif args.action == 'reset':
         setup.cleanup_all()
+        setup.purge_all()
         print("\n" + "=" * 60)
         print("Waiting before setup...")
         print("=" * 60)
-        import time
         time.sleep(3)
         setup.setup_all()
 

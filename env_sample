@@ -1,6 +1,12 @@
 # SNIPE-IT Configuration
-SNIPE_URL = 
-SNIPE_API_TOKEN = 
+SNIPE_URL= 
+SNIPE_API_TOKEN= 
+
+# SNIPE-IT DB
+DB_HOST=
+DB_NAME=
+DB_USER=
+DB_PASS=
 
 # Verification of SSL certs
 SSL_VERIFY=False

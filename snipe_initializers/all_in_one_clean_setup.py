@@ -4,6 +4,9 @@ import requests
 import urllib3
 import json
 import time
+import pymysql
+
+from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -295,7 +298,6 @@ def create_locations():
         make_api_request("POST", f"{SNIPE_URL}/api/v1/locations", json=payload)
     print("Location creation process complete.")
 
-# Optional: Functions to delete all created
 def delete_all_fields():
     """Deletes all custom fields defined in CUSTOM FIELDS."""
     print("--- Deleting Custom Fields ---")
@@ -388,6 +390,44 @@ def delete_all_locations():
         make_api_request("DELETE", f"{SNIPE_URL}/api/v1/locations/{location_id}")
         print(f"Deleted location: {location_name} (ID: {location_id})")
 
+def purge_deleted_via_database():
+        """Directly purge soft-deleted records from database"""
+        load_dotenv()
+    
+        DB_HOST = os.getenv("DB_HOST")
+        DB_USER = os.getenv("DB_USER")
+        DB_PASS = os.getenv("DB_PASS")
+        DB_NAME = os.getenv("DB_NAME")
+        
+        try:
+            connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME)
+            with connection.cursor() as cursor:
+                tables_to_purge =[
+                'assets',
+                'categories',
+                'custom_fieldsets',
+                'custom_fields',
+                'status_labels',
+                'locations',
+                'manufacturers',
+                'models'
+                ]
+            for table in tables_to_purge:
+                    cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
+                    deleted_count = cursor.rowcount
+                    if deleted_count > 0:
+                        print(f"  ✓ Purged {deleted_count} records from {table}")
+                
+            connection.commit()
+            print("✓ Database purge complete")
+                
+        except Exception as e:
+            print(f"✗ Database connection failed: {e}")
+        finally:
+            if 'connection' in locals():
+                connection.close()        
+                    
+
 if __name__ == "__main__":
     """DELETE ALL"""
     delete_all_fields()
@@ -397,6 +437,10 @@ if __name__ == "__main__":
     delete_all_manufacturers()
     delete_all_models()
     delete_all_locations()
+    
+    """PURGE ALL (HARD DELETE)"""
+    # This step makes the deletions permanent!
+    purge_deleted_via_database()
     
     """CREATE ALL"""
     create_status_labels()

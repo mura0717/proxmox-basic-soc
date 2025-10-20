@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Simple Nmap scan for testing purposes.
+Simple Nmap scan for testing.
 """
 
 import os
@@ -14,7 +14,7 @@ if os.geteuid() != 0:
     #---DEBUG---
     user_euid = os.geteuid()
     command_to_run = ['sudo', sys.executable] + sys.argv
-    print(f"\nDEBUG: The exact command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
+    print(f"\n---DEBUG---\nThe exact command being passed to sudo is: {' '.join(command_to_run)}\nAnd the user euid is: {user_euid}\n")
     
     test_cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
     result = subprocess.run(test_cmd, capture_output=True, timeout=5)
@@ -39,7 +39,7 @@ if os.geteuid() != 0:
 
 nm = nmap.PortScanner()
 
-ip_addr = '192.168.1.3' 
+ip_addr = '192.168.1.176' 
 ip_addr_range = '192.168.1.0/24'
 ports = '1-1024'
 tcp_scan_args = '-v -sS -sV -O'
@@ -68,4 +68,4 @@ print("Scan Info:", nm.scaninfo())
 print("Assets found:")
 for asset in assets:
     print(asset)
-print("All hosts:", nm.all_hosts())
+print("All scanned hosts:", nm.all_hosts())

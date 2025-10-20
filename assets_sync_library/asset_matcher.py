@@ -211,6 +211,9 @@ class AssetMatcher:
         """
         Determine if we have enough data to confidently create a new asset.
         """
+        # If the IP is in our trusted static map, it's sufficient.
+        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
+            return True
         if asset_data.get('serial'):
             return True
         if asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac'):

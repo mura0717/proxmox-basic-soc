@@ -14,6 +14,11 @@ class AssetCategorizer:
         pass
     
     @classmethod
+    def _is_static_ip(cls, ip_address: str) -> bool:
+        """Check if an IP is in our static mapping"""
+        return ip_address in network_config.STATIC_IP_MAP
+
+    @classmethod
     def _categorize_by_static_ip(cls, ip_address: Optional[str]) -> Optional[Dict]:
         """Looks up a device in the hardcoded static IP map."""
         if not ip_address:
@@ -21,14 +26,17 @@ class AssetCategorizer:
         return network_config.STATIC_IP_MAP.get(ip_address)
 
     @classmethod
-    def _categorize_network_device(cls, model: str, manufacturer: str) -> str | None:
+    def _categorize_network_device(cls, model: str, manufacturer: str, device_name: str) -> str | None:
         """Categorizes network devices using a structured rule set."""
         device_type_priority = ['Firewall', 'Switch', 'Router', 'Access Point']
 
         for device_type in device_type_priority:
             rule_set = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
             
-            # Check if manufacturer matches AND (model keywords are not defined OR model keywords match)
+            # Special check for Access Points by hostname prefix
+            if device_type == 'Access Point' and device_name.startswith('ap'):
+                return 'Access Point'
+            
             if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])) and \
                (not rule_set.get('model_keywords') or not model or \
                 any(keyword in model for keyword in rule_set.get('model_keywords', []))):
@@ -193,7 +201,10 @@ class AssetCategorizer:
         nmap_services = device_data.get('nmap_services', [])
         
         # --- 2. Static IP Mapping Override (Highest Priority) ---
-        static_info = cls._categorize_by_static_ip(ip_address)
+        static_info = None
+        if ip_address and cls._is_static_ip(ip_address):
+            static_info = cls._categorize_by_static_ip(ip_address)
+            
         if static_info:
             # If a static entry is found, merge its data into the device data
             device_data.update(static_info)
@@ -256,11 +267,11 @@ class AssetCategorizer:
                 # 1. Virtual Machines (very specific)
                 cls._categorize_vm(manufacturer, model) or
                 
-                # 2. Network Infrastructure (Switches, Routers, etc.)
-                cls._categorize_network_device(model, manufacturer) or
-                
-                # 3. IoT Devices (Yealink, etc.)
+                # 2. IoT Devices (Yealink, etc. - check before general Android)
                 cls._categorize_iot(model, os_type) or
+                
+                # 3. Network Infrastructure (Switches, Routers, etc.)
+                cls._categorize_network_device(model, manufacturer, device_name) or
                 
                 # 4. Mobile Devices (iOS/Android Phones/Tablets)
                 cls._categorize_ios(os_type, model, device_name) or

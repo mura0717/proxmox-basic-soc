@@ -18,10 +18,10 @@ SCAN_PROFILES = {
     # LEVEL 2: Basic Discovery (With DNS)
     'discovery': {
         # Changed from -sn to a proper inventory scan to get more data for matching
-        'args': '-sS -O --osscan-limit --top-ports 50 -T4 --open -PR',
+        'args': '-v -sS --top-ports 50 -T4 --open -PR',
         'use_dns': True,
         'collects_ports': True,
-        'description': 'Lightweight inventory - gets MAC (local), OS, and top 50 ports.',
+        'description': 'Lightweight discovery - gets MAC (local) and top 50 open ports.',
         'frequency': 'hourly',
         'timeout': 900  # 15 minutes
     },

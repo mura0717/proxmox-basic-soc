@@ -17,7 +17,7 @@ NETWORK_DEVICE_RULES = {
     },
     'Access Point': {
         'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link'],
-        'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr']
+        'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap']
     }
 }
 
@@ -27,13 +27,13 @@ VIRTUAL_MACHINE_RULES = {
 }
 
 SERVER_RULES = {
-    'os_keywords': ['server'],
+    'os_keywords': ['server', 'windows server', 'esxi'],
     'model_keywords': ['server']
 }
 
 IOS_RULES = {
     'tablet_keywords': ['ipad', 'ipad pro', 'ipad air', 'ipad mini'],
-    'phone_keywords': ['iphone']
+    'phone_keywords': ['iphone'],
 }
 
 ANDROID_RULES = {
