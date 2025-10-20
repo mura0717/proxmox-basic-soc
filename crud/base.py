@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from snipe_api.api_client import make_api_request
+from assets_sync_library.text_utils import normalize_for_comparison, normalize_for_display
 
 class BaseCRUDService:
     """Base class for CRUD operations on Snipe-IT entities"""
@@ -25,15 +26,6 @@ class BaseCRUDService:
         self.endpoint = endpoint
         self.entity_name = entity_name
         self._cache = {}
-    
-    """Helper to normalize entity names for comparison."""
-    def _normalize_name(self, name: str):
-        if not isinstance(name, str):
-            return ""
-        name = name.replace('"', '-inch').replace('\"', 'inch')
-        name = re.sub(r'[()"\/]', ' ', name)
-        name = re.sub(r'\s+', ' ', name)
-        return name.strip()
     
     def get_all(self, limit: int = 500, refresh_cache: bool = False) -> List[Dict]:
         """Get all entities"""
@@ -56,14 +48,14 @@ class BaseCRUDService:
         if not name:
             return None
         
-        normalized_search_name = self._normalize_name(name)
+        normalized_search_name = normalize_for_comparison(name)
         all_entities = self.get_all()
         for entity in all_entities:
             entity_name = entity.get('name')
             if not entity_name:
                 continue
             
-            normalized_entity_name = self._normalize_name(entity_name)
+            normalized_entity_name = normalize_for_comparison(entity_name)
             if normalized_entity_name == normalized_search_name:
                 return entity
         return None
@@ -75,9 +67,9 @@ class BaseCRUDService:
             return None
         
         if 'name' in data:
-            data['name'] = self._normalize_name(data['name'])
+            data['name'] = normalize_for_display(data['name'])
         if 'model_number' in data:
-            data['model_number'] = self._normalize_name(data['model_number'])
+            data['model_number'] = normalize_for_display(data['model_number'])
     
         response = make_api_request("POST", self.endpoint, json=data)
         if not response:

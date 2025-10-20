@@ -1,12 +1,20 @@
 """General-purpose text utility functions."""
 
 import re
-
-def normalize_text(text: str) -> str:
-    """Normalizes text for consistent comparison."""
+def normalize_for_comparison(text: str) -> str:
+    """Normalizes text for case-insensitive comparison by lowercasing and removing special chars."""
     if not isinstance(text, str):
         return ""
     # Remove special characters and extra whitespace, convert to lowercase
     normalized = re.sub(r'[()"/*-]', ' ', text.lower())
     normalized = re.sub(r'\s+', ' ', normalized).strip()
     return normalized
+
+def normalize_for_display(name: str) -> str:
+    """Normalizes a name for display or creation, preserving case but handling special chars."""
+    if not isinstance(name, str):
+        return ""
+    name = name.replace('"', '-inch').replace('\"', 'inch')
+    name = re.sub(r'[()"\/]', ' ', name)
+    name = re.sub(r'\s+', ' ', name)
+    return name.strip()

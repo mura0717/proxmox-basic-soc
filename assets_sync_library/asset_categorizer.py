@@ -6,8 +6,8 @@ from ipaddress import ip_address, AddressValueError
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
 from config import categorization_rules
+from assets_sync_library.text_utils import normalize_for_comparison
 from config import network_config
-from assets_sync_library import text_utils
 
 class AssetCategorizer:
     """Determines device type and category based on attributes."""
@@ -112,16 +112,14 @@ class AssetCategorizer:
             return None
 
         # Check for Laptop
-        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['laptop_hostname_keywords']) or \
-           any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
+        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
             return 'Laptop'
         if manufacturer in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'][manufacturer]):
             return 'Laptop'
 
         # Check for Desktop
-        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['desktop_hostname_keywords']) or \
-           any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
+        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
             return 'Desktop'
         if manufacturer in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'][manufacturer]):
@@ -142,11 +140,11 @@ class AssetCategorizer:
             # If OS is known but no specific model, default to Workstation
             return 'Desktop'
         return None
-    
+
     @classmethod
     def _categorize_iot(cls, model: str, os_type: str, device_name: str) -> Optional[str]:
         """Categorize a device as IoT."""
-        clean_device_name = text_utils.normalize_text(device_name)
+        clean_device_name = normalize_for_comparison(device_name)
 
         if any(kw in model for kw in categorization_rules.IOT_RULES['model_keywords']) or \
            any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']) or \
