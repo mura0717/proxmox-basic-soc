@@ -121,6 +121,10 @@ STATIC_IP_MAP = {
     '192.168.1.226': {'device_type': 'Storage Device', 'category': 'Storage Devices', 'host_name': 'Synology NAS', 'manufacturer': 'Synology', 'model': 'NAS', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.251': {'device_type': 'Storage Device', 'category': 'Storage Devices', 'host_name': 'BackupNAS03 Synology RS820RP+', 'manufacturer': 'Synology', 'model': 'RS820RP+', 'services': '', 'location': 'Glostrup', 'placement': ''},
 
+    # Other Infrastructure
+    '192.168.1.3': {'device_type': 'Router', 'category': 'Routers', 'host_name': 'Zyxel Guest WiFi Router', 'os': 'HP ProCurve Secure Router 7102dl', 'manufacturer': 'Zyxel', 'model': 'Guest WiFi', 'services': 'http', 'location': 'Glostrup', 'placement': 'Server Room'},
+    '192.168.1.209': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'APC Management Card', 'os':'APC 7940 or 7723 Network Management Card (AOS 3.7.3 - 3.7.4)', 'manufacturer': 'APC', 'model': 'Network Management Card', 'services': 'ftp', 'location': 'Glostrup', 'placement': 'Server Room'},
+
     # --- Odense Location ---
     '192.168.200.1': {'device_type': 'Router', 'category': 'Routers', 'host_name': 'MPLS Gateway', 'manufacturer': 'Generic', 'model': 'MPLS Gateway', 'services': '', 'location': 'Odense', 'placement': ''},
     '192.168.200.3': {'device_type': 'Router', 'category': 'Routers', 'host_name': 'NiaNet MPLS (Reserved 1)', 'manufacturer': 'NiaNet', 'model': 'MPLS Router', 'services': '', 'location': 'Odense', 'placement': ''},

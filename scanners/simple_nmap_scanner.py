@@ -39,10 +39,10 @@ if os.geteuid() != 0:
 
 nm = nmap.PortScanner()
 
-ip_addr = '192.168.1.176' 
+ip_addr = '192.168.1.3' 
 ip_addr_range = '192.168.1.0/24'
-ports = '1-1024'
-tcp_scan_args = '-v -sS -sV -O'
+ports = '--top-ports 1024'
+tcp_scan_args = '-v -sS -sV -O --osscan-guess'
 udp_scan_args = '-v -sU'
 
 print("Starting Nmap scan...")

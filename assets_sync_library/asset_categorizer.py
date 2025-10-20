@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
 from config import categorization_rules
 from config import network_config
+from assets_sync_library import text_utils
 
 class AssetCategorizer:
     """Determines device type and category based on attributes."""
@@ -34,7 +35,7 @@ class AssetCategorizer:
             rule_set = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
             
             # Special check for Access Points by hostname prefix
-            if device_type == 'Access Point' and device_name.startswith('ap'):
+            if device_type == 'Access Point' and device_name.lower().startswith('ap'):
                 return 'Access Point'
             
             if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])) and \
@@ -74,10 +75,11 @@ class AssetCategorizer:
         return None
 
     @classmethod
-    def _categorize_server(cls, os_type: str, model: str) -> Optional[str]:
+    def _categorize_server(cls, os_type: str, model: str, device_name: str) -> Optional[str]:
         """Categorize a device as a Server."""
         if any(kw in os_type for kw in categorization_rules.SERVER_RULES['os_keywords']) or \
-           any(kw in model for kw in categorization_rules.SERVER_RULES['model_keywords']):
+           any(kw in model for kw in categorization_rules.SERVER_RULES['model_keywords']) or \
+           any(kw in device_name for kw in categorization_rules.SERVER_RULES.get('hostname_keywords', [])):
             return 'Server'
         return None
 
@@ -104,20 +106,22 @@ class AssetCategorizer:
         return 'Mobile Phone'
 
     @classmethod
-    def _categorize_computer(cls, os_type: str, model: str, manufacturer: str) -> Optional[str]:
+    def _categorize_computer(cls, os_type: str, model: str, manufacturer: str, device_name: str) -> Optional[str]:
         """Categorize a computer as a Laptop or Desktop."""
         if 'windows' not in os_type and 'mac' not in os_type:
             return None
 
         # Check for Laptop
-        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
+        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['laptop_hostname_keywords']) or \
+           any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
             return 'Laptop'
         if manufacturer in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'][manufacturer]):
             return 'Laptop'
 
         # Check for Desktop
-        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
+        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['desktop_hostname_keywords']) or \
+           any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
             return 'Desktop'
         if manufacturer in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'][manufacturer]):
@@ -138,12 +142,15 @@ class AssetCategorizer:
             # If OS is known but no specific model, default to Workstation
             return 'Desktop'
         return None
-
+    
     @classmethod
-    def _categorize_iot(cls, model: str, os_type: str) -> Optional[str]:
+    def _categorize_iot(cls, model: str, os_type: str, device_name: str) -> Optional[str]:
         """Categorize a device as IoT."""
+        clean_device_name = text_utils.normalize_text(device_name)
+
         if any(kw in model for kw in categorization_rules.IOT_RULES['model_keywords']) or \
-           any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']):
+           any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']) or \
+           any(kw in clean_device_name for kw in categorization_rules.IOT_RULES.get('hostname_keywords', [])):
             return 'IoT Devices'
         return None
 
@@ -268,7 +275,7 @@ class AssetCategorizer:
                 cls._categorize_vm(manufacturer, model) or
                 
                 # 2. IoT Devices (Yealink, etc. - check before general Android)
-                cls._categorize_iot(model, os_type) or
+                cls._categorize_iot(model, os_type, device_name) or
                 
                 # 3. Network Infrastructure (Switches, Routers, etc.)
                 cls._categorize_network_device(model, manufacturer, device_name) or
@@ -278,11 +285,11 @@ class AssetCategorizer:
                 cls._categorize_android(os_type, model, manufacturer) or
                 
                 # 5. Computers (Laptops/Desktops)
-                cls._categorize_computer(os_type, model, manufacturer) or
+                cls._categorize_computer(os_type, model, manufacturer, device_name) or
                 
                 # --- OS & Service-based Categorization (Lower Priority) ---
                 # 6. Servers (based on OS name)
-                cls._categorize_server(os_type, model) or
+                cls._categorize_server(os_type, model, device_name) or
                 
                 # 7. By specific services (e.g., Printer, Domain Controller)
                 cls._categorize_by_services(nmap_services) or
