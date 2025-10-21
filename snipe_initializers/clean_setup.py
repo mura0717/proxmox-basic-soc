@@ -33,7 +33,6 @@ class SnipeITSetup:
         self.model_service = ModelService()
         self.manufacture_service = ManufacturerService()
         self.location_service = LocationService()
-        self.base_service = BaseCRUDService()
     
     def setup_all(self):
         """Run complete setup"""
@@ -281,7 +280,7 @@ class SnipeITSetup:
     def purge_all(self):
         """Directly purge soft-deleted records from database"""
         print("\n--- Purging all deleted ---")
-        self.base_service.purge_deleted_via_database()
+        BaseCRUDService.purge_deleted_via_database()
         print(f"✓ Purged all deleted records")
         
 
