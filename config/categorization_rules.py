@@ -72,7 +72,7 @@ COMPUTER_RULES = {
 IOT_RULES = {
     'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30'],
     'hostname_keywords': ['meetingbar', 'roompanel', 'ctp'],
-    'os_keywords': ['iot'] # Rely on model for Nmap, Intune handles Android OS better
+    'os_keywords': ['iot', 'androidaosp'] # Rely on model for Nmap, Intune handles Android OS better
 }
 
 CATEGORY_MAP = {

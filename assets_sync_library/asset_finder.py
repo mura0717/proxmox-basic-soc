@@ -52,7 +52,6 @@ class AssetFinder:
         dns_hostname = asset_data.get('dns_hostname', '')
         if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
             return True
-        # Allow matching by asset_tag even if other data is weak
         return bool(asset_data.get('asset_tag'))
 
     def by_serial(self, serial: Optional[str]) -> Optional[Dict]:

@@ -117,6 +117,8 @@ class AssetCategorizer:
         if manufacturer in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'][manufacturer]):
             return 'Laptop'
+        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['laptop_hostname_keywords']):
+            return 'Laptop'
 
         # Check for Desktop
         if any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
@@ -124,20 +126,21 @@ class AssetCategorizer:
         if manufacturer in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'] and \
            any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'][manufacturer]):
             return 'Desktop'
+        if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['desktop_hostname_keywords']):
+            return 'Desktop'
         if any(kw in os_type for kw in categorization_rules.COMPUTER_RULES['desktop_os_keywords']):
             return 'Desktop'
             
-        return 'Desktop' # Default for a computer
+        return 'Desktop' # Default for a computer if not explicitly a laptop
 
     @classmethod
     def _categorize_generic_os_device(cls, os_type: str, model: str) -> Optional[str]:
         """Categorize a device based on generic OS and inferred model."""
         if 'windows server' in model or 'linux server' in model:
             return 'Server'
-        if 'windows workstation' in model or 'linux workstation' in model or 'macos device' in model: # Use Desktop as the fallback
+        if 'windows workstation' in model or 'linux workstation' in model or 'macos device' in model:
             return 'Desktop'
         if 'windows' in os_type or 'mac' in os_type or 'linux' in os_type:
-            # If OS is known but no specific model, default to Workstation
             return 'Desktop'
         return None
 
@@ -145,10 +148,11 @@ class AssetCategorizer:
     def _categorize_iot(cls, model: str, os_type: str, device_name: str) -> Optional[str]:
         """Categorize a device as IoT."""
         clean_device_name = normalize_for_comparison(device_name)
-
+               
         if any(kw in model for kw in categorization_rules.IOT_RULES['model_keywords']) or \
            any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']) or \
            any(kw in clean_device_name for kw in categorization_rules.IOT_RULES.get('hostname_keywords', [])):
+               
             return 'IoT Devices'
         return None
 

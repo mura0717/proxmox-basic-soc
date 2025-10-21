@@ -5,8 +5,8 @@ def normalize_for_comparison(text: str) -> str:
     """Normalizes text for case-insensitive comparison by lowercasing and removing special chars."""
     if not isinstance(text, str):
         return ""
-    # Remove special characters and extra whitespace, convert to lowercase
-    normalized = re.sub(r'[()"/*-]', ' ', text.lower())
+    text = text.lower().replace('"', ' inch')
+    normalized = re.sub(r'[()/*-.]', ' ', text)
     normalized = re.sub(r'\s+', ' ', normalized).strip()
     return normalized
 
@@ -18,3 +18,4 @@ def normalize_for_display(name: str) -> str:
     name = re.sub(r'[()"\/]', ' ', name)
     name = re.sub(r'\s+', ' ', name)
     return name.strip()
+
