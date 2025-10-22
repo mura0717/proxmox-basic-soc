@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from crud.assets import AssetService
+from crud.base import BaseCRUDService
 
 load_dotenv()
 
@@ -23,7 +24,11 @@ if assets != []:
     for asset in assets:
         asset_service.delete_by_name(asset['name'])
         print(f"Deleted asset: {asset['name']}")
-    print("Asset deletion completed.")
+    print("Soft-deletion of assets completed.")
+    print("\n--- Purging soft-deleted records from the database ---")
+    # This makes the deletion permanent
+    BaseCRUDService.purge_deleted_via_database()
+
 else:
     print("There are no assets to delete.")
  

@@ -21,6 +21,7 @@ def delete_category(category_name: str):
     """Finds and deletes the specified category."""
     
     category_service = CategoryService()
+    from crud.base import BaseCRUDService
 
     print(f"Searching for category: '{category_name}'...")
     category = category_service.get_by_name(category_name)
@@ -32,7 +33,10 @@ def delete_category(category_name: str):
     print(f"✓ Found category '{category_name}' (ID: {category['id']}).")
 
     if category_service.delete(category['id']) or category_service.delete_by_name(category_name):
-        print(f"✓ Successfully deleted category: '{category_name}'")
+        print(f"✓ Successfully soft-deleted category: '{category_name}'")
+        print("\n--- Purging soft-deleted record from the database ---")
+        # This makes the deletion permanent
+        BaseCRUDService.purge_deleted_via_database()
     else:
         print(f"✗ Failed to delete category '{category_name}'. It might be protected if assets are still assigned to it.")
 

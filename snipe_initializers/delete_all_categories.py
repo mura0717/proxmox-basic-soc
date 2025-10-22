@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from crud.categories import CategoryService
+from crud.base import BaseCRUDService
 
 load_dotenv()
 
@@ -23,7 +24,10 @@ if categories != []:
     for category in categories:
         category_service.delete_by_name(category['name'])
         print(f"Deleted asset: {category['name']}")
-    print("Category deletion completed.")
+    print("Soft-deletion of categories completed.")
+    print("\n--- Purging soft-deleted records from the database ---")
+    # This makes the deletion permanent
+    BaseCRUDService.purge_deleted_via_database()
 else:
     print("There are no categories to delete.")
  
