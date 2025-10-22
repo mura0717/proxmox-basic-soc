@@ -40,6 +40,8 @@ class AssetMatcher:
         self.location_service = LocationService()
         self.finder = AssetFinder(self.asset_service) # Instantiate finder once
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
+        if self.debug:
+            self._debug_custom_fields()
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
         """Generate unique hash for asset identification"""
@@ -417,6 +419,9 @@ class AssetMatcher:
 
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate all custom fields in the payload."""
+        
+        # cf = payload.setdefault('custom_fields', {})
+      
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
                 field_name = field_def['name']
@@ -434,6 +439,16 @@ class AssetMatcher:
                 
                 # Use exact field name from schema
                 payload[field_name] = value
+                
+                if self.debug:
+                    print(f"[DEBUG] Setting custom field '{field_name}' = '{value}'")
+
+    def _debug_custom_fields(self):
+        """Debug method to show custom field mappings"""
+        print("=== CUSTOM FIELD MAPPINGS ===")
+        for field_key, field_def in CUSTOM_FIELDS.items():
+            print(f"Key: '{field_key}' -> Field Name: '{field_def['name']}'")
+        print("==============================")
 
     def _determine_status(self, payload: Dict, asset_data: Dict):
         """Determines and sets the status_id for the asset."""
