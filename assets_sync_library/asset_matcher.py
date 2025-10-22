@@ -40,8 +40,6 @@ class AssetMatcher:
         self.location_service = LocationService()
         self.finder = AssetFinder(self.asset_service) # Instantiate finder once
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
-        if self.debug:
-            self._debug_custom_fields()
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
         """Generate unique hash for asset identification"""
@@ -202,11 +200,12 @@ class AssetMatcher:
         
         # Log the final payload before sending
         if debug_logger.is_enabled:
+            print(f"Log final payload for update: {asset_data.get('name')}")
             debug_logger.log_final_payload(asset_data.get('_source', 'unknown'), 'update', asset_data.get('name', 'Unknown'), payload)
             
         result = self.asset_service.update(asset_id, payload)
         return result is not None
-
+    
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
         payload = {}
@@ -275,6 +274,9 @@ class AssetMatcher:
                     
                     # Create FULL model name (e.g., "LENOVO 20L8002WMD")
                     full_model_name = f"{manufacturer_name} {model_name}"
+                    # Truncate full model name to prevent 255 character limit
+                    if len(full_model_name) > 250:
+                        full_model_name = f"{manufacturer_name} {model_name[:250]}"
                     
                     # Check if model exists
                     existing_model = self.model_service.get_by_name(full_model_name)
@@ -415,41 +417,30 @@ class AssetMatcher:
         # 5. STATUS
         self._determine_status(payload, asset_data)
         
-        
-
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate all custom fields in the payload."""
-        
-        # cf = payload.setdefault('custom_fields', {})
-      
+        cf = payload.setdefault('custom_fields', {})
+
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
-                field_name = field_def['name']
+                field_label = field_def['name']
                 value = asset_data[field_key]
-                
-                # Skip empty values
+
                 if value == "" or value == "Unknown":
                     continue
-                
-                # Convert based on type
+
                 if field_def['element'] == 'checkbox':
                     value = 1 if value else 0
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
                     value = json.dumps(value)
-                
-                # Use exact field name from schema
-                payload[field_name] = value
-                
+
+                cf[field_label] = value
                 if self.debug:
-                    print(f"[DEBUG] Setting custom field '{field_name}' = '{value}'")
+                    print(f"[DEBUG] Setting custom field '{field_label}' = '{value}'")
 
-    def _debug_custom_fields(self):
-        """Debug method to show custom field mappings"""
-        print("=== CUSTOM FIELD MAPPINGS ===")
-        for field_key, field_def in CUSTOM_FIELDS.items():
-            print(f"Key: '{field_key}' -> Field Name: '{field_def['name']}'")
-        print("==============================")
-
+        if not cf:
+            payload.pop('custom_fields', None)
+                
     def _determine_status(self, payload: Dict, asset_data: Dict):
         """Determines and sets the status_id for the asset."""
         if 'status_id' in payload:
@@ -481,7 +472,19 @@ class AssetMatcher:
         
         # The 'category' value can be a string or a dictionary. Handle both.
         category_value = classification.get('category', 'Other Assets')
-        return category_value if isinstance(category_value, dict) else self.category_service.get_by_name(category_value) or self.category_service.get_by_name('Other Assets')
+        if isinstance(category_value, dict):
+            return category_value
+    
+        # If it's a string, look it up
+        category_obj = self.category_service.get_by_name(category_value)
+        if category_obj:
+            return category_obj
+        
+        # Fallback to Other Assets if not found
+        fallback_obj = self.category_service.get_by_name('Other Assets')
+        return fallback_obj if fallback_obj else {'id': 18, 'name': 'Other Assets'}
+
+        # return category_value if isinstance(category_value, dict) else self.category_service.get_by_name(category_value) or self.category_service.get_by_name('Other Assets')
         
     
     def _generate_asset_tag(self, asset_data: Dict) -> str:

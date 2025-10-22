@@ -17,6 +17,9 @@ class AssetDebugLogger:
         # Master flag for convenience
         self.is_enabled = self.intune_debug or self.nmap_debug
         
+        print(f"DEBUG_LOGGER: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
+              f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}")
+
         # Create log directory
         self.log_dir = os.path.join("logs", "debug_logs")
         os.makedirs(self.log_dir, exist_ok=True)
@@ -40,15 +43,23 @@ class AssetDebugLogger:
         }
     
     def _get_log_path(self, source: str, purpose: str) -> str | None:
-        """Helper to get the correct log file path for a source and purpose."""
+        """Helper to get the correct log file path for a source and purpose."""  
+        log_path = self.log_files.get(source.lower(), {}).get(purpose)
+        if log_path:
+            print(f"DEBUG_LOGGER: _get_log_path for source '{source}' purpose '{purpose}' resolved to: '{os.path.abspath(log_path)}'")
         return self.log_files.get(source.lower(), {}).get(purpose)
+    
     
     def _should_log(self, source: str) -> bool:
         """Check if logging is enabled for the given source."""
         source_lower = source.lower()
-        if source_lower == 'intune': return self.intune_debug
-        if source_lower == 'nmap': return self.nmap_debug
-        return False
+        if source_lower == 'intune': result = self.intune_debug
+        elif source_lower == 'nmap': result = self.nmap_debug
+        elif source_lower == 'snmp': result = self.snmp_debug
+        else: result = False
+        
+        print(f"DEBUG_LOGGER: _should_log called for source '{source_lower}'. Result: {result}")
+        return result
     
     def clear_logs(self, source: str):
         """Clears all log files for a specific source."""
@@ -103,12 +114,17 @@ class AssetDebugLogger:
         message = f"\n--- FINAL PAYLOAD | Action: {action.upper()} | Asset: {asset_name} ---\n" + \
                   json.dumps(payload, indent=2, default=str) + "\n" + "-"*50
         self._write_log(message, log_path)
+        print(f"Final Log Message: {message}")
 
     def _write_log(self, message: str, log_file: str):
         timestamp = datetime.now().isoformat()
         log_entry = f"[{timestamp}] {message}"
+        absolute_log_file = os.path.abspath(log_file)
         try:
             with open(log_file, "a", encoding="utf-8") as f: f.write(log_entry + "\n")
+            # f.flush()  # Explicitly flush Python's internal buffer
+            # os.fsync(f.fileno()) # Force OS to write to disk
+            print(f"DEBUG_LOGGER: Successfully wrote to '{absolute_log_file}'.")
         except IOError as e:
             print(f"Warning: Could not write to log file {log_file}: {e}")
 
