@@ -418,14 +418,15 @@ class AssetMatcher:
         self._determine_status(payload, asset_data)
         
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
-        """Populate all custom fields in the payload."""
-        cf = payload.setdefault('custom_fields', {})
-
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
-                field_label = field_def['name']
-                value = asset_data[field_key]
+                db_key = field_def.get('db_field_name')  # e.g. "_snipeit_last_seen_ip_1"
+                if not db_key:
+                    if self.debug:
+                        print(f"[WARNING] Missing db_field_name for '{field_def['name']}'. Skipping.")
+                    continue
 
+                value = asset_data[field_key]
                 if value == "" or value == "Unknown":
                     continue
 
@@ -434,12 +435,10 @@ class AssetMatcher:
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
                     value = json.dumps(value)
 
-                cf[field_label] = value
-                if self.debug:
-                    print(f"[DEBUG] Setting custom field '{field_label}' = '{value}'")
+                payload[db_key] = value
 
-        if not cf:
-            payload.pop('custom_fields', None)
+                if self.debug:
+                    print(f"[DEBUG] Setting custom field '{db_key}' = '{value}'")
                 
     def _determine_status(self, payload: Dict, asset_data: Dict):
         """Determines and sets the status_id for the asset."""
