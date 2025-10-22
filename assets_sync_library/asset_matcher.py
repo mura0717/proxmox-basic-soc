@@ -22,6 +22,7 @@ from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS
 from config.network_config import STATIC_IP_MAP
+from debug.asset_debug_logger import debug_logger
 from assets_sync_library.mac_utils import normalize_mac
 
 class AssetMatcher:
@@ -184,12 +185,23 @@ class AssetMatcher:
     def _create_asset(self, asset_data: Dict) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data)
-        print(f"Creating new asset: {asset_data.get('name', 'Unknown')}")
+        asset_name = asset_data.get('name', 'Unknown')
+        
+        # Log the final payload before sending
+        if debug_logger.is_enabled:
+            debug_logger.log_final_payload(asset_data.get('_source', 'unknown'), 'create', asset_name, payload)
+            
+        print(f"Creating new asset: {asset_name}")
         return self.asset_service.create(payload)
     
     def _update_asset(self, asset_id: int, asset_data: Dict) -> bool:
         """Prepare and update an existing asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data, is_update=True)
+        
+        # Log the final payload before sending
+        if debug_logger.is_enabled:
+            debug_logger.log_final_payload(asset_data.get('_source', 'unknown'), 'update', asset_data.get('name', 'Unknown'), payload)
+            
         result = self.asset_service.update(asset_id, payload)
         return result is not None
 

@@ -15,7 +15,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.mac_utils import normalize_mac
 
-
 class NmapDebugCategorization:
     """Test categorization logic for Nmap assets without needing live scans"""
     
@@ -168,9 +167,3 @@ class NmapDebugCategorization:
             print(f"  {device_type:35} : {count}")
         
 nmap_debug_categorization = NmapDebugCategorization()
-
-# if __name__ == "__main__":
-#     if nmap_debug_categorization.debug:
-#         nmap_debug_categorization.write_nmap_assets_to_logfile()
-#     else:
-#         print("Set NMAP_CATEGORIZATION_DEBUG=1 to run this script.")

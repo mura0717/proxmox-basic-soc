@@ -28,12 +28,14 @@ class AssetDebugLogger:
                 'parsed': os.path.join(self.log_dir, 'intune_parsed_asset_data.log'),
                 'categorization': os.path.join(self.log_dir, 'intune_categorization_details.log'),
                 'summary': os.path.join(self.log_dir, 'intune_sync_summary.log'),
+                'final_payload': os.path.join(self.log_dir, 'intune_final_payload.log'),
             },
             'nmap': {
                 'raw': os.path.join(self.log_dir, 'nmap_raw_unparsed_data.log'),
                 'parsed': os.path.join(self.log_dir, 'nmap_parsed_asset_data.log'),
                 'categorization': os.path.join(self.log_dir, 'nmap_categorization_details.log'),
                 'summary': os.path.join(self.log_dir, 'nmap_sync_summary.log'),
+                'final_payload': os.path.join(self.log_dir, 'nmap_final_payload.log'),
             }
         }
     
@@ -90,6 +92,16 @@ class AssetDebugLogger:
                   f"Created: {results.get('created', 0)}\n" + \
                   f"Updated: {results.get('updated', 0)}\n" + \
                   f"Failed:  {results.get('failed', 0)}\n" + "-"*50
+        self._write_log(message, log_path)
+
+    def log_final_payload(self, source: str, action: str, asset_name: str, payload: dict):
+        """Logs the final payload being sent to the Snipe-IT API."""
+        if not self._should_log(source): return
+        log_path = self._get_log_path(source, 'final_payload')
+        if not log_path: return
+
+        message = f"\n--- FINAL PAYLOAD | Action: {action.upper()} | Asset: {asset_name} ---\n" + \
+                  json.dumps(payload, indent=2, default=str) + "\n" + "-"*50
         self._write_log(message, log_path)
 
     def _write_log(self, message: str, log_file: str):
