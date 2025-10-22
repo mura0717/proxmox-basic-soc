@@ -90,7 +90,7 @@ class AssetMatcher:
         if found_asset:
             return found_asset
             
-        print("No existing asset found")
+        print("No existing asset found.")
         return None
 
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
@@ -233,20 +233,18 @@ class AssetMatcher:
         model_name = str(asset_data.get('model') or '').strip()
         
         if self.debug:
-            print(f"[DEBUG] Processing model - Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
-            print(f"[DEBUG] Model type: '{type(model_name)}'")
-            print(f"[DEBUG] Manufacturer type: '{type(manufacturer_name)}'")
+            print(f"[_handle_model_and_category] Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
             if not manufacturer_name:
-                print(f"[DEBUG] Missing manufacturer for asset: {asset_data.get('name', 'Unknown')}")
+                print(f"[_handle_model_and_category] WARNING: Missing manufacturer for asset: {asset_data.get('name', 'Unknown')}")
             if not model_name:
-                print(f"[DEBUG] Missing model for asset: {asset_data.get('name', 'Unknown')}")
+                print(f"[_handle_model_and_category] WARNING: Missing model for asset: {asset_data.get('name', 'Unknown')}")
         
         # Only process if we have actual data
         if manufacturer_name and model_name:
             # Use "get or create" logic to prevent errors for existing manufacturers
             manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
             if self.debug:
-                print(f"Get or create manufacturer: '{manufacturer}'")
+                print(f"[_handle_model_and_category] Get/Create Manufacturer result: {manufacturer}")
     
             if manufacturer:
                 payload['manufacturer_id'] = manufacturer['id']
@@ -256,11 +254,9 @@ class AssetMatcher:
                 category_name = category.get('name') if isinstance(category, dict) else category
                 
                 if self.debug:
-                    print(f"[DEBUG] Category lookup in _handel_model_and_category for: '{category_name}': {category}")
+                    print(f"[_handle_model_and_category] Determined category for '{category_name}': {category}")
                 
                 if category:
-                    if self.debug:
-                        print(f"[DEBUG] Determined category: '{category_name}'")
                     payload['category_id'] = category['id']
                     
                     # Create FULL model name (e.g., "LENOVO 20L8002WMD")
@@ -269,11 +265,7 @@ class AssetMatcher:
                     # Check if model exists
                     existing_model = self.model_service.get_by_name(full_model_name)
                     if self.debug:
-                        if existing_model:
-                            print(f"Full model name: '{full_model_name}'")
-                            print(f"Existing model found: '{existing_model.get('name')}' (ID: {existing_model.get('id')})")
-                        else:
-                            print(f"Existing model: None")
+                        print(f"[_handle_model_and_category] Full model name: '{full_model_name}'. Found existing model: {existing_model.get('name') if existing_model else 'None'}")
                     
                     if not existing_model:
                         # Create model with proper fieldset
@@ -306,8 +298,8 @@ class AssetMatcher:
                             model_data['fieldset_id'] = fieldset['id']
                             
                         if self.debug:
-                            print(f"[DEBUG] Model '{full_model_name}' not found. Attempting to create...")
-                            print(f"[DEBUG] Model creation payload: {json.dumps(model_data, indent=2)}")
+                            print(f"[_handle_model_and_category] Model '{full_model_name}' not found. Attempting to create...")
+                            print(f"[_handle_model_and_category] Model creation payload: {json.dumps(model_data, indent=2)}")
                         
                             try:
                                 newly_created_model = self.model_service.create(model_data)
@@ -315,21 +307,21 @@ class AssetMatcher:
                                 if newly_created_model:
                                     existing_model = newly_created_model
                                     if self.debug:
-                                        print(f"Successfully created model: {full_model_name} (ID: {existing_model.get('id')})")
+                                        print(f"[_handle_model_and_category] Successfully created model: {full_model_name} (ID: {existing_model.get('id')})")
                                 else:
                                     # This block runs if create() returns None, indicating an API error
                                     error_response = getattr(self.model_service, 'last_error', "No specific error message from API.")
-                                    print(f"[ERROR] Model creation failed for '{full_model_name}'. API Error: {error_response}")
-                                    print(f"[WARNING] Retrying lookup for '{full_model_name}' in case of a race condition...")
+                                    print(f"[_handle_model_and_category] ERROR: Model creation failed for '{full_model_name}'. API Error: {error_response}")
+                                    print(f"[_handle_model_and_category] WARNING: Retrying lookup for '{full_model_name}' in case of a race condition...")
                                     self.model_service.get_all(refresh_cache=True)
                                     
                                     existing_model = self.model_service.get_by_name(full_model_name)
                                     if not existing_model:
                                         print(f"[ERROR] Could not create or find model '{full_model_name}'. Asset will be processed without a specific model.")
                                         if self.debug:
-                                            print(f"[DEBUG] Failed model creation payload: {json.dumps(model_data, indent=2)}")
+                                            print(f"[_handle_model_and_category] DEBUG: Failed model creation payload: {json.dumps(model_data, indent=2)}")
                             except Exception as e:
-                                print(f"[ERROR] Exception during model creation for '{full_model_name}': {str(e)}")
+                                print(f"[_handle_model_and_category] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
                                 existing_model = None
 
                     #  To automatically correct the category of an existing model.
@@ -338,7 +330,7 @@ class AssetMatcher:
                         if category and (not existing_model.get('category') or existing_model.get('category', {}).get('id') != category['id']):
                             if self.debug:
                                 old_cat = (existing_model.get('category') or {}).get('name')
-                                print(f"[DEBUG] Updating model category: {existing_model.get('name')} from {old_cat} to {category['name']}")
+                                print(f"[_handle_model_and_category] Updating model category for '{existing_model.get('name')}' from '{old_cat}' to '{category['name']}'")
                             self.model_service.update(existing_model['id'], {'category_id': category['id']})
                             self.model_service.get_all(refresh_cache=True)
         
@@ -353,15 +345,15 @@ class AssetMatcher:
             generic_model_obj = self.model_service.get_by_name(generic_model_name)
             
             if self.debug:
-                print(f"[DEBUG] No specific model found. Looking for generic: '{generic_model_name}'")
+                print(f"[_assign_generic_model] No specific model found. Looking for generic: '{generic_model_name}'")
         
             if generic_model_obj:
                 payload['model_id'] = generic_model_obj['id']
                 # Set category from generic model if not already set
                 if 'category_id' not in payload and generic_model_obj.get('category'):
                     payload['category_id'] = generic_model_obj['category']['id']    
-                if self.debug:
-                    print(f"[DEBUG] Successfully found and assigned generic model ID: {payload['model_id']}")
+                    if self.debug:
+                        print(f"[_assign_generic_model] Successfully found and assigned generic model ID: {payload['model_id']}")
             else:
                 raise ValueError(
                     f"FATAL: The required generic model '{generic_model_name}' was not found in Snipe-IT. "
@@ -458,7 +450,7 @@ class AssetMatcher:
         asset_data['device_type'] = classification.get('device_type')
         
         if self.debug:
-            print(f"Categorization for {asset_data.get('name')}: {classification}")
+            print(f"[_determine_category] Categorization for '{asset_data.get('name')}': {classification}")
         
         # The 'category' value can be a string or a dictionary. Handle both.
         category_value = classification.get('category', 'Other Assets')
