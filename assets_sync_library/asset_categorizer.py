@@ -49,20 +49,23 @@ class AssetCategorizer:
         """Determine device type based on a list of open services."""
         if not services:
             return None
+
+        # Use the normalized string for more reliable matching - BEFORE: service_str = ' '.join(services).lower()
+        service_str = normalize_for_comparison(' '.join(services))
         
-        service_str = ' '.join(services).lower()
-        
-        if 'domain' in service_str and 'ldap' in service_str:
+        dc_keywords = categorization_rules.SERVICE_RULES['Domain Controller']['service_keywords']
+        if all(kw in service_str for kw in dc_keywords):
             return 'Domain Controller'
-        if any(svc in service_str for svc in ['ipp', 'jetdirect', 'printer', 'cups']):
+
+        if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Printer']['service_keywords']):
             return 'Printer'
-        if any(db in service_str for db in ['mysql', 'mssql', 'postgresql', 'oracle', 'mongodb']):
+        if any(db in service_str for db in categorization_rules.SERVICE_RULES['Database Server']['service_keywords']):
             return 'Database Server'
-        if any(svc in service_str for svc in ['nfs', 'smb', 'cifs', 'iscsi']):
+        if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Storage Device']['service_keywords']):
             return 'Storage Device'
-        if ('http' in service_str or 'https' in service_str):
+        if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Web Server']['service_keywords']):
             return 'Web Server'
-        if 'snmp' in service_str:
+        if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Network Device']['service_keywords']):
             return 'Network Device' # Generic fallback if SNMP is seen
         return None
     

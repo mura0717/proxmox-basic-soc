@@ -75,6 +75,27 @@ IOT_RULES = {
     'os_keywords': ['iot', 'androidaosp'] # Rely on model for Nmap, Intune handles Android OS better
 }
 
+SERVICE_RULES = {
+    'Domain Controller': {
+        'service_keywords': ['domain', 'ldap', 'kerberos']
+    },
+    'Printer': {
+        'service_keywords': ['ipp', 'jetdirect', 'printer', 'cups', 'lpr']
+    },
+    'Database Server': {
+        'service_keywords': ['mysql', 'mssql', 'postgresql', 'oracle', 'mongodb']
+    },
+    'Storage Device': {
+        'service_keywords': ['nfs', 'smb', 'cifs', 'iscsi', 'netapp', 'synology']
+    },
+    'Web Server': {
+        'service_keywords': ['http', 'https', 'nginx', 'apache', 'iis']
+    },
+    'Network Device': { # Generic fallback if SNMP is seen
+        'service_keywords': ['snmp']
+    }
+}
+
 CATEGORY_MAP = {
     'Server': 'Servers',
     'Switch': 'Switches',
