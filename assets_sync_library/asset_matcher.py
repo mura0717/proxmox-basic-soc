@@ -41,9 +41,10 @@ class AssetMatcher:
         self.location_service = LocationService()
         self.finder = AssetFinder(self.asset_service)
         self.field_service = FieldService()
+        self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
         self.custom_field_map = {}
         self._hydrate_field_map()
-        self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
+        
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
         """Generate unique hash for asset identification"""
@@ -465,10 +466,6 @@ class AssetMatcher:
             if field_key in asset_data and asset_data[field_key] is not None:
                 
                 db_key = self.custom_field_map.get(field_key)
-                if not db_key:
-                    self._hydrate_field_map()
-                    db_key = self.custom_field_map.get(field_key)
-                
                 if not db_key:
                     if self.debug:
                         print(f"[WARNING] No DB key for custom field '{field_def.get('name')}'. Skipping.")
