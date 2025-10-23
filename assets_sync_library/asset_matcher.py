@@ -18,6 +18,7 @@ from crud.manufacturers import ManufacturerService
 from crud.models import ModelService
 from crud.assets import AssetService
 from crud.locations import LocationService
+from crud.fields import FieldService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS
@@ -38,7 +39,10 @@ class AssetMatcher:
         self.manufacturer_service = ManufacturerService()
         self.model_service = ModelService()
         self.location_service = LocationService()
-        self.finder = AssetFinder(self.asset_service) # Instantiate finder once
+        self.finder = AssetFinder(self.asset_service)
+        self.field_service = FieldService()
+        self.custom_field_map = {}
+        self._hydrate_field_map()
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
@@ -376,6 +380,44 @@ class AssetMatcher:
                     f"Please ensure the initialization script has been run and the model exists."
                 )
 
+    def _hydrate_field_map(self):
+        """
+        Builds a map from our internal config key (e.g., 'last_seen_ip') to the
+        server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
+        """
+        try:
+        
+            # Create a reverse lookup: "Last Seen IP" -> "last_seen_ip"
+            name_to_key_map = {v['name']: k for k, v in CUSTOM_FIELDS.items()}
+            all_fields_from_server = self.field_service.get_all(refresh_cache=True)
+            db_key_candidates = ('db_field_name', 'db_column', 'db_field')
+            self.custom_field_map = {}
+            
+            for server_field in all_fields_from_server:
+                field_name = server_field.get('name')
+                
+                internal_key = name_to_key_map.get(field_name)
+                
+                db_column = None
+                for candidate in db_key_candidates:
+                    if server_field.get(candidate):
+                        db_column = server_field.get(candidate)
+                        break
+                    
+                if db_column and internal_key:
+                    self.custom_field_map[internal_key] = db_column
+            
+            if self.debug:
+                print(f"[DEBUG] Hydrated {len(self.custom_field_map)} custom field mappings.")
+                if len(self.custom_field_map) < len(CUSTOM_FIELDS):
+                    missing = [k for k in CUSTOM_FIELDS if k not in self.custom_field_map]
+                    print(f"[WARNING] Could not find server mapping for keys: {missing}")
+        
+        except Exception as e:
+            print(f"[ERROR] CRITICAL: Failed to hydrate custom field map: {e}")
+            print("         Custom fields will not be synced.")
+    
+    
     def _populate_standard_fields(self, payload: Dict, asset_data: Dict, is_update: bool):
         """Populate standard, non-custom fields in the payload."""
         # 1. Basic text fields
@@ -418,12 +460,18 @@ class AssetMatcher:
         self._determine_status(payload, asset_data)
         
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
+        """Populate custom fields into the main payload using their DB column names."""
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
-                db_key = field_def.get('db_field_name')  # e.g. "_snipeit_last_seen_ip_1"
+                
+                db_key = self.custom_field_map.get(field_key)
+                if not db_key:
+                    self._hydrate_field_map()
+                    db_key = self.custom_field_map.get(field_key)
+                
                 if not db_key:
                     if self.debug:
-                        print(f"[WARNING] Missing db_field_name for '{field_def['name']}'. Skipping.")
+                        print(f"[WARNING] No DB key for custom field '{field_def.get('name')}'. Skipping.")
                     continue
 
                 value = asset_data[field_key]
@@ -436,7 +484,6 @@ class AssetMatcher:
                     value = json.dumps(value)
 
                 payload[db_key] = value
-
                 if self.debug:
                     print(f"[DEBUG] Setting custom field '{db_key}' = '{value}'")
                 

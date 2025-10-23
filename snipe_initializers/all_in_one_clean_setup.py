@@ -440,7 +440,7 @@ if __name__ == "__main__":
 
     """PURGE ALL (HARD DELETE)"""
     # This step makes the deletions permanent!
-    #purge_deleted_via_database()
+    purge_deleted_via_database()
 
     """CREATE ALL"""
     create_status_labels()
