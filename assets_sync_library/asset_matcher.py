@@ -7,11 +7,11 @@ import os
 import sys
 import hashlib
 import json
+from datetime import datetime, timezone
+from typing import Dict, List, Optional, Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any
 from crud.status_labels import StatusLabelService
 from crud.categories import CategoryService
 from crud.manufacturers import ManufacturerService
@@ -25,6 +25,7 @@ from config.snipe_schema import CUSTOM_FIELDS
 from config.network_config import STATIC_IP_MAP
 from debug.asset_debug_logger import debug_logger
 from assets_sync_library.mac_utils import normalize_mac
+from assets_sync_library.text_utils import normalize_for_comparison
 
 class AssetMatcher:
     """
@@ -165,8 +166,15 @@ class AssetMatcher:
             existing = self.find_existing_asset(asset_data)
             
             if existing:
+                
+                flattened_existing = {**existing} # Create a copy
+                if isinstance(flattened_existing.get('model'), dict):
+                    flattened_existing['model'] = flattened_existing['model'].get('name')
+                if isinstance(flattened_existing.get('manufacturer'), dict):
+                    flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
+                    
                 # Merge with existing data and update
-                merged_data = self.merge_asset_data({'_source': 'existing', **existing}, asset_data)
+                merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data)
                 if self._update_asset(existing['id'], merged_data):
                     results['updated'] += 1
                     results['assets'].append({'id': existing['id'], 'action': 'updated', 'name': merged_data.get('name', 'Unknown')})
@@ -243,12 +251,23 @@ class AssetMatcher:
         dns_hostname = asset_data.get('dns_hostname', '') # Real not generic
         if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
             return True
-        return False
+        name = (asset_data.get('name') or '').strip()
+        if name and not name.lower().startswith('device-'):
+            return True
+        return bool(asset_data.get('asset_tag')) # False
 
     def _handle_model_and_category(self, payload: Dict, asset_data: Dict):
         """Determine and assign manufacturer, model, and category."""
-        manufacturer_name = str(asset_data.get('manufacturer') or '').strip()
-        model_name = str(asset_data.get('model') or '').strip()
+        raw_mfr = asset_data.get('manufacturer')
+        raw_model = asset_data.get('model')
+
+        if isinstance(raw_mfr, dict):
+            raw_mfr = raw_mfr.get('name') or ''
+        if isinstance(raw_model, dict):
+            raw_model = raw_model.get('name') or raw_model.get('model_number') or ''
+
+        manufacturer_name = str(raw_mfr or '').strip()
+        model_name = str(raw_model or '').strip()
         
         if self.debug:
             print(f"[_handle_model_and_category] Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
@@ -380,44 +399,6 @@ class AssetMatcher:
                     f"FATAL: The required generic model '{generic_model_name}' was not found in Snipe-IT. "
                     f"Please ensure the initialization script has been run and the model exists."
                 )
-
-    def _hydrate_field_map(self):
-        """
-        Builds a map from our internal config key (e.g., 'last_seen_ip') to the
-        server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
-        """
-        try:
-        
-            # Create a reverse lookup: "Last Seen IP" -> "last_seen_ip"
-            name_to_key_map = {v['name']: k for k, v in CUSTOM_FIELDS.items()}
-            all_fields_from_server = self.field_service.get_all(refresh_cache=True)
-            db_key_candidates = ('db_field_name', 'db_column', 'db_field')
-            self.custom_field_map = {}
-            
-            for server_field in all_fields_from_server:
-                field_name = server_field.get('name')
-                
-                internal_key = name_to_key_map.get(field_name)
-                
-                db_column = None
-                for candidate in db_key_candidates:
-                    if server_field.get(candidate):
-                        db_column = server_field.get(candidate)
-                        break
-                    
-                if db_column and internal_key:
-                    self.custom_field_map[internal_key] = db_column
-            
-            if self.debug:
-                print(f"[DEBUG] Hydrated {len(self.custom_field_map)} custom field mappings.")
-                if len(self.custom_field_map) < len(CUSTOM_FIELDS):
-                    missing = [k for k in CUSTOM_FIELDS if k not in self.custom_field_map]
-                    print(f"[WARNING] Could not find server mapping for keys: {missing}")
-        
-        except Exception as e:
-            print(f"[ERROR] CRITICAL: Failed to hydrate custom field map: {e}")
-            print("         Custom fields will not be synced.")
-    
     
     def _populate_standard_fields(self, payload: Dict, asset_data: Dict, is_update: bool):
         """Populate standard, non-custom fields in the payload."""
@@ -459,6 +440,45 @@ class AssetMatcher:
         
         # 5. STATUS
         self._determine_status(payload, asset_data)
+    
+    
+    def _hydrate_field_map(self):
+        """
+        Builds a map from our internal config key (e.g., 'last_seen_ip') to the
+        server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
+        """
+        try:
+            name_to_key_map = {normalize_for_comparison(defn.get('name', '')): key
+            for key, defn in CUSTOM_FIELDS.items()}
+            
+            all_fields_from_server = self.field_service.get_all(refresh_cache=True) or []
+            
+            if all_fields_from_server and self.debug:
+                # Print the first field to see its structure
+                print(f"[DEBUG] Sample field structure: {all_fields_from_server[0]}")
+                print(f"[DEBUG] Available keys: {list(all_fields_from_server[0].keys())}")
+                    
+            for server_field in all_fields_from_server:
+                field_name = normalize_for_comparison(server_field.get('name') or '')
+                internal_key = name_to_key_map.get(field_name) # Find internal key corresponding to this server field
+                if not internal_key:
+                    continue
+                
+                # Find the DB column name using our list of candidates
+                db_column_str = server_field.get('db_column_name')
+                    
+                if db_column_str:
+                    self.custom_field_map[internal_key] = db_column_str
+            
+            if self.debug:
+                print(f"[DEBUG] Hydrated {len(self.custom_field_map)} custom field mappings.")
+                if len(self.custom_field_map) < len(CUSTOM_FIELDS):
+                    missing = [k for k in CUSTOM_FIELDS if k not in self.custom_field_map]
+                    print(f"[WARNING] Could not find server mapping for keys: {missing}")
+        
+        except Exception as e:
+            print(f"[ERROR] CRITICAL: Failed to hydrate custom field map: {e}")
+            print("         Custom fields will not be synced.")
         
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate custom fields into the main payload using their DB column names."""
@@ -475,12 +495,18 @@ class AssetMatcher:
                 if value == "" or value == "Unknown":
                     continue
 
-                if field_def['element'] == 'checkbox':
+                """ if field_def['element'] == 'checkbox':
                     value = 1 if value else 0
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
-                    value = json.dumps(value)
+                    value = json.dumps(value) """
+                    
+                if isinstance(value, dict) and field_def['element'] != 'checkbox':
+                    value = value.get('name') or json.dumps(value) # Prefer name, fallback to JSON
+                elif isinstance(value, list) and field_def['element'] != 'textarea':
+                    value = ', '.join(map(str, value))
 
                 payload[db_key] = value
+                
                 if self.debug:
                     print(f"[DEBUG] Setting custom field '{db_key}' = '{value}'")
                 

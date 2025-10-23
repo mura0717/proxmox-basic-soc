@@ -145,7 +145,7 @@ CUSTOM_FIELDS = {
     'azure_tags_json': {"name": "Azure Tags (JSON)", "element": "textarea", "help_text": "JSON-encoded Azure tags"},
     
     # Cybersec Tags
-    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'select', 'values': 'Low,Medium,High,Critical'},
+    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'select', 'field_values': 'Low\nMedium\nHigh\nCritical}'},
     'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'checkbox'},
     'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text'}
 }
