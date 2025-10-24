@@ -19,6 +19,7 @@ from crud.models import ModelService
 from crud.assets import AssetService
 from crud.locations import LocationService
 from crud.fields import FieldService
+from crud.fieldsets import FieldsetService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS
@@ -194,6 +195,36 @@ class AssetMatcher:
                     print(f"  ⊘ Insufficient data to create: {asset_data.get('name')} (need MAC, serial, or unique hostname/ID)")
         
         return results
+    
+    def _filter_custom_fields_by_fieldset(self, payload: Dict):
+        model_id = payload.get('model_id')
+        if not model_id:
+            return
+
+        # Ensure we can see the model’s fieldset
+        model = self.model_service.get_by_id(model_id)
+        fieldset = (model or {}).get('fieldset') or {}
+        fieldset_id = fieldset.get('id') or model.get('fieldset_id')
+        if not fieldset_id:
+            return
+
+        # Fetch allowed fields and keep only their DB columns
+        fs = FieldsetService()
+        fields = fs.get_fields(fieldset_id) or []
+        allowed = set()
+        for f in fields:
+            # Your instance exposes db_column_name (confirmed by your debug)
+            db_key = f.get('db_column_name') or f.get('field') or f.get('db_column')
+            if isinstance(db_key, str) and db_key:
+                allowed.add(db_key)
+
+        # Remove any custom-field DB keys that are not on this fieldset
+        for k in list(payload.keys()):
+            if k.startswith('_snipeit_') and k not in allowed:
+                if self.debug:
+                    print(f"[DEBUG] Dropping not-in-fieldset custom field '{k}'")
+                payload.pop(k, None)
+
 
     def _create_asset(self, asset_data: Dict) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
@@ -231,6 +262,8 @@ class AssetMatcher:
         self._handle_model_and_category(payload, asset_data)
         self._populate_standard_fields(payload, asset_data, is_update)
         self._populate_custom_fields(payload, asset_data)
+        self._filter_custom_fields_by_fieldset(payload)
+        
         return payload
     
     def _has_sufficient_data(self, asset_data: Dict) -> bool:
@@ -308,8 +341,6 @@ class AssetMatcher:
                         print(f"[_handle_model_and_category] Full model name: '{full_model_name}'. Found existing model: {existing_model.get('name') if existing_model else 'None'}")
                     
                     if not existing_model:
-                        # Create model with proper fieldset
-                        from crud.fieldsets import FieldsetService
                         fieldset_service = FieldsetService()
                         
                         fieldset_map = {
@@ -448,8 +479,8 @@ class AssetMatcher:
         server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
         """
         try:
-            name_to_key_map = {normalize_for_comparison(defn.get('name', '')): key
-            for key, defn in CUSTOM_FIELDS.items()}
+            name_to_key_map = {normalize_for_comparison(value.get('name', '')): key
+            for key, value in CUSTOM_FIELDS.items()}
             
             all_fields_from_server = self.field_service.get_all(refresh_cache=True) or []
             
@@ -460,12 +491,11 @@ class AssetMatcher:
                     
             for server_field in all_fields_from_server:
                 field_name = normalize_for_comparison(server_field.get('name') or '')
-                internal_key = name_to_key_map.get(field_name) # Find internal key corresponding to this server field
+                internal_key = name_to_key_map.get(field_name) # internal key corresponding to server field
                 if not internal_key:
                     continue
-                
-                # Find the DB column name using our list of candidates
-                db_column_str = server_field.get('db_column_name')
+                # Find the DB column name
+                db_column_str = server_field.get('db_column_name') 
                     
                 if db_column_str:
                     self.custom_field_map[internal_key] = db_column_str

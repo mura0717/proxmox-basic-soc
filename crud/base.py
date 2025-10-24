@@ -65,7 +65,6 @@ class BaseCRUDService:
         if not data:
             print(f"Cannot create {self.entity_name}: No data provided")
             return None
-        
         if 'name' in data:
             data['name'] = normalize_for_display(data['name'])
         if 'model_number' in data:

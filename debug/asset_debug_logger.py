@@ -58,7 +58,7 @@ class AssetDebugLogger:
         elif source_lower == 'snmp': result = self.snmp_debug
         else: result = False
         
-        print(f"DEBUG_LOGGER: _should_log called for source '{source_lower}'. Result: {result}")
+        print(f"asset_dbug_logger.py: DEBUG_LOGGER: _should_log called for source '{source_lower}'. Result: {result}")
         return result
     
     def clear_logs(self, source: str):

@@ -176,7 +176,7 @@ CUSTOM_FIELDSETS = {
         'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
 
         # Networking
-        'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id',
+        'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id','device_type',
 
         # Cellular / Device comms
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',
