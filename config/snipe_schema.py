@@ -9,6 +9,7 @@ CUSTOM_FIELDS = {
     'device_enrollment_type': {"name": "Device Enrollment Type", "element": "text", "help_text": "Type of device enrollment"},
     'device_registration_state': {"name": "Device Registration State", "element": "text", "help_text": "State of device registration"},
     'device_category_display_name': {"name": "Device Category Display Name", "element": "text", "help_text": "Display name of the device category"},
+    'device_type': {"name": "Device Type", "element": "text", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
     'udid': {"name": "UDID", "element": "text", "help_text": "Unique Device Identifier"},
     'serial_number': {"name": "Serial Number", "element": "text", "help_text": "Serial number of the device"},
 
@@ -72,7 +73,6 @@ CUSTOM_FIELDS = {
     'wifi_subnet': {"name": "WiFi Subnet", "element": "text", "help_text": "Subnet information for the WiFi interface"},
 
     # Network Device Information (SNMP)
-    'device_type': {"name": "Device Type", "element": "text", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
     'snmp_location': {"name": "SNMP Location", "element": "text", "help_text": "Physical location from SNMP"},
     'snmp_contact': {"name": "SNMP Contact", "element": "text", "help_text": "Contact person from SNMP"},
     'snmp_uptime': {"name": "SNMP Uptime", "element": "text", "help_text": "Device uptime from SNMP"},
@@ -176,7 +176,7 @@ CUSTOM_FIELDSETS = {
         'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
 
         # Networking
-        'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id','device_type',
+        'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id', 'device_type',
 
         # Cellular / Device comms
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',
