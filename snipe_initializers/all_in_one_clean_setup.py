@@ -116,7 +116,7 @@ def create_all_fields():
 
     for field_data in CUSTOM_FIELDS.values():
         if field_data["name"] in existing_fields:
-            print(f"Field '{field_data['name']}' already exists. Skipping.") # Uncomment for less output
+            print(f"Field '{field_data['name']}' already exists. Skipping.")
             continue
         print(f"Creating field: {field_data['name']}...")
         make_api_request("POST", f"{SNIPE_URL}/api/v1/fields", json=field_data)

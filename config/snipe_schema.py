@@ -14,8 +14,8 @@ CUSTOM_FIELDS = {
     'serial_number': {"name": "Serial Number", "element": "text", "help_text": "Serial number of the device"},
 
     # Enrollment / Management
-    'intune_managed': {"name": "Intune Managed", "element": "checkbox", "help_text": "Is this device managed by Intune?"},
-    'intune_registered': {"name": "Intune Registered", "element": "checkbox", "help_text": "Device is registered with Intune"},
+    'intune_managed': {"name": "Intune Managed", "element": "checkbox", "format": "BOOLEAN", "help_text": "Is this device managed by Intune?"},
+    'intune_registered': {"name": "Intune Registered", "element": "checkbox", "format": "BOOLEAN", "help_text": "Device is registered with Intune"},
     'intune_enrollment_date': {"name": "Intune Enrollment Date", "element": "text", "help_text": "Enrollment timestamp from Intune (ISO 8601)"},
     'intune_last_sync': {"name": "Intune Last Sync", "element": "text", "help_text": "Last check-in timestamp from Intune (ISO 8601)"},
     'managed_by': {"name": "Managed By", "element": "text", "help_text": "Management authority (e.g., Intune, Co-managed, ConfigMgr)"},
@@ -27,7 +27,7 @@ CUSTOM_FIELDS = {
     'compliance_grace_expiration': {"name": "Compliance Grace Expiration", "element": "text", "help_text": "Compliance grace period expiration (ISO 8601)"},
     'management_cert_expiration': {"name": "Management Cert Expiration", "element": "text", "help_text": "Management certificate expiration date (ISO 8601)"},
     'enrollment_profile_name': {"name": "Enrollment Profile Name", "element": "text", "help_text": "Name of the enrollment profile used"},
-    'require_user_enrollment_approval': {"name": "Require User Enrollment Approval", "element": "checkbox", "help_text": "Indicates if user enrollment approval is required"},
+    'require_user_enrollment_approval': {"name": "Require User Enrollment Approval", "element": "checkbox", "format": "BOOLEAN", "help_text": "Indicates if user enrollment approval is required"},
     'activation_lock_bypass_code': {"name": "Activation Lock Bypass Code", "element": "text", "help_text": "Bypass code for activation lock"},
 
     # OS / Platform
@@ -38,10 +38,10 @@ CUSTOM_FIELDS = {
     'product_name': {"name": "Product Name", "element": "text", "help_text": "Product or OS name as reported"},
     'processor_architecture': {"name": "Processor Architecture", "element": "text", "help_text": "CPU architecture (x64, ARM64, etc.)"},
     'security_patch_level': {"name": "Security Patch Level", "element": "text", "help_text": "OS security patch level"},
-    'encrypted': {"name": "Encrypted", "element": "checkbox", "help_text": "Device encryption status"},
-    'supervised': {"name": "Supervised", "element": "checkbox", "help_text": "Supervised status (iOS/macOS)"},
-    'jailbroken': {"name": "Jailbroken/Rooted", "element": "checkbox", "help_text": "Device jailbreak/root status"},
-    'azure_ad_registered': {"name": "Azure AD Registered", "element": "checkbox", "help_text": "Registered in Azure AD"},
+    'encrypted': {"name": "Encrypted", "element": "checkbox", "format": "BOOLEAN", "help_text": "Device encryption status"},
+    'supervised': {"name": "Supervised", "element": "checkbox", "format": "BOOLEAN", "help_text": "Supervised status (iOS/macOS)"},
+    'jailbroken': {"name": "Jailbroken/Rooted", "element": "checkbox", "format": "BOOLEAN", "help_text": "Device jailbreak/root status"},
+    'azure_ad_registered': {"name": "Azure AD Registered", "element": "checkbox", "format": "BOOLEAN", "help_text": "Registered in Azure AD"},
     'bios_version': {"name": "System Management BIOS Version", "element": "text", "help_text": "SMBIOS/Firmware version"},
     'tpm_manufacturer_id': {"name": "TPM Manufacturer ID", "element": "text", "help_text": "TPM manufacturer ID"},
     'tpm_manufacturer_version': {"name": "TPM Manufacturer Version", "element": "text", "help_text": "TPM manufacturer version"},
@@ -95,7 +95,7 @@ CUSTOM_FIELDS = {
 
     # EAS (Exchange ActiveSync)
     'eas_activation_id': {"name": "EAS Activation ID", "element": "text", "help_text": "EAS activation ID"},
-    'eas_activated': {"name": "EAS Activated", "element": "checkbox", "help_text": "EAS activation status"},
+    'eas_activated': {"name": "EAS Activated", "element": "checkbox", "format": "BOOLEAN", "help_text": "EAS activation status"},
     'eas_last_sync': {"name": "EAS Last Sync", "element": "text", "help_text": "Last EAS sync time (ISO 8601)"},
     'eas_reason': {"name": "EAS Reason", "element": "text", "help_text": "EAS status reason"},
     'eas_status': {"name": "EAS Status", "element": "text", "help_text": "EAS status"},
@@ -146,13 +146,23 @@ CUSTOM_FIELDS = {
     
     # Cybersec Tags
     'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'select', 'field_values': 'Low\nMedium\nHigh\nCritical}'},
-    'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'checkbox'},
+    'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'checkbox', "format": "BOOLEAN"},
     'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text'}
 }
 
 # Define which fields belong to which fieldset, using our reference keys
 CUSTOM_FIELDSETS = {
     # Comprehensive fieldset for all managed assets
+     "Managed Assets (Intune)": [
+        'azure_ad_id', 'intune_device_id', 'intune_managed', 'intune_registered',
+        'intune_enrollment_date', 'intune_last_sync', 'intune_compliance',
+        'primary_user_upn', 'primary_user_display_name',
+        'os_platform', 'os_version', 'manufacturer', 'model',
+        'encrypted', 'supervised', 'jailbroken',
+        'total_storage', 'free_storage',
+        'last_update_source', 'last_update_at'   
+    ],
+    
     "Managed Assets (Intune+Nmap)": [
         # Identity / IDs
         'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
@@ -176,7 +186,7 @@ CUSTOM_FIELDSETS = {
         'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
 
         # Networking
-        'dns_hostname', 'mac_addresses', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id', 'device_type',
+        'dns_hostname', 'mac_addresses', 'wifi_mac', 'ethernet_mac', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id', 'device_type',
 
         # Cellular / Device comms
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',
@@ -185,7 +195,7 @@ CUSTOM_FIELDSETS = {
         'total_storage', 'free_storage', 'physical_memory_in_bytes',
 
         # EAS
-        'eas_activation_id', 'eas_activated', 'eas_last_sync', 'eas_reason', 'eas_status',
+        'eas_activation_id', 'eas_activated', 'eas_last_sync', 'eas_reason', 'eas_status', 'exchange_access_state', 'exchange_access_state_reason',
 
         # Nmap
         'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'nmap_open_ports', 'open_ports_hash',

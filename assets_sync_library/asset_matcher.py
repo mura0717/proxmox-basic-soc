@@ -195,35 +195,6 @@ class AssetMatcher:
                     print(f"  ⊘ Insufficient data to create: {asset_data.get('name')} (need MAC, serial, or unique hostname/ID)")
         
         return results
-    
-    def _filter_custom_fields_by_fieldset(self, payload: Dict):
-        model_id = payload.get('model_id')
-        if not model_id:
-            return
-
-        # Ensure we can see the model’s fieldset
-        model = self.model_service.get_by_id(model_id)
-        fieldset = (model or {}).get('fieldset') or {}
-        fieldset_id = fieldset.get('id') or model.get('fieldset_id')
-        if not fieldset_id:
-            return
-
-        # Fetch allowed fields and keep only their DB columns
-        fs = FieldsetService()
-        fields = fs.get_fields(fieldset_id) or []
-        allowed = set()
-        for field in fields:
-            # Your instance exposes db_column_name (confirmed by your debug)
-            db_key = field.get('db_column_name') or field.get('field') or field.get('db_column')
-            if isinstance(db_key, str) and db_key:
-                allowed.add(db_key)
-
-        # Remove any custom-field DB keys that are not on this fieldset
-        for key in list(payload.keys()):
-            if key.startswith('_snipeit_') and key not in allowed:
-                if self.debug:
-                    print(f"[DEBUG] Dropping not-in-fieldset custom field '{key}'")
-                payload.pop(key, None)
 
     def _create_asset(self, asset_data: Dict) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
@@ -261,7 +232,6 @@ class AssetMatcher:
         self._assign_model_manufacturer_and_category(payload, asset_data)
         self._populate_standard_fields(payload, asset_data, is_update)
         self._populate_custom_fields(payload, asset_data)
-        self._filter_custom_fields_by_fieldset(payload)
         
         return payload
     
@@ -323,7 +293,7 @@ class AssetMatcher:
                 
                 if category_obj:
                     payload['category_id'] = category_obj['id']
-                    category_name = category_obj.get('name') if isinstance(category_obj, dict) else category_obj
+                    category_name = category_obj.get('name') if isinstance(category_obj, dict) else str(category_obj)
                     
                     if self.debug:
                         print(f"[_assign_model_manufacturer_and_category] Determined category for '{category_name}': {category_obj}")
@@ -333,8 +303,8 @@ class AssetMatcher:
                         # Standard End-User Devices
                         'Laptops': 'Managed Assets (Intune+Nmap)',
                         'Desktops': 'Managed Assets (Intune+Nmap)',
-                        'Mobile Phones': 'Mobile Devices',
-                        'Tablets': 'Mobile Devices',
+                        'Mobile Phones': 'Managed Assets (Intune+Nmap)',
+                        'Tablets': 'Managed Assets (Intune+Nmap)',
                         'IoT Devices': 'Managed Assets (Intune+Nmap)',
                         # Infrastructure
                         'Servers': 'Managed Assets (Intune+Nmap)',
@@ -353,12 +323,7 @@ class AssetMatcher:
                     fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
                     fieldset = fieldset_service.get_by_name(fieldset_name)
                     
-                    # Create FULL model name (e.g., "LENOVO 20L8002WMD")
-                    full_model_name = f"{manufacturer_name} {model_name}"
-                    # Truncate full model name to prevent 255 character limit
-                    if len(full_model_name) > 250:
-                        full_model_name = f"{manufacturer_name} {model_name[:250]}"
-                    # Check if model exists
+                    full_model_name = f"{manufacturer_name} {model_name}" #(e.g., "LENOVO 20L8002WMD")
                     existing_model = self.model_service.get_by_name(full_model_name)
                     
                     if self.debug:
@@ -412,13 +377,31 @@ class AssetMatcher:
                         update_payload = {}
                         if category_obj and existing_model.get('category', {}).get('id') != category_obj['id']:
                             update_payload['category_id'] = category_obj['id']
-                        if fieldset and existing_model.get('fieldset', {}).get('id') != fieldset['id']:
-                            update_payload['fieldset_id'] = fieldset['id']
+                        current_fieldset_id = None
+                        if existing_model.get('fieldset'):
+                            current_fieldset_id = existing_model['fieldset'].get('id')
+                        
+                        target_fieldset_id = fieldset['id'] if fieldset else None
+                        # Update fieldset if it's missing or wrong
+                        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
+                            update_payload['fieldset_id'] = target_fieldset_id
+                        elif target_fieldset_id and current_fieldset_id is None:
+                            # Fieldset is completely missing - definitely need to set it
+                            update_payload['fieldset_id'] = target_fieldset_id
+                            
+                        if self.debug:
+                            print(f"[_assign_model_manufacturer_and_category] Target fieldset for category '{category_name}': '{fieldset_name}'")
+                            print(f"[_assign_model_manufacturer_and_category] Existing model fieldset: {existing_model.get('fieldset')}")
+                        
                         if update_payload:
                             if self.debug:
                                 old_category = (existing_model.get('category') or {}).get('name')
-                                print(f"[_assign_model_manufacturer_and_category] Updating model category for '{existing_model.get('name')}' from '{old_category}' to '{category_obj['name']}'")
-                            self.model_service.update(existing_model['id'], {'category_id': category_obj['id']})
+                                old_fieldset = (existing_model.get('fieldset') or {}).get('name')
+                                new_fieldset_name = fieldset.get('name') if fieldset else 'None'
+                                print(f"[_assign_model_manufacturer_and_category] Updating model for '{existing_model.get('name')}'")
+                                print(f"  Category: '{old_category}' -> '{category_obj['name']}'")
+                                print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
+                            self.model_service.update(existing_model['id'], update_payload)
         
         # FALLBACK to generic if no specific model
         if 'model_id' not in payload:
@@ -540,12 +523,20 @@ class AssetMatcher:
                 if value == "" or value == "Unknown":
                     continue
 
-                """ if field_def['element'] == 'checkbox':
-                    value = 1 if value else 0
+                if field_def['element'] == 'checkbox':
+                    if isinstance(value, bool):
+                        value = "1" if value else "0"
+                    elif isinstance(value, int):
+                        value = "1" if value == 1 else "0"
+                    elif isinstance(value, str):
+                        # Handle string representations
+                        if value.lower() in ('true', '1', 'yes', 'on'):
+                            value = "1"
+                        else:
+                            value = "0"
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
-                    value = json.dumps(value) """
-                    
-                if isinstance(value, dict) and field_def['element'] != 'checkbox':
+                    value = json.dumps(value)
+                elif isinstance(value, dict) and field_def['element'] != 'checkbox':
                     value = value.get('name') or json.dumps(value) # Prefer name, fallback to JSON
                 elif isinstance(value, list) and field_def['element'] != 'textarea':
                     value = ', '.join(map(str, value))
