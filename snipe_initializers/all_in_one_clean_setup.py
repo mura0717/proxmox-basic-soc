@@ -4,13 +4,13 @@ import requests
 import urllib3
 import json
 import time
-import pymysql
 
 from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
+from config.snipe_db_connection import SnipeItDbConnection
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.
@@ -391,41 +391,33 @@ def delete_all_locations():
         print(f"Deleted location: {location_name} (ID: {location_id})")
 
 def purge_deleted_via_database():
-        """Directly purge soft-deleted records from database"""
-        load_dotenv()
-
-        DB_HOST = os.getenv("DB_HOST")
-        DB_USER = os.getenv("DB_USER")
-        DB_PASS = os.getenv("DB_PASS")
-        DB_NAME = os.getenv("DB_NAME")
-
-        try:
-            connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME)
+    """Directly purge soft-deleted records from database"""
+    db_manager = SnipeItDbConnection()
+    connection = None
+    try:
+        connection = db_manager.db_connect()
+        if connection:
             with connection.cursor() as cursor:
-                tables_to_purge =[
-                'assets',
-                'categories',
-                'custom_fieldsets',
-                'custom_fields',
-                'status_labels',
-                'locations',
-                'manufacturers',
-                'models'
+                tables_to_purge = [
+                    'assets', 'categories', 'custom_fieldsets', 'custom_fields',
+                    'status_labels', 'locations', 'manufacturers', 'models'
                 ]
-            for table in tables_to_purge:
+                for table in tables_to_purge:
                     cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
                     deleted_count = cursor.rowcount
                     if deleted_count > 0:
                         print(f"  ✓ Purged {deleted_count} records from {table}")
-
+                
             connection.commit()
             print("✓ Database purge complete")
-
-        except Exception as e:
-            print(f"✗ Database connection failed: {e}")
-        finally:
-            if 'connection' in locals():
-                connection.close()        
+        else:
+            print("✗ Could not proceed with purge due to database connection failure.")
+            
+    except Exception as e:
+        print(f"✗ An unexpected error occurred during database purge: {e}")
+    finally:
+        if connection:
+            db_manager.db_disconnect(connection)        
 
 
 if __name__ == "__main__":

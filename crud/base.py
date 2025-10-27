@@ -2,15 +2,13 @@
 
 import os
 import sys
-import re
-import pymysql
 from typing import Dict, List, Optional
-from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from snipe_api.api_client import make_api_request
 from assets_sync_library.text_utils import normalize_for_comparison, normalize_for_display
+from config.snipe_db_connection import SnipeItDbConnection
 
 class BaseCRUDService:
     """Base class for CRUD operations on Snipe-IT entities"""
@@ -47,14 +45,12 @@ class BaseCRUDService:
         """Get entity by name (normalized)"""
         if not name:
             return None
-        
         normalized_search_name = normalize_for_comparison(name)
         all_entities = self.get_all()
         for entity in all_entities:
             entity_name = entity.get('name')
             if not entity_name:
                 continue
-            
             normalized_entity_name = normalize_for_comparison(entity_name)
             if normalized_entity_name == normalized_search_name:
                 return entity
@@ -161,38 +157,31 @@ class BaseCRUDService:
     
     def purge_deleted_via_database():
         """Directly purge soft-deleted records from database"""
-        load_dotenv()
-    
-        DB_HOST = os.getenv("DB_HOST")
-        DB_USER = os.getenv("DB_USER")
-        DB_PASS = os.getenv("DB_PASS")
-        DB_NAME = os.getenv("DB_NAME")
-        
+        db_manager = SnipeItDbConnection()
+        connection = None
         try:
-            connection = pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME)
-            with connection.cursor() as cursor:
-                tables_to_purge =[
-                'assets',
-                'categories',
-                'custom_fieldsets',
-                'custom_fields',
-                'status_labels',
-                'locations',
-                'manufacturers',
-                'models'
-                ]
-            for table in tables_to_purge:
-                    cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
-                    deleted_count = cursor.rowcount
-                    if deleted_count > 0:
-                        print(f"  ✓ Purged {deleted_count} records from {table}")
-                
-            connection.commit()
-            print("✓ Database purge complete")
+            connection = db_manager.db_connect()
+            if connection:
+                with connection.cursor() as cursor:
+                    tables_to_purge = [
+                        'assets', 'categories', 'custom_fieldsets', 'custom_fields',
+                        'status_labels', 'locations', 'manufacturers', 'models'
+                    ]
+                    for table in tables_to_purge:
+                        cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
+                        deleted_count = cursor.rowcount
+                        if deleted_count > 0:
+                            print(f"  ✓ Purged {deleted_count} records from {table}")
+                    
+                connection.commit()
+                print("✓ Database purge complete")
+            else:
+                print("✗ Could not proceed with purge due to database connection failure.")
                 
         except Exception as e:
-            print(f"✗ Database connection failed: {e}")
+            print(f"✗ An unexpected error occurred during database purge: {e}")
         finally:
-            if 'connection' in locals():
-                connection.close()        
+            if connection:
+                db_manager.db_disconnect(connection)
+        
                     

@@ -225,7 +225,6 @@ class AssetMatcher:
                     print(f"[DEBUG] Dropping not-in-fieldset custom field '{key}'")
                 payload.pop(key, None)
 
-
     def _create_asset(self, asset_data: Dict) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data)
@@ -254,7 +253,7 @@ class AssetMatcher:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
         payload = {}
 
-        # --- Step 1: Set the definitive asset name (Highest Priority) ---
+        # --- Set the definitive asset name (Highest Priority) ---
         # Use the trusted hostname from the static map if it exists. This must happen first.
         if asset_data.get('host_name'):
             asset_data['name'] = asset_data['host_name']
@@ -320,44 +319,56 @@ class AssetMatcher:
                 payload['manufacturer_id'] = manufacturer['id']
                 
                 # Determine category - returns the category object/string directly.
-                category = self._determine_category(asset_data)
-                category_name = category.get('name') if isinstance(category, dict) else category
+                category_obj = self._determine_category(asset_data)
                 
-                if self.debug:
-                    print(f"[_assign_model_manufacturer_and_category] Determined category for '{category_name}': {category}")
-                
-                if category:
-                    payload['category_id'] = category['id']
+                if category_obj:
+                    payload['category_id'] = category_obj['id']
+                    category_name = category_obj.get('name') if isinstance(category_obj, dict) else category_obj
+                    
+                    if self.debug:
+                        print(f"[_assign_model_manufacturer_and_category] Determined category for '{category_name}': {category_obj}")
+                    
+                    fieldset_service = FieldsetService()
+                    fieldset_map = {
+                        # Standard End-User Devices
+                        'Laptops': 'Managed Assets (Intune+Nmap)',
+                        'Desktops': 'Managed Assets (Intune+Nmap)',
+                        'Mobile Phones': 'Mobile Devices',
+                        'Tablets': 'Mobile Devices',
+                        'IoT Devices': 'Managed Assets (Intune+Nmap)',
+                        # Infrastructure
+                        'Servers': 'Managed Assets (Intune+Nmap)',
+                        'Virtual Machines (On-Premises)': 'Managed Assets (Intune+Nmap)',
+                        'Cloud Resources': 'Cloud Resources (Azure)',
+                        # Network Gear
+                        'Switches': 'Network Infrastructure',
+                        'Routers': 'Network Infrastructure',
+                        'Firewalls': 'Network Infrastructure',
+                        'Access Points': 'Network Infrastructure',
+                        'Network Devices': 'Network Infrastructure',
+                        # Peripherals
+                        'Printers': 'Discovered Assets (Nmap Only)',
+                    }
+                    
+                    fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
+                    fieldset = fieldset_service.get_by_name(fieldset_name)
                     
                     # Create FULL model name (e.g., "LENOVO 20L8002WMD")
                     full_model_name = f"{manufacturer_name} {model_name}"
                     # Truncate full model name to prevent 255 character limit
                     if len(full_model_name) > 250:
                         full_model_name = f"{manufacturer_name} {model_name[:250]}"
-                    
                     # Check if model exists
                     existing_model = self.model_service.get_by_name(full_model_name)
+                    
                     if self.debug:
                         print(f"[_assign_model_manufacturer_and_category] Full model name: '{full_model_name}'. Found existing model: {existing_model.get('name') if existing_model else 'None'}")
                     
                     if not existing_model:
-                        fieldset_service = FieldsetService()
-                        
-                        fieldset_map = {
-                            'Laptops': 'Managed Assets (Intune+Nmap)',
-                            'Desktops': 'Managed Assets (Intune+Nmap)',
-                            'Mobile Phones': 'Mobile Devices',
-                            'Tablets': 'Mobile Devices',
-                            'IoT Devices': 'Managed Assets (Intune+Nmap)',
-                        }
-                        
-                        fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
-                        fieldset = fieldset_service.get_by_name(fieldset_name)
-                        
                         model_data = {
                             'name': full_model_name,
                             'manufacturer_id': manufacturer['id'],
-                            'category_id': category['id'],
+                            'category_id': category_obj['id'],
                             'model_number': model_name
                         }
                         
@@ -399,15 +410,15 @@ class AssetMatcher:
                     if existing_model:
                         payload['model_id'] = existing_model['id']
                         update_payload = {}
-                        if category and existing_model.get('category', {}).get('id') != category['id']:
-                            update_payload['category_id'] = category['id']
+                        if category_obj and existing_model.get('category', {}).get('id') != category_obj['id']:
+                            update_payload['category_id'] = category_obj['id']
                         if fieldset and existing_model.get('fieldset', {}).get('id') != fieldset['id']:
                             update_payload['fieldset_id'] = fieldset['id']
                         if update_payload:
                             if self.debug:
                                 old_category = (existing_model.get('category') or {}).get('name')
-                                print(f"[_assign_model_manufacturer_and_category] Updating model category for '{existing_model.get('name')}' from '{old_category}' to '{category['name']}'")
-                            self.model_service.update(existing_model['id'], {'category_id': category['id']})
+                                print(f"[_assign_model_manufacturer_and_category] Updating model category for '{existing_model.get('name')}' from '{old_category}' to '{category_obj['name']}'")
+                            self.model_service.update(existing_model['id'], {'category_id': category_obj['id']})
         
         # FALLBACK to generic if no specific model
         if 'model_id' not in payload:
