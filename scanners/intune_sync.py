@@ -252,7 +252,6 @@ if __name__ == "__main__":
     debug_logger.clear_logs('intune')
     
     if intune_debug_categorization.debug:
-        intune_debug_categorization.get_raw_intune_assets_from_log()
         intune_debug_categorization.write_managed_assets_to_logfile()
     else:
         sync = IntuneSync()

@@ -164,8 +164,8 @@ class BaseCRUDService:
             if connection:
                 with connection.cursor() as cursor:
                     tables_to_purge = [
-                        'assets', 'categories', 'custom_fieldsets', 'custom_fields',
-                        'status_labels', 'locations', 'manufacturers', 'models'
+                        'assets', 'categories', 'custom_fieldsets', 'status_labels',
+                        'locations', 'manufacturers', 'models'
                     ]
                     for table in tables_to_purge:
                         cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
