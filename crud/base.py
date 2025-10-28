@@ -163,16 +163,29 @@ class BaseCRUDService:
             connection = db_manager.db_connect()
             if connection:
                 with connection.cursor() as cursor:
-                    tables_to_purge = [
-                        'assets', 'categories', 'custom_fieldsets', 'status_labels',
-                        'locations', 'manufacturers', 'models'
+                    all_tables = [
+                        'assets', 'categories',  'fieldsets', 'fields', 'status_labels',
+                        'locations', 'manufacturers', 'models', 'custom_fieldsets', 'custom_fields'
                     ]
-                    for table in tables_to_purge:
+                    
+                    # Find which tables actually have a 'deleted_at' column
+                    tables_with_soft_deletes = []
+                    for table in all_tables:
+                        # Using information_schema is a standard way to get column info
+                        cursor.execute(f"""
+                            SELECT COUNT(*) FROM information_schema.columns 
+                            WHERE table_schema = DATABASE() 
+                            AND table_name = '{table}' 
+                            AND column_name = 'deleted_at'
+                        """)
+                        if cursor.fetchone()[0] > 0:
+                            tables_with_soft_deletes.append(table)
+
+                    for table in tables_with_soft_deletes:
                         cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
                         deleted_count = cursor.rowcount
                         if deleted_count > 0:
                             print(f"  ✓ Purged {deleted_count} records from {table}")
-                    
                 connection.commit()
                 print("✓ Database purge complete")
             else:

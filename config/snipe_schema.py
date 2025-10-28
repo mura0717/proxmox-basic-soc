@@ -145,7 +145,7 @@ CUSTOM_FIELDS = {
     'azure_tags_json': {"name": "Azure Tags (JSON)", "element": "textarea", "help_text": "JSON-encoded Azure tags"},
     
     # Cybersec Tags
-    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'select', 'field_values': 'Low\nMedium\nHigh\nCritical'},
+    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'listbox', 'field_values': 'Low\nMedium\nHigh\nCritical'},
     'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'checkbox', "format": "BOOLEAN"},
     'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text'}
 }
@@ -460,8 +460,7 @@ MODELS = [
     {'name': 'Generic IoT Device', 'category': 'IoT Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Storage Device', 'category': 'Storage Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines (On-Premises)', 'manufacturer': 'Generic'},
-    {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},
-    {'name': 'Generic Software License', 'category': 'Software Licenses', 'manufacturer': 'Generic'},
+    {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},    
     {'name': 'Generic Domain Controller', 'category': 'Servers', 'manufacturer': 'Generic'},
     {'name': 'Generic Database Server', 'category': 'Servers', 'manufacturer': 'Generic'},
     {'name': 'Generic Web Server', 'category': 'Servers', 'manufacturer': 'Generic'}
