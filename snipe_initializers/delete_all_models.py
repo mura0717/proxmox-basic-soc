@@ -1,4 +1,4 @@
-""" Removes all categories for a clean start. """
+""" Removes all models for a clean start. """
 
 import os
 import sys
@@ -11,23 +11,23 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from crud.categories import CategoryService
+from crud.models import ModelService
 from crud.base import BaseCRUDService
 
 load_dotenv()
 
-category_service = CategoryService()
-categories = category_service.get_all(limit=10000, refresh_cache=True)
+model_service = ModelService()
+models = model_service.get_all(limit=10000, refresh_cache=True)
 
-if categories != []:
-    print("Category deletion started...")
-    for category in categories:
-        category_service.delete_by_name(category['name'])
-        print(f"Deleted category: {category['name']}")
-    print("Soft-deletion of categories completed.")
+if models != []:
+    print("Model deletion started...")
+    for model in models:
+        model_service.delete_by_name(model['name'])
+        print(f"Deleted model: {model['name']}")
+    print("Soft-deletion of models completed.")
     print("\n--- Purging soft-deleted records from the database ---")
     # This makes the deletion permanent
     BaseCRUDService.purge_deleted_via_database()
 else:
-    print("There are no categories to delete.")
+    print("There are no models to delete.")
  

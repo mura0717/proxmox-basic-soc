@@ -2,6 +2,7 @@
 
 import os
 import sys
+import subprocess
 from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -155,46 +156,79 @@ class BaseCRUDService:
         all_entities = self.get_all()
         return {entity.get(key): entity.get(value) for entity in all_entities}
     
-    def purge_deleted_via_database():
-        """Directly purge soft-deleted records from database"""
+    @staticmethod
+    def truncate():
+        """
+        Truncates all relevant Snipe-IT tables for a clean reset.
+        WARNING: This is a destructive operation that deletes ALL data in these tables.
+        """
         db_manager = SnipeItDbConnection()
         connection = None
+        tables_to_truncate = [
+            'assets', 'models', 'manufacturers', 'categories', 'custom_fieldsets',
+            'custom_fields', 'status_labels', 'locations', 'accessories',
+            'components', 'consumables', 'licenses'
+        ]
+        print("\n--- TRUNCATING DATABASE TABLES ---")
+        print("WARNING: This will permanently delete all data from specified tables.")
+
         try:
             connection = db_manager.db_connect()
-            if connection:
-                with connection.cursor() as cursor:
-                    all_tables = [
-                        'assets', 'categories',  'fieldsets', 'fields', 'status_labels',
-                        'locations', 'manufacturers', 'models', 'custom_fieldsets', 'custom_fields'
-                    ]
-                    
-                    # Find which tables actually have a 'deleted_at' column
-                    tables_with_soft_deletes = []
-                    for table in all_tables:
-                        # Using information_schema is a standard way to get column info
-                        cursor.execute(f"""
-                            SELECT COUNT(*) FROM information_schema.columns 
-                            WHERE table_schema = DATABASE() 
-                            AND table_name = '{table}' 
-                            AND column_name = 'deleted_at'
-                        """)
-                        if cursor.fetchone()[0] > 0:
-                            tables_with_soft_deletes.append(table)
+            if not connection:
+                print("✗ Could not proceed with truncate due to database connection failure.")
+                return
 
-                    for table in tables_with_soft_deletes:
-                        cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
-                        deleted_count = cursor.rowcount
-                        if deleted_count > 0:
-                            print(f"  ✓ Purged {deleted_count} records from {table}")
-                connection.commit()
-                print("✓ Database purge complete")
-            else:
-                print("✗ Could not proceed with purge due to database connection failure.")
-                
+            with connection.cursor() as cursor:
+                print("  -> Disabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+
+                for table in tables_to_truncate:
+                    print(f"  -> Truncating table: {table}...")
+                    cursor.execute(f"TRUNCATE TABLE `{table}`;")
+
+                print("  -> Re-enabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+
+            connection.commit()
+            print("✓ Database truncation complete.")
         except Exception as e:
-            print(f"✗ An unexpected error occurred during database purge: {e}")
+            print(f"✗ An unexpected error occurred during database truncation: {e}")
         finally:
             if connection:
                 db_manager.db_disconnect(connection)
+        
+    
+    @staticmethod
+    def purge_deleted_via_database():
+        """
+        Purges all soft-deleted records by calling the official Snipe-IT artisan command.
+        """
+        snipe_it_path = os.getenv("SNIPE_IT_APP_PATH", "/var/www/snipe-it")
+        if not os.path.isdir(snipe_it_path):
+            print(f"✗ ERROR: Snipe-IT path '{snipe_it_path}' not found. Cannot run purge command.")
+            print("  Please set SNIPE_IT_APP_PATH in your .env file if it's in a non-standard location.")
+            return
+
+        command = ['php', 'artisan', 'snipeit:purge', '--force']
+        
+        print(f"-> Running official Snipe-IT purge command: {' '.join(command)}")
+        try:
+            # We run the command from within the Snipe-IT directory
+            # We pipe 'yes' to stdin to automatically confirm the prompt.
+            result = subprocess.run(
+                command,
+                cwd=snipe_it_path,
+                capture_output=True, text=True, check=True,
+                input='yes\n'
+            )
+            print("  " + result.stdout.strip().replace('\n', '\n  '))
+            print("✓ Purge command completed successfully.")
+        except FileNotFoundError:
+            print("✗ ERROR: 'php' command not found. Is PHP installed and in your system's PATH?")
+        except subprocess.CalledProcessError as e:
+            print(f"✗ An error occurred while running the purge command:")
+            print(f"  Return Code: {e.returncode}")
+            print(f"  Output:\n{e.stdout}")
+            print(f"  Error Output:\n{e.stderr}")
         
                     
