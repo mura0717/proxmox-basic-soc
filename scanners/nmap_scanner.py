@@ -220,7 +220,6 @@ def main():
     debug_logger.clear_logs('nmap')
     
     if nmap_debug_categorization.debug:
-        nmap_debug_categorization.get_raw_nmap_assets_from_log()
         nmap_debug_categorization.write_nmap_assets_to_logfile()
     
     scanner = NmapScanner()

@@ -528,9 +528,9 @@ class AssetMatcher:
                         value = "1" if value == 1 else "0"
                     elif isinstance(value, str):
                         if value.lower() in ('true', '1', 'yes', 'on'):
-                            value = "Yes"
+                            value = "1"
                         elif value.lower() in ('false', '0', 'no', 'off'):
-                            value = "No"
+                            value = "0"
                 
                     if self.debug:
                         print(f"[DEBUG] Boolean field '{field_key}' converted to: '{value}'")

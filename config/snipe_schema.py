@@ -56,14 +56,14 @@ CUSTOM_FIELDS = {
     'user_display_name': {"name": "User Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the user"},
 
     # Software Inventory
-    'installed_software': {"name": "Installed Software", "element": "textarea", "help_text": "JSON list of installed applications from Intune"},
+    'installed_software': {"name": "Installed Software", "element": "textarea", "format": "ANY", "help_text": "JSON list of installed applications from Intune"},
     'software_count': {"name": "Software Count", "element": "text", "format": "ANY", "help_text": "Total number of installed applications"},
     'last_software_scan': {"name": "Last Software Scan", "element": "text", "format": "ANY", "help_text": "Timestamp of last software inventory scan"},
     'configuration_manager_client_enabled_features': {"name": "Configuration Manager Client Enabled Features", "element": "text", "format": "ANY", "help_text": "Enabled features for Configuration Manager client"},
 
     # Networking
     'dns_hostname': {"name": "DNS Hostname", "element": "text", "format": "ANY", "help_text": "Hostname from DNS or discovery"},
-    'mac_addresses': {"name": "MAC Addresses", "element": "textarea", "help_text": "Newline-separated list of all MACs (Wi-Fi/Ethernet)"},
+    'mac_addresses': {"name": "MAC Addresses", "element": "textarea", "format": "ANY", "help_text": "Newline-separated list of all MACs (Wi-Fi/Ethernet)"},
     'last_seen_ip': {"name": "Last Seen IP", "element": "text", "format": "ANY", "help_text": "Last observed IP on the network"},
     'intune_wifi_ipv4': {"name": "Intune WiFi IPv4", "element": "text", "format": "ANY", "help_text": "WiFi IPv4 address reported by Intune"},
     'wifi_subnet_id': {"name": "WiFi Subnet ID", "element": "text", "format": "ANY", "help_text": "WiFi subnet ID reported by Intune"},
@@ -109,17 +109,17 @@ CUSTOM_FIELDS = {
     'first_seen_date': {"name": "First Seen Date", "element": "text", "format": "ANY", "help_text": "Timestamp when first discovered (ISO 8601)"},
     'nmap_last_scan': {"name": "Nmap Last Scan", "element": "text", "format": "ANY", "help_text": "Timestamp of last nmap scan (ISO 8601)"},
     'nmap_os_guess': {"name": "Nmap OS Guess", "element": "text", "format": "ANY", "help_text": "Nmap's OS fingerprint guess"},
-    'nmap_open_ports': {"name": "Nmap Open Ports", "element": "textarea", "help_text": "Newline or comma-separated list of open ports"},
+    'nmap_open_ports': {"name": "Nmap Open Ports", "element": "textarea", "format": "ANY", "help_text": "Newline or comma-separated list of open ports"},
     'open_ports_hash': {"name": "Open Ports Hash", "element": "text", "format": "ANY", "help_text": "Hash of open ports list to detect changes"},
-    'discovery_note': {"name": "Discovery Note", "element": "textarea", "help_text": "Notes about discovery (VLAN, location, etc.)"},
+    'discovery_note': {"name": "Discovery Note", "element": "textarea", "format": "ANY", "help_text": "Notes about discovery (VLAN, location, etc.)"},
 
     # Data hygiene
     'last_update_source': {"name": "Last Update Source", "element": "text", "format": "ANY", "help_text": "Which system updated last (Intune/Nmap/Azure)"},
     'last_update_at': {"name": "Last Update At", "element": "text", "format": "ANY", "help_text": "Timestamp of last update (ISO 8601)"},
-    'device_action_results': {"name": "Device Action Results", "element": "textarea", "help_text": "Results of device actions performed"},
+    'device_action_results': {"name": "Device Action Results", "element": "textarea", "format": "ANY", "help_text": "Results of device actions performed"},
     'device_health_attestation_state': {"name": "Device Health Attestation State", "element": "text", "format": "ANY", "help_text": "State of device health attestation"},
     'partner_reported_threat_state': {"name": "Partner Reported Threat State", "element": "text", "format": "ANY", "help_text": "Threat state reported by partner"},
-    'notes': {"name": "Notes", "element": "textarea", "help_text": "Additional notes about the device"},
+    'notes': {"name": "Notes", "element": "textarea", "format": "ANY", "help_text": "Additional notes about the device"},
 
     # Vulnerability Information
     'vulnerability_scan_date': {"name": "Last Vulnerability Scan", "element": "text", "format": "ANY", "help_text": "Date of last vulnerability scan"},
@@ -128,7 +128,7 @@ CUSTOM_FIELDS = {
     'vulnerability_score': {"name": "Vulnerability Score", "element": "text", "format": "ANY", "help_text": "Overall vulnerability score (0-10)"},
 
     # Certificate Management
-    'certificates': {"name": "Certificates", "element": "textarea", "help_text": "JSON list of certificates and expiry dates"},
+    'certificates': {"name": "Certificates", "element": "textarea", "format": "ANY", "help_text": "JSON list of certificates and expiry dates"},
     'cert_expiry_warning': {"name": "Certificate Expiry Warning", "element": "text", "format": "ANY", "help_text": "Earliest certificate expiry date"},
 
     # Asset Relationships
@@ -142,12 +142,12 @@ CUSTOM_FIELDS = {
     'azure_subscription_id': {"name": "Azure Subscription ID", "element": "text", "format": "ANY", "help_text": "Subscription GUID"},
     'azure_resource_group': {"name": "Azure Resource Group", "element": "text", "format": "ANY", "help_text": "Resource group name"},
     'azure_region': {"name": "Azure Region", "element": "text", "format": "ANY", "help_text": "Azure location/region"},
-    'azure_tags_json': {"name": "Azure Tags (JSON)", "element": "textarea", "help_text": "JSON-encoded Azure tags"},
+    'azure_tags_json': {"name": "Azure Tags (JSON)", "element": "textarea", "format": "ANY", "help_text": "JSON-encoded Azure tags"},
     
     # Cybersec Tags
-    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'listbox', 'field_values': 'Low\nMedium\nHigh\nCritical'},
-    'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'text', "format": "BOOLEAN"},
-    'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY'}
+    'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'listbox', "format": "ANY", 'field_values': 'Low\nMedium\nHigh\nCritical', "help_text": "Security risk level of the device"},
+    'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'text', "format": "BOOLEAN", "help_text": "Flag to indicate if the device needs security investigation"},
+    'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY', "help_text": "Th last scan that the device was seen."}
 }
 
 # Define which fields belong to which fieldset, using our reference keys
@@ -203,6 +203,9 @@ CUSTOM_FIELDSETS = {
         # Hygiene
         'last_update_source', 'last_update_at', 'device_action_results', 'device_health_attestation_state', 'partner_reported_threat_state', 'notes',
 
+        # Cybersec
+        'cybersec_risk_level', 'cybersec_needs_investigation', 'cybersec_last_seen',
+
         # Notes
         'discovery_note',
     ],
@@ -235,7 +238,8 @@ CUSTOM_FIELDSETS = {
     # Vulnerability and certificate details
     "Security and Vulnerabilities": [
         'vulnerability_scan_date', 'critical_vulns', 'high_vulns', 'vulnerability_score',
-        'certificates', 'cert_expiry_warning', 'security_patch_level', 'encrypted'
+        'certificates', 'cert_expiry_warning', 'security_patch_level', 'encrypted',
+        'cybersec_risk_level', 'cybersec_needs_investigation', 'cybersec_last_seen'
     ],
 
     # Network devices and infrastructure

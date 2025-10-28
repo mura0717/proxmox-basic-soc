@@ -15,15 +15,14 @@ CHECKBOX_FIELDS = [
     'EAS Activated',
     'Jailbroken/Rooted',
     'Azure AD Registered',
-    'Require User Enrollment Approval',
-    'Needs Security Investigation'
+    'Require User Enrollment Approval'
 ]
 
 field_service = FieldService()
 all_fields = field_service.get_all(refresh_cache=True)
 
 print("="*80)
-print("FIXING CHECKBOX FIELDS")
+print("CHANGING CHECKBOX FIELDS TO TEXT")
 print("="*80)
 
 fixed_count = 0
@@ -39,7 +38,7 @@ for field in all_fields:
         current_values = field.get('field_values', '')
         
         needs_fix = (
-            current_element != 'checkbox' or 
+            current_element != 'text' or 
             current_format != 'BOOLEAN' or 
             (current_values and current_values.strip())
         )
@@ -56,7 +55,7 @@ for field in all_fields:
         
         # The fix payload
         update_payload = {
-            'element': 'checkbox',
+            'element': 'text',
             'format': 'BOOLEAN',
             'field_values': ''  # Remove any dropdown options
         }
@@ -64,7 +63,7 @@ for field in all_fields:
         result = field_service.update(field_id, update_payload)
         
         if result:
-            print(f"  ✓ Successfully updated to BOOLEAN format")
+            print(f"  ✓ Successfully updated to 'text' element")
             fixed_count += 1
         else:
             print(f"  ✗ Failed to update")
