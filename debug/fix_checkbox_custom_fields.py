@@ -34,7 +34,7 @@ for field in all_fields:
         field_id = field.get('id')
         field_name = field.get('name')
         
-        current_element = field.get('element')
+        current_element = field.get('type')
         current_format = field.get('format')
         current_values = field.get('field_values', '')
         

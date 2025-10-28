@@ -4,7 +4,7 @@ import requests
 import urllib3
 import json
 import time
-
+import subprocess
 from dotenv import load_dotenv
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -391,33 +391,36 @@ def delete_all_locations():
         print(f"Deleted location: {location_name} (ID: {location_id})")
 
 def purge_deleted_via_database():
-    """Directly purge soft-deleted records from database"""
-    db_manager = SnipeItDbConnection()
-    connection = None
-    try:
-        connection = db_manager.db_connect()
-        if connection:
-            with connection.cursor() as cursor:
-                tables_to_purge = [
-                    'assets', 'categories', 'custom_fieldsets', 'custom_fields',
-                    'status_labels', 'locations', 'manufacturers', 'models'
-                ]
-                for table in tables_to_purge:
-                    cursor.execute(f"DELETE FROM {table} WHERE deleted_at IS NOT NULL")
-                    deleted_count = cursor.rowcount
-                    if deleted_count > 0:
-                        print(f"  ✓ Purged {deleted_count} records from {table}")
-                
-            connection.commit()
-            print("✓ Database purge complete")
-        else:
-            print("✗ Could not proceed with purge due to database connection failure.")
-            
-    except Exception as e:
-        print(f"✗ An unexpected error occurred during database purge: {e}")
-    finally:
-        if connection:
-            db_manager.db_disconnect(connection)        
+        """
+        Purges all soft-deleted records by calling the official Snipe-IT artisan command.
+        """
+        snipe_it_path = os.getenv("SNIPE_IT_APP_PATH", "/var/www/snipe-it")
+        if not os.path.isdir(snipe_it_path):
+            print(f"✗ ERROR: Snipe-IT path '{snipe_it_path}' not found. Cannot run purge command.")
+            print("  Please set SNIPE_IT_APP_PATH in your .env file if it's in a non-standard location.")
+            return
+
+        command = ['php', 'artisan', 'snipeit:purge', '--force']
+        
+        print(f"-> Running official Snipe-IT purge command: {' '.join(command)}")
+        try:
+            # We run the command from within the Snipe-IT directory
+            # We pipe 'yes' to stdin to automatically confirm the prompt.
+            result = subprocess.run(
+                command,
+                cwd=snipe_it_path,
+                capture_output=True, text=True, check=True,
+                input='yes\n'
+            )
+            print("  " + result.stdout.strip().replace('\n', '\n  '))
+            print("✓ Purge command completed successfully.")
+        except FileNotFoundError:
+            print("✗ ERROR: 'php' command not found. Is PHP installed and in your system's PATH?")
+        except subprocess.CalledProcessError as e:
+            print(f"✗ An error occurred while running the purge command:")
+            print(f"  Return Code: {e.returncode}")
+            print(f"  Output:\n{e.stdout}")
+            print(f"  Error Output:\n{e.stderr}")        
 
 
 if __name__ == "__main__":

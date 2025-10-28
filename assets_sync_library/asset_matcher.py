@@ -374,9 +374,11 @@ class AssetMatcher:
                     #  To automatically correct the category of an existing model.
                     if existing_model:
                         payload['model_id'] = existing_model['id']
+                        
                         update_payload = {}
                         if category_obj and existing_model.get('category', {}).get('id') != category_obj['id']:
                             update_payload['category_id'] = category_obj['id']
+                        
                         current_fieldset_id = None
                         if existing_model.get('fieldset'):
                             current_fieldset_id = existing_model['fieldset'].get('id')
@@ -385,13 +387,6 @@ class AssetMatcher:
                         # Update fieldset if it's missing or wrong
                         if target_fieldset_id and current_fieldset_id != target_fieldset_id:
                             update_payload['fieldset_id'] = target_fieldset_id
-                        elif target_fieldset_id and current_fieldset_id is None:
-                            # Fieldset is completely missing - definitely need to set it
-                            update_payload['fieldset_id'] = target_fieldset_id
-                            
-                        if self.debug:
-                            print(f"[_assign_model_manufacturer_and_category] Target fieldset for category '{category_name}': '{fieldset_name}'")
-                            print(f"[_assign_model_manufacturer_and_category] Existing model fieldset: {existing_model.get('fieldset')}")
                         
                         if update_payload:
                             if self.debug:
@@ -510,6 +505,9 @@ class AssetMatcher:
         
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate custom fields into the main payload using their DB column names."""
+
+        BOOLEAN_TEXT_FIELDS = {field_key for field_key, field_def in CUSTOM_FIELDS.items() if field_def['format'] == 'BOOLEAN'}
+        
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
                 
@@ -520,27 +518,30 @@ class AssetMatcher:
                     continue
 
                 value = asset_data[field_key]
-                if value == "" or value == "Unknown":
+                if isinstance(value, str) and value.strip() in ["", "Unknown"]:
                     continue
 
-                if field_def['element'] == 'checkbox':
+                if field_key in BOOLEAN_TEXT_FIELDS:
                     if isinstance(value, bool):
                         value = "1" if value else "0"
                     elif isinstance(value, int):
                         value = "1" if value == 1 else "0"
                     elif isinstance(value, str):
-                        # Handle string representations
                         if value.lower() in ('true', '1', 'yes', 'on'):
-                            value = "1"
-                        else:
-                            value = "0"
+                            value = "Yes"
+                        elif value.lower() in ('false', '0', 'no', 'off'):
+                            value = "No"
+                
+                    if self.debug:
+                        print(f"[DEBUG] Boolean field '{field_key}' converted to: '{value}'")
+                    
                 elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
-                    value = json.dumps(value)
-                elif isinstance(value, dict) and field_def['element'] != 'checkbox':
-                    value = value.get('name') or json.dumps(value) # Prefer name, fallback to JSON
-                elif isinstance(value, list) and field_def['element'] != 'textarea':
+                    value = json.dumps(value, indent=2)
+                elif isinstance(value, dict):
+                    value = value['name'] or json.dumps(value)
+                elif isinstance(value, list):
                     value = ', '.join(map(str, value))
-
+                
                 payload[db_key] = value
                 
                 if self.debug:

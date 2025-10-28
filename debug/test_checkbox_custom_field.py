@@ -175,7 +175,7 @@ class CheckboxFieldTester:
             
             # Check critical fields
             print_info("\nChecking critical field properties:")
-            print(f"  - element: {test_field.get('element')} (expected: 'checkbox')")
+            print(f"  - element: {test_field.get('element')} (expected: 'checkbox')") # This will be None - Fetching element happens with 'type'.
             print(f"  - type: {test_field.get('type')} (expected: 'checkbox')")
             print(f"  - format: {test_field.get('format')} (expected: 'BOOLEAN')")
             print(f"  - db_column_name: {test_field.get('db_column_name')}")
