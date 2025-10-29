@@ -219,7 +219,7 @@ def main():
     """Command-line interface"""
     debug_logger.clear_logs('nmap')
     
-    if nmap_debug_categorization.debug:
+    if nmap_debug_categorization.debug: 
         nmap_debug_categorization.write_nmap_assets_to_logfile()
     
     scanner = NmapScanner()

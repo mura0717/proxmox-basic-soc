@@ -426,6 +426,7 @@ class AssetMatcher:
                         print(f"[_assign_generic_model] Successfully found and assigned generic model ID: {payload['model_id']}")
 
                 # For Nmap-only discovered assets, we need the 'Discovered Assets (Nmap Only)' fieldset.
+                fieldset_service = self.fieldset_service
                 target_fieldset_name = 'Discovered Assets (Nmap Only)'
                 target_fieldset = fieldset_service.get_by_name(target_fieldset_name)
                 
@@ -437,7 +438,7 @@ class AssetMatcher:
                         print(f"[_assign_generic_model] Updating generic model '{generic_model_name}' to use fieldset '{target_fieldset_name}'.")
                     update_payload = {
                         'fieldset_id': target_fieldset_id,
-                        'manufacturer_id': generic_model_obj.get('manufacturer', {}).get('id')
+                        'manufacturer_id': (generic_model_obj.get('manufacturer') or {}).get('id')
                     }
                     self.model_service.update(generic_model_obj['id'], update_payload)
                 elif not target_fieldset:
@@ -489,7 +490,6 @@ class AssetMatcher:
         
         # 5. STATUS
         self._determine_status(payload, asset_data)
-    
     
     def _hydrate_field_map(self):
         """
@@ -624,10 +624,7 @@ class AssetMatcher:
         # Fallback to Other Assets if not found
         fallback_obj = self.category_service.get_by_name('Other Assets')
         return fallback_obj if fallback_obj else {'id': 18, 'name': 'Other Assets'}
-
-        # return category_value if isinstance(category_value, dict) else self.category_service.get_by_name(category_value) or self.category_service.get_by_name('Other Assets')
         
-    
     def _generate_asset_tag(self, asset_data: Dict) -> str:
         """Generate unique asset tag"""
         # Use timestamp and partial hash for uniqueness
