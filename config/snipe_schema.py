@@ -251,10 +251,14 @@ CUSTOM_FIELDSETS = {
 
     # Network devices and infrastructure
     "Network Infrastructure": [
-        'device_type', 'snmp_location', 'snmp_contact', 'snmp_uptime',
-        'switch_port_count', 'firmware_version', 'dns_hostname', 'mac_addresses', 'connected_switch_port',
+        'device_type', 'dns_hostname', 'mac_addresses', 'last_seen_ip',
+        'snmp_location', 'snmp_contact', 'snmp_uptime', 'switch_port_count', 'firmware_version',
+        'model', 'manufacturer', # Add model and manufacturer fields
+        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
+        'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output',
+        'discovery_note', 'last_update_source', 'last_update_at'
     ],
-
+    
     # Cellular and mobile device specifics
     "Mobile Devices": [
         'imei', 'meid', 'phone_number', 'iccid', 'eid', 'subscriber_carrier',
@@ -264,7 +268,8 @@ CUSTOM_FIELDSETS = {
     # Nmap-discovered assets
     "Discovered Assets (Nmap Only)": [
         'dns_hostname', 'mac_addresses', 'last_seen_ip',
-        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy',
+        'model', 'manufacturer',
+        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
         'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output', 'discovery_note', 'device_type'
     ],
 
@@ -293,18 +298,24 @@ CUSTOM_FIELDSETS = {
 
 # Define Status Labels
 STATUS_LABELS = {
-    "Managed (Intune)": {
+    "Managed - Intune": {
         "type": "deployable", 
         "color": "#3498db",
         "show_in_nav": False,
         "default_label": False
         },
-    "Discovered (Nmap)": {
+    "Discovered - Nmap": {
         "type": "deployable", 
         "color": "#f1c40f",
         "show_in_nav": False,
         "default_label": False
         },
+    "Discovered - Needs Review": {
+        "type": "pending",
+        "color": "#d35400",
+        "show_in_nav": True,
+        "default_label": False
+    },
     "Cloud Resource": {
         "type": "deployable", 
         "color": "#9b59b6",
@@ -323,7 +334,7 @@ STATUS_LABELS = {
         "show_in_nav": False,
         "default_label": False
     },
-    "Unmanaged/Discovered": {
+    "Discovered - Unmanaged": {
         "type": "deployable", 
         "color": "#e74c3c",
         "show_in_nav": False,

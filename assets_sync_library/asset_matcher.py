@@ -43,6 +43,7 @@ class AssetMatcher:
         self.location_service = LocationService()
         self.finder = AssetFinder(self.asset_service)
         self.field_service = FieldService()
+        self.fieldset_service = FieldsetService()        
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
         self.custom_field_map = {}
         self._hydrate_field_map()
@@ -239,6 +240,10 @@ class AssetMatcher:
         """
         Determine if we have enough data to confidently create a new asset.
         """
+        # If the only real data is an IP, we'll create it but flag it for review.
+        if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
+            return True
+
         # If the IP is in our trusted static map, it's sufficient.
         if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
             return True
@@ -403,6 +408,7 @@ class AssetMatcher:
             self._assign_generic_model(payload, asset_data)
 
     def _assign_generic_model(self, payload: Dict, asset_data: Dict):
+        """Assigns a generic model and ensures it has the correct fieldset."""
         if 'model_id' not in payload:
             device_type = str(asset_data.get('device_type') or '').lower()
             generic_model_name = self._determine_model_name(device_type)
@@ -410,14 +416,33 @@ class AssetMatcher:
             
             if self.debug:
                 print(f"[_assign_generic_model] No specific model found. Looking for generic: '{generic_model_name}'")
-        
+
             if generic_model_obj:
                 payload['model_id'] = generic_model_obj['id']
                 # Set category from generic model if not already set
                 if 'category_id' not in payload and generic_model_obj.get('category'):
-                    payload['category_id'] = generic_model_obj['category']['id']    
+                    payload['category_id'] = generic_model_obj['category']['id']
                     if self.debug:
                         print(f"[_assign_generic_model] Successfully found and assigned generic model ID: {payload['model_id']}")
+
+                # For Nmap-only discovered assets, we need the 'Discovered Assets (Nmap Only)' fieldset.
+                target_fieldset_name = 'Discovered Assets (Nmap Only)'
+                target_fieldset = fieldset_service.get_by_name(target_fieldset_name)
+                
+                current_fieldset_id = (generic_model_obj.get('fieldset') or {}).get('id')
+                target_fieldset_id = target_fieldset.get('id') if target_fieldset else None
+
+                if target_fieldset_id and current_fieldset_id != target_fieldset_id:
+                    if self.debug:
+                        print(f"[_assign_generic_model] Updating generic model '{generic_model_name}' to use fieldset '{target_fieldset_name}'.")
+                    update_payload = {
+                        'fieldset_id': target_fieldset_id,
+                        'manufacturer_id': generic_model_obj.get('manufacturer', {}).get('id')
+                    }
+                    self.model_service.update(generic_model_obj['id'], update_payload)
+                elif not target_fieldset:
+                    print(f"[ERROR] Could not find the required fieldset '{target_fieldset_name}' in Snipe-IT.")
+
             else:
                 raise ValueError(
                     f"FATAL: The required generic model '{generic_model_name}' was not found in Snipe-IT. "
@@ -552,13 +577,23 @@ class AssetMatcher:
         if 'status_id' in payload:
             return
 
+        # Check if this is a low-information asset (IP only)
+        is_ip_only_asset = (
+            asset_data.get('last_seen_ip') and
+            not asset_data.get('serial') and
+            not asset_data.get('mac_addresses') and
+            not asset_data.get('intune_device_id')
+        )
+
         source_for_status = (asset_data.get('_source') or asset_data.get('last_update_source') or 'unknown')
         status_map = {
-            'intune': 'Managed (Intune)',
-            'nmap': 'Discovered (Nmap)',
+            'intune': 'Managed - Intune',
+            'nmap': 'Discovered - Nmap',
             'snmp': 'On-Premise',
         }
-        status_name = status_map.get(source_for_status, 'Unknown')
+        # If it's an IP-only asset from Nmap, assign it for review.
+        status_name = 'Discovered - Needs Review' if is_ip_only_asset and source_for_status == 'nmap' else status_map.get(source_for_status, 'Unknown')
+
         status = self.status_service.get_by_name(status_name)
         if status:
             payload['status_id'] = status['id']
