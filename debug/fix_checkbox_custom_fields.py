@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Fix checkbox fields to proper BOOLEAN format"""
+"""Fix checkbox fields to proper BOOLEAN format if they are not already."""
+
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

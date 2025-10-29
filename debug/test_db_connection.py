@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from snipe_api.snipe_db.snipe_db_connection import SnipeItDbConnection
+from snipe_db.snipe_db_connection import SnipeItDbConnection
 
 def main():
     db_manager = SnipeItDbConnection()
