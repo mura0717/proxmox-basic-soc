@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
-from config.snipe_db_connection import SnipeItDbConnection
+from snipe_api.snipe_db.snipe_db_connection import SnipeItDbConnection
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.

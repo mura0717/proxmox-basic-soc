@@ -23,6 +23,7 @@ CUSTOM_FIELDS = {
     'intune_category': {"name": "Intune Category", "element": "text", "format": "ANY", "help_text": "Intune device category"},
     'ownership': {"name": "Ownership", "element": "text", "format": "ANY", "help_text": "Corporate or Personal ownership"},
     'device_state': {"name": "Device State", "element": "text", "format": "ANY", "help_text": "State reported by Intune (e.g., Active)"},
+    'management_state': {"name": "Management State", "element": "text", "format": "ANY", "help_text": "Device's management state (e.g., managed, pending)"},
     'intune_compliance': {"name": "Intune Compliance", "element": "text", "format": "ANY", "help_text": "Compliance state (Compliant/Noncompliant/Unknown)"},
     'compliance_grace_expiration': {"name": "Compliance Grace Expiration", "element": "text", "format": "ANY", "help_text": "Compliance grace period expiration (ISO 8601)"},
     'management_cert_expiration': {"name": "Management Cert Expiration", "element": "text", "format": "ANY", "help_text": "Management certificate expiration date (ISO 8601)"},
@@ -53,6 +54,7 @@ CUSTOM_FIELDS = {
     'primary_user_upn': {"name": "Primary User UPN", "element": "text", "format": "ANY", "help_text": "User Principal Name of the primary user"},
     'primary_user_email': {"name": "Primary User Email", "element": "text", "format": "ANY", "help_text": "Primary user's email address"},
     'primary_user_display_name': {"name": "Primary User Display Name", "element": "text", "format": "ANY", "help_text": "Primary user's display name"},
+    'managed_device_name': {"name": "Managed Device Name", "element": "text", "format": "ANY", "help_text": "The name of the device in Intune"},
     'user_display_name': {"name": "User Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the user"},
 
     # Software Inventory
@@ -96,6 +98,7 @@ CUSTOM_FIELDS = {
     # EAS (Exchange ActiveSync)
     'eas_activation_id': {"name": "EAS Activation ID", "element": "text", "format": "ANY", "help_text": "EAS activation ID"},
     'eas_activated': {"name": "EAS Activated", "element": "text", "format": "BOOLEAN", "help_text": "EAS activation status"},
+    'eas_activation_date': {"name": "EAS Activation Date", "element": "text", "format": "ANY", "help_text": "EAS activation timestamp (ISO 8601)"},
     'eas_last_sync': {"name": "EAS Last Sync", "element": "text", "format": "ANY", "help_text": "Last EAS sync time (ISO 8601)"},
     'eas_reason': {"name": "EAS Reason", "element": "text", "format": "ANY", "help_text": "EAS status reason"},
     'eas_status': {"name": "EAS Status", "element": "text", "format": "ANY", "help_text": "EAS status"},
@@ -109,9 +112,12 @@ CUSTOM_FIELDS = {
     'first_seen_date': {"name": "First Seen Date", "element": "text", "format": "ANY", "help_text": "Timestamp when first discovered (ISO 8601)"},
     'nmap_last_scan': {"name": "Nmap Last Scan", "element": "text", "format": "ANY", "help_text": "Timestamp of last nmap scan (ISO 8601)"},
     'nmap_os_guess': {"name": "Nmap OS Guess", "element": "text", "format": "ANY", "help_text": "Nmap's OS fingerprint guess"},
+    'os_accuracy': {"name": "OS Accuracy", "element": "text", "format": "ANY", "help_text": "Nmap's confidence level in the OS guess (percentage)"},
     'nmap_open_ports': {"name": "Nmap Open Ports", "element": "textarea", "format": "ANY", "help_text": "Newline or comma-separated list of open ports"},
     'open_ports_hash': {"name": "Open Ports Hash", "element": "text", "format": "ANY", "help_text": "Hash of open ports list to detect changes"},
     'discovery_note': {"name": "Discovery Note", "element": "textarea", "format": "ANY", "help_text": "Notes about discovery (VLAN, location, etc.)"},
+    'nmap_discovered_services': {"name": "Nmap Services", "element": "textarea", "format": "ANY", "help_text": "List of discovered service names from Nmap"},
+    'nmap_script_output': {"name": "Nmap Script Output", "element": "textarea", "format": "ANY", "help_text": "Output from Nmap NSE scripts (e.g., vuln, http-title)"},
 
     # Data hygiene
     'last_update_source': {"name": "Last Update Source", "element": "text", "format": "ANY", "help_text": "Which system updated last (Intune/Nmap/Azure)"},
@@ -154,11 +160,11 @@ CUSTOM_FIELDS = {
 CUSTOM_FIELDSETS = {
     # Comprehensive fieldset for all managed assets
      "Managed Assets (Intune)": [
-        'azure_ad_id', 'intune_device_id', 'intune_managed', 'intune_registered',
-        'intune_enrollment_date', 'intune_last_sync', 'intune_compliance',
-        'primary_user_upn', 'primary_user_display_name',
-        'os_platform', 'os_version', 'manufacturer', 'model',
-        'encrypted', 'supervised', 'jailbroken',
+        'azure_ad_id', 'intune_device_id', 'managed_device_name', 'intune_managed',
+        'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
+        'intune_compliance', 'management_state', 'primary_user_upn',
+        'primary_user_display_name', 'os_platform', 'os_version',
+        'manufacturer', 'model', 'encrypted', 'supervised', 'jailbroken',
         'total_storage', 'free_storage',
         'last_update_source', 'last_update_at'   
     ],
@@ -169,7 +175,7 @@ CUSTOM_FIELDSETS = {
 
         # Enrollment / Management
         'intune_managed', 'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
-        'managed_by', 'management_name', 'intune_category', 'ownership', 'device_state',
+        'managed_by', 'management_name', 'intune_category', 'ownership', 'device_state', 'management_state',
         'intune_compliance', 'compliance_grace_expiration', 'management_cert_expiration',
         'enrollment_profile_name', 'require_user_enrollment_approval', 'activation_lock_bypass_code',
 
@@ -180,7 +186,7 @@ CUSTOM_FIELDSETS = {
         'tpm_manufacturer_id', 'tpm_manufacturer_version', 'android_security_patch_level', 'model', 'manufacturer',
 
         # User
-        'primary_user_upn', 'primary_user_email', 'primary_user_display_name', 'user_display_name',
+        'primary_user_upn', 'primary_user_email', 'primary_user_display_name', 'managed_device_name', 'user_display_name',
 
         # Software Inventory
         'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
@@ -195,13 +201,14 @@ CUSTOM_FIELDSETS = {
         'total_storage', 'free_storage', 'physical_memory_in_bytes',
 
         # EAS
-        'eas_activation_id', 'eas_activated', 'eas_last_sync', 'eas_reason', 'eas_status', 'exchange_access_state', 'exchange_access_state_reason',
+        'eas_activation_id', 'eas_activated', 'eas_activation_date', 'eas_last_sync', 'eas_reason', 'eas_status', 'exchange_access_state', 'exchange_access_state_reason',
 
         # Nmap
-        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'nmap_open_ports', 'open_ports_hash',
+        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 'nmap_open_ports',
+        'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output',
 
         # Hygiene
-        'last_update_source', 'last_update_at', 'device_action_results', 'device_health_attestation_state', 'partner_reported_threat_state', 'notes',
+        'last_update_source', 'last_update_at', 'device_action_results', 'device_health_attestation_state', 'partner_reported_threat_state',
 
         # Cybersec
         'cybersec_risk_level', 'cybersec_needs_investigation', 'cybersec_last_seen',
@@ -257,8 +264,8 @@ CUSTOM_FIELDSETS = {
     # Nmap-discovered assets
     "Discovered Assets (Nmap Only)": [
         'dns_hostname', 'mac_addresses', 'last_seen_ip',
-        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess',
-        'nmap_open_ports', 'open_ports_hash', 'discovery_note', 'device_type'
+        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy',
+        'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output', 'discovery_note', 'device_type'
     ],
 
     # Cloud resources
@@ -275,6 +282,7 @@ CUSTOM_FIELDSETS = {
     
     # Exchange and Remote Assistance
     "Exchange and Remote Assistance": [
+        'eas_activation_date',
         'exchange_last_successful_sync_date_time',
         'exchange_access_state',
         'exchange_access_state_reason',
@@ -438,8 +446,8 @@ CATEGORIES = {
         "use_default_eula": True,
         "require_acceptance": True,
         "checkin_email": False
-    },
-       "Other Assets": {
+        },
+    "Other Assets": {
         "category_type": "asset", 
         "use_default_eula": False,
         "require_acceptance": False,
