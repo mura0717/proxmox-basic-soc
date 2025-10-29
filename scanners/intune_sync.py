@@ -16,8 +16,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from config.intune_settings import AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
-from debug.intune_categorize_from_logs import intune_debug_categorization
-from assets_sync_library.mac_utils import combine_macs
+from debug.intune_categorize_from_logs import intune_debug_categorization 
+from assets_sync_library.mac_utils import combine_macs, normalize_mac
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""
@@ -103,10 +103,10 @@ class IntuneSync:
     def _combine_mac_addresses(self, asset: Dict) -> str:
         """Combine all MAC addresses into a single field"""
         macs = []
-        if asset.get('wiFiMacAddress'):
-            macs.append(asset['wiFiMacAddress'])
-        if asset.get('ethernetMacAddress'):
-            macs.append(asset['ethernetMacAddress'])
+        if asset.get('wiFiMacAddress'): 
+            macs.append(normalize_mac(asset['wiFiMacAddress']))
+        if asset.get('ethernetMacAddress'): 
+            macs.append(normalize_mac(asset['ethernetMacAddress']))
         return combine_macs(macs)
     
     def transform_intune_to_snipeit(self, intune_asset: Dict) -> Dict:
@@ -167,8 +167,8 @@ class IntuneSync:
             'user_display_name': intune_asset.get('userDisplayName'),
             
             # Network
-            'wifi_mac': intune_asset.get('wiFiMacAddress'),
-            'ethernet_mac': intune_asset.get('ethernetMacAddress'),
+            'wifi_mac': normalize_mac(intune_asset.get('wiFiMacAddress')),
+            'ethernet_mac': normalize_mac(intune_asset.get('ethernetMacAddress')),
             'mac_addresses': self._combine_mac_addresses(intune_asset),
             
             # Mobile specific

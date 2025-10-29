@@ -92,6 +92,7 @@ class AssetMatcher:
             self.finder.by_static_mapping(asset_data.get('last_seen_ip')) or
             self.finder.by_mac_address(asset_data) or
             self.finder.by_hostname(asset_data) or
+            #self.finder.by_model_and_manufacturer_and_ip(asset_data) or # NEW STRATEGY
             self.finder.by_ip_address(asset_data.get('last_seen_ip')) or
             self.finder.by_fallback_identifiers(asset_data)
         )

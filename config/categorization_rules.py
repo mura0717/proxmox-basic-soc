@@ -9,15 +9,16 @@ NETWORK_DEVICE_RULES = {
     },
     'Switch': {
         'vendors': ['cisco', 'juniper', 'aruba', 'hp', 'dell', 'meraki', 'ubiquiti', 'd-link', 'netgear', 'tp-link'],
-        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'dgs', 'sg', 'tl-sg']
+        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'dgs', 'sg', 'tl-sg', 'usw']
     },
     'Router': {
         'vendors': ['cisco', 'juniper', 'mikrotik', 'ubiquiti', 'netgear', 'tp-link'],
         'model_keywords': ['router', 'isr', 'asr', 'edgerouter']
     },
     'Access Point': {
-        'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link'],
-        'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap']
+        'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link', 'unifi'],
+        'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap'],
+        'hostname_prefixes': ['ap']
     }
 }
 
@@ -70,8 +71,8 @@ COMPUTER_RULES = {
 }
 
 IOT_RULES = {
-    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30'],
-    'hostname_keywords': ['meetingbar', 'roompanel', 'ctp'],
+    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30', 'poly'],
+    'hostname_keywords': ['meetingbar', 'roompanel', 'ctp', 'poly'],
     'os_keywords': ['iot', 'androidaosp'] # Rely on model for Nmap, Intune handles Android OS better
 }
 

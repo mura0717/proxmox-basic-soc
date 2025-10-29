@@ -253,8 +253,9 @@ CUSTOM_FIELDSETS = {
     "Network Infrastructure": [
         'device_type', 'dns_hostname', 'mac_addresses', 'last_seen_ip',
         'snmp_location', 'snmp_contact', 'snmp_uptime', 'switch_port_count', 'firmware_version',
-        'model', 'manufacturer', # Add model and manufacturer fields
-        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
+        'model', 'manufacturer',
+        'first_seen_date', 'last_update_source', 'last_update_at',
+        'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
         'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output',
         'discovery_note', 'last_update_source', 'last_update_at'
     ],
@@ -269,7 +270,7 @@ CUSTOM_FIELDSETS = {
     "Discovered Assets (Nmap Only)": [
         'dns_hostname', 'mac_addresses', 'last_seen_ip',
         'model', 'manufacturer',
-        'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
+        'first_seen_date', 'last_update_source', 'last_update_at','nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
         'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output', 'discovery_note', 'device_type'
     ],
 

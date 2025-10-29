@@ -41,7 +41,6 @@ def make_api_request(method, endpoint, max_retries=3, **kwargs):
                     print(f"-> Max retries exceeded for {method} {url}. Aborting this request.")
                     response.raise_for_status() # Raise the final 429 error
 
-            # For any other non-successful status code, raise an exception
             response.raise_for_status()
             
             return response

@@ -11,6 +11,7 @@ from crud.assets import AssetService
 from config import network_config
 from config.snipe_schema import CUSTOM_FIELDS
 from assets_sync_library.mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets
+from assets_sync_library.text_utils import normalize_for_comparison
 
 class AssetFinder:
     """
@@ -143,6 +144,9 @@ class AssetFinder:
                 return asset
         return None
 
+    def by_partial_hostname(self, asset_data: Dict) -> Optional[Dict]:
+        pass
+
     def by_ip_address(self, ip_address: Optional[str]) -> Optional[Dict]:
         """Strategy 6: Find by last seen IP address (requires full asset list)."""
         if not ip_address: # IP is considered a weak identifier, so we don't check for sufficient data
@@ -154,6 +158,9 @@ class AssetFinder:
                 return asset
         return None
 
+    def by_model_manufacturer_ip(self, asset_data: Dict) -> Optional[Dict]:
+        pass
+    
     def by_fallback_identifiers(self, asset_data: Dict) -> Optional[Dict]:
         """Strategy 7: Find by other unique identifiers in custom fields."""
         if not self._has_sufficient_match_data(asset_data):

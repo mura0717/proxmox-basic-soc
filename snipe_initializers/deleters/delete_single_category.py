@@ -35,7 +35,6 @@ def delete_category(category_name: str):
     if category_service.delete(category['id']) or category_service.delete_by_name(category_name):
         print(f"✓ Successfully soft-deleted category: '{category_name}'")
         print("\n--- Purging soft-deleted record from the database ---")
-        # This makes the deletion permanent
         BaseCRUDService.purge_deleted_via_database()
     else:
         print(f"✗ Failed to delete category '{category_name}'. It might be protected if assets are still assigned to it.")

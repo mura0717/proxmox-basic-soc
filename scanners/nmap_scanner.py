@@ -139,6 +139,7 @@ class NmapScanner:
             'mac_addresses': None,
             'manufacturer': None,
             'os_platform': None,
+            'model': None,
             'nmap_os_guess': None,
             'os_accuracy': None,
             'nmap_open_ports': None,
@@ -163,6 +164,10 @@ class NmapScanner:
             asset['nmap_os_guess'] = os_match.get('name', '')
             asset['os_accuracy'] = os_match.get('accuracy')
             asset['os_platform'] = os_match.get('name', '')
+            
+            # Use OS name as a fallback model if no better model is found ???
+            if not asset.get('model'):
+                asset['model'] = os_match.get('name', '').split(' ')[0] # Take first word of OS name
 
         # Get Port and Service Information
         if scan_config.get('collects_ports'):
@@ -178,6 +183,12 @@ class NmapScanner:
                         # Build the descriptive port string for storage
                         product = port_info.get('product', '')
                         version = port_info.get('version', '')
+
+                        # If a product name is found and it's not generic, use it as model ???
+                        if product and product.lower() not in ['http', 'https', 'ssh', 'telnet', 'ftp', 'microsoft-ds', 'msrpc']:
+                            if not asset.get('model') or len(product) > len(asset['model']): # Prefer longer, more specific product names
+                                asset['model'] = product
+
                         port_str = f"{port}/{proto}/{service_name} ({product} {version})".strip()
                         open_ports_list.append(port_str)
             
@@ -185,8 +196,8 @@ class NmapScanner:
                 asset['nmap_open_ports'] = '\n'.join(sorted(open_ports_list))
                 asset['open_ports_hash'] = hashlib.md5(asset['nmap_open_ports'].encode()).hexdigest()
                 asset['nmap_services'] = service_names
-
-        # Set first seen timestamp
+        
+        # Set first seen timestamp (moved to the end to ensure it's always included)
         asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
         
         # Return a clean dictionary with no None values

@@ -34,13 +34,13 @@ class AssetCategorizer:
         for device_type in device_type_priority:
             rule_set = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
             
-            # Special check for Access Points by hostname prefix
-            if device_type == 'Access Point' and device_name.lower().startswith('ap'):
-                return 'Access Point'
-            
-            if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])) and \
-               (not rule_set.get('model_keywords') or not model or \
-                any(keyword in model for keyword in rule_set.get('model_keywords', []))):
+            # Check by hostname prefix (e.g., 'ap' for Access Points)
+            if any(device_name.startswith(prefix) for prefix in rule_set.get('hostname_prefixes', [])):
+                return device_type
+
+            # Check by vendor and model keywords
+            if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])):
+                if not rule_set.get('model_keywords') or not model or any(keyword in model for keyword in rule_set.get('model_keywords', [])):
                     return device_type
         return None
     
@@ -297,8 +297,8 @@ class AssetCategorizer:
                 cls._categorize_server(os_type, model, device_name) or
                 
                 # 7. By specific services (e.g., Printer, Domain Controller)
-                cls._categorize_by_services(nmap_services) or
-                
+                (cls._categorize_by_services(nmap_services) if nmap_services else None) or
+                            
                 # 8. Generic OS-based devices (e.g., Windows Workstation, Linux Server)
                 cls._categorize_generic_os_device(os_type, model) or
                 
