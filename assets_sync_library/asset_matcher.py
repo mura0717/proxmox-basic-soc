@@ -284,8 +284,11 @@ class AssetMatcher:
             if not model_name:
                 print(f"[_assign_model_manufacturer_and_category] WARNING: Missing model for asset: {asset_data.get('name', 'Unknown')}")
         
-        # Only process if we have actual data
-        if manufacturer_name and model_name:
+        # Only attempt to create a specific model if we have a meaningful manufacturer and model name.
+        # If model_name is a generic placeholder, let _assign_generic_model handle it.
+        # We check against normalized names of generic models defined in MODELS.
+        is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
+        if manufacturer_name and model_name and not is_generic_model_name:
             # Use "get or create" logic to prevent errors for existing manufacturers
             manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
             if self.debug:
