@@ -22,7 +22,7 @@ from crud.fields import FieldService
 from crud.fieldsets import FieldsetService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
-from config.snipe_schema import CUSTOM_FIELDS
+from config.snipe_schema import CUSTOM_FIELDS, MODELS
 from config.network_config import STATIC_IP_MAP
 from debug.asset_debug_logger import debug_logger
 from assets_sync_library.mac_utils import normalize_mac
@@ -332,7 +332,12 @@ class AssetMatcher:
                     fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
                     fieldset = fieldset_service.get_by_name(fieldset_name)
                     
-                    full_model_name = f"{manufacturer_name} {model_name}" #(e.g., "LENOVO 20L8002WMD")
+                    # Compare the normalized versions to prevent duplicating the manufacturer name            
+                    if normalize_for_comparison(model_name).startswith(normalize_for_comparison(manufacturer_name)):
+                        full_model_name = model_name
+                    else:
+                        full_model_name = f"{manufacturer_name} {model_name}" #(e.g., "LENOVO 20L8002WMD")
+
                     existing_model = self.model_service.get_by_name(full_model_name)
                     
                     if self.debug:

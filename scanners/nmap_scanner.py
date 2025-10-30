@@ -139,7 +139,6 @@ class NmapScanner:
             'mac_addresses': None,
             'manufacturer': None,
             'os_platform': None,
-            'model': None,
             'nmap_os_guess': None,
             'os_accuracy': None,
             'nmap_open_ports': None,
@@ -179,10 +178,6 @@ class NmapScanner:
                         # Build the descriptive port string for storage
                         product = port_info.get('product', '')
                         version = port_info.get('version', '')
-                        # If a product name is found and it's not generic, use it as model ???
-                        if product and product.lower() not in ['http', 'https', 'ssh', 'telnet', 'ftp', 'microsoft-ds', 'msrpc', 'windows', 'linux', 'ios', 'android', 'router', 'switch', 'firewall', 'printer', 'server', 'gateway']: # Expanded exclusion list
-                            if not asset.get('model') or len(product) > len(asset['model']): # Prefer longer, more specific product names
-                                asset['model'] = product
 
                         port_str = f"{port}/{proto}/{service_name} ({product} {version})".strip()
                         open_ports_list.append(port_str)

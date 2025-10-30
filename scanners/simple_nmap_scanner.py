@@ -14,7 +14,7 @@ if os.geteuid() != 0:
     #---DEBUG---
     user_euid = os.geteuid()
     command_to_run = ['sudo', sys.executable] + sys.argv
-    print(f"\n---DEBUG---\nThe exact command being passed to sudo is: {' '.join(command_to_run)}\nAnd the user euid is: {user_euid}\n")
+    print(f"\n---DEBUG---\nThe command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
     
     test_cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
     result = subprocess.run(test_cmd, capture_output=True, timeout=5)
@@ -26,7 +26,7 @@ if os.geteuid() != 0:
             subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
             sys.exit(0)
         except (FileNotFoundError, subprocess.CalledProcessError) as e:
-            print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
+            print(f"\nERROR: Either sudo failed or scan failed: {e}")
             sys.exit(1)
     else:
         print("\nERROR: Root privileges are required for this scan.")
@@ -39,25 +39,34 @@ if os.geteuid() != 0:
 
 nm = nmap.PortScanner()
 
-ip_addr = '192.168.1.3' 
+ip_addr = '192.168.1.52' 
 ip_addr_range = '192.168.1.0/24'
-ports = '--top-ports 1024'
+ports = '-1024' #f it is o
 tcp_scan_args = '-v -sS -sV -O --osscan-guess'
 udp_scan_args = '-v -sU'
 
 print("Starting Nmap scan...")
-nm.scan(ip_addr, ports, tcp_scan_args)
+nm.scan(hosts=ip_addr, ports=ports, arguments=tcp_scan_args)
 
 assets = []
 for host in nm.all_hosts():
     if nm[host].state() == 'up':
         asset = {
             'ip': host,
+            'hostname': nm[host].hostname(), 
             'os': nm[host]['osmatch'][0]['name'] if 'osmatch' in nm[host] else 'Unknown',
-            'hostname': nm[host].hostname(),
+            'type': nm[host]['osmatch'][0]['type'] if 'type' in nm[host] else 'Unknown',
             'mac': nm[host]['addresses'].get('mac', 'Unknown'),
             'state': nm[host].state(),
-            'protocols': {}
+            'protocols': {},
+            'manufacturer': list(nm[host]['vendor'].values())[0] if 'vendor' in nm[host] else 'Unknown',
+            'product_113': nm[host]['tcp'][0]['product'] if 'product' in nm[host] else 'Unknown',
+            'product_443': nm[host]['tcp'][1]['product'] if 'product' in nm[host] else 'Unknown',
+            'version_113': nm[host]['tcp'][0]['version'] if 'version' in nm[host] else 'Unknown',
+            'version_443': nm[host]['tcp'][1]['version'] if 'version' in nm[host] else 'Unknown',
+            'extra_info_113': nm[host]['tcp'][0]['extrainfo'] if 'extrainfo' in nm[host] else 'Unknown',
+            'extra_info_443': nm[host]['tcp'][1]['extrainfo'] if 'extrainfo' in nm[host] else 'Unknown',
+           
         }
         for proto in nm[host].all_protocols():
             lport = nm[host][proto].keys()
@@ -65,7 +74,7 @@ for host in nm.all_hosts():
         assets.append(asset)
         
 print("Scan Info:", nm.scaninfo())
-print("Assets found:")
+print("Assets found:", len(assets))
 for asset in assets:
     print(asset)
 print("All scanned hosts:", nm.all_hosts())
