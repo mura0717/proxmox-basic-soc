@@ -14,7 +14,7 @@ if os.geteuid() != 0:
     #---DEBUG---
     user_euid = os.geteuid()
     command_to_run = ['sudo', sys.executable] + sys.argv
-    print(f"\n---DEBUG---\nThe command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
+    print(f"\n[DEBUG] - The command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
     
     test_cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
     result = subprocess.run(test_cmd, capture_output=True, timeout=5)
@@ -39,10 +39,10 @@ if os.geteuid() != 0:
 
 nm = nmap.PortScanner()
 
-ip_addr = '192.168.1.52' 
+ip_addr = '192.168.1.209' 
 ip_addr_range = '192.168.1.0/24'
-ports = '-1024' #f it is o
-tcp_scan_args = '-v -sS -sV -O --osscan-guess'
+ports = '-1024'
+tcp_scan_args = '-v -sS -sV -O -A --osscan-guess'
 udp_scan_args = '-v -sU'
 
 print("Starting Nmap scan...")

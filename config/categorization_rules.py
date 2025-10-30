@@ -24,11 +24,12 @@ NETWORK_DEVICE_RULES = {
 
 VIRTUAL_MACHINE_RULES = {
     'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation'],
-    'model_keywords': ['virtual machine', 'vm']
+    'model_keywords': ['virtual machine', 'vm'],
+    'specific_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # These are temporary
 }
 
 SERVER_RULES = {
-    'os_keywords': ['windows server', 'esxi'], # Be more specific
+    'os_keywords': ['windows server', 'esxi'],
     'model_keywords': ['server'],
     'hostname_keywords': ['zabbix', 'ubuntu', 'veeam', 'vcenter', 'esx', 'dc', 'filesrvr', 'terminal', 'consult']
 }
