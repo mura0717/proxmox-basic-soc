@@ -1,0 +1,9 @@
+requests
+python-dotenv
+python-crontab
+msal
+pysnmp
+python-gvm
+pyzabbix
+python-nmap
+pymysql
