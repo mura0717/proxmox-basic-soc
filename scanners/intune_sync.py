@@ -7,6 +7,7 @@ Syncs assets from Microsoft Intune to Snipe-IT
 import os
 import sys
 import requests
+import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from msal import ConfidentialClientApplication
@@ -14,8 +15,8 @@ from msal import ConfidentialClientApplication
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
-from debug.asset_debug_logger import debug_logger
-from config.intune_settings import AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+from debug.asset_debug_logger import debug_logger # Keep for logging calls
+from config.microsoft365_config import Microsoft365 # Import the Microsoft365 class
 from debug.intune_categorize_from_logs import intune_debug_categorization 
 from assets_sync_library.mac_utils import combine_macs, normalize_mac
 
@@ -24,61 +25,28 @@ class IntuneSync:
     
     def __init__(self):
         # Load credentials from environment
-        self.tenant_id = AZURE_TENANT_ID
-        self.client_id = AZURE_CLIENT_ID
-        self.client_secret = AZURE_CLIENT_SECRET
-        
-        if not all([self.tenant_id, self.client_id, self.client_secret]):
-            raise ValueError("Azure credentials not configured in environment")
-        
         self.asset_matcher = AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/v1.0"
-        self.access_token = None
-    
-    def authenticate(self) -> bool:
-        """Authenticate with Microsoft Graph API"""
-        try:
-            app = ConfidentialClientApplication(
-                self.client_id,
-                authority=f"https://login.microsoftonline.com/{self.tenant_id}",
-                client_credential=self.client_secret
-            )
-            
-            result = app.acquire_token_silent(
-                ["https://graph.microsoft.com/.default"], 
-                account=None
-            )
-            
-            if not result:
-                result = app.acquire_token_for_client(
-                    scopes=["https://graph.microsoft.com/.default"]
-                )
-            
-            if "access_token" in result:
-                self.access_token = result["access_token"]
-                return True
-            else:
-                print(f"Authentication failed: {result.get('error_description')}")
-                return False
-                
-        except Exception as e:
-            print(f"Authentication error: {e}")
-            return False
+        self.microsoft365 = Microsoft365() # Instantiate the Microsoft365 helper
     
     def get_access_token(self) -> Optional[str]:
         """Ensure a valid access token is available and return it."""
-        if not self.access_token:
-            self.authenticate()
-        return self.access_token
+        if not self.microsoft365.access_token:
+            if not self.microsoft365.authenticate():
+                print("Authentication failed via Microsoft365 helper.")
+                return None
+        return self.microsoft365.access_token
     
     def get_managed_assets(self) -> List[Dict]:
         """Fetch all managed assets from Intune"""
-        if not self.access_token:
-            if not self.get_access_token():
-                return []
+        # Ensure we have an access token before making the request
+        access_token = self.get_access_token()
+        if not access_token:
+            print("No access token available, cannot fetch Intune assets.")
+            return []
         
         headers = {
-            'Authorization': f'Bearer {self.access_token}',
+            'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json'
         }
         
@@ -91,10 +59,17 @@ class IntuneSync:
                 response.raise_for_status()
                 data = response.json()
                 
+                if not data.get('value'):
+                    print(f"DEBUG: API call to {url} returned an empty 'value' array.") # Keep this for immediate feedback
+                    print(f"DEBUG: Full API Response: {json.dumps(data, indent=2)}")
+                
                 assets.extend(data.get('value', []))
                 url = data.get('@odata.nextLink')  # Handle pagination
                 
             except requests.exceptions.RequestException as e:
+                if 'response' in locals() and response is not None:
+                    print(f"Intune API Error - Response Status Code: {response.status_code}")
+                    print(f"Intune API Error - Response Body: {response.text}")
                 print(f"Error fetching assets: {e}")
                 break
         
@@ -215,8 +190,9 @@ class IntuneSync:
     def sync_to_snipeit(self) -> Dict:
         """Main sync function"""
         print("Starting Intune synchronization...")
-        
-        if not self.authenticate():
+        # Authenticate using the Microsoft365 helper
+        if not self.microsoft365.authenticate():
+            print("Intune sync authentication failed.")
             return {'error': 'Authentication failed'}
         
         self.asset_matcher.clear_all_caches()

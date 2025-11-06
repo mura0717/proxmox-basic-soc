@@ -10,6 +10,12 @@ CUSTOM_FIELDS = {
     'device_registration_state': {"name": "Device Registration State", "element": "text", "format": "ANY", "help_text": "State of device registration"},
     'device_category_display_name': {"name": "Device Category Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the device category"},
     'device_type': {"name": "Device Type", "element": "text", "format": "ANY", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
+    # Teams Specific Fields
+    'teams_device_id': {"name": "Teams Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Teams"},
+    'teams_device_type': {"name": "Teams Device Type", "element": "text", "format": "ANY", "help_text": "Type of Teams device (e.g., collaborationBar, teamsRoom)"},
+    'teams_health_status': {"name": "Teams Health Status", "element": "text", "format": "ANY", "help_text": "Health status reported by Teams (e.g., Healthy, Non-urgent)"},
+    'teams_activity_state': {"name": "Teams Activity State", "element": "text", "format": "ANY", "help_text": "Activity state reported by Teams (e.g., Idle, InUse)"},
+    'teams_last_modified': {"name": "Teams Last Modified", "element": "text", "format": "ANY", "help_text": "Last modified timestamp from Teams (ISO 8601)"},
     'udid': {"name": "UDID", "element": "text", "format": "ANY", "help_text": "Unique Device Identifier"},
     'serial_number': {"name": "Serial Number", "element": "text", "format": "ANY", "help_text": "Serial number of the device"},
 
@@ -280,6 +286,22 @@ CUSTOM_FIELDSETS = {
         'azure_region', 'azure_tags_json', 'last_update_source', 'last_update_at'
     ],
 
+    # New fieldset for Teams devices
+    "Managed Assets (Teams)": [
+        'teams_device_id',
+        'teams_device_type',
+        'teams_health_status',
+        'teams_activity_state',
+        'teams_last_modified',
+        'name',
+        'asset_tag',
+        'serial',
+        'manufacturer',
+        'model',
+        'mac_addresses',
+        'primary_user_display_name',
+        'last_update_source', 'last_update_at'
+    ],
     # All network identifiers for easy reference
     "All Network Identifiers": [
         'dns_hostname', 'wifi_mac', 'ethernet_mac', 'mac_addresses', 'wifi_ipv4',

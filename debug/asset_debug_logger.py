@@ -12,13 +12,16 @@ class AssetDebugLogger:
         # Granular debug flags (can be set independently)
         self.intune_debug = os.getenv('INTUNE_DEBUG', '0') == '1'
         self.nmap_debug = os.getenv('NMAP_DEBUG', '0') == '1'
+        self.teams_debug = os.getenv('TEAMS_DEBUG', '0') == '1'
         self.snmp_debug = os.getenv('SNMP_DEBUG', '0') == '1' # Not yet implemented
         
         # Master flag for convenience
-        self.is_enabled = self.intune_debug or self.nmap_debug
+        self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug
         
         print(f"DEBUG_LOGGER: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
-              f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}")
+              f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}"
+              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug})."
+              )
 
         # Create log directory
         self.log_dir = os.path.join("logs", "debug_logs")
@@ -39,6 +42,13 @@ class AssetDebugLogger:
                 'categorization': os.path.join(self.log_dir, 'nmap_categorization_details.log'),
                 'summary': os.path.join(self.log_dir, 'nmap_sync_summary.log'),
                 'final_payload': os.path.join(self.log_dir, 'nmap_final_payload.log'),
+            },
+            'teams': {
+                'raw': os.path.join(self.log_dir, 'teams_raw_unparsed_data.log'),
+                'parsed': os.path.join(self.log_dir, 'teams_parsed_asset_data.log'),
+                'categorization': os.path.join(self.log_dir, 'teams_categorization_details.log'),
+                'summary': os.path.join(self.log_dir, 'teams_sync_summary.log'),
+                'final_payload': os.path.join(self.log_dir, 'teams_final_payload.log'),
             }
         }
     
@@ -55,6 +65,7 @@ class AssetDebugLogger:
         source_lower = source.lower()
         if source_lower == 'intune': result = self.intune_debug
         elif source_lower == 'nmap': result = self.nmap_debug
+        elif source_lower == 'teams': result = self.teams_debug
         elif source_lower == 'snmp': result = self.snmp_debug
         else: result = False
         
