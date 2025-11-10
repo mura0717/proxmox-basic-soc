@@ -10,14 +10,17 @@ CUSTOM_FIELDS = {
     'device_registration_state': {"name": "Device Registration State", "element": "text", "format": "ANY", "help_text": "State of device registration"},
     'device_category_display_name': {"name": "Device Category Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the device category"},
     'device_type': {"name": "Device Type", "element": "text", "format": "ANY", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
-    # Teams Specific Fields
+    'udid': {"name": "UDID", "element": "text", "format": "ANY", "help_text": "Unique Device Identifier"},
+    'serial_number': {"name": "Serial Number", "element": "text", "format": "ANY", "help_text": "Serial number of the device"},
+     # Teams Specific Fields
     'teams_device_id': {"name": "Teams Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Teams"},
     'teams_device_type': {"name": "Teams Device Type", "element": "text", "format": "ANY", "help_text": "Type of Teams device (e.g., collaborationBar, teamsRoom)"},
     'teams_health_status': {"name": "Teams Health Status", "element": "text", "format": "ANY", "help_text": "Health status reported by Teams (e.g., Healthy, Non-urgent)"},
     'teams_activity_state': {"name": "Teams Activity State", "element": "text", "format": "ANY", "help_text": "Activity state reported by Teams (e.g., Idle, InUse)"},
     'teams_last_modified': {"name": "Teams Last Modified", "element": "text", "format": "ANY", "help_text": "Last modified timestamp from Teams (ISO 8601)"},
-    'udid': {"name": "UDID", "element": "text", "format": "ANY", "help_text": "Unique Device Identifier"},
-    'serial_number': {"name": "Serial Number", "element": "text", "format": "ANY", "help_text": "Serial number of the device"},
+    'teams_created_date': {"name": "Teams Created Date", "element": "text", "format": "ANY", "help_text": "Creation timestamp from Teams (ISO 8601)"},
+    'teams_last_modified_by_id': {"name": "Teams Last Modified By ID", "element": "text", "format": "ANY", "help_text": "AAD User ID of the person who last modified the device in Teams"},
+    'teams_last_modified_by_name': {"name": "Teams Last Modified By Name", "element": "text", "format": "ANY", "help_text": "Display name of the person who last modified the device in Teams"},
 
     # Enrollment / Management
     'intune_managed': {"name": "Intune Managed", "element": "text", "format": "BOOLEAN", "help_text": "Is this device managed by Intune?"},
@@ -61,6 +64,7 @@ CUSTOM_FIELDS = {
     'primary_user_email': {"name": "Primary User Email", "element": "text", "format": "ANY", "help_text": "Primary user's email address"},
     'primary_user_display_name': {"name": "Primary User Display Name", "element": "text", "format": "ANY", "help_text": "Primary user's display name"},
     'managed_device_name': {"name": "Managed Device Name", "element": "text", "format": "ANY", "help_text": "The name of the device in Intune"},
+    'identity_type': {'name': 'Identity Type', 'element': 'text', 'format': 'ANY', 'help_text': 'User identity type (e.g., aadUser)'},
     'user_display_name': {"name": "User Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the user"},
 
     # Software Inventory
@@ -286,21 +290,26 @@ CUSTOM_FIELDSETS = {
         'azure_region', 'azure_tags_json', 'last_update_source', 'last_update_at'
     ],
 
-    # New fieldset for Teams devices
-    "Managed Assets (Teams)": [
-        'teams_device_id',
-        'teams_device_type',
-        'teams_health_status',
-        'teams_activity_state',
-        'teams_last_modified',
+    # Dedicated fieldset for Teams devices
+    "Teams Devices": [
         'name',
         'asset_tag',
         'serial',
         'manufacturer',
         'model',
         'mac_addresses',
+        'teams_device_id',
+        'teams_device_type',
+        'teams_health_status',
+        'teams_activity_state',
+        'teams_last_modified',
+        'teams_created_date',
+        'teams_last_modified_by_id',
+        'teams_last_modified_by_name',
         'primary_user_display_name',
-        'last_update_source', 'last_update_at'
+        'primary_user_id',
+        'last_update_source',
+        'last_update_at'
     ],
     # All network identifiers for easy reference
     "All Network Identifiers": [

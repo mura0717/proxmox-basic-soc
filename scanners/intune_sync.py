@@ -18,7 +18,7 @@ from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger # Keep for logging calls
 from config.microsoft365_config import Microsoft365 # Import the Microsoft365 class
 from debug.intune_categorize_from_logs import intune_debug_categorization 
-from assets_sync_library.mac_utils import combine_macs, normalize_mac
+from utils.mac_utils import combine_macs, normalize_mac
 
 class IntuneSync:
     """Microsoft Intune synchronization service"""

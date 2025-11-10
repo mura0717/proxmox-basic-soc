@@ -12,11 +12,13 @@ load_dotenv(dotenv_path=config_path)
 AZURE_TENANT_ID= os.getenv("AZURE_TENANT_ID")
 AZURE_CLIENT_ID= os.getenv("AZURE_CLIENT_ID")
 AZURE_CLIENT_SECRET= os.getenv("AZURE_CLIENT_SECRET")
+AZURE_DEBUG = os.getenv('AZURE_DEBUG', '0') == '1'
 
 if not AZURE_TENANT_ID or not AZURE_CLIENT_ID or not AZURE_CLIENT_SECRET:
     raise RuntimeError("Azure credentials not configured in environment.")
 
-#print(f"[DEBUG] AZURE_TENANT_ID: {AZURE_TENANT_ID} " + f"AZURE_CLIENT_ID: {AZURE_CLIENT_ID} " + f"AZURE_CLIENT_SECRET: {AZURE_CLIENT_SECRET}")
+if AZURE_DEBUG:
+    print(f"[DEBUG] AZURE_TENANT_ID: {AZURE_TENANT_ID} " + f"AZURE_CLIENT_ID: {AZURE_CLIENT_ID} " + f"AZURE_CLIENT_SECRET: {AZURE_CLIENT_SECRET}")
 
 import os
 import sys

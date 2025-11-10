@@ -25,8 +25,8 @@ from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS, MODELS
 from config.network_config import STATIC_IP_MAP
 from debug.asset_debug_logger import debug_logger
-from assets_sync_library.mac_utils import normalize_mac
-from assets_sync_library.text_utils import normalize_for_comparison
+from utils.mac_utils import normalize_mac
+from utils.text_utils import normalize_for_comparison
 
 class AssetMatcher:
     """

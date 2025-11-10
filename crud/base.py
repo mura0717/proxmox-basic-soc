@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from snipe_api.api_client import make_api_request
-from assets_sync_library.text_utils import normalize_for_comparison, normalize_for_display
+from utils.text_utils import normalize_for_comparison, normalize_for_display
 from snipe_db.snipe_db_connection import SnipeItDbConnection
 
 class BaseCRUDService:

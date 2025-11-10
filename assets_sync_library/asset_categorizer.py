@@ -6,7 +6,7 @@ from ipaddress import ip_address, AddressValueError
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from debug.asset_debug_logger import debug_logger
 from config import categorization_rules
-from assets_sync_library.text_utils import normalize_for_comparison
+from utils.text_utils import normalize_for_comparison
 from config import network_config
 
 class AssetCategorizer:
@@ -56,7 +56,6 @@ class AssetCategorizer:
         dc_keywords = categorization_rules.SERVICE_RULES['Domain Controller']['service_keywords']
         if all(kw in service_str for kw in dc_keywords):
             return 'Domain Controller'
-
         if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Printer']['service_keywords']):
             return 'Printer'
         if any(db in service_str for db in categorization_rules.SERVICE_RULES['Database Server']['service_keywords']):

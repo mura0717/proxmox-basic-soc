@@ -144,3 +144,4 @@ STATIC_IP_MAP = {
     '192.168.200.212': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Zebra ZD421', 'manufacturer': 'Zebra', 'model': 'ZD421', 'services': 'Label Printer ', 'location': 'Odense', 'placement': ''},
     '192.168.200.213': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Brother HL-L6415DN', 'manufacturer': 'Brother', 'model': 'HL-L6415DN', 'services': 'Fakturaprinter', 'location': 'Odense', 'placement': ''},
 }
+

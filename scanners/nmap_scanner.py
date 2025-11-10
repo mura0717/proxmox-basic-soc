@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from debug.nmap_categorize_from_logs import nmap_debug_categorization
-from assets_sync_library.mac_utils import normalize_mac
+from utils.mac_utils import normalize_mac
 from config.network_config import NMAP_SCAN_RANGES
 from config.nmap_profiles import SCAN_PROFILES
 
