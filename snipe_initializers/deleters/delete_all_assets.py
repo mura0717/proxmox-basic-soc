@@ -5,7 +5,7 @@ import sys
 from dotenv import load_dotenv
 import urllib3
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.
@@ -26,8 +26,7 @@ if assets != []:
         print(f"Deleted asset: {asset['name']}")
     print("Soft-deletion of assets completed.")
     print("\n--- Purging soft-deleted records from the database ---")
-    # This makes the deletion permanent
-    BaseCRUDService.purge_deleted_via_database()
+    BaseCRUDService.purge_deleted_via_database() # This makes the deletion permanent
 
 else:
     print("There are no assets to delete.")

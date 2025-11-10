@@ -14,13 +14,15 @@ class AssetDebugLogger:
         self.nmap_debug = os.getenv('NMAP_DEBUG', '0') == '1'
         self.teams_debug = os.getenv('TEAMS_DEBUG', '0') == '1'
         self.snmp_debug = os.getenv('SNMP_DEBUG', '0') == '1' # Not yet implemented
+        self.microsoft365_debug = os.getenv('MICROSOFT365_DEBUG', '0') == '1'
         
         # Master flag for convenience
-        self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug
+        self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug or self.microsoft365_debug
         
         print(f"DEBUG_LOGGER: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
               f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}"
-              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug})."
+              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}). "
+              f"MICROSOFT365_DEBUG={os.getenv('MICROSOFT365_DEBUG', '0')} (internal: {self.microsoft365_debug})."
               )
 
         # Create log directory
@@ -49,6 +51,13 @@ class AssetDebugLogger:
                 'categorization': os.path.join(self.log_dir, 'teams_categorization_details.log'),
                 'summary': os.path.join(self.log_dir, 'teams_sync_summary.log'),
                 'final_payload': os.path.join(self.log_dir, 'teams_final_payload.log'),
+            },
+            'microsoft365': {
+                'raw': os.path.join(self.log_dir, 'microsoft365_raw_merged_data.log'),
+                'parsed': os.path.join(self.log_dir, 'microsoft365_parsed_asset_data.log'),
+                'categorization': os.path.join(self.log_dir, 'microsoft365_categorization_details.log'),
+                'summary': os.path.join(self.log_dir, 'microsoft365_sync_summary.log'),
+                'final_payload': os.path.join(self.log_dir, 'microsoft365_final_payload.log'),
             }
         }
     
@@ -67,6 +76,7 @@ class AssetDebugLogger:
         elif source_lower == 'nmap': result = self.nmap_debug
         elif source_lower == 'teams': result = self.teams_debug
         elif source_lower == 'snmp': result = self.snmp_debug
+        elif source_lower == 'microsoft365': result = self.microsoft365_debug
         else: result = False
         
         print(f"asset_dbug_logger.py: DEBUG_LOGGER: _should_log called for source '{source_lower}'. Result: {result}")
