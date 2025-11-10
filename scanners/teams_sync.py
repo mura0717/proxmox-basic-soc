@@ -121,7 +121,7 @@ class TeamsSync:
             
             # Network
             'mac_addresses': combine_macs([
-                normalize_mac(mac.split(':')[-1])
+                normalize_mac(mac.split(':', 1)[-1])
                 for mac in hardware_details.get('macAddresses', [])
                 if mac
             ]),

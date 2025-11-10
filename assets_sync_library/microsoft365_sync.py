@@ -29,11 +29,11 @@ class Microsoft365Sync:
         """Creates dictionaries of assets keyed by serial number for quick lookups."""
         print("Preparing asset dictionaries...")
         intune_assets_by_serial = {
-            asset.get('serial'): asset 
+            asset.get('serial').upper(): asset 
             for asset in intune_data if asset.get('serial')
         }
         teams_assets_by_serial = {
-            asset.get('serial'): asset 
+            asset.get('serial').upper(): asset 
             for asset in teams_data if asset.get('serial')
         }
         return intune_assets_by_serial, teams_assets_by_serial
@@ -51,9 +51,12 @@ class Microsoft365Sync:
             if teams_asset:
                 final_asset = teams_asset.copy()
                 final_asset.update(intune_asset)
+                final_asset['last_update_source'] = 'microsoft365'
+                final_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
                 merged_assets.append(final_asset)
             else:
                 merged_assets.append(merged_asset)
+                print(f"  ✓ Intune only: {serial}")
             
             processed_serials.add(serial)
             

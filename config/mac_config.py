@@ -1,5 +1,5 @@
 """
-HArdcoded MACs for missing devices.
+Hardcoded MACs for missing devices.
 """
 
 # CTP18 - Meeting Room Displays MAC Address list
