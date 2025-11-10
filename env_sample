@@ -18,6 +18,8 @@ AZURE_TENANT_ID=
 AZURE_CLIENT_ID=
 AZURE_CLIENT_SECRET=
 AZURE_DEBUG=0
+
+#Microsoft365 Sync debugging flags
 MICROSOFT365_DEBUG=0
 
 # Intune debugging flags

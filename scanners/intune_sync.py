@@ -186,48 +186,18 @@ class IntuneSync:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
-    def sync_to_snipeit(self) -> Dict:
-        """Main sync function"""
-        print("Starting Intune synchronization...")
-        # Authenticate using the Microsoft365 helper
-        if not self.microsoft365.authenticate():
-            print("Intune sync authentication failed.")
-            return {'error': 'Authentication failed'}
-        
-        self.asset_matcher.clear_all_caches()
-        
-        # Fetch assets from Intune
-        intune_assets = self.get_intune_assets()
-        print(f"Found {len(intune_assets)} assets in Intune")
-        
-        # DEBUG: Log raw Intune API responses
-        for asset in intune_assets:
-            device_id = asset.get('id', 'unknown')
-            debug_logger.log_raw_host_data('intune', device_id, asset)  
-            
-        # Transform and prepare for Snipe-IT
-        transformed_assets = []
-        for asset in intune_assets:
-            transformed = self.transform_intune_to_snipeit(asset)
-            transformed_assets.append(transformed)
-        
-        # DEBUG: Log transformed data
-        debug_logger.log_parsed_asset_data('intune', transformed_assets)
-        
-        # Send to asset matcher for processing
-        results = self.asset_matcher.process_scan_data('intune', transformed_assets)
-        
-        # DEBUG: Log sync results
-        debug_logger.log_sync_summary('intune', results)
-        
-        print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
-        return results
+    def get_transformed_assets(self) -> List[Dict]:
+        """Fetches and transforms all assets from Intune."""
+        print("Fetching and transforming Intune assets...")
+        raw_assets = self.get_intune_assets()
+        transformed_assets = [self.transform_intune_to_snipeit(asset) for asset in raw_assets]
+        return transformed_assets
 
 if __name__ == "__main__":
-    debug_logger.clear_logs('intune')
-    
     if intune_debug_categorization.debug:
+        debug_logger.clear_logs('intune')
         intune_debug_categorization.write_managed_assets_to_logfile()
     else:
-        sync = IntuneSync()
-        sync.sync_to_snipeit()
+        print("This script is not meant to be run directly for syncing.")
+        print("Use microsoft365_sync.py to perform a full sync.")
+        print("To debug categorization, set INTUNE_CATEGORIZATION_DEBUG=1 and run this script.")

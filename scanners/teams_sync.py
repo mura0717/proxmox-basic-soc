@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger
 from config.microsoft365_config import Microsoft365
-from debug.teams_categorize_from_logs import teams_debug_categorization 
+from debug.teams_categorize_from_logs import teams_debug_categorization
 from utils.mac_utils import combine_macs, normalize_mac
 
 class TeamsSync:
@@ -140,32 +140,27 @@ class TeamsSync:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
-    def sync_to_snipeit(self) -> Dict:
-        """Main sync function"""
-        print("Starting Teams synchronization...")
-        
-        # Clear logs for this sync run
-        debug_logger.clear_logs('teams')
-        
-        self.asset_matcher.clear_all_caches()
-        
-        teams_assets = self.get_teams_assets()
-        print(f"Found {len(teams_assets)} assets in Teams")
-        
-        # DEBUG: Log raw Teams API responses
-        for asset in teams_assets:
-            device_id = asset.get('id', 'unknown')
-            debug_logger.log_raw_host_data('teams', device_id, asset)
-            
-        # Transform and prepare for Snipe-IT
-        transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in teams_assets]        
-        debug_logger.log_parsed_asset_data('teams', transformed_assets) # Log transformed data
-        
-        results = self.asset_matcher.process_scan_data('teams', transformed_assets)
-        debug_logger.log_sync_summary('teams', results) # Log sync results
-        return results
+    def get_transformed_assets(self) -> List[Dict]:
+        """Fetches and transforms all assets from Teams."""
+        print("Fetching and transforming Teams assets...")
+        raw_assets = self.get_teams_assets()
+        transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in raw_assets]
+        return transformed_assets
 
 if __name__ == "__main__":
-    sync = TeamsSync()
-    #sync.sync_to_snipeit()
-    sync.testing_get_assets_to_log_and_terminal()
+    # This script is now intended to be used as a library by Microsoft365Sync.
+    # To test transformation, you can run the categorization debug script.
+    print("This script is not meant to be run directly for syncing.")
+    print("Use microsoft365_sync.py to perform a full sync.")
+    # For direct testing of the raw data fetching and transformation:
+    # sync = TeamsSync()
+    # sync.testing_get_assets_to_log_and_terminal()
+
+if __name__ == "__main__":
+    if teams_debug_categorization.debug:
+        debug_logger.clear_logs('teams')
+        teams_debug_categorization.write_teams_assets_to_logfile()
+    else:
+        print("This script is not meant to be run directly for syncing.")
+        print("Use microsoft365_sync.py to perform a full sync.")
+        print("To debug categorization, set TEAMS_CATEGORIZATION_DEBUG=1 and run this script.")
