@@ -15,8 +15,8 @@ from msal import ConfidentialClientApplication
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
-from debug.asset_debug_logger import debug_logger # Keep for logging calls
-from config.microsoft365_config import Microsoft365 # Import the Microsoft365 class
+from debug.asset_debug_logger import debug_logger 
+from config.microsoft365_config import Microsoft365 
 from debug.intune_categorize_from_logs import intune_debug_categorization 
 from utils.mac_utils import combine_macs, normalize_mac
 
@@ -24,7 +24,6 @@ class IntuneSync:
     """Microsoft Intune synchronization service"""
     
     def __init__(self):
-        # Load credentials from environment
         self.asset_matcher = AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/v1.0"
         self.microsoft365 = Microsoft365() # Instantiate the Microsoft365 helper
@@ -37,7 +36,7 @@ class IntuneSync:
                 return None
         return self.microsoft365.access_token
     
-    def get_managed_assets(self) -> List[Dict]:
+    def get_intune_assets(self) -> List[Dict]:
         """Fetch all managed assets from Intune"""
         # Ensure we have an access token before making the request
         access_token = self.get_access_token()
@@ -198,7 +197,7 @@ class IntuneSync:
         self.asset_matcher.clear_all_caches()
         
         # Fetch assets from Intune
-        intune_assets = self.get_managed_assets()
+        intune_assets = self.get_intune_assets()
         print(f"Found {len(intune_assets)} assets in Intune")
         
         # DEBUG: Log raw Intune API responses

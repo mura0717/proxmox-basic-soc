@@ -43,7 +43,7 @@ if __name__ == "__main__":
     else:
         print("No device id provided on command line — attempting to fetch managed devices and auto-select the first one...")
         try:
-            managed = sync.get_managed_assets()
+            managed = sync.get_intune_assets()
         except Exception:
             managed = None
 
