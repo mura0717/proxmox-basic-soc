@@ -52,8 +52,8 @@ class IntuneDebugCategorization:
         return assets
     
     def write_managed_assets_to_logfile(self):
-        from scanners.intune_sync import IntuneSync
-        sync = IntuneSync()
+        from scanners.intune_scanner import IntuneScanner
+        sync = IntuneScanner()
         raw_assets = self.get_raw_intune_assets_from_log()
         print(f"Loaded {len(raw_assets)} raw assets from log.")
 

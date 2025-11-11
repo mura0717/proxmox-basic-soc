@@ -19,7 +19,7 @@ class AssetDebugLogger:
         # Master flag for convenience
         self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug or self.microsoft365_debug
         
-        print(f"DEBUG_LOGGER: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
+        print(f"[DEBUG_LOGGER]: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
               f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}"
               f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}). "
               f"MICROSOFT365_DEBUG={os.getenv('MICROSOFT365_DEBUG', '0')} (internal: {self.microsoft365_debug})."
@@ -79,7 +79,7 @@ class AssetDebugLogger:
         elif source_lower == 'microsoft365': result = self.microsoft365_debug
         else: result = False
         
-        print(f"asset_dbug_logger.py: DEBUG_LOGGER: _should_log called for source '{source_lower}'. Result: {result}")
+        print(f" [DEBUG_LOGGER] asset_debug_logger: _should_log called for source '{source_lower}'. Result: {result}")
         return result
     
     def clear_logs(self, source: str):

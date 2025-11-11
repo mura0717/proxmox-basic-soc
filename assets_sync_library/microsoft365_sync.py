@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger 
-from config.microsoft365_config import Microsoft365
-from scanners.intune_sync import IntuneSync
-from scanners.teams_sync import TeamsSync
+from config.microsoft365_service import Microsoft365Service
+from scanners.intune_scanner import IntuneScanner
+from scanners.teams_scanner import TeamsScanner
 from utils.mac_utils import combine_macs, normalize_mac
 
 class Microsoft365Sync:
@@ -21,9 +21,9 @@ class Microsoft365Sync:
     
     def __init__(self):
         self.asset_matcher = AssetMatcher()
-        self.microsoft365 = Microsoft365()
-        self.intune_sync = IntuneSync()
-        self.teams_sync = TeamsSync()
+        self.microsoft365 = Microsoft365Service()
+        self.intune_sync = IntuneScanner(self.asset_matcher)
+        self.teams_sync = TeamsScanner(self.asset_matcher)
     
     def _prepare_asset_dictionaries(self, intune_data: List[Dict], teams_data: List[Dict]) -> tuple[Dict, Dict]:
         """Creates dictionaries of assets keyed by serial number for quick lookups."""

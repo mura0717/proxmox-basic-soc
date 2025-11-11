@@ -16,17 +16,17 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger 
-from config.microsoft365_config import Microsoft365 
+from config.microsoft365_service import Microsoft365Service 
 from debug.intune_categorize_from_logs import intune_debug_categorization 
 from utils.mac_utils import combine_macs, normalize_mac
 
-class IntuneSync:
+class IntuneScanner:
     """Microsoft Intune synchronization service"""
     
-    def __init__(self):
-        self.asset_matcher = AssetMatcher()
+    def __init__(self, asset_matcher: Optional[AssetMatcher] = None):
+        self.asset_matcher = asset_matcher or AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/v1.0"
-        self.microsoft365 = Microsoft365() # Instantiate the Microsoft365 helper
+        self.microsoft365 = Microsoft365Service() # Instantiate the Microsoft365 helper
     
     def get_access_token(self) -> Optional[str]:
         """Ensure a valid access token is available and return it."""

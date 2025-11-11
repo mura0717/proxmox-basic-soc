@@ -53,8 +53,8 @@ class TeamsDebugCategorization:
 
     def write_teams_assets_to_logfile(self):
         """Transforms and categorizes raw Teams assets, writing the result to a log."""
-        from scanners.teams_sync import TeamsSync
-        sync = TeamsSync()
+        from scanners.teams_scanner import TeamsScanner
+        sync = TeamsScanner()
         raw_assets = self.get_raw_teams_assets_from_log()
         print(f"Loaded {len(raw_assets)} raw assets from Teams log.")
 

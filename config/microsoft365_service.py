@@ -8,7 +8,6 @@ config_path = "/opt/snipeit-sync/snipe-it-asset-management/.env"
 load_dotenv(dotenv_path=config_path)
 
 # Configuration
-
 AZURE_TENANT_ID= os.getenv("AZURE_TENANT_ID")
 AZURE_CLIENT_ID= os.getenv("AZURE_CLIENT_ID")
 AZURE_CLIENT_SECRET= os.getenv("AZURE_CLIENT_SECRET")
@@ -26,7 +25,7 @@ from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-class Microsoft365:
+class Microsoft365Service:
     """Microsoft365 API service"""
     
     def __init__(self):

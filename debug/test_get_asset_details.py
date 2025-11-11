@@ -11,7 +11,7 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scanners.intune_sync import IntuneSync
+from scanners.intune_scanner import IntuneScanner
 
 GRAPH_URL = "https://graph.microsoft.com/v1.0"
 
@@ -30,7 +30,7 @@ def get_device(device_id: str, token: str):
         return None
 
 if __name__ == "__main__":
-    sync = IntuneSync()
+    sync = IntuneScanner()
     token = sync.get_access_token()
     
     if not token:
