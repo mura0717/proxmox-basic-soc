@@ -153,6 +153,5 @@ if __name__ == "__main__":
     sync = Microsoft365Sync()
     if debug_logger.microsoft365_debug:
         sync.sync_to_logs()
-    else:
-        sync.sync_to_snipeit()
+    sync.sync_to_snipeit()
     

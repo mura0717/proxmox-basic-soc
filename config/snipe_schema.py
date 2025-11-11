@@ -168,18 +168,10 @@ CUSTOM_FIELDS = {
 
 # Define which fields belong to which fieldset, using our reference keys
 CUSTOM_FIELDSETS = {
-    # Comprehensive fieldset for all managed assets
-     "Managed Assets (Intune)": [
-        'azure_ad_id', 'intune_device_id', 'managed_device_name', 'intune_managed',
-        'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
-        'intune_compliance', 'management_state', 'primary_user_upn',
-        'primary_user_display_name', 'os_platform', 'os_version',
-        'manufacturer', 'model', 'encrypted', 'supervised', 'jailbroken',
-        'total_storage', 'free_storage',
-        'last_update_source', 'last_update_at'   
-    ],
-    
-    "Managed Assets (Intune+Nmap)": [
+    # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.)
+    # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.
+    # This unified approach simplifies model assignment, as any managed device model can use this one fieldset.
+    "Managed & Discovered Assets": [
         # Identity / IDs
         'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
 
@@ -187,6 +179,14 @@ CUSTOM_FIELDSETS = {
         'intune_managed', 'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
         'managed_by', 'management_name', 'intune_category', 'ownership', 'device_state', 'management_state',
         'intune_compliance', 'compliance_grace_expiration', 'management_cert_expiration',
+        
+        # Teams Specific Fields
+        'teams_device_id', 'teams_device_type', 'teams_health_status', 'teams_activity_state',
+        'teams_last_modified', 'teams_created_date', 'teams_last_modified_by_id',
+        'teams_last_modified_by_name',
+        
+        # User Identity Type
+        'identity_type',
         'enrollment_profile_name', 'require_user_enrollment_approval', 'activation_lock_bypass_code',
 
         # OS / Platform
@@ -225,26 +225,6 @@ CUSTOM_FIELDSETS = {
 
         # Notes
         'discovery_note',
-    ],
-
-    # Focused fieldset for core managed asset details
-    "Managed Assets - Core Info": [
-        'azure_ad_id', 'intune_device_id', 'primary_user_upn', 'primary_user_display_name',
-        'ownership', 'device_state', 'intune_compliance', 'intune_last_sync',
-        'os_platform', 'os_version', 'product_name', 'device_type'
-    ],
-
-    # Focused fieldset for network and security details
-    "Managed Assets - Network and Security": [
-        'dns_hostname', 'mac_addresses', 'intune_wifi_ipv4', 'wifi_subnet_id', 'last_seen_ip',
-        'encrypted', 'supervised', 'jailbroken', 'security_patch_level',
-        'nmap_last_scan', 'nmap_open_ports', 'open_ports_hash', 'connected_switch_port'
-    ],
-
-    # Focused fieldset for hardware and system details
-    "Managed Assets - Hardware Details": [
-        'total_storage', 'free_storage', 'processor_architecture', 'tpm_manufacturer_id',
-        'tpm_manufacturer_version', 'bios_version', 'sku_family', 'parent_device_id', 'hypervisor_host'
     ],
 
     # Software inventory details
@@ -289,28 +269,6 @@ CUSTOM_FIELDSETS = {
         'cloud_provider', 'azure_resource_id', 'azure_subscription_id', 'azure_resource_group',
         'azure_region', 'azure_tags_json', 'last_update_source', 'last_update_at'
     ],
-
-    # Dedicated fieldset for Teams devices
-    "Teams Devices": [
-        'name',
-        'asset_tag',
-        'serial',
-        'manufacturer',
-        'model',
-        'mac_addresses',
-        'teams_device_id',
-        'teams_device_type',
-        'teams_health_status',
-        'teams_activity_state',
-        'teams_last_modified',
-        'teams_created_date',
-        'teams_last_modified_by_id',
-        'teams_last_modified_by_name',
-        'primary_user_display_name',
-        'primary_user_id',
-        'last_update_source',
-        'last_update_at'
-    ],
     # All network identifiers for easy reference
     "All Network Identifiers": [
         'dns_hostname', 'wifi_mac', 'ethernet_mac', 'mac_addresses', 'wifi_ipv4',
@@ -332,10 +290,22 @@ CUSTOM_FIELDSETS = {
 STATUS_LABELS = {
     "Managed - Intune": {
         "type": "deployable", 
-        "color": "#3498db",
+        "color": "#36a9e0",
         "show_in_nav": False,
         "default_label": False
         },
+    "Managed - M365": {
+        "type": "deployable",
+        "color": "#0078d4",
+        "show_in_nav": True,
+        "default_label": False
+    },
+    "Managed - Teams": {
+        "type": "deployable",
+        "color": "#4b53bc",
+        "show_in_nav": True,
+        "default_label": False
+    },
     "Discovered - Nmap": {
         "type": "deployable", 
         "color": "#f1c40f",

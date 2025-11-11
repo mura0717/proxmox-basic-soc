@@ -303,14 +303,14 @@ class AssetMatcher:
                     fieldset_service = FieldsetService()
                     fieldset_map = {
                         # Standard End-User Devices
-                        'Laptops': 'Managed Assets (Intune+Nmap)',
-                        'Desktops': 'Managed Assets (Intune+Nmap)',
-                        'Mobile Phones': 'Managed Assets (Intune+Nmap)',
-                        'Tablets': 'Managed Assets (Intune+Nmap)',
-                        'IoT Devices': 'Managed Assets (Intune+Nmap)',
+                        'Laptops': 'Managed & Discovered Assets',
+                        'Desktops': 'Managed & Discovered Assets',
+                        'Mobile Phones': 'Managed & Discovered Assets',
+                        'Tablets': 'Managed & Discovered Assets',
+                        'IoT Devices': 'Managed & Discovered Assets',
                         # Infrastructure
-                        'Servers': 'Managed Assets (Intune+Nmap)',
-                        'Virtual Machines (On-Premises)': 'Managed Assets (Intune+Nmap)',
+                        'Servers': 'Managed & Discovered Assets',
+                        'Virtual Machines (On-Premises)': 'Managed & Discovered Assets',
                         'Cloud Resources': 'Cloud Resources (Azure)',
                         # Network Gear
                         'Switches': 'Network Infrastructure',
@@ -322,7 +322,7 @@ class AssetMatcher:
                         'Printers': 'Discovered Assets (Nmap Only)',
                     }
                     
-                    fieldset_name = fieldset_map.get(category_name, 'Managed Assets (Intune+Nmap)')
+                    fieldset_name = fieldset_map.get(category_name, 'Managed & Discovered Assets')
                     fieldset = fieldset_service.get_by_name(fieldset_name)
                     
                     # Prevent duplicating the manufacturer name in the model name
@@ -587,6 +587,8 @@ class AssetMatcher:
         source_for_status = (asset_data.get('_source') or asset_data.get('last_update_source') or 'unknown')
         status_map = {
             'intune': 'Managed - Intune',
+            'microsoft365': 'Managed - M365',
+            'teams': 'Managed - Teams',      
             'nmap': 'Discovered - Nmap',
             'snmp': 'On-Premise',
         }
