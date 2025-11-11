@@ -49,12 +49,12 @@ class Microsoft365Sync:
             teams_asset = teams_assets_by_serial.get(serial)
     
             if teams_asset:
+                print(f"  ✓ Teams only: {serial}")
                 final_asset = teams_asset.copy()
                 final_asset.update(intune_asset)
                 final_asset['last_update_source'] = 'microsoft365'
                 final_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
                 merged_assets.append(final_asset)
-                print(f"  ✓ Teams only: {serial}")
             else:
                 merged_assets.append(merged_asset)
                 print(f"  ✓ Intune only: {serial}")
@@ -77,42 +77,44 @@ class Microsoft365Sync:
             if not intune_asset.get('serial'):
                 merged_assets.append(intune_asset)
         
-    def merge_data(self) -> List[Dict]:
+    def merge_data(self, intune_data: Optional[List[Dict]] = None, teams_data: Optional[List[Dict]] = None) -> List[Dict]:
         """
-        Merges transformed data from Intune and Teams. Intune data is prioritized.
-        Missing fields in an Intune asset are supplemented by the corresponding Teams asset.
+        Merges Intune and Teams data. If data lists are not provided, fetches them from the scanners.
         """
-        # 1. Fetch raw and transformed data from both sources
-        raw_intune_data, intune_data = self.intune_sync.get_transformed_assets()
-        raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
+        # Fetch data from scanners if not provided
+        if intune_data is None or teams_data is None:
+            raw_intune_data, intune_data = self.intune_sync.get_transformed_assets()
+            raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
+            
+            # Log raw API data if debugging is enabled
+            if debug_logger.microsoft365_debug:
+                combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
+                debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
         
-        # 2. Log the actual raw data if debugging is enabled
-        if debug_logger.microsoft365_debug:
-            combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
-            # Log the combined raw data as the "raw" input for the M365 sync.
-            debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
-        
-        # 3. Prepare dictionaries for efficient merging
+        # Prepare dictionaries keyed by serial number for efficient merging
         intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data)
         
-        # 3. Perform the merge operations
+        # Perform the merge operations
         merged_assets, processed_serials = self._merge_intune_with_teams(intune_assets_by_serial, teams_assets_by_serial)
         self._add_unmatched_assets(merged_assets, processed_serials, intune_data, teams_assets_by_serial)
 
         return merged_assets
     
     def sync_to_snipeit(self):
-        """Fetches, merges, and syncs all Microsoft 365 data to Snipe-IT."""
+        """Fetches, merges, and syncs all Microsoft 365 assets to Snipe-IT."""
         print("Starting Microsoft 365 synchronization...")
         
         self.asset_matcher.clear_all_caches()
-              
+        # Clear previous debug logs for this source at the start of the sync
+        if debug_logger.microsoft365_debug:
+            debug_logger.clear_logs('microsoft365')
+
         # Get the final, merged list of assets
         final_assets = self.merge_data()
         print(f"Total of {len(final_assets)} unique assets after merging Intune and Teams data.")
         
+        # Log the final transformed payload before sending to the matcher
         if debug_logger.microsoft365_debug:
-            debug_logger.clear_logs('microsoft365')
             debug_logger.log_parsed_asset_data('microsoft365', final_assets)
         
         # Process the final list with the asset matcher
@@ -124,20 +126,33 @@ class Microsoft365Sync:
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 
-    def test_final_log(self):
-        """
-        Fetches, merges, and logs the combined TRANSFORMED asset data for debugging and verification.
-        This does not transform or sync data to Snipe-IT.
-        """
-        final_assets = self.merge_data()
-        print(f"Found {len(final_assets)} unique assets from Intune and Teams")
-        
+    def sync_to_logs(self):
+        """Fetches live data and generates the raw and parsed log files for debugging."""
+        print("Starting Microsoft 365 debug logging...")
+        if not debug_logger.microsoft365_debug:
+            print("Microsoft 365 debugging is not enabled. Set MICROSOFT365_DEBUG=1 to run this test.")
+            return
+
+        # 1. Fetch live data once
+        raw_intune_data, transformed_intune = self.intune_sync.get_transformed_assets()
+        raw_teams_data, transformed_teams = self.teams_sync.get_transformed_assets()
+        combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
+
+        # 2. Clear old logs and write the new raw data log
         debug_logger.clear_logs('microsoft365')
-        debug_logger.log_parsed_asset_data('microsoft365', final_assets)
+        debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
+        print(f"\nRaw data log file has been created at: {debug_logger.log_files['microsoft365']['raw']}")
+
+        # 3. Merge the already-fetched data and write the parsed data log
+        merged_assets = self.merge_data(intune_data=transformed_intune, teams_data=transformed_teams)
+        print(f"Found {len(merged_assets)} unique assets from Intune and Teams")
+        debug_logger.log_parsed_asset_data('microsoft365', merged_assets)
         print(f"\nMerged transformed data log file has been created at: {debug_logger.log_files['microsoft365']['parsed']}")
-    
-    
+
 if __name__ == "__main__":
     sync = Microsoft365Sync()
-    sync.test_final_log()
-    # sync.sync_to_snipeit()
+    if debug_logger.microsoft365_debug:
+        sync.sync_to_logs()
+    else:
+        sync.sync_to_snipeit()
+    
