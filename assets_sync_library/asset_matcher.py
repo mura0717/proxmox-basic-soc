@@ -33,6 +33,9 @@ class AssetMatcher:
     Central service for matching and consolidating asset data from multiple sources
     """
     
+    _custom_field_map: Dict[str, str] = {}
+    _hydrated = False
+    
     def __init__(self):
         self.asset_service = AssetService()
         self.matched_assets = {}
@@ -45,8 +48,8 @@ class AssetMatcher:
         self.field_service = FieldService()
         self.fieldset_service = FieldsetService()        
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
-        self.custom_field_map = {}
-        self._hydrate_field_map()
+        if not AssetMatcher._hydrated:
+            self._hydrate_field_map()
         
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
@@ -494,7 +497,7 @@ class AssetMatcher:
         Builds a map from our internal config key (e.g., 'last_seen_ip') to the
         server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
         """
-        try:
+        if not AssetMatcher._hydrated:
             name_to_key_map = {normalize_for_comparison(value.get('name', '')): key
             for key, value in CUSTOM_FIELDS.items()}
             
@@ -510,29 +513,29 @@ class AssetMatcher:
                 if not internal_key:
                     continue
 
-                db_column_str = server_field.get('db_column_name') 
+                db_column_str = server_field.get('db_column_name')
                 if db_column_str:
-                    self.custom_field_map[internal_key] = db_column_str
+                    AssetMatcher._custom_field_map[internal_key] = db_column_str
             
             if self.debug:
-                print(f"[DEBUG] Hydrated {len(self.custom_field_map)} custom field mappings.")
-                if len(self.custom_field_map) < len(CUSTOM_FIELDS):
-                    missing = [k for k in CUSTOM_FIELDS if k not in self.custom_field_map]
+                print(f"[DEBUG] Hydrated {len(AssetMatcher._custom_field_map)} custom field mappings.")
+                if len(AssetMatcher._custom_field_map) < len(CUSTOM_FIELDS):
+                    missing = [k for k in CUSTOM_FIELDS if k not in AssetMatcher._custom_field_map]
                     print(f"[WARNING] Could not find server mapping for keys: {missing}")
-        
-        except Exception as e:
-            print(f"[ERROR] CRITICAL: Failed to hydrate custom field map: {e}")
-            print("         Custom fields will not be synced.")
+            AssetMatcher._hydrated = True
         
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate custom fields into the main payload using their DB column names."""
 
         BOOLEAN_TEXT_FIELDS = {field_key for field_key, field_def in CUSTOM_FIELDS.items() if field_def['format'] == 'BOOLEAN'}
         
+        if not AssetMatcher._hydrated:
+            self._hydrate_field_map()
+            
         for field_key, field_def in CUSTOM_FIELDS.items():
             if field_key in asset_data and asset_data[field_key] is not None:
                 
-                db_key = self.custom_field_map.get(field_key)
+                db_key = AssetMatcher._custom_field_map.get(field_key)
                 if not db_key:
                     if self.debug:
                         print(f"[WARNING] No DB key for custom field '{field_def.get('name')}'. Skipping.")

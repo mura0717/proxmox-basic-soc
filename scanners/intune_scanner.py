@@ -72,6 +72,10 @@ class IntuneScanner:
                 print(f"Error fetching assets: {e}")
                 break
         
+        # Log raw data for each asset if debugging is enabled
+        if debug_logger.intune_debug:
+            for asset in assets:
+                debug_logger.log_raw_host_data('intune', asset.get('id', 'Unknown'), asset)
         return assets
     
     def _combine_mac_addresses(self, asset: Dict) -> str:
@@ -186,18 +190,13 @@ class IntuneScanner:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
-    def get_transformed_assets(self) -> List[Dict]:
+    def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
         """Fetches and transforms all assets from Intune."""
         print("Fetching and transforming Intune assets...")
         raw_assets = self.get_intune_assets()
         transformed_assets = [self.transform_intune_to_snipeit(asset) for asset in raw_assets]
-        return transformed_assets
-
-if __name__ == "__main__":
-    if intune_debug_categorization.debug:
-        debug_logger.clear_logs('intune')
-        intune_debug_categorization.write_managed_assets_to_logfile()
-    else:
-        print("This script is not meant to be run directly for syncing.")
-        print("Use microsoft365_sync.py to perform a full sync.")
-        print("To debug categorization, set INTUNE_CATEGORIZATION_DEBUG=1 and run this script.")
+        
+        if debug_logger.intune_debug:
+            debug_logger.log_parsed_asset_data('intune', transformed_assets)
+        
+        return raw_assets, transformed_assets

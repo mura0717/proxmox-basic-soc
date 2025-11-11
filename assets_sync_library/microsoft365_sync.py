@@ -54,6 +54,7 @@ class Microsoft365Sync:
                 final_asset['last_update_source'] = 'microsoft365'
                 final_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
                 merged_assets.append(final_asset)
+                print(f"  ✓ Teams only: {serial}")
             else:
                 merged_assets.append(merged_asset)
                 print(f"  ✓ Intune only: {serial}")
@@ -81,11 +82,17 @@ class Microsoft365Sync:
         Merges transformed data from Intune and Teams. Intune data is prioritized.
         Missing fields in an Intune asset are supplemented by the corresponding Teams asset.
         """
-        # 1. Fetch data from both sources
-        intune_data = self.intune_sync.get_transformed_assets()
-        teams_data = self.teams_sync.get_transformed_assets()
+        # 1. Fetch raw and transformed data from both sources
+        raw_intune_data, intune_data = self.intune_sync.get_transformed_assets()
+        raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
         
-        # 2. Prepare dictionaries for efficient merging
+        # 2. Log the actual raw data if debugging is enabled
+        if debug_logger.microsoft365_debug:
+            combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
+            # Log the combined raw data as the "raw" input for the M365 sync.
+            debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
+        
+        # 3. Prepare dictionaries for efficient merging
         intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data)
         
         # 3. Perform the merge operations
@@ -98,22 +105,22 @@ class Microsoft365Sync:
         """Fetches, merges, and syncs all Microsoft 365 data to Snipe-IT."""
         print("Starting Microsoft 365 synchronization...")
         
-        # Clear caches and logs for this run
         self.asset_matcher.clear_all_caches()
-        debug_logger.clear_logs('microsoft365')
-        
+              
         # Get the final, merged list of assets
         final_assets = self.merge_data()
         print(f"Total of {len(final_assets)} unique assets after merging Intune and Teams data.")
         
-        # Log the final transformed payload before sending to the matcher
-        debug_logger.log_parsed_asset_data('microsoft365', final_assets)
+        if debug_logger.microsoft365_debug:
+            debug_logger.clear_logs('microsoft365')
+            debug_logger.log_parsed_asset_data('microsoft365', final_assets)
         
         # Process the final list with the asset matcher
         results = self.asset_matcher.process_scan_data('microsoft365', final_assets)
         
-        # Log the summary of the sync operation
-        debug_logger.log_sync_summary('microsoft365', results)
+        if debug_logger.microsoft365_debug:
+            debug_logger.log_sync_summary('microsoft365', results)
+        
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
 

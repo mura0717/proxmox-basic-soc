@@ -69,12 +69,12 @@ class TeamsScanner:
                     print(f"Teams API Error - Response Body: {response.text}")
                 print(f"Error fetching assets: {e}")
                 break
-        
-        return assets
 
-        # Log the data after it has been transformed
-        debug_logger.log_parsed_asset_data('teams', logged_assets)
-        print(f"\nTeams debug log files have been created in the logs/debug_logs/ directory.")
+        # Log raw data for each asset if debugging is enabled
+        if debug_logger.teams_debug:
+            for asset in assets:
+                debug_logger.log_raw_host_data('teams', asset.get('id', 'Unknown'), asset)
+        return assets
  
             
     def transform_teams_to_snipeit(self, teams_asset: Dict) -> Dict:
@@ -127,18 +127,13 @@ class TeamsScanner:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
-    def get_transformed_assets(self) -> List[Dict]:
+    def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
         """Fetches and transforms all assets from Teams."""
         print("Fetching and transforming Teams assets...")
         raw_assets = self.get_teams_assets()
         transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in raw_assets]
-        return transformed_assets
 
-if __name__ == "__main__":
-    if teams_debug_categorization.debug:
-        debug_logger.clear_logs('teams')
-        teams_debug_categorization.write_teams_assets_to_logfile()
-    else:
-        print("This script is not meant to be run directly for syncing.")
-        print("Use microsoft365_sync.py to perform a full sync.")
-        print("To debug categorization, set TEAMS_CATEGORIZATION_DEBUG=1 and run this script.")
+        if debug_logger.teams_debug:
+            debug_logger.log_parsed_asset_data('teams', transformed_assets)
+
+        return raw_assets, transformed_assets

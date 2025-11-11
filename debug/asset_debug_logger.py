@@ -64,8 +64,6 @@ class AssetDebugLogger:
     def _get_log_path(self, source: str, purpose: str) -> str | None:
         """Helper to get the correct log file path for a source and purpose."""  
         log_path = self.log_files.get(source.lower(), {}).get(purpose)
-        if log_path:
-            print(f"DEBUG_LOGGER: _get_log_path for source '{source}' purpose '{purpose}' resolved to: '{os.path.abspath(log_path)}'")
         return self.log_files.get(source.lower(), {}).get(purpose)
     
     
