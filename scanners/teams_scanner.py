@@ -70,9 +70,6 @@ class TeamsScanner:
                 print(f"Error fetching assets: {e}")
                 break
 
-        if debug_logger.teams_debug:
-            for asset in assets:
-                debug_logger.log_raw_host_data('teams', asset.get('id', 'Unknown'), asset)
         return assets
  
             
@@ -127,6 +124,15 @@ class TeamsScanner:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
+    def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
+        """Write both raw and transformed assets to debug logs"""
+        debug_logger.clear_logs('intune')  
+        for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
+            asset_id = raw_asset.get('id', 'Unknown')
+            debug_logger.log_raw_host_data('teams', asset_id, raw_asset)
+            debug_logger.log_parsed_asset_data('teams', asset_id, transformed_asset)
+
+
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
         """Fetches and transforms all assets from Teams."""
         print("Fetching and transforming Teams assets...")
@@ -134,6 +140,6 @@ class TeamsScanner:
         transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in raw_assets]
 
         if debug_logger.teams_debug:
-            debug_logger.log_parsed_asset_data('teams', transformed_assets)
+            self.write_to_logs(raw_assets, transformed_assets)
 
         return raw_assets, transformed_assets

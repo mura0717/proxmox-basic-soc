@@ -27,69 +27,56 @@ class Microsoft365Sync:
         self.intune_sync = IntuneScanner(self.asset_matcher)
         self.teams_sync = TeamsScanner(self.asset_matcher)
     
-    def _prepare_asset_dictionaries(self, intune_data: List[Dict], teams_data: List[Dict]) -> tuple[Dict, Dict, Dict, Dict]:
-        """Creates dictionaries of assets keyed by various identifiers for quick lookups."""
+    def _prepare_asset_dictionaries(self, intune_data: List[Dict], teams_data: List[Dict]) -> tuple[Dict, Dict]:
+        """Creates dictionaries of assets keyed by serial number for quick lookups."""
         print("Preparing asset dictionaries...")
         intune_assets_by_serial = {
             asset.get('serial').upper(): asset 
             for asset in intune_data if asset.get('serial')
         }
-        intune_assets_by_user_id = {
-            asset.get('primary_user_id'): asset
-            for asset in intune_data if asset.get('primary_user_id')
-        }
         teams_assets_by_serial = {
             asset.get('serial').upper(): asset 
             for asset in teams_data if asset.get('serial')
         }
-        teams_assets_by_user_id = {
-            asset.get('primary_user_id'): asset
-            for asset in teams_data if asset.get('primary_user_id')
-        }
-        return intune_assets_by_serial, teams_assets_by_serial, intune_assets_by_user_id, teams_assets_by_user_id
+        return intune_assets_by_serial, teams_assets_by_serial
 
-    def _merge_intune_with_teams(self, intune_assets_by_serial: Dict, teams_assets_by_serial: Dict, intune_assets_by_user_id: Dict, teams_assets_by_user_id: Dict) -> tuple[List[Dict], set]:
+    def _merge_intune_with_teams(self, intune_assets_by_serial: Dict, teams_assets_by_serial: Dict) -> tuple[List[Dict], set]:
         """Merges Teams data into Intune assets, prioritizing Intune data."""
         print("Merging transformed Intune assets with corresponding Teams data...")
         merged_assets = []
-        processed_ids = set()
+        processed_serials = set()
 
-        # Use a copy of the user ID dict to track which Teams assets have been merged
-        unmerged_teams_by_user_id = teams_assets_by_user_id.copy()
-
-        for intune_asset in intune_data:
-            # Start with the Intune asset as the base
+        for serial, intune_asset in intune_assets_by_serial.items():
             final_asset = intune_asset.copy()
-            serial = final_asset.get('serial')
-            user_id = final_asset.get('primary_user_id')
-
-            # Try to find a matching Teams asset by serial, then by primary user ID as a fallback
-            teams_asset = None
-            if serial:
-                teams_asset = teams_assets_by_serial.get(serial.upper())
-            if not teams_asset and user_id:
-                teams_asset = teams_assets_by_user_id.get(user_id)
+            teams_asset = teams_assets_by_serial.get(serial)
     
             if teams_asset:
-                print(f"  ✓ Merging Teams data for: {serial or user_id}")
-                # Merge: Teams data is added only if the key doesn't already exist in the Intune asset
+                print(f"  ✓ Merging Teams data for: {serial}")
                 final_asset.update({k: v for k, v in teams_asset.items() if k not in final_asset})
                 final_asset['last_update_source'] = 'microsoft365'
                 final_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
-                
-                # Mark this teams asset as processed
-                if user_id in unmerged_teams_by_user_id:
-                    del unmerged_teams_by_user_id[user_id]
+            else:
+                print(f"  ✓ Intune only: {serial}")
             
             merged_assets.append(final_asset)
+            processed_serials.add(serial)
             
-        # Add any remaining Teams assets that didn't have a corresponding Intune object
-        for teams_asset in unmerged_teams_by_user_id.values():
-            print(f"  ✓ Adding Teams-only asset: {teams_asset.get('name')}")
-            merged_assets.append(teams_asset)
-            
-        return merged_assets
+        return merged_assets, processed_serials
 
+    def _add_unmatched_assets(self, merged_assets: List[Dict], processed_serials: set, intune_data: List[Dict], teams_assets_by_serial: Dict):
+        """Adds assets from Teams and Intune that were not matched by serial number."""
+        # Add Teams assets that were not found in Intune
+        print("Adding unmatched Teams-only assets...")
+        for serial, teams_asset in teams_assets_by_serial.items():
+            if serial not in processed_serials:
+                merged_assets.append(teams_asset)
+        
+        # Add Intune assets that did not have a serial number
+        print("Adding unmatched Intune assets (without serial numbers)...")
+        for intune_asset in intune_data:
+            if not intune_asset.get('serial'):
+                merged_assets.append(intune_asset)
+    
     def _enrich_assets_with_static_macs(self, merged_assets: List[Dict]):
         """Adds MAC addresses from a static MAC address list for missing assets."""
         print("Enriching assets with static MAC addresses from mac_config...")
@@ -120,10 +107,11 @@ class Microsoft365Sync:
                 debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
         
         # Prepare dictionaries keyed by serial number for efficient merging
-        intune_assets_by_serial, teams_assets_by_serial, intune_assets_by_user_id, teams_assets_by_user_id = self._prepare_asset_dictionaries(intune_data, teams_data)
+        intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data)
         
         # Perform the merge operations
-        merged_assets = self._merge_intune_with_teams(intune_assets_by_serial, teams_assets_by_serial, intune_assets_by_user_id, teams_assets_by_user_id)
+        merged_assets, processed_serials = self._merge_intune_with_teams(intune_assets_by_serial, teams_assets_by_serial)
+        self._add_unmatched_assets(merged_assets, processed_serials, intune_data, teams_assets_by_serial)
         
         # Enrich the final list with static MACs for devices that are missing them
         self._enrich_assets_with_static_macs(merged_assets)

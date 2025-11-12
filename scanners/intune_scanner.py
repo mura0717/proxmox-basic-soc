@@ -71,10 +71,7 @@ class IntuneScanner:
                     print(f"Intune API Error - Response Body: {response.text}")
                 print(f"Error fetching assets: {e}")
                 break
-        
-        if debug_logger.intune_debug:
-            for asset in assets:
-                debug_logger.log_raw_host_data('intune', asset.get('id', 'Unknown'), asset)
+            
         return assets
     
     def _combine_mac_addresses(self, asset: Dict) -> str:
@@ -189,6 +186,14 @@ class IntuneScanner:
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
+    def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
+        """Write both raw and transformed assets to debug logs"""
+        debug_logger.clear_logs('intune')  
+        for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
+            asset_id = raw_asset.get('id', 'Unknown')
+            debug_logger.log_raw_host_data('intune', asset_id, raw_asset)
+            debug_logger.log_parsed_asset_data('intune', asset_id, transformed_asset)
+        
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
         """Fetches and transforms all assets from Intune."""
         print("Fetching and transforming Intune assets...")
@@ -196,6 +201,6 @@ class IntuneScanner:
         transformed_assets = [self.transform_intune_to_snipeit(asset) for asset in raw_assets]
         
         if debug_logger.intune_debug:
-            debug_logger.log_parsed_asset_data('intune', transformed_assets)
+            self.write_to_logs(raw_assets, transformed_assets)
         
         return raw_assets, transformed_assets

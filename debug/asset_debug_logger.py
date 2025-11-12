@@ -141,8 +141,6 @@ class AssetDebugLogger:
         absolute_log_file = os.path.abspath(log_file)
         try:
             with open(log_file, "a", encoding="utf-8") as f: f.write(log_entry + "\n")
-            # f.flush()  # Explicitly flush Python's internal buffer
-            # os.fsync(f.fileno()) # Force OS to write to disk
             print(f"DEBUG_LOGGER: Successfully wrote to '{absolute_log_file}'.")
         except IOError as e:
             print(f"Warning: Could not write to log file {log_file}: {e}")
