@@ -72,7 +72,6 @@ class IntuneScanner:
                 print(f"Error fetching assets: {e}")
                 break
         
-        # Log raw data for each asset if debugging is enabled
         if debug_logger.intune_debug:
             for asset in assets:
                 debug_logger.log_raw_host_data('intune', asset.get('id', 'Unknown'), asset)

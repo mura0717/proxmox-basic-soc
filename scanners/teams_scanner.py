@@ -70,7 +70,6 @@ class TeamsScanner:
                 print(f"Error fetching assets: {e}")
                 break
 
-        # Log raw data for each asset if debugging is enabled
         if debug_logger.teams_debug:
             for asset in assets:
                 debug_logger.log_raw_host_data('teams', asset.get('id', 'Unknown'), asset)
@@ -99,6 +98,7 @@ class TeamsScanner:
             
             # Identity
             'asset_tag': teams_asset.get('companyAssetTag'),
+            'name': current_user.get('displayName'),
             'serial': hardware_details.get('serialNumber'),
             'notes': teams_asset.get('notes'),
             
