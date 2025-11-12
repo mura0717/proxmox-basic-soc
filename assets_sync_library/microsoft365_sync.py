@@ -16,7 +16,7 @@ from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 from utils.mac_utils import normalize_mac
 from utils.text_utils import normalize_for_comparison
-from config.mac_config import CTP18_MACS
+from config.mac_config import CTP18
 
 class Microsoft365Sync:
     """Microsoft365 data merging service"""
@@ -79,19 +79,20 @@ class Microsoft365Sync:
             if not intune_asset.get('serial'):
                 merged_assets.append(intune_asset)
     
-    def _enrich_assets_with_static_macs(self):
-        #Iterate through the list of merged assets.
-        teams_data = self.teams_sync.get_transformed_assets()
-        teams_assets_by_serial = self._prepare_asset_dictionaries(teams_data)
-        ctp18_list = CTP18_MACS.items()
-        for asset in teams_assets_by_serial:
-            if not asset.get('mac_addresses') or asset.get('mac_addresses') is '' or asset.get('mac_addresses') is None:
-                if asset.get('serial') in ctp18_list['serial']:
-                    asset['mac_addresses'] = ctp18_list['mac_addresses'][asset.get('serial')]
-
-        #If a MAC is missing, it will attempt to match the asset against your CTP18_MACS list (from mac_config.py) using its serial number, Azure AD ID, or Intune Device ID.
-        #If a match is found, the MAC address from CTP18_MACS will be added to the asset, and its last_update_source and last_update_at fields will be updated to reflect this enrichment.
-        pass
+    def _enrich_assets_with_static_macs(self, merged_assets: List[Dict]):
+        """Adds MAC addresses from a static MAC address list for missing assets."""
+        print("Enriching assets with static MAC addresses from mac_config...")
+        
+        static_mac_map = {
+            device['serial']: device['mac_address']
+            for device in CTP18.values() if 'serial' in device and 'mac_address' in device
+        }
+        
+        for asset in merged_assets:
+            if not asset.get('mac_addresses'):
+                serial = asset.get('serial')
+                if serial and serial in static_mac_map:
+                    asset['mac_addresses'] = normalize_mac(static_mac_map[serial])
         
     def merge_data(self, intune_data: Optional[List[Dict]] = None, teams_data: Optional[List[Dict]] = None) -> List[Dict]:
         """
@@ -113,6 +114,9 @@ class Microsoft365Sync:
         # Perform the merge operations
         merged_assets, processed_serials = self._merge_intune_with_teams(intune_assets_by_serial, teams_assets_by_serial)
         self._add_unmatched_assets(merged_assets, processed_serials, intune_data, teams_assets_by_serial)
+        
+        # Enrich the final list with static MACs for devices that are missing them
+        self._enrich_assets_with_static_macs(merged_assets)
 
         return merged_assets
     
@@ -126,16 +130,14 @@ class Microsoft365Sync:
             debug_logger.clear_logs('microsoft365')
 
         # Get the final, merged list of assets
-        final_assets = self.merge_data()
-        self._enrich_assets_with_static_macs(final_assets)
-        print(f"Total of {len(final_assets)} unique assets after merging Intune and Teams data.")
-        
+        merged_assets = self.merge_data()
+        print(f"Total of {len(merged_assets)} unique assets after merging Intune and Teams data.")
         # Log the final transformed payload before sending to the matcher
         if debug_logger.microsoft365_debug:
-            debug_logger.log_parsed_asset_data('microsoft365', final_assets)
+            debug_logger.log_parsed_asset_data('microsoft365', merged_assets)
         
         # Process the final list with the asset matcher
-        results = self.asset_matcher.process_scan_data('microsoft365', final_assets)
+        results = self.asset_matcher.process_scan_data('microsoft365', merged_assets)
         
         if debug_logger.microsoft365_debug:
             debug_logger.log_sync_summary('microsoft365', results)
@@ -146,9 +148,6 @@ class Microsoft365Sync:
     def sync_to_logs(self):
         """Fetches live data and generates the raw and parsed log files for debugging."""
         print("Starting Microsoft 365 debug logging...")
-        if not debug_logger.microsoft365_debug:
-            print("Microsoft 365 debugging is not enabled. Set MICROSOFT365_DEBUG=1 to run this test.")
-            return
 
         # 1. Fetch live data once
         raw_intune_data, transformed_intune = self.intune_sync.get_transformed_assets()
@@ -171,4 +170,7 @@ if __name__ == "__main__":
     if debug_logger.microsoft365_debug:
         sync.sync_to_logs()
     sync.sync_to_snipeit()
+ 
+
+  
     

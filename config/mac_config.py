@@ -3,7 +3,7 @@ Hardcoded MACs for missing devices.
 """
 
 # CTP18 - Meeting Room Displays MAC Address list
-CTP18_MACS = {
+CTP18 = {
     "HB-Lokale": {
         'display_name': 'HB-Lokale',
         'azure_id': '646ca8aa-0c1b-44e2-99b2-e20fa0e757bd',
