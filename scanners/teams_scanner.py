@@ -96,7 +96,7 @@ class TeamsScanner:
             # Identity
             'asset_tag': teams_asset.get('companyAssetTag'),
             'name': current_user.get('displayName'),
-            'serial': hardware_details.get('serialNumber'),
+            'serial': hardware_details.get('serialNumber').upper(),
             'notes': teams_asset.get('notes'),
             
             # Hardware
@@ -126,11 +126,12 @@ class TeamsScanner:
 
     def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
         """Write both raw and transformed assets to debug logs"""
-        debug_logger.clear_logs('intune')  
+        debug_logger.clear_logs('teams') 
+        teams_debug_categorization.write_teams_assets_to_logfile() 
         for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
             asset_id = raw_asset.get('id', 'Unknown')
             debug_logger.log_raw_host_data('teams', asset_id, raw_asset)
-            debug_logger.log_parsed_asset_data('teams', asset_id, transformed_asset)
+            debug_logger.log_parsed_asset_data('teams', transformed_asset)
 
 
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:

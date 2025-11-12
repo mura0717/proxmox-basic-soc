@@ -166,7 +166,7 @@ class AssetFinder:
         if not self._has_sufficient_match_data(asset_data):
             return None
 
-        identifiers_to_check = ['intune_device_id', 'azure_ad_id']
+        identifiers_to_check = ['intune_device_id', 'azure_ad_id', 'teams_device_id']
         for key in identifiers_to_check:
             new_value = asset_data.get(key)
             if not new_value:

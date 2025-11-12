@@ -586,9 +586,7 @@ class AssetMatcher:
 
         source_for_status = (asset_data.get('_source') or asset_data.get('last_update_source') or 'unknown')
         status_map = {
-            'intune': 'Managed - Intune',
             'microsoft365': 'Managed - M365',
-            'teams': 'Managed - Teams',      
             'nmap': 'Discovered - Nmap',
             'snmp': 'On-Premise',
         }

@@ -91,7 +91,7 @@ class IntuneScanner:
         transformed = {
             # Identity
             'name': intune_asset.get('deviceName'),
-            'serial': intune_asset.get('serialNumber'),
+            'serial': (intune_asset.get('serialNumber')).upper(),
             'azure_ad_id': intune_asset.get('azureADDeviceId'),
             'intune_device_id': intune_asset.get('id'),
             'device_enrollment_type': intune_asset.get('deviceEnrollmentType'),
@@ -185,14 +185,15 @@ class IntuneScanner:
 
         # Remove None values
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
-
+    
     def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
         """Write both raw and transformed assets to debug logs"""
-        debug_logger.clear_logs('intune')  
+        debug_logger.clear_logs('intune')
+        intune_debug_categorization.write_managed_assets_to_logfile()  
         for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
             asset_id = raw_asset.get('id', 'Unknown')
             debug_logger.log_raw_host_data('intune', asset_id, raw_asset)
-            debug_logger.log_parsed_asset_data('intune', asset_id, transformed_asset)
+            debug_logger.log_parsed_asset_data('intune', transformed_asset)
         
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
         """Fetches and transforms all assets from Intune."""

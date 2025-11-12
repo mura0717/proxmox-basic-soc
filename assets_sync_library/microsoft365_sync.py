@@ -31,13 +31,17 @@ class Microsoft365Sync:
         """Creates dictionaries of assets keyed by serial number for quick lookups."""
         print("Preparing asset dictionaries...")
         intune_assets_by_serial = {
-            asset.get('serial').upper(): asset 
+            asset.get('serial'): asset 
             for asset in intune_data if asset.get('serial')
         }
         teams_assets_by_serial = {
-            asset.get('serial').upper(): asset 
+            asset.get('serial'): asset 
             for asset in teams_data if asset.get('serial')
         }
+        
+        print(f"  Intune assets with serial: {len(intune_assets_by_serial)}")
+        print(f"  Teams assets with serial: {len(teams_assets_by_serial)}")
+        
         return intune_assets_by_serial, teams_assets_by_serial
 
     def _merge_intune_with_teams(self, intune_assets_by_serial: Dict, teams_assets_by_serial: Dict) -> tuple[List[Dict], set]:
@@ -47,18 +51,21 @@ class Microsoft365Sync:
         processed_serials = set()
 
         for serial, intune_asset in intune_assets_by_serial.items():
-            final_asset = intune_asset.copy()
+            # Start with the Intune asset as the base
+            merged_asset = intune_asset.copy()
             teams_asset = teams_assets_by_serial.get(serial)
     
             if teams_asset:
                 print(f"  ✓ Merging Teams data for: {serial}")
-                final_asset.update({k: v for k, v in teams_asset.items() if k not in final_asset})
-                final_asset['last_update_source'] = 'microsoft365'
-                final_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
+                final_asset = teams_asset.copy()
+                final_asset.update(merged_asset)
+                merged_asset = final_asset
+                merged_asset['last_update_source'] = 'microsoft365'
+                merged_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
             else:
                 print(f"  ✓ Intune only: {serial}")
             
-            merged_assets.append(final_asset)
+            merged_assets.append(merged_asset)
             processed_serials.add(serial)
             
         return merged_assets, processed_serials

@@ -72,9 +72,10 @@ COMPUTER_RULES = {
 }
 
 IOT_RULES = {
-    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30', 'poly'],
+    'manufacturer_keywords': ['yealink'],
+    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'ctp18', 'a20', 'a30', 'poly', 'core2kit'],
     'hostname_keywords': ['meetingbar', 'roompanel', 'ctp', 'poly'],
-    'os_keywords': ['iot', 'androidaosp'] # Rely on model for Nmap, Intune handles Android OS better
+    'os_keywords': ['iot', 'androidaosp']
 }
 
 SERVICE_RULES = {
