@@ -25,15 +25,15 @@ class TeamsScanner:
     def __init__(self, asset_matcher: Optional[AssetMatcher] = None):
         self.asset_matcher = asset_matcher or AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/beta"
-        self.microsoft365 = Microsoft365Service()
+        self.ms365_service = Microsoft365Service()
     
     def get_access_token(self) -> Optional[str]:
         """Ensure a valid access token is available and return it."""
-        if not self.microsoft365.access_token:
-            if not self.microsoft365.authenticate():
+        if not self.ms365_service.access_token:
+            if not self.ms365_service.authenticate():
                 print("Authentication failed via Microsoft365 helper.")
                 return None
-        return self.microsoft365.access_token
+        return self.ms365_service.access_token
     
     def get_teams_assets(self) -> List[Dict]:
         """Fetch all teams devices from Microsoft Teams"""
