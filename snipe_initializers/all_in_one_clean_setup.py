@@ -84,6 +84,11 @@ def get_fieldset_fields(fieldset_id):
         return {field['id'] for field in response.json().get("rows", [])}
     return set()
 
+def get_assets_map():
+    """Fetches all assets from Snipe-IT."""
+    response = make_api_request("GET", f"{SNIPE_URL}/api/v1/hardware", params={"limit": 5000})
+    return {asset['id']: asset for asset in response.json().get("rows", [])} if response else {}
+
 def get_status_labels_map():
     """Fetches all status labels from Snipe-IT."""
     response = make_api_request("GET", f"{SNIPE_URL}/api/v1/statuslabels", params={"limit": 5000})
@@ -301,14 +306,14 @@ def create_locations():
 def delete_all_assets():
     """Deletes ALL assets in the system."""
     print("\n--- Deleting ALL Assets ---")
-    response = make_api_request("GET", f"{SNIPE_URL}/api/v1/hardware", params={"limit": 5000})
-    if not response:
-        print("Could not fetch assets to delete.")
-        return
-    assets = response.json().get("rows", [])
-    for asset in assets:
-        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/hardware/{asset['id']}")
-        print(f"Soft-deleted asset: {asset.get('name', 'Unnamed')} (ID: {asset['id']})")
+    existing_assets = get_assets_map()
+    for asset_name in existing_assets:
+        if not existing_assets:
+            print("No assets found to delete.")
+            return
+        asset_id = existing_assets[asset_name]
+        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/hardware/{asset_id}")
+        print(f"Deleted asset: {asset_name} (ID: {asset_id})")
 
 def delete_all_fields():
     """Deletes all custom fields defined in CUSTOM FIELDS."""
@@ -440,9 +445,9 @@ if __name__ == "__main__":
     print("="*60)
     print("STEP 1: DELETING ALL SNIPE-IT DATA")
     print("="*60)
-    delete_all_assets()       # Assets depend on Models
-    delete_all_models()         # Models depend on Fieldsets, Categories, Manufacturers
-    delete_all_fieldsets()      # Fieldsets depend on Fields
+    #delete_all_assets()       
+    delete_all_models()         
+    delete_all_fieldsets()      
     delete_all_fields()
     delete_all_status_labels()
     delete_all_categories()

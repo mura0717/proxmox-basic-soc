@@ -23,5 +23,10 @@ def truncate_table(table_name: str):
     BaseCRUDService.truncate_tables([table_name])
 
 if __name__ == "__main__":
-    TARGET_TABLE = "custom_fieldsets"
-    truncate_table(TARGET_TABLE)
+    TABLES_TO_TRUNCATE = [
+        "assets",
+        "action_logs",      # General activity logs, can contain asset info.
+        "asset_logs",       # Specifically for asset checkin/checkout history.
+        "maintenances"      # Asset maintenance records.
+    ]
+    BaseCRUDService.truncate_tables(TABLES_TO_TRUNCATE)
