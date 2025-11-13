@@ -13,23 +13,14 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from crud.base import BaseCRUDService
 
 def truncate_table(table_name: str):
-    """Finds and deletes the specified category."""
-    
-    crud_service = BaseCRUDService()
-
-    print(f"Searching for table: '{table_name}'...")
-    table_to_truncate = crud_service.get_by_name(table_name)
-
-    if not table_to_truncate:
-        print(f"✗ table '{table_name}' not found. Nothing to do.")
+    """
+    Calls the centralized truncate method from BaseCRUDService.
+    """
+    if not table_name or not table_name.strip():
+        print("✗ Error: No table name provided.")
         return
-
-    print(f"✓ Found table '{table_name}' (ID: {table_to_truncate['id']}).")
-
-    if crud_service.truncate_by_name(table_name):
-        print(f"✓ Successfully truncated table: '{table_name}'")
-    else:
-        print(f"✗ Failed to truncate table '{table_name}'")
+    
+    BaseCRUDService.truncate_tables([table_name])
 
 if __name__ == "__main__":
     TARGET_TABLE = "custom_fieldsets"

@@ -22,8 +22,8 @@ assets = asset_service.get_all(limit=10000, refresh_cache=True)
 if assets != []:
     print("Asset deletion started...")
     for asset in assets:
-        asset_service.delete_by_name(asset['name'])
-        print(f"Deleted asset: {asset['name']}")
+        asset_service.delete(asset['id'])
+        print(f"Soft-deleted asset: {asset.get('name', 'Unnamed')} (ID: {asset['id']})")
     print("Soft-deletion of assets completed.")
     print("\n--- Purging soft-deleted records from the database ---")
     BaseCRUDService.purge_deleted_via_database()

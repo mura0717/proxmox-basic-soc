@@ -22,8 +22,8 @@ fieldsets = fieldset_service.get_all(limit=10000, refresh_cache=True)
 if fieldsets != []:
     print("Fieldset deletion started...")
     for fieldset in fieldsets:
-        fieldset_service.delete_by_name(fieldset['name'])
-        print(f"Deleted fieldset: {fieldset['name']}")
+        fieldset_service.delete(fieldset['id'])
+        print(f"Soft-deleted fieldset: {fieldset.get('name', 'Unnamed')} (ID: {fieldset['id']})")
     print("Soft-deletion of fieldsets completed.")
     print("\n--- Purging soft-deleted records from the database ---")
     BaseCRUDService.purge_deleted_via_database()

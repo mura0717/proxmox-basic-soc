@@ -157,6 +157,50 @@ class BaseCRUDService:
         return {entity.get(key): entity.get(value) for entity in all_entities}
     
     @staticmethod
+    def truncate_tables(table_names: List[str]):
+        """
+        Truncates a list of Snipe-IT tables for a clean reset.
+        WARNING: This is a destructive operation that deletes ALL data in the specified tables.
+        """
+        if not table_names:
+            print("No tables specified for truncation.")
+            return
+
+        db_manager = SnipeItDbConnection()
+        connection = None
+        
+        print("\n--- TRUNCATING DATABASE TABLES ---")
+        print(f"Tables to be truncated: {', '.join(table_names)}")
+        print("WARNING: This will permanently delete all data from these tables.")
+
+        confirm = input("Are you sure you want to proceed? (yes/no): ")
+        if confirm.lower() != 'yes':
+            print("Operation cancelled.")
+            return
+
+        try:
+            connection = db_manager.db_connect()
+            if not connection:
+                print("✗ Could not proceed with truncate due to database connection failure.")
+                return
+
+            with connection.cursor() as cursor:
+                print("  -> Disabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+                for table in table_names:
+                    print(f"  -> Truncating table: `{table}`...")
+                    cursor.execute(f"TRUNCATE TABLE `{table}`;")
+                print("  -> Re-enabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            connection.commit()
+            print("✓ Database truncation complete.")
+        except Exception as e:
+            print(f"✗ An unexpected error occurred during database truncation: {e}")
+        finally:
+            if connection:
+                db_manager.db_disconnect(connection)
+
+    @staticmethod
     def truncate_all():
         """
         Truncates all relevant Snipe-IT tables for a clean reset.
@@ -164,71 +208,12 @@ class BaseCRUDService:
         """
         db_manager = SnipeItDbConnection()
         connection = None
-        tables_to_truncate = [
+        all_tables = [
             'assets', 'models', 'manufacturers', 'categories', 'custom_fieldsets',
             'custom_fields', 'status_labels', 'locations', 'accessories',
             'components', 'consumables', 'licenses'
         ]
-        print("\n--- TRUNCATING DATABASE TABLES ---")
-        print("WARNING: This will permanently delete all data from specified tables.")
-
-        try:
-            connection = db_manager.db_connect()
-            if not connection:
-                print("✗ Could not proceed with truncate due to database connection failure.")
-                return
-
-            with connection.cursor() as cursor:
-                print("  -> Disabling foreign key checks...")
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-
-                for table in tables_to_truncate:
-                    print(f"  -> Truncating table: {table}...")
-                    cursor.execute(f"TRUNCATE TABLE `{table}`;")
-
-                print("  -> Re-enabling foreign key checks...")
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-
-            connection.commit()
-            print("✓ Database truncation complete.")
-        except Exception as e:
-            print(f"✗ An unexpected error occurred during database truncation: {e}")
-        finally:
-            if connection:
-                db_manager.db_disconnect(connection)
-    
-    @staticmethod
-    def truncate_by_name(self, name: str) -> bool:
-        """
-        Truncates a single Snipe-IT table for a clean reset.
-        """
-        db_manager = SnipeItDbConnection()
-        connection = None
-        table_to_truncate = self.get_by_name(name)
-    
-        print(f"\n--- TRUNCATING DATABASE TABLE {table_to_truncate} ---")
-
-        try:
-            connection = db_manager.db_connect()
-            if not connection:
-                print("✗ Could not proceed with truncate due to database connection failure.")
-                return
-
-            with connection.cursor() as cursor:
-                print("  -> Disabling foreign key checks...")
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-                print(f"  -> Truncating table: {table_to_truncate}...")
-                cursor.execute(f"TRUNCATE TABLE `{table_to_truncate}`;")
-                print("  -> Re-enabling foreign key checks...")
-                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-
-            connection.commit()
-            print("✓ Database truncation complete.")
-        except Exception as e:
-            print(f"✗ An unexpected error occurred during database truncation: {e}")
-        finally:
-            if connection:
-                db_manager.db_disconnect(connection)
+        BaseCRUDService.truncate_tables(all_tables)
     
     @staticmethod
     def purge_deleted_via_database():

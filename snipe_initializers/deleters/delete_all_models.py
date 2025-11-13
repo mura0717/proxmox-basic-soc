@@ -22,8 +22,8 @@ models = model_service.get_all(limit=10000, refresh_cache=True)
 if models != []:
     print("Model deletion started...")
     for model in models:
-        model_service.delete_by_name(model['name'])
-        print(f"Deleted model: {model['name']}")
+        model_service.delete(model['id'])
+        print(f"Soft-deleted model: {model.get('name', 'Unnamed')} (ID: {model['id']})")
     print("Soft-deletion of models completed.")
     print("\n--- Purging soft-deleted records from the database ---")
     BaseCRUDService.purge_deleted_via_database()
