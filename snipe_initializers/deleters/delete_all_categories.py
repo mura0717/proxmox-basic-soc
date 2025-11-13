@@ -5,7 +5,7 @@ import sys
 from dotenv import load_dotenv
 import urllib3
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.
@@ -26,8 +26,8 @@ if categories != []:
         print(f"Deleted category: {category['name']}")
     print("Soft-deletion of categories completed.")
     print("\n--- Purging soft-deleted records from the database ---")
-    # This makes the deletion permanent
     BaseCRUDService.purge_deleted_via_database()
+    print("Purging completed.")
 else:
     print("There are no categories to delete.")
  

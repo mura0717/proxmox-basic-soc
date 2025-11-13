@@ -157,7 +157,7 @@ class BaseCRUDService:
         return {entity.get(key): entity.get(value) for entity in all_entities}
     
     @staticmethod
-    def truncate():
+    def truncate_all():
         """
         Truncates all relevant Snipe-IT tables for a clean reset.
         WARNING: This is a destructive operation that deletes ALL data in these tables.
@@ -196,7 +196,39 @@ class BaseCRUDService:
         finally:
             if connection:
                 db_manager.db_disconnect(connection)
-        
+    
+    @staticmethod
+    def truncate_by_name(self, name: str) -> bool:
+        """
+        Truncates a single Snipe-IT table for a clean reset.
+        """
+        db_manager = SnipeItDbConnection()
+        connection = None
+        table_to_truncate = self.get_by_name(name)
+    
+        print(f"\n--- TRUNCATING DATABASE TABLE {table_to_truncate} ---")
+
+        try:
+            connection = db_manager.db_connect()
+            if not connection:
+                print("✗ Could not proceed with truncate due to database connection failure.")
+                return
+
+            with connection.cursor() as cursor:
+                print("  -> Disabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+                print(f"  -> Truncating table: {table_to_truncate}...")
+                cursor.execute(f"TRUNCATE TABLE `{table_to_truncate}`;")
+                print("  -> Re-enabling foreign key checks...")
+                cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+
+            connection.commit()
+            print("✓ Database truncation complete.")
+        except Exception as e:
+            print(f"✗ An unexpected error occurred during database truncation: {e}")
+        finally:
+            if connection:
+                db_manager.db_disconnect(connection)
     
     @staticmethod
     def purge_deleted_via_database():

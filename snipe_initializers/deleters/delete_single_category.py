@@ -10,9 +10,10 @@ import os
 import sys
 import urllib3
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from crud.categories import CategoryService
+from crud.base import BaseCRUDService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -21,7 +22,6 @@ def delete_category(category_name: str):
     """Finds and deletes the specified category."""
     
     category_service = CategoryService()
-    from crud.base import BaseCRUDService
 
     print(f"Searching for category: '{category_name}'...")
     category = category_service.get_by_name(category_name)
@@ -36,6 +36,7 @@ def delete_category(category_name: str):
         print(f"✓ Successfully soft-deleted category: '{category_name}'")
         print("\n--- Purging soft-deleted record from the database ---")
         BaseCRUDService.purge_deleted_via_database()
+        print("Purging completed.")
     else:
         print(f"✗ Failed to delete category '{category_name}'. It might be protected if assets are still assigned to it.")
 

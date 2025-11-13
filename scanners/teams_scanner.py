@@ -118,7 +118,6 @@ class TeamsScanner:
             'primary_user_id': current_user.get('id'),
             'primary_user_display_name': current_user.get('displayName'),
             'identity_type': current_user.get('userIdentityType'),
-            
         }
 
         # Remove None values

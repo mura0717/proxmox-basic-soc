@@ -325,6 +325,11 @@ class AssetMatcher:
                     fieldset_name = fieldset_map.get(category_name, 'Managed & Discovered Assets')
                     fieldset = fieldset_service.get_by_name(fieldset_name)
                     
+                    if not fieldset:
+                        print(f"[ERROR] Fieldset '{fieldset_name}' not found in Snipe-IT. Please ensure it exists and contains all necessary custom fields.")
+                        print(f"  Asset '{asset_data.get('name', 'Unknown')}' will be processed without a specific fieldset, which may lead to custom field errors.")
+                        # Continue without a fieldset, but the user is warned.
+
                     # Prevent duplicating the manufacturer name in the model name
                     if normalize_for_comparison(model_name).startswith(normalize_for_comparison(manufacturer_name)):
                         full_model_name = model_name

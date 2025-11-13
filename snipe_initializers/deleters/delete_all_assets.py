@@ -26,8 +26,8 @@ if assets != []:
         print(f"Deleted asset: {asset['name']}")
     print("Soft-deletion of assets completed.")
     print("\n--- Purging soft-deleted records from the database ---")
-    BaseCRUDService.purge_deleted_via_database() # This makes the deletion permanent
-
+    BaseCRUDService.purge_deleted_via_database()
+    print("Purging completed.")
 else:
     print("There are no assets to delete.")
  

@@ -11,22 +11,23 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 # Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from crud.models import ModelService
+from crud.fieldsets import FieldsetService
 from crud.base import BaseCRUDService
 
 load_dotenv()
 
-model_service = ModelService()
-models = model_service.get_all(limit=10000, refresh_cache=True)
+fieldset_service = FieldsetService()
+fieldsets = fieldset_service.get_all(limit=10000, refresh_cache=True)
 
-if models != []:
-    print("Model deletion started...")
-    for model in models:
-        model_service.delete_by_name(model['name'])
-        print(f"Deleted model: {model['name']}")
-    print("Soft-deletion of models completed.")
+if fieldsets != []:
+    print("Fieldset deletion started...")
+    for fieldset in fieldsets:
+        fieldset_service.delete_by_name(fieldset['name'])
+        print(f"Deleted fieldset: {fieldset['name']}")
+    print("Soft-deletion of fieldsets completed.")
     print("\n--- Purging soft-deleted records from the database ---")
     BaseCRUDService.purge_deleted_via_database()
+    print("Purging completed.")
 else:
-    print("There are no models to delete.")
+    print("There are no fieldsets to delete.")
  
