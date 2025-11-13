@@ -164,7 +164,7 @@ CUSTOM_FIELDS = {
 CUSTOM_FIELDSETS = {
     # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.)
     # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.
-    "Managed & Discovered Assets": [
+    "Managed and Discovered Assets": [
         # Identity / IDs
         'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
 
@@ -196,7 +196,6 @@ CUSTOM_FIELDSETS = {
         # Networking
         'dns_hostname', 'device_type', 'mac_addresses', 
         'wifi_mac', 'ethernet_mac', 'last_seen_ip', 'wifi_subnet_id', 'wifi_ipv4', 'wifi_subnet',
-
 
         # Cellular / Device comms
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',

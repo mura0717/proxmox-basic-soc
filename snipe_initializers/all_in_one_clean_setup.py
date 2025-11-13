@@ -298,6 +298,18 @@ def create_locations():
         make_api_request("POST", f"{SNIPE_URL}/api/v1/locations", json=payload)
     print("Location creation process complete.")
 
+def delete_all_assets():
+    """Deletes ALL assets in the system."""
+    print("\n--- Deleting ALL Assets ---")
+    response = make_api_request("GET", f"{SNIPE_URL}/api/v1/hardware", params={"limit": 5000})
+    if not response:
+        print("Could not fetch assets to delete.")
+        return
+    assets = response.json().get("rows", [])
+    for asset in assets:
+        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/hardware/{asset['id']}")
+        print(f"Soft-deleted asset: {asset.get('name', 'Unnamed')} (ID: {asset['id']})")
+
 def delete_all_fields():
     """Deletes all custom fields defined in CUSTOM FIELDS."""
     print("--- Deleting Custom Fields ---")
@@ -354,16 +366,15 @@ def delete_all_categories():
 
 def delete_all_models():
     """Deletes all generic models defined in MODELS."""
-    print("\n--- Deleting Generic Models ---")
+    print("\n--- Deleting ALL Models ---")
     existing_models = get_models_map()
-    for model in MODELS:
-        model_name = model['name']
-        if model_name not in existing_models:
-            print(f"Model '{model_name}' does not exist. Skipping.")
-            continue
-        model_id = existing_models[model_name]
+    if not existing_models:
+        print("No models found to delete.")
+        return
+
+    for model_name, model_id in existing_models.items():
         make_api_request("DELETE", f"{SNIPE_URL}/api/v1/models/{model_id}")
-        print(f"Deleted model: {model_name} (ID: {model_id})")
+        print(f"Soft-deleted model: {model_name} (ID: {model_id})")
 
 def delete_all_manufacturers():
     """Deletes all manufacturers defined in MANUFACTURERS."""
@@ -425,19 +436,26 @@ def purge_deleted_via_database():
 
 if __name__ == "__main__":
     """DELETE ALL"""
+    # Deletion must happen in the correct order of dependency
+    print("="*60)
+    print("STEP 1: DELETING ALL SNIPE-IT DATA")
+    print("="*60)
+    delete_all_assets()       # Assets depend on Models
+    delete_all_models()         # Models depend on Fieldsets, Categories, Manufacturers
+    delete_all_fieldsets()      # Fieldsets depend on Fields
     delete_all_fields()
-    delete_all_fieldsets()
     delete_all_status_labels()
     delete_all_categories()
     delete_all_manufacturers()
-    delete_all_models()
     delete_all_locations()
 
     """PURGE ALL (HARD DELETE)"""
-    # This step makes the deletions permanent!
     purge_deleted_via_database()
 
     """CREATE ALL"""
+    print("\n" + "="*60)
+    print("STEP 2: SETTING UP SNIPE-IT FROM SCHEMA")
+    print("="*60)
     create_status_labels()
     create_categories()
     create_locations()

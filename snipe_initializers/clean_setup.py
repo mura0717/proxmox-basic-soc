@@ -200,11 +200,11 @@ class SnipeITSetup:
         print("Starting Cleanup")
         print("=" * 60)
         
-        
-        # Delete in reverse order of dependencies
-        self.cleanup_fields()
-        self.cleanup_fieldsets()
+        # Delete in an order that respects dependencies.
+        # Note: Assets should be deleted before this script is run.
         self.cleanup_models()
+        self.cleanup_fieldsets()
+        self.cleanup_fields()
         self.cleanup_manufacturers()
         self.cleanup_locations()
         self.cleanup_categories()
@@ -278,6 +278,10 @@ class SnipeITSetup:
         print(f"✓ Deleted {deleted} locations")
         
     def purge_all(self):
+        """
+        Purges all soft-deleted records by calling the official Snipe-IT artisan command.
+        This should be run AFTER all cleanup operations.
+        """
         """Directly purge soft-deleted records from database"""
         print("\n--- Purging all deleted ---")
         BaseCRUDService.purge_deleted_via_database()
@@ -296,6 +300,11 @@ def main():
     setup = SnipeITSetup()
     
     if args.action == 'setup':
+        # To prevent issues, a setup should always start from a clean slate.
+        # We will run the same logic as 'reset'.
+        print("INFO: 'setup' action runs a full reset to ensure a clean environment.")
+        setup.cleanup_all()
+        setup.purge_all()
         setup.setup_all()
     elif args.action == 'cleanup':
         setup.cleanup_all()
