@@ -303,14 +303,14 @@ class AssetMatcher:
                     fieldset_service = FieldsetService()
                     fieldset_map = {
                         # Standard End-User Devices
-                        'Laptops': 'Managed & Discovered Assets',
-                        'Desktops': 'Managed & Discovered Assets',
-                        'Mobile Phones': 'Managed & Discovered Assets',
-                        'Tablets': 'Managed & Discovered Assets',
-                        'IoT Devices': 'Managed & Discovered Assets',
+                        'Laptops': 'Managed and Discovered Assets',
+                        'Desktops': 'Managed and Discovered Assets',
+                        'Mobile Phones': 'Managed and Discovered Assets',
+                        'Tablets': 'Managed and Discovered Assets',
+                        'IoT Devices': 'Managed and Discovered Assets',
                         # Infrastructure
-                        'Servers': 'Managed & Discovered Assets',
-                        'Virtual Machines (On-Premises)': 'Managed & Discovered Assets',
+                        'Servers': 'Managed and Discovered Assets',
+                        'Virtual Machines (On-Premises)': 'Managed and Discovered Assets',
                         'Cloud Resources': 'Cloud Resources (Azure)',
                         # Network Gear
                         'Switches': 'Network Infrastructure',
@@ -322,7 +322,7 @@ class AssetMatcher:
                         'Printers': 'Discovered Assets (Nmap Only)',
                     }
                     
-                    fieldset_name = fieldset_map.get(category_name, 'Managed & Discovered Assets')
+                    fieldset_name = fieldset_map.get(category_name, 'Managed and Discovered Assets')
                     fieldset = fieldset_service.get_by_name(fieldset_name)
                     
                     if not fieldset:

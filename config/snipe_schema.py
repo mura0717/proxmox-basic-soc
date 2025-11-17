@@ -162,7 +162,7 @@ CUSTOM_FIELDS = {
 
 # Define which fields belong to which fieldset, using our reference keys
 CUSTOM_FIELDSETS = {
-    # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.)
+    # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.).
     # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.
     "Managed and Discovered Assets": [
         # Identity / IDs
