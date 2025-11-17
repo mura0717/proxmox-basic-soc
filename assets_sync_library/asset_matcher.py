@@ -329,8 +329,10 @@ class AssetMatcher:
                         print(f"  Asset '{asset_data.get('name', 'Unknown')}' will be processed without a specific fieldset, which may lead to custom field errors.")
                         # Continue without a fieldset, but the user is warned.
 
-                    # Prevent duplicating the manufacturer name in the model name
-                    if normalize_for_comparison(model_name).startswith(normalize_for_comparison(manufacturer_name)):
+                    # Prevent duplicating the manufacturer name in the model name.
+                    norm_model = normalize_for_comparison(model_name)
+                    norm_mfr = normalize_for_comparison(manufacturer_name)
+                    if norm_model.startswith(norm_mfr) or norm_mfr.startswith(norm_model):
                         full_model_name = model_name
                     else:
                         full_model_name = f"{manufacturer_name} {model_name}"
