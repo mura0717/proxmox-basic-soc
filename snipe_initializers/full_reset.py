@@ -46,10 +46,7 @@ if __name__ == "__main__":
     print_step("STEP 1: Deleting all existing assets")
     run_script(os.path.join(base_dir, "deleters", "delete_all_assets.py"))
 
-    print_step("STEP 2: Deleting all existing models")
-    run_script(os.path.join(base_dir, "deleters", "delete_all_models.py"))
-
     print_step("STEP 3: Running the main cleanup and setup process")
-    run_script(os.path.join(base_dir, "clean_setup.py")) # It defaults to 'reset'
+    run_script(os.path.join(base_dir, "clean_setup.py"))
 
     print("\n✅ Full reset and setup process completed successfully!")

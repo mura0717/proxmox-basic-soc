@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
-from snipe_db.snipe_db_connection import SnipeItDbConnection
+from crud.assets import AssetService
+from crud.base import BaseCRUDService
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.
@@ -306,14 +307,16 @@ def create_locations():
 def delete_all_assets():
     """Deletes ALL assets in the system."""
     print("\n--- Deleting ALL Assets ---")
-    existing_assets = get_assets_map()
-    for asset_name in existing_assets:
-        if not existing_assets:
-            print("No assets found to delete.")
-            return
-        asset_id = existing_assets[asset_name]
-        make_api_request("DELETE", f"{SNIPE_URL}/api/v1/hardware/{asset_id}")
-        print(f"Deleted asset: {asset_name} (ID: {asset_id})")
+    asset_service = AssetService()
+    assets = asset_service.get_all(limit=10000, refresh_cache=True)
+
+    if assets != []:
+        for asset in assets:
+            asset_service.delete(asset['id'])
+            print(f"Soft-deleted asset: {asset.get('name', 'Unnamed')} (ID: {asset['id']})")
+        print("Soft-deletion of assets completed.")
+    else:
+        print("There are no assets to delete.")
 
 def delete_all_fields():
     """Deletes all custom fields defined in CUSTOM FIELDS."""
@@ -445,7 +448,7 @@ if __name__ == "__main__":
     print("="*60)
     print("STEP 1: DELETING ALL SNIPE-IT DATA")
     print("="*60)
-    #delete_all_assets()       
+    delete_all_assets()       
     delete_all_models()         
     delete_all_fieldsets()      
     delete_all_fields()
