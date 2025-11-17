@@ -76,8 +76,6 @@ class AssetDebugLogger:
         elif source_lower == 'snmp': result = self.snmp_debug
         elif source_lower == 'microsoft365': result = self.microsoft365_debug
         else: result = False
-        
-        print(f" [DEBUG_LOGGER] asset_debug_logger: _should_log called for source '{source_lower}'. Result: {result}")
         return result
     
     def clear_logs(self, source: str):
@@ -124,24 +122,21 @@ class AssetDebugLogger:
                   f"Failed:  {results.get('failed', 0)}\n" + "-"*50
         self._write_log(message, log_path)
 
-    def log_final_payload(self, source: str, action: str, asset_name: str, payload: dict):
+    def log_final_payload(self, scan_type: str, action: str, asset_name: str, payload: dict):
         """Logs the final payload being sent to the Snipe-IT API."""
-        if not self._should_log(source): return
-        log_path = self._get_log_path(source, 'final_payload')
+        if not self._should_log(scan_type): return
+        log_path = self._get_log_path(scan_type, 'final_payload')
         if not log_path: return
 
         message = f"\n--- FINAL PAYLOAD | Action: {action.upper()} | Asset: {asset_name} ---\n" + \
                   json.dumps(payload, indent=2, default=str) + "\n" + "-"*50
         self._write_log(message, log_path)
-        print(f"Final Log Message: {message}")
 
     def _write_log(self, message: str, log_file: str):
         timestamp = datetime.now().isoformat()
         log_entry = f"[{timestamp}] {message}"
-        absolute_log_file = os.path.abspath(log_file)
         try:
             with open(log_file, "a", encoding="utf-8") as f: f.write(log_entry + "\n")
-            print(f"DEBUG_LOGGER: Successfully wrote to '{absolute_log_file}'.")
         except IOError as e:
             print(f"Warning: Could not write to log file {log_file}: {e}")
 

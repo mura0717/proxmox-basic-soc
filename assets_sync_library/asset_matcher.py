@@ -178,8 +178,8 @@ class AssetMatcher:
                     flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
                     
                 # Merge with existing data and update
-                merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data)
-                if self._update_asset(existing['id'], merged_data):
+                merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data) # Pass scan_type to _update_asset
+                if self._update_asset(existing['id'], merged_data, scan_type):
                     results['updated'] += 1
                     results['assets'].append({'id': existing['id'], 'action': 'updated', 'name': merged_data.get('name', 'Unknown')})
                 else:
@@ -187,7 +187,7 @@ class AssetMatcher:
             else:
                 # Create new asset if it has sufficient data
                 if self._has_sufficient_data(asset_data):
-                    new_asset = self._create_asset(asset_data)
+                    new_asset = self._create_asset(asset_data, scan_type)
                     if new_asset:
                         results['created'] += 1
                         results['assets'].append({'id': new_asset.get('id'), 'action': 'created', 'name': asset_data.get('name', 'Unknown')})
@@ -199,24 +199,23 @@ class AssetMatcher:
         
         return results
 
-    def _create_asset(self, asset_data: Dict) -> Optional[Dict]:
+    def _create_asset(self, asset_data: Dict, scan_type: str) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data)
         asset_name = asset_data.get('name', 'Unknown')
         
         if debug_logger.is_enabled:
-            debug_logger.log_final_payload(asset_data.get('_source', 'unknown'), 'create', asset_name, payload)
+            debug_logger.log_final_payload(scan_type, 'create', asset_name, payload)
             
         print(f"Creating new asset: {asset_name}")
         return self.asset_service.create(payload)
     
-    def _update_asset(self, asset_id: int, asset_data: Dict) -> bool:
+    def _update_asset(self, asset_id: int, asset_data: Dict, scan_type: str) -> bool:
         """Prepare and update an existing asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data, is_update=True)
         
         if debug_logger.is_enabled:
-            print(f"Log final payload for update: {asset_data.get('name')}")
-            debug_logger.log_final_payload(asset_data.get('_source', 'unknown'), 'update', asset_data.get('name', 'Unknown'), payload)
+            debug_logger.log_final_payload(scan_type, 'update', asset_data.get('name', 'Unknown'), payload)
             
         result = self.asset_service.update(asset_id, payload)
         return result is not None
@@ -432,9 +431,15 @@ class AssetMatcher:
                     if self.debug:
                         print(f"[_assign_generic_model] Successfully found and assigned generic model ID: {payload['model_id']}")
 
-                # Ensure Nmap-only assets get the correct fieldset
+                # Ensure assets get the correct fieldset based on their source
                 fieldset_service = self.fieldset_service
-                target_fieldset_name = 'Discovered Assets (Nmap Only)'
+                source = asset_data.get('_source', 'nmap')
+                
+                if source == 'microsoft365':
+                    target_fieldset_name = 'Managed and Discovered Assets'
+                else: # Default for nmap or other simple discovery
+                    target_fieldset_name = 'Discovered Assets (Nmap Only)'
+
                 target_fieldset = fieldset_service.get_by_name(target_fieldset_name)
                 
                 current_fieldset_id = (generic_model_obj.get('fieldset') or {}).get('id')

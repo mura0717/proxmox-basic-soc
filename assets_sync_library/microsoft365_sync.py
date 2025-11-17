@@ -5,7 +5,6 @@ import sys
 import os
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -15,7 +14,6 @@ from config.microsoft365_service import Microsoft365Service
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 from utils.mac_utils import normalize_mac
-from utils.text_utils import normalize_for_comparison
 from config.mac_config import CTP18
 
 class Microsoft365Sync:
@@ -57,61 +55,75 @@ class Microsoft365Sync:
         processed_serials = set()
 
         for serial, intune_asset in intune_assets_by_serial.items():
-            # Start with the Intune asset as the base
-            merged_asset = intune_asset.copy()
+            intune_asset['_source'] = 'intune'  # Tag source for merge logic
             teams_asset = teams_assets_by_serial.get(serial)
     
             if teams_asset:
-                print(f"  ✓ Merging Teams data for: {serial}")
-                final_asset = teams_asset.copy()
-                final_asset.update(merged_asset)
-                merged_asset = final_asset
-                merged_asset['last_update_source'] = 'microsoft365'
-                merged_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
+                if debug_logger.microsoft365_debug:
+                    print(f"  ✓ Merging Teams data for: {serial}")
+                teams_asset['_source'] = 'teams'
+                # Use the robust, centralized merge function
+                merged_asset = self.asset_matcher.merge_asset_data(teams_asset, intune_asset)
             else:
-                print(f"  ✓ Intune only: {serial}")
+                if debug_logger.microsoft365_debug:
+                    print(f"  ✓ Intune only: {serial}")
+                merged_asset = intune_asset
             
             merged_assets.append(merged_asset)
             processed_serials.add(serial)
             
         return merged_assets, processed_serials
 
-    def _add_unmatched_assets(self, merged_assets: List[Dict], processed_serials: set, intune_data: List[Dict], teams_data: List[Dict]):
-        """Adds assets from Teams and Intune that were not matched by serial number."""
-        
-        # Create a lookup for Intune assets by user ID for fallback matching
+    def _handle_unmatched_teams_assets(self, merged_assets: List[Dict], processed_serials: set, teams_data: List[Dict], intune_data: List[Dict]):
+        """Handles Teams assets not matched by serial, with a fallback merge on user ID."""
+        if debug_logger.microsoft365_debug:
+            print("Processing unmatched Teams-only assets...")
         intune_assets_by_user_id = {
             asset['primary_user_id']: asset 
             for asset in intune_data if asset.get('primary_user_id')
         }
-        
-        # Create a lookup for already merged assets by their serial number for quick access
         merged_assets_by_serial = {asset['serial']: asset for asset in merged_assets if asset.get('serial')}
-
-        # Add Teams assets that were not found in Intune
-        print("Adding unmatched Teams-only assets...")
         for teams_asset in teams_data:
             serial = teams_asset.get('serial')
             if serial and serial in processed_serials:
                 continue # Already merged by serial
-
-            # Fallback to matching by user ID
             user_id = teams_asset.get('primary_user_id')
-            if user_id and user_id in intune_assets_by_user_id:
-                intune_match = intune_assets_by_user_id[user_id]
-                intune_serial = intune_match.get('serial')
-                
-                if intune_serial in merged_assets_by_serial:
-                    print(f"  ✓ Fallback merge for user ID {user_id} (Intune S/N: {intune_serial}, Teams S/N: {serial})")
+            intune_match = intune_assets_by_user_id.get(user_id)
+            intune_serial = intune_match.get('serial') if intune_match else None
+
+            if intune_match and intune_serial in merged_assets_by_serial:
+                # Fallback merge logic for shared user accounts
+                if not serial:
+                    if debug_logger.microsoft365_debug:
+                        print(f"  ✓ Fallback merge for user ID {user_id} (Intune S/N: {intune_serial}, Teams asset has no S/N)")
                     merged_assets_by_serial[intune_serial].update(teams_asset)
+                else:
+                    if debug_logger.microsoft365_debug:
+                        print(f"  ✗ Not merging for user ID {user_id}. Assets have different serials ({intune_serial} vs {serial}). Treating as separate devices.")
+                    teams_asset['last_update_source'] = 'microsoft365'
+                    teams_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
+                    merged_assets.append(teams_asset)
             else:
-                merged_assets.append(teams_asset) # Truly unmatched Teams asset
-        
-        # Add Intune assets that did not have a serial number
-        print("Adding unmatched Intune assets (without serial numbers)...")
+                # This is a truly unmatched Teams asset
+                if debug_logger.microsoft365_debug:
+                    print(f"  ✓ Teams only: {serial or teams_asset.get('name', 'Unknown')}")
+                # Ensure source metadata is set for truly unmatched Teams assets
+                teams_asset['last_update_source'] = 'microsoft365'
+                teams_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
+                merged_assets.append(teams_asset)
+    
+    def _handle_unmatched_intune_assets(self, merged_assets: List[Dict], intune_data: List[Dict]):
+        """Adds Intune assets that did not have a serial number."""
+        if debug_logger.microsoft365_debug:
+            print("Processing unmatched Intune assets (without serial numbers)...")
         for intune_asset in intune_data:
             if not intune_asset.get('serial'):
                 merged_assets.append(intune_asset)
+
+    def _add_unmatched_assets(self, merged_assets: List[Dict], processed_serials: set, intune_data: List[Dict], teams_data: List[Dict]):
+        """Orchestrates the addition of assets that were not matched by serial number."""
+        self._handle_unmatched_teams_assets(merged_assets, processed_serials, teams_data, intune_data)
+        self._handle_unmatched_intune_assets(merged_assets, intune_data)
     
     def _enrich_assets_with_static_macs(self, merged_assets: List[Dict]):
         """Adds MAC addresses from a static MAC address list for missing assets."""
