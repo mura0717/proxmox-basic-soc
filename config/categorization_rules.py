@@ -18,7 +18,7 @@ NETWORK_DEVICE_RULES = {
     'Access Point': {
         'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link', 'unifi'],
         'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap'],
-        'hostname_prefixes': ['ap']
+        'hostname_prefixes': ['ap', 'ap-', 'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8']
     }
 }
 
