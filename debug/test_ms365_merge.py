@@ -13,7 +13,7 @@ from assets_sync_library.microsoft365_sync import Microsoft365Sync
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 
-def main():
+def ms365_merge_tester():
 
     print("--- Starting Microsoft 365 Merge Debug Test ---")
 
@@ -129,4 +129,4 @@ def main():
     print("--- End of Test ---")
 
 if __name__ == "__main__":
-    main()
+    ms365_merge_tester()

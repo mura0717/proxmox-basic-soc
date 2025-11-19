@@ -1,6 +1,7 @@
 """General-purpose text utility functions."""
 
 import re
+
 def normalize_for_comparison(text: str) -> str:
     """Normalizes text for case-insensitive comparison by lowercasing and removing special chars."""
     if not isinstance(text, str):

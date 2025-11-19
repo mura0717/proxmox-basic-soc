@@ -26,7 +26,7 @@ class IntuneScanner:
     def __init__(self, asset_matcher: Optional[AssetMatcher] = None):
         self.asset_matcher = asset_matcher or AssetMatcher()
         self.graph_url = "https://graph.microsoft.com/v1.0"
-        self.ms365_service = Microsoft365Service() # Instantiate the Microsoft365 helper
+        self.ms365_service = Microsoft365Service() 
     
     def get_access_token(self) -> Optional[str]:
         """Ensure a valid access token is available and return it."""
