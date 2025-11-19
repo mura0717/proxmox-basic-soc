@@ -9,7 +9,7 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.microsoft365_sync import Microsoft365Sync
+from assets_sync_library.ms365_sync import Microsoft365Sync
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 

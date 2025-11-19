@@ -29,6 +29,7 @@ class MS365APTConnectionTester:
         return self.ms365_service.access_token
     
     def test_connection(self) -> bool:
+        print("Testing connection to Microsoft365 API...")
         access_token = self.get_access_token()
         if not access_token:
             print("No access token available, cannot fetch Intune assets.")

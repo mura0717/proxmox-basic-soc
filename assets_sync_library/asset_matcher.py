@@ -82,7 +82,8 @@ class AssetMatcher:
         """
         Find an existing asset in Snipe-IT using a prioritized chain of matching strategies.
         """
-        print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
+        if self.debug:
+            print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
 
         # The order of these calls defines the matching priority
         found_asset = (
@@ -98,7 +99,8 @@ class AssetMatcher:
         if found_asset:
             return found_asset
             
-        print("No existing asset found.")
+        if self.debug:
+            print("No existing asset found.")
         return None
 
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
