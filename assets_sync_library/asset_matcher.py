@@ -405,15 +405,15 @@ class AssetMatcher:
             generic_model_obj = self.model_service.get_by_name(generic_model_name)
             
             if self.debug:
-                print(f"[_assign_generic_model] No specific model found. Looking for generic: '{generic_model_name}'")
+                print(f"No specific model assigned. Looking for generic: '{generic_model_name}'")
 
             if generic_model_obj:
                 payload['model_id'] = generic_model_obj['id']
                 # Set category from generic model if not already set
                 if 'category_id' not in payload and generic_model_obj.get('category'):
-                    payload['category_id'] = generic_model_obj['category']['id']
+                    payload['category_id'] = generic_model_obj.get('category', {}).get('id')
                     if self.debug:
-                        print(f"[_assign_generic_model] Successfully found and assigned generic model ID: {payload['model_id']}")
+                        print(f"Assigned generic model ID: {payload['model_id']}")
 
                 # Ensure assets get the correct fieldset based on their source
                 fieldset_service = self.fieldset_service

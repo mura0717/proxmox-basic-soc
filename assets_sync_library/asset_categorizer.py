@@ -33,15 +33,26 @@ class AssetCategorizer:
 
         for device_type in device_type_priority:
             rule_set = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
-            
-            # Check by hostname prefix (e.g., 'ap' for Access Points)
-            if any(device_name.startswith(prefix) for prefix in rule_set.get('hostname_prefixes', [])):
+
+            # Rule 1: Hostname prefix is the strongest signal.
+            hostname_match = any(device_name.startswith(prefix) for prefix in rule_set.get('hostname_prefixes', []))
+            if hostname_match:
+                if debug_logger.is_enabled:
+                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on hostname prefix.")
                 return device_type
 
-            # Check by vendor and model keywords
-            if any(vendor in manufacturer for vendor in rule_set.get('vendors', [])):
-                if not rule_set.get('model_keywords') or not model or any(keyword in model for keyword in rule_set.get('model_keywords', [])):
-                    return device_type
+            # Rule 2: Vendor AND Model keyword match is a strong signal.
+            vendor_match = any(vendor in manufacturer for vendor in rule_set.get('vendors', []))
+            if vendor_match and model and any(keyword in model for keyword in rule_set.get('model_keywords', [])):
+                if debug_logger.is_enabled:
+                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on vendor '{manufacturer}' and model '{model}'.")
+                return device_type
+
+            # Rule 3: Vendor-only match (weakest signal).
+            if vendor_match and not model and not rule_set.get('model_keywords'):
+                if debug_logger.is_enabled:
+                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on vendor-only ('{manufacturer}') and empty model.")
+                return device_type
         return None
     
     @classmethod

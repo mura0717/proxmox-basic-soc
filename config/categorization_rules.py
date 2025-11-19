@@ -9,11 +9,11 @@ NETWORK_DEVICE_RULES = {
     },
     'Switch': {
         'vendors': ['cisco', 'juniper', 'aruba', 'hp', 'dell', 'meraki', 'ubiquiti', 'd-link', 'netgear', 'tp-link'],
-        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'dgs', 'sg', 'tl-sg', 'usw']
+        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'unifi switch', 'dgs', 'sg', 'tl-sg', 'usw']
     },
     'Router': {
         'vendors': ['cisco', 'juniper', 'mikrotik', 'ubiquiti', 'netgear', 'tp-link'],
-        'model_keywords': ['router', 'isr', 'asr', 'edgerouter']
+        'model_keywords': ['router', 'isr', 'asr', 'edgerouter', 'unifi gateway']
     },
     'Access Point': {
         'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link', 'unifi'],

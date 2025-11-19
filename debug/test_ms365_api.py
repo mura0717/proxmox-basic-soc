@@ -11,7 +11,7 @@ from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.microsoft365_service import Microsoft365Service 
+from config.ms365_service import Microsoft365Service 
 
 class MS365APTConnectionTester:
     """Microsoft Intune synchronization service"""

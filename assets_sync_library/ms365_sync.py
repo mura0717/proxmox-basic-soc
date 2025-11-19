@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
 from debug.asset_debug_logger import debug_logger 
-from config.microsoft365_service import Microsoft365Service
+from config.ms365_service import Microsoft365Service
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 from utils.mac_utils import normalize_mac
