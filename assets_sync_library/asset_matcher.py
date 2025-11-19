@@ -107,49 +107,31 @@ class AssetMatcher:
         """
         Merge data from multiple sources with priority handling
         """
-        merged = {}
-        highest_priority_source = 'unknown'
-        last_event_source = None
-        
-        # Higher number = higher priority
+        # Lower number = higher priority. This makes it easier to find the min.
         source_priority = {
-            'intune': 4,
+            'intune': 1,
+            'teams': 2,
             'nmap': 3,
-            'snmp': 2,
-            'existing': 1
+            'snmp': 4,
+            'existing': 99
         }
-        
+
+        # Start with the lowest priority data source and layer higher priority ones on top.
+        sorted_sources = sorted(data_sources, key=lambda d: source_priority.get(d.get('_source', 'existing'), 99))
+
+        merged = {}
         for source_data in data_sources:
-            source = source_data.get('_source', 'unknown')
-            last_event_source = source
-            
-            # _source is passed before removal so it's available in the categorizer
-            if source_priority.get(source, 0) > source_priority.get(highest_priority_source, 0):
-                highest_priority_source = source
-            
-            source_data: Dict[str, Any] = {k: v for k, v in source_data.items() if not k.startswith('_')}
-            
             for key, value in source_data.items():
-                if value is None or value == '':
+                # Ignore internal keys
+                if key.startswith('_'):
                     continue
-                
-                if key not in merged:
+
+                # Add the value if the key doesn't exist yet,
+                # OR if the new value is not empty/None.
+                # This prevents a high-priority source from blanking out a field.
+                if key not in merged or (value is not None and value != ''):
                     merged[key] = value
-                    merged[f'{key}_source'] = source
-                else:
-                    # Check if new source has higher priority
-                    current_source = merged.get(f'{key}_source', 'unknown')
-                    if source_priority.get(source, 0) > source_priority.get(current_source, 0):
-                        merged[key] = value
-                        merged[f'{key}_source'] = source
-        
-        # Preserve the highest priority _source field
-        merged['_source'] = highest_priority_source
-        
-        # Update metadata
-        merged['last_update_source'] = last_event_source
-        merged['last_update_at'] = datetime.now(timezone.utc).isoformat()
-        
+
         return merged
 
     # --- Private Orchestration Methods ---
@@ -175,7 +157,10 @@ class AssetMatcher:
                     flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
                     
                 # Merge with existing data and update
-                merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data) # Pass scan_type to _update_asset
+                merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data)
+                # Ensure the source from the new scan is preserved for categorization.
+                merged_data['_source'] = scan_type
+
                 if self._update_asset(existing['id'], merged_data, scan_type):
                     results['updated'] += 1
                     results['assets'].append({'id': existing['id'], 'action': 'updated', 'name': merged_data.get('name', 'Unknown')})
