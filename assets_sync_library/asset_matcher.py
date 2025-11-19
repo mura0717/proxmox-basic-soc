@@ -225,7 +225,7 @@ class AssetMatcher:
         if asset_data.get('host_name'):
             asset_data['name'] = asset_data['host_name']
 
-        self._assign_model_manufacturer_and_category(payload, asset_data)
+        self._assign_model_manufacturer_category(payload, asset_data)
         self._populate_standard_fields(payload, asset_data, is_update)
         self._populate_custom_fields(payload, asset_data)
         
@@ -256,8 +256,27 @@ class AssetMatcher:
             return True
         return bool(asset_data.get('asset_tag'))
 
-    def _assign_model_manufacturer_and_category(self, payload: Dict, asset_data: Dict):
+    def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
         """Determine and assign manufacturer, model, and category, creating them if necessary."""
+        manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)
+
+        if self.debug:
+            print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
+            if not manufacturer_name:
+                print(f"WARNING: Missing manufacturer for asset: {asset_data.get('name', 'Unknown')}")
+            if not model_name:
+                print(f"WARNING: Missing model for asset: {asset_data.get('name', 'Unknown')}")
+
+        is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
+
+        if manufacturer_name and model_name and not is_generic_model_name:
+            self._handle_specific_model(payload, asset_data, manufacturer_name, model_name)
+
+        if 'model_id' not in payload:
+            self._assign_generic_model(payload, asset_data)
+
+    def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
+        """Extracts and cleans manufacturer and model names from asset data."""
         raw_mfr = asset_data.get('manufacturer')
         raw_model = asset_data.get('model')
 
@@ -266,150 +285,117 @@ class AssetMatcher:
         if isinstance(raw_model, dict):
             raw_model = raw_model.get('name') or raw_model.get('model_number') or ''
 
-        manufacturer_name = str(raw_mfr or '').strip()
-        model_name = str(raw_model or '').strip()
-        
+        return str(raw_mfr or '').strip(), str(raw_model or '').strip()
+
+    def _handle_specific_model(self, payload: Dict, asset_data: Dict, manufacturer_name: str, model_name: str):
+        """Handles the logic for finding, creating, and assigning a specific model."""
+        manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
+        if not manufacturer:
+            return
+
+        payload['manufacturer_id'] = manufacturer['id']
+        category_obj = self._determine_category(asset_data)
+        if not category_obj:
+            return
+
+        payload['category_id'] = category_obj['id']
+        fieldset = self._determine_fieldset(category_obj, asset_data)
+
+        full_model_name = self._build_full_model_name(manufacturer_name, model_name)
+
+        model = self._get_or_create_model(full_model_name, manufacturer, category_obj, fieldset, model_name)
+
+        if model:
+            payload['model_id'] = model['id']
+            self._update_model_if_needed(model, category_obj, fieldset)
+
+    def _determine_fieldset(self, category_obj: Dict, asset_data: Dict) -> Optional[Dict]:
+        """Determines the correct fieldset based on the asset's category."""
+        category_name = category_obj.get('name') if isinstance(category_obj, dict) else str(category_obj)
+        fieldset_map = {
+            'Laptops': 'Managed and Discovered Assets', 'Desktops': 'Managed and Discovered Assets',
+            'Mobile Phones': 'Managed and Discovered Assets', 'Tablets': 'Managed and Discovered Assets',
+            'IoT Devices': 'Managed and Discovered Assets', 'Servers': 'Managed and Discovered Assets',
+            'Virtual Machines (On-Premises)': 'Managed and Discovered Assets',
+            'Cloud Resources': 'Cloud Resources (Azure)', 'Switches': 'Network Infrastructure',
+            'Routers': 'Network Infrastructure', 'Firewalls': 'Network Infrastructure',
+            'Access Points': 'Network Infrastructure', 'Network Devices': 'Network Infrastructure',
+            'Printers': 'Discovered Assets (Nmap Only)',
+        }
+        fieldset_name = fieldset_map.get(category_name, 'Managed and Discovered Assets')
+        fieldset = self.fieldset_service.get_by_name(fieldset_name)
+
+        if not fieldset:
+            print(f"[ERROR] Fieldset '{fieldset_name}' not found in Snipe-IT. Please ensure it exists.")
+            print(f"  Asset '{asset_data.get('name', 'Unknown')}' may have issues with custom fields.")
+        return fieldset
+
+    def _build_full_model_name(self, manufacturer_name: str, model_name: str) -> str:
+        """Constructs the full model name, avoiding manufacturer duplication."""
+        norm_model = normalize_for_comparison(model_name)
+        norm_mfr = normalize_for_comparison(manufacturer_name)
+        if norm_model.startswith(norm_mfr) or norm_mfr.startswith(norm_model):
+            return model_name
+        return f"{manufacturer_name} {model_name}"
+
+    def _get_or_create_model(self, full_model_name: str, manufacturer: Dict, category: Dict, fieldset: Optional[Dict], model_number: str) -> Optional[Dict]:
+        """Finds an existing model by name or creates a new one."""
+        model = self.model_service.get_by_name(full_model_name)
+        if model:
+            return model
+
         if self.debug:
-            print(f"[_assign_model_manufacturer_and_category] Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
-            if not manufacturer_name:
-                print(f"[_assign_model_manufacturer_and_category] WARNING: Missing manufacturer for asset: {asset_data.get('name', 'Unknown')}")
-            if not model_name:
-                print(f"[_assign_model_manufacturer_and_category] WARNING: Missing model for asset: {asset_data.get('name', 'Unknown')}")
-        
-        # Only create a specific model if manufacturer and model name.
-        is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
-        if manufacturer_name and model_name and not is_generic_model_name:
-            manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
+            print(f"[_get_or_create_model] Model '{full_model_name}' not found. Attempting to create...")
+
+        model_data = {
+            'name': full_model_name,
+            'manufacturer_id': manufacturer['id'],
+            'category_id': category['id'],
+            'model_number': model_number
+        }
+        if full_model_name == model_number:
+            model_data.pop('model_number', None)
+        if fieldset:
+            model_data['fieldset_id'] = fieldset['id']
+
+        try:
+            new_model = self.model_service.create(model_data)
+            if new_model:
+                if self.debug:
+                    print(f"[_get_or_create_model] Successfully created model: {full_model_name} (ID: {new_model.get('id')})")
+                return new_model
+            else:
+                # Handle API error or race condition where another process created it
+                error_response = getattr(self.model_service, 'last_error', "No specific error message.")
+                print(f"[_get_or_create_model] ERROR: Model creation failed for '{full_model_name}'. API Error: {error_response}")
+                print(f"[_get_or_create_model] WARNING: Retrying lookup for '{full_model_name}'...")
+                self.model_service.get_all(refresh_cache=True)
+                return self.model_service.get_by_name(full_model_name)
+        except Exception as e:
+            print(f"[_get_or_create_model] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
+            return None
+
+    def _update_model_if_needed(self, model: Dict, category: Dict, fieldset: Optional[Dict]):
+        """Updates an existing model's category or fieldset if they are incorrect."""
+        update_payload = {}
+        if category and model.get('category', {}).get('id') != category['id']:
+            update_payload['category_id'] = category['id']
+
+        current_fieldset_id = (model.get('fieldset') or {}).get('id')
+        target_fieldset_id = fieldset['id'] if fieldset else None
+
+        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
+            update_payload['fieldset_id'] = target_fieldset_id
+
+        if update_payload:
             if self.debug:
-                print(f"[_assign_model_manufacturer_and_category] Get/Create Manufacturer result: {manufacturer}")
-    
-            if manufacturer:
-                payload['manufacturer_id'] = manufacturer['id']
-                
-                category_obj = self._determine_category(asset_data)
-                
-                if category_obj:
-                    payload['category_id'] = category_obj['id']
-                    category_name = category_obj.get('name') if isinstance(category_obj, dict) else str(category_obj)
-                    
-                    if self.debug:
-                        print(f"[_assign_model_manufacturer_and_category] Determined category for '{category_name}': {category_obj}")
-                    
-                    fieldset_service = FieldsetService()
-                    fieldset_map = {
-                        # Standard End-User Devices
-                        'Laptops': 'Managed and Discovered Assets',
-                        'Desktops': 'Managed and Discovered Assets',
-                        'Mobile Phones': 'Managed and Discovered Assets',
-                        'Tablets': 'Managed and Discovered Assets',
-                        'IoT Devices': 'Managed and Discovered Assets',
-                        # Infrastructure
-                        'Servers': 'Managed and Discovered Assets',
-                        'Virtual Machines (On-Premises)': 'Managed and Discovered Assets',
-                        'Cloud Resources': 'Cloud Resources (Azure)',
-                        # Network Gear
-                        'Switches': 'Network Infrastructure',
-                        'Routers': 'Network Infrastructure',
-                        'Firewalls': 'Network Infrastructure',
-                        'Access Points': 'Network Infrastructure',
-                        'Network Devices': 'Network Infrastructure',
-                        # Peripherals
-                        'Printers': 'Discovered Assets (Nmap Only)',
-                    }
-                    
-                    fieldset_name = fieldset_map.get(category_name, 'Managed and Discovered Assets')
-                    fieldset = fieldset_service.get_by_name(fieldset_name)
-                    
-                    if not fieldset:
-                        print(f"[ERROR] Fieldset '{fieldset_name}' not found in Snipe-IT. Please ensure it exists and contains all necessary custom fields.")
-                        print(f"  Asset '{asset_data.get('name', 'Unknown')}' will be processed without a specific fieldset, which may lead to custom field errors.")
-                        # Continue without a fieldset, but the user is warned.
-
-                    # Prevent duplicating the manufacturer name in the model name.
-                    norm_model = normalize_for_comparison(model_name)
-                    norm_mfr = normalize_for_comparison(manufacturer_name)
-                    if norm_model.startswith(norm_mfr) or norm_mfr.startswith(norm_model):
-                        full_model_name = model_name
-                    else:
-                        full_model_name = f"{manufacturer_name} {model_name}"
-
-                    existing_model = self.model_service.get_by_name(full_model_name)
-                    
-                    if self.debug:
-                        print(f"[_assign_model_manufacturer_and_category] Full model name: '{full_model_name}'. Found existing model: {existing_model.get('name') if existing_model else 'None'}")
-                    
-                    if not existing_model:
-                        model_data = {
-                            'name': full_model_name,
-                            'manufacturer_id': manufacturer['id'],
-                            'category_id': category_obj['id'],
-                            'model_number': model_name
-                        }
-                        
-                        # If same, omit model_number - uniqueness constraint
-                        if full_model_name == model_name:
-                            model_data.pop('model_number', None)
-                        
-                        if fieldset:
-                            model_data['fieldset_id'] = fieldset['id']
-                            
-                        if self.debug:
-                            print(f"[_assign_model_manufacturer_and_category] Model '{full_model_name}' not found. Attempting to create...")
-                            print(f"[_assign_model_manufacturer_and_category] Model creation payload: {json.dumps(model_data, indent=2)}")
-                        
-                            try:
-                                newly_created_model = self.model_service.create(model_data)
-
-                                if newly_created_model:
-                                    existing_model = newly_created_model
-                                    if self.debug:
-                                        print(f"[_assign_model_manufacturer_and_category] Successfully created model: {full_model_name} (ID: {existing_model.get('id')})")
-                                else:
-                                    # This runs if create() returns None, indicating an API error
-                                    error_response = getattr(self.model_service, 'last_error', "No specific error message from API.")
-                                    print(f"[_assign_model_manufacturer_and_category] ERROR: Model creation failed for '{full_model_name}'. API Error: {error_response}")
-                                    print(f"[_assign_model_manufacturer_and_category] WARNING: Retrying lookup for '{full_model_name}' in case of a race condition...")
-                                    self.model_service.get_all(refresh_cache=True)
-                                    
-                                    existing_model = self.model_service.get_by_name(full_model_name)
-                                    if not existing_model:
-                                        print(f"[ERROR] Could not create or find model '{full_model_name}'. Asset will be processed without a specific model.")
-                                        if self.debug:
-                                            print(f"[_assign_model_manufacturer_and_category] DEBUG: Failed model creation payload: {json.dumps(model_data, indent=2)}")
-                            except Exception as e:
-                                print(f"[_assign_model_manufacturer_and_category] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
-                                existing_model = None
-
-                    # Automatically correct the category of an existing model
-                    if existing_model:
-                        payload['model_id'] = existing_model['id']
-                        
-                        update_payload = {}
-                        if category_obj and existing_model.get('category', {}).get('id') != category_obj['id']:
-                            update_payload['category_id'] = category_obj['id']
-                        
-                        current_fieldset_id = None
-                        if existing_model.get('fieldset'):
-                            current_fieldset_id = existing_model['fieldset'].get('id')
-                        
-                        target_fieldset_id = fieldset['id'] if fieldset else None
-                        # Update fieldset if it's missing or incorrect
-                        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
-                            update_payload['fieldset_id'] = target_fieldset_id
-                        
-                        if update_payload:
-                            if self.debug:
-                                old_category = (existing_model.get('category') or {}).get('name')
-                                old_fieldset = (existing_model.get('fieldset') or {}).get('name')
-                                new_fieldset_name = fieldset.get('name') if fieldset else 'None'
-                                print(f"[_assign_model_manufacturer_and_category] Updating model for '{existing_model.get('name')}'")
-                                print(f"  Category: '{old_category}' -> '{category_obj['name']}'")
-                                print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
-                            self.model_service.update(existing_model['id'], update_payload)
-        
-        # Fallback to a generic model if no specific one was assigned
-        if 'model_id' not in payload:
-            self._assign_generic_model(payload, asset_data)
+                old_category = (model.get('category') or {}).get('name')
+                old_fieldset = (model.get('fieldset') or {}).get('name')
+                new_fieldset_name = fieldset.get('name') if fieldset else 'None'
+                print(f"[_update_model_if_needed] Updating model '{model.get('name')}'")
+                print(f"  Category: '{old_category}' -> '{category['name']}'")
+                print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
+            self.model_service.update(model['id'], update_payload)
 
     def _assign_generic_model(self, payload: Dict, asset_data: Dict):
         """Assigns a generic model and ensures it has the correct fieldset."""

@@ -205,12 +205,8 @@ class NmapScanner:
             print("No hosts found.")
             print(f"Found {len(assets)} hosts")
         
-        # DEBUG: Log parsed asset data
-        debug_logger.log_parsed_asset_data('nmap', assets)
-        
+        debug_logger.log_parsed_asset_data('nmap', assets)  
         results = self.asset_matcher.process_scan_data('nmap', assets)
-        
-        # DEBUG: Log sync results
         debug_logger.log_sync_summary('nmap', results)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated")

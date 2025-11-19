@@ -42,7 +42,7 @@ def main():
     
     print("\n=== Testing full model/manufacturer/category assignment ===")
     payload = {}
-    result_payload = matcher._assign_model_manufacturer_and_category(payload, SAMPLE_ASSET)
+    result_payload = matcher._assign_model_manufacturer_category(payload, SAMPLE_ASSET)
     
     print("\nFinal payload that would be sent to Snipe-IT:")
     pprint(result_payload)
