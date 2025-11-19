@@ -35,8 +35,11 @@ class AssetDebugLogger:
                 'raw': os.path.join(self.log_dir, 'intune_raw_unparsed_data.log'),
                 'parsed': os.path.join(self.log_dir, 'intune_parsed_asset_data.log'),
                 'categorization': os.path.join(self.log_dir, 'intune_categorization_details.log'),
-                'summary': os.path.join(self.log_dir, 'intune_sync_summary.log'),
-                'final_payload': os.path.join(self.log_dir, 'intune_final_payload.log'),
+            },
+            'teams': {
+                'raw': os.path.join(self.log_dir, 'teams_raw_unparsed_data.log'),
+                'parsed': os.path.join(self.log_dir, 'teams_parsed_asset_data.log'),
+                'categorization': os.path.join(self.log_dir, 'teams_categorization_details.log'),
             },
             'nmap': {
                 'raw': os.path.join(self.log_dir, 'nmap_raw_unparsed_data.log'),
@@ -44,13 +47,6 @@ class AssetDebugLogger:
                 'categorization': os.path.join(self.log_dir, 'nmap_categorization_details.log'),
                 'summary': os.path.join(self.log_dir, 'nmap_sync_summary.log'),
                 'final_payload': os.path.join(self.log_dir, 'nmap_final_payload.log'),
-            },
-            'teams': {
-                'raw': os.path.join(self.log_dir, 'teams_raw_unparsed_data.log'),
-                'parsed': os.path.join(self.log_dir, 'teams_parsed_asset_data.log'),
-                'categorization': os.path.join(self.log_dir, 'teams_categorization_details.log'),
-                'summary': os.path.join(self.log_dir, 'teams_sync_summary.log'),
-                'final_payload': os.path.join(self.log_dir, 'teams_final_payload.log'),
             },
             'microsoft365': {
                 'raw': os.path.join(self.log_dir, 'microsoft365_raw_merged_data.log'),
