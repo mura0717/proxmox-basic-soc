@@ -14,12 +14,10 @@ from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 
 def main():
-    """
-    Runs the debug merge process for a single hardcoded Intune and Teams asset.
-    """
+
     print("--- Starting Microsoft 365 Merge Debug Test ---")
 
-    intune_asset_raw = {
+    intune_asset_raw_sample = {
         "id": "734482e2-bec7-47ba-bd51-4897355f2766",
         "userId": "f74d0f00-ac95-4725-8241-d8f0527cc06a",
         "deviceName": "kantine_AndroidAOSP_5/1/2025_2:56 PM",
@@ -78,7 +76,7 @@ def main():
         "deviceActionResults": []
         }
 
-    teams_asset_raw = {
+    teams_asset_raw_sample = {
         "id": "d86782f6-796a-4f8c-985e-dde0b660ab04",
         "deviceType": "teamsRoom",
         "notes": None,
@@ -112,12 +110,12 @@ def main():
     ms365_sync = Microsoft365Sync()
 
     # 2. Transform the raw data into the standardized Snipe-IT format
-    transformed_raw_intune = intune_scanner.transform_intune_to_snipeit(intune_asset_raw)
+    transformed_raw_intune = intune_scanner.transform_intune_to_snipeit(intune_asset_raw_sample)
     print("\n--- Transformed Intune Asset ---")
     print(json.dumps(transformed_raw_intune, indent=2))
     print("--- End of Transformed Intune Asset ---")
     
-    transformed_raw_teams = teams_scanner.transform_teams_to_snipeit(teams_asset_raw)
+    transformed_raw_teams = teams_scanner.transform_teams_to_snipeit(teams_asset_raw_sample)
     print("\n--- Transformed Teams Asset ---")
     print(json.dumps(transformed_raw_teams, indent=2))
     print("--- End of Transformed Teams Asset ---")

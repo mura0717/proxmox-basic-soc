@@ -29,9 +29,6 @@ from utils.mac_utils import normalize_mac
 from utils.text_utils import normalize_for_comparison
 
 class AssetMatcher:
-    """
-    Central service for matching and consolidating asset data from multiple sources
-    """
     
     _custom_field_map: Dict[str, str] = {}
     _hydrated = False
@@ -50,7 +47,6 @@ class AssetMatcher:
         self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
         if not AssetMatcher._hydrated:
             self._hydrate_field_map()
-        
     
     def generate_asset_hash(self, identifiers: Dict) -> str:
         """Generate unique hash for asset identification"""
@@ -108,7 +104,6 @@ class AssetMatcher:
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
         """
         Merge data from multiple sources with priority handling
-        Priority: Intune > SNMP > Nmap > Existing
         """
         merged = {}
         highest_priority_source = 'unknown'
@@ -241,8 +236,7 @@ class AssetMatcher:
         # An IP-only asset will be created but flagged for review.
         if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
             return True
-        # An IP in our trusted static map is sufficient.
-        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
+        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:  # An IP in our trusted static map is sufficient.
             return True
         if asset_data.get('serial'):
             return True
@@ -252,7 +246,7 @@ class AssetMatcher:
             return True
         if asset_data.get('azure_ad_id'):
             return True
-        dns_hostname = asset_data.get('dns_hostname', '') # A real, non-generic hostname
+        dns_hostname = asset_data.get('dns_hostname', '')
         if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
             return True
         name = (asset_data.get('name') or '').strip()
@@ -471,7 +465,7 @@ class AssetMatcher:
             if field in asset_data and asset_data[field]:
                 payload[field] = asset_data[field]
         
-        # 2. MAC ADDRESS (built-in field)
+        # MAC ADDRESS (built-in field)
         if 'mac_addresses' in asset_data and asset_data['mac_addresses']:
             macs = asset_data['mac_addresses']
             if isinstance(macs, str):
@@ -480,11 +474,11 @@ class AssetMatcher:
                 if first_mac:
                     payload['mac_address'] = normalize_mac(first_mac.strip())
         
-        # 3. AUTO-GENERATE ASSET TAG for new assets
+        # AUTO-GENERATE ASSET TAG for new assets
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)
        
-        # 4. LOCATION
+        # LOCATION
         location_name = asset_data.get('location')
         if location_name:
             # Ensure location_name is a string, not a dictionary
@@ -501,7 +495,7 @@ class AssetMatcher:
             else:
                 print(f"  [ERROR] Failed to find or create location '{location_name}'. Asset will have no location.")
         
-        # 5. STATUS
+        #  STATUS
         self._determine_status(payload, asset_data)
     
     def _hydrate_field_map(self):
