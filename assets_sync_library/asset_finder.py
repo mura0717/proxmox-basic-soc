@@ -24,7 +24,7 @@ class AssetFinder:
     def _get_all_assets(self) -> List[Dict]:
         """Lazily fetches all assets from the API, caching the result for the lifetime of the instance."""
         if self._all_assets_cache is None:
-            print("  -> Fetching all assets for deep matching...")
+            print("  -> Fetching all assets for matching...")
             self._all_assets_cache = self.asset_service.get_all()
         return self._all_assets_cache
 
