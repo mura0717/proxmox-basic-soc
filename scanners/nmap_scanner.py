@@ -24,9 +24,7 @@ DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
 NO_ROOT_COMMANDS = ['web', 'list', 'help']
 COMMAND = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
 
-# Auto-elevate to root if needed
-# We need root for any command that is a scan profile.
-# The default command is 'discovery' if none is provided.
+# Auto-elevate to root for scan commands.
 if COMMAND not in NO_ROOT_COMMANDS:
     if os.geteuid() != 0:
         user_euid = os.geteuid()
@@ -79,10 +77,8 @@ class NmapScanner:
         print(f"Targets: {scan_targets}")
         
         try:
-            # Run the scan
             self.nm.scan(hosts=scan_targets, arguments=scan_config['args'])
             
-            # Parse results, passing the full scan config
             assets = []
             for host in self.nm.all_hosts():
                 if self.nm[host].state() == 'up':
@@ -100,17 +96,12 @@ class NmapScanner:
     
     def _parse_host(self, host: str, profile: str, scan_config: Dict) -> Dict:
         """
-        Parse single host results - DATA COLLECTION ONLY.
-        This method's only job is to extract raw data from Nmap.
-        All categorization logic is handled by the AssetCategorizer.
+        Parse Nmap results for a single host to collect raw data.
+        Categorization logic is handled later by the AssetCategorizer.
         """
         nmap_host = self.nm[host]
         
-        # ----------- DEBUG -----------
-        if debug_logger.nmap_debug:
-            print(f"DEBUG: Parsing host {host}, MAC: {nmap_host.get('addresses', {}).get('mac', 'NO MAC')}")
-        
-        # Log raw nmap data BEFORE parsing
+        # Log raw nmap data for debugging before parsing.
         raw_host_data = {
             'host': host,
             'hostname': nmap_host.hostname(),
@@ -120,14 +111,11 @@ class NmapScanner:
             'osmatch': nmap_host.get('osmatch', []),
             'protocols': {}
         }
-        
-        # Add protocol/port info if available
         for proto in nmap_host.all_protocols():
             raw_host_data['protocols'][proto] = nmap_host[proto]
         
         debug_logger.log_raw_host_data('nmap', host, raw_host_data)
-
-        # Parse all the raw data found.
+        
         asset = {
             'last_seen_ip': host,
             'nmap_last_scan': datetime.now(timezone.utc).isoformat(),
@@ -135,7 +123,6 @@ class NmapScanner:
             'name': nmap_host.hostname() or f"Device-{host}",
             'dns_hostname': nmap_host.hostname(),
             '_source': 'nmap',
-            # Will populate these fields if the data exists.
             'mac_addresses': None,
             'manufacturer': None,
             'os_platform': None,
@@ -145,8 +132,7 @@ class NmapScanner:
             'open_ports_hash': None,
             'nmap_services': [],
         }
-
-        # Get MAC and Manufacturer from MAC Vendor
+        
         mac_addresses = []
         if 'mac' in nmap_host.get('addresses', {}):
             raw_mac = nmap_host['addresses']['mac']
@@ -156,15 +142,13 @@ class NmapScanner:
                 asset['mac_addresses'] = normalized_mac
                 if 'vendor' in nmap_host and nmap_host['vendor']:
                     asset['manufacturer'] = list(nmap_host['vendor'].values())[0]
-
-        # Get OS Guess (take the first, most accurate match)
+        
         if scan_config.get('collects_ports') and 'osmatch' in nmap_host and nmap_host['osmatch']:
             os_match = nmap_host['osmatch'][0]
             asset['nmap_os_guess'] = os_match.get('name', '')
             asset['os_accuracy'] = os_match.get('accuracy')
             asset['os_platform'] = os_match.get('name', '')
-
-        # Get Port and Service Information
+        
         if scan_config.get('collects_ports'):
             open_ports_list = []
             service_names = []
@@ -175,7 +159,6 @@ class NmapScanner:
                         service_name = port_info.get('name', 'unknown')
                         service_names.append(service_name)
                         
-                        # Build the descriptive port string for storage
                         product = port_info.get('product', '')
                         version = port_info.get('version', '')
 
@@ -186,11 +169,8 @@ class NmapScanner:
                 asset['nmap_open_ports'] = '\n'.join(sorted(open_ports_list))
                 asset['open_ports_hash'] = hashlib.md5(asset['nmap_open_ports'].encode()).hexdigest()
                 asset['nmap_services'] = service_names
-        
-        # Set first seen timestamp (moved to the end to ensure it's always included)
+                
         asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
-        
-        # Return a clean dictionary with no None values
         return {k: v for k, v in asset.items() if v is not None and v != '' and v != []}
     
     def sync_to_snipeit(self, profile: str = 'discovery') -> Dict:

@@ -8,18 +8,14 @@ import sys
 from pprint import pprint
 import json
 
-# Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
 
-# --- CONFIGURATION ---
-# 1. Set the ID of the asset in Snipe-IT you want to test the update against.
-#    This asset should currently have an incorrect category (e.g., "Other Assets").
+# Set the ID of the Snipe-IT asset to test the update against.
 ASSET_ID_TO_TEST = 612  # <--- CHANGE THIS TO A REAL ASSET ID
 
-# 2. Define the new data from an Nmap scan that should trigger a re-categorization.
-#    For example, this data includes a hostname that should categorize it as an "Access Point".
+# New Nmap scan data that should trigger a re-categorization.
 NEW_NMAP_DATA = {
     "last_seen_ip": "192.168.1.64",
     "nmap_last_scan": "2025-11-20T10:00:00.000000+00:00",
@@ -46,10 +42,9 @@ def main():
     print(f"--- Starting Update Test for Asset ID: {ASSET_ID_TO_TEST} ---")
 
     matcher = AssetMatcher()
-    # Enable debug prints to see the logic flow
     matcher.debug = True
 
-    # --- Step 1: Fetch the existing asset data from Snipe-IT ---
+    # Fetch the existing asset data from Snipe-IT
     print("\n[DEBUG] Fetching existing asset data from Snipe-IT...")
     existing_asset = matcher.asset_service.get_by_id(ASSET_ID_TO_TEST)
     if not existing_asset:
@@ -59,33 +54,25 @@ def main():
     print(f"  > Found asset: '{existing_asset.get('name')}'")
     print(f"  > Current Category: {existing_asset.get('category', {}).get('name', 'N/A')}")
 
-    # --- Step 2: Simulate the main processing loop for a single update ---
-    # This mimics the logic in `_process_assets`
+    # Simulate the main processing loop for a single update
     print("\n[DEBUG] Simulating asset update process...")
 
-    # --- Step 2a: Manually merge the data ---
-    # This bypasses the asset finding logic and forces us to use the asset we fetched.
+    # Manually merge data, bypassing asset finding to force an update on the fetched asset.
     flattened_existing = {**existing_asset}
     if isinstance(flattened_existing.get('model'), dict):
         flattened_existing['model'] = flattened_existing['model'].get('name')
     if isinstance(flattened_existing.get('manufacturer'), dict):
         flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
 
-    print("\n[DEBUG] --- DATA BEFORE MERGE ---")
-    print(f"[DEBUG] Existing Asset Data (ID: {ASSET_ID_TO_TEST}): {json.dumps(flattened_existing, indent=2, default=str)}")
-    print(f"[DEBUG] New Scan Data: {json.dumps(NEW_NMAP_DATA, indent=2, default=str)}")
-
     merged_data = matcher.merge_asset_data({'_source': 'existing', **flattened_existing}, NEW_NMAP_DATA)
     merged_data['_source'] = 'nmap' # Ensure new source is prioritized for categorization
 
-    # IMPORTANT FIX: Always re-determine the category on update.
-    # Remove the old category from the merged data to force re-categorization.
+    # Remove the old category from the merged data to force re-categorization on update.
     merged_data.pop('category', None)
 
-    print("\n[DEBUG] --- DATA AFTER MERGE (Category Removed) ---")
-    print(f"[DEBUG] Merged Data: {json.dumps(merged_data, indent=2, default=str)}")
-
-    # --- Step 2b: Call the internal update method directly ---
+    print("\n[DEBUG] --- DATA AFTER MERGE ---")
+    print(f"[DEBUG] Merged data contains {len(merged_data)} keys. Preparing to build final payload.")
+    # Call the internal update method directly to test the payload generation and API call.
     matcher._update_asset(ASSET_ID_TO_TEST, merged_data, 'nmap')
 
     print(f"\n--- Test for Asset ID: {ASSET_ID_TO_TEST} Complete ---")

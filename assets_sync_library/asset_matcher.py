@@ -53,8 +53,6 @@ class AssetMatcher:
         hash_string = json.dumps(identifiers, sort_keys=True)
         return hashlib.md5(hash_string.encode()).hexdigest()
     
-    # --- Public Methods ---
-    
     def clear_all_caches(self):
         """Clears the internal caches of all services to ensure fresh data."""
         print("Clearing all local service caches...")
@@ -66,9 +64,7 @@ class AssetMatcher:
         self.finder._all_assets_cache = None # Clear finder's asset cache
     
     def process_scan_data(self, scan_type: str, scan_data: List[Dict]) -> Dict:
-        """
-        Process scan data from various sources.
-        This is the main entry point for the class.
+        """Process scan data from various sources (main entry point).
         Args:
             scan_type: Type of scan (nmap, snmp, intune, etc.)
             scan_data: List of discovered assets
@@ -79,11 +75,9 @@ class AssetMatcher:
         return self._process_assets(scan_type, scan_data, results)
     
     def find_existing_asset(self, asset_data: Dict) -> Optional[Dict]:
-        """
-        Find an existing asset in Snipe-IT using a prioritized chain of matching strategies.
-        """
+        """Find an existing asset using a prioritized chain of matching strategies."""
         if self.debug:
-            print(f"Looking for existing asset: {asset_data.get('name', 'Unknown')}")
+            print(f"[SEARCHING EXISTING ASSET]: {asset_data.get('name', 'Unknown')}")
 
         # The order of these calls defines the matching priority
         found_asset = (
@@ -104,9 +98,7 @@ class AssetMatcher:
         return None
 
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
-        """
-        Merge data from multiple sources with priority handling
-        """
+        """Merge data from multiple sources with priority handling."""
         # Lower number = higher priority. This makes it easier to find the min.
         source_priority = {
             'intune': 1,
@@ -117,31 +109,26 @@ class AssetMatcher:
         }
 
         # Start with the lowest priority data source and layer higher priority ones on top.
-        sorted_sources = sorted(data_sources, key=lambda d: source_priority.get(d.get('_source', 'existing'), 99))
+        sorted_sources = sorted(data_sources, key=lambda d: source_priority.get(d.get('_source', 'existing'), 99), reverse=True)
 
         merged = {}
-        for source_data in data_sources:
+        for source_data in sorted_sources:
             for key, value in source_data.items():
                 # Ignore internal keys
-                if key.startswith('_'):
+                if key.startswith('_') and key != '_source':
                     continue
-
-                # Add the value if the key doesn't exist yet,
-                # OR if the new value is not empty/None.
-                # This prevents a high-priority source from blanking out a field.
+                # Add the value if key doesn't exist, OR if new value is truthy.
+                # We also allow overwriting with 0 or False (but not None/Empty string).
                 if key not in merged or (value is not None and value != ''):
                     merged[key] = value
-
         return merged
-
-    # --- Private Orchestration Methods ---
 
     def _process_assets(self, scan_type: str, scan_data: List[Dict], results: Dict) -> Dict:
         """Iterate through scan data and process each asset."""
         for asset_data in scan_data:
             asset_data['_source'] = scan_type
 
-            # Enrich with static IP mapping data first
+            # 1. Enrich with static IP mapping data first
             ip_address = asset_data.get('last_seen_ip')
             if ip_address and ip_address in STATIC_IP_MAP:
                 asset_data.update(STATIC_IP_MAP[ip_address])
@@ -156,9 +143,9 @@ class AssetMatcher:
                 if isinstance(flattened_existing.get('manufacturer'), dict):
                     flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
                     
-                # Merge with existing data and update
+                # 2. Merge with existing data and update
                 merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data)
-                # Ensure the source from the new scan is preserved for categorization.
+                # 3. Ensure the source from the new scan is preserved for categorization.
                 merged_data['_source'] = scan_type
 
                 if self._update_asset(existing['id'], merged_data, scan_type):
@@ -167,7 +154,7 @@ class AssetMatcher:
                 else:
                     results['failed'] += 1
             else:
-                # Create new asset if it has sufficient data
+                # 4. Create new asset if it has sufficient data
                 if self._has_sufficient_data(asset_data):
                     new_asset = self._create_asset(asset_data, scan_type)
                     if new_asset:
@@ -217,9 +204,7 @@ class AssetMatcher:
         return payload
     
     def _has_sufficient_data(self, asset_data: Dict) -> bool:
-        """
-        Determine if we have enough data to confidently create a new asset.
-        """
+        """Determine if we have enough data to create a new asset."""
         # An IP-only asset will be created but flagged for review.
         if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
             return True
@@ -472,20 +457,13 @@ class AssetMatcher:
         self._determine_status(payload, asset_data)
     
     def _hydrate_field_map(self):
-        """
-        Builds a map from our internal config key (e.g., 'last_seen_ip') to the
-        server's actual database column name (e.g., '_snipeit_last_seen_ip_1').
-        """
+        """Map internal config keys to Snipe-IT's database column names for custom fields."""
         if not AssetMatcher._hydrated:
             name_to_key_map = {normalize_for_comparison(value.get('name', '')): key
             for key, value in CUSTOM_FIELDS.items()}
             
             all_fields_from_server = self.field_service.get_all(refresh_cache=True) or []
             
-            if all_fields_from_server and self.debug:
-                print(f"[DEBUG] Sample field structure: {all_fields_from_server[0]}")
-                print(f"[DEBUG] Available keys: {list(all_fields_from_server[0].keys())}")
-                    
             for server_field in all_fields_from_server:
                 field_name = normalize_for_comparison(server_field.get('name') or '')
                 internal_key = name_to_key_map.get(field_name)

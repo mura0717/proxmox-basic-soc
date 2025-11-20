@@ -80,10 +80,11 @@ class AssetCategorizer:
         return None
     
     @classmethod
-    def _categorize_vm(cls, manufacturer: str, model: str) -> Optional[str]:
+    def _categorize_vm(cls, manufacturer: str, model: str, device_name: str) -> Optional[str]:
         """Categorize a device as a Virtual Machine."""
         if any(vendor in manufacturer for vendor in categorization_rules.VIRTUAL_MACHINE_RULES['vendors']) and \
-           any(kw in model for kw in categorization_rules.VIRTUAL_MACHINE_RULES['model_keywords']):
+           any(kw in model for kw in categorization_rules.VIRTUAL_MACHINE_RULES['model_keywords']) or \
+           any(kw in device_name for kw in categorization_rules.VIRTUAL_MACHINE_RULES.get('hostname_keywords', [])):
             return 'Virtual Machine'
         return None
 
@@ -287,7 +288,7 @@ class AssetCategorizer:
             device_type = (
                 # --- Hardware-based Categorization (Highest Priority) ---
                 # 1. Virtual Machines (very specific)
-                cls._categorize_vm(manufacturer, model) or
+                cls._categorize_vm(manufacturer, model, device_name) or
                 
                 # 2. IoT Devices (Yealink, etc. - check before general Android)
                 cls._categorize_iot(model, os_type, device_name) or

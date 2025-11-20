@@ -25,7 +25,7 @@ NETWORK_DEVICE_RULES = {
 VIRTUAL_MACHINE_RULES = {
     'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation'],
     'model_keywords': ['virtual machine', 'vm'],
-    'specific_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # These are temporary
+    'hostname_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # Temporary
 }
 
 SERVER_RULES = {
