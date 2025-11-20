@@ -12,21 +12,20 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from assets_sync_library.asset_matcher import AssetMatcher
 
 SAMPLE_PARSED_ASSET_DATA =   {
-    "last_seen_ip": "192.168.1.64",
-    "nmap_last_scan": "2025-11-20T14:54:14.895951+00:00",
+    "last_seen_ip": "192.168.1.176",
+    "nmap_last_scan": "2025-11-20T16:22:28.182327+00:00",
     "nmap_scan_profile": "discovery",
-    "name": "AP7-Reception.Diabetes.local",
-    "dns_hostname": "AP7-Reception.Diabetes.local",
+    "name": "Device-192.168.1.176",
     "_source": "nmap",
-    "mac_addresses": "D0:21:F9:C7:97:E7",
-    "manufacturer": "Ubiquiti Networks",
-    "nmap_open_ports": "22/tcp/ssh ( )\n8080/tcp/http-proxy ( )",
-    "open_ports_hash": "d374ef4e815def6c253e48ccae9a36dc",
+    "mac_addresses": "D0:39:EA:23:D0:59",
+    "manufacturer": "NetApp",
+    "nmap_open_ports": "443/tcp/https ( )\n8443/tcp/https-alt ( )",
+    "open_ports_hash": "d22b17c7a9350ec8a54d0afe47097600",
     "nmap_services": [
-      "ssh",
-      "http-proxy"
+      "https",
+      "https-alt"
     ],
-    "first_seen_date": "2025-11-20T14:54:14.896020+00:00"
+    "first_seen_date": "2025-11-20T16:22:28.182359+00:00"
 }
 
 def main():

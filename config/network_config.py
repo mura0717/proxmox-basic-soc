@@ -90,8 +90,8 @@ STATIC_IP_MAP = {
     '192.168.1.172': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 2', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.173': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx06', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.174': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx07', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.175': {'device_type': 'Server', 'category': '', 'host_name': 'res 1 - MDL-Laptop7.Diabetes.local', 'manufacturer': 'NetApp', 'model': '', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.176': {'device_type': 'Server', 'category': '', 'host_name': 'res 2 - ?', 'manufacturer': '', 'model': '', 'services': 'NetApp', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.175': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'res 1 - MDL-Laptop7.Diabetes.local', 'manufacturer': 'NetApp', 'model': 'FAS Series', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.176': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'res 2 - ?', 'manufacturer': 'NetApp', 'model': 'FAS Series', 'services': 'NetApp', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.181': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'DC03', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.186': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Filesrvr04', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.196': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 3', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
@@ -144,4 +144,3 @@ STATIC_IP_MAP = {
     '192.168.200.212': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Zebra ZD421', 'manufacturer': 'Zebra', 'model': 'ZD421', 'services': 'Label Printer ', 'location': 'Odense', 'placement': ''},
     '192.168.200.213': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Brother HL-L6415DN', 'manufacturer': 'Brother', 'model': 'HL-L6415DN', 'services': 'Fakturaprinter', 'location': 'Odense', 'placement': ''},
 }
-

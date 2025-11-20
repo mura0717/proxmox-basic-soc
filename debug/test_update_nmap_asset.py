@@ -15,26 +15,25 @@ from assets_sync_library.asset_matcher import AssetMatcher
 # --- CONFIGURATION: CHOOSE ONE IDENTIFIER ---
 # Use the Asset ID, Asset Tag, OR Serial Number to find the asset you want to test.
 ASSET_ID_TO_TEST = 0  # Option 1: Direct Asset ID (e.g., 612)
-ASSET_TAG_TO_TEST = "AUTO-20251120155438-288F85"  # Option 2: Asset Tag (e.g., "My-Asset-123")
+ASSET_TAG_TO_TEST = "AUTO-20251120155422-BDF3DA"  # Option 2: Asset Tag (e.g., "My-Asset-123")
 ASSET_SERIAL_TO_TEST = "" # Option 3: Serial Number
 
 # New Nmap scan data that should trigger a re-categorization.
 NEW_NMAP_DATA = {
-    "last_seen_ip": "192.168.1.64",
-    "nmap_last_scan": "2025-11-20T14:54:14.895951+00:00",
+    "last_seen_ip": "192.168.1.176",
+    "nmap_last_scan": "2025-11-20T16:22:28.182327+00:00",
     "nmap_scan_profile": "discovery",
-    "name": "AP7-Reception.Diabetes.local",
-    "dns_hostname": "AP7-Reception.Diabetes.local",
+    "name": "Device-192.168.1.176",
     "_source": "nmap",
-    "mac_addresses": "D0:21:F9:C7:97:E7",
-    "manufacturer": "Ubiquiti Networks",
-    "nmap_open_ports": "22/tcp/ssh ( )\n8080/tcp/http-proxy ( )",
-    "open_ports_hash": "d374ef4e815def6c253e48ccae9a36dc",
+    "mac_addresses": "D0:39:EA:23:D0:59",
+    "manufacturer": "NetApp",
+    "nmap_open_ports": "443/tcp/https ( )\n8443/tcp/https-alt ( )",
+    "open_ports_hash": "d22b17c7a9350ec8a54d0afe47097600",
     "nmap_services": [
-      "ssh",
-      "http-proxy"
+      "https",
+      "https-alt"
     ],
-    "first_seen_date": "2025-11-20T14:54:14.896020+00:00"
+    "first_seen_date": "2025-11-20T16:22:28.182359+00:00"
 }
 
 def main():
