@@ -436,7 +436,7 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
         },
-    "Virtual Machines (On-Premises)": {
+    "Virtual Machines": {
         "category_type": "asset", 
         "use_default_eula": False,
         "require_acceptance": False,
