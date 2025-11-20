@@ -321,10 +321,8 @@ class AssetMatcher:
             'name': full_model_name,
             'manufacturer_id': manufacturer['id'],
             'category_id': category['id'],
-            'model_number': model_number
+            'model_number': full_model_name  # Use the full name to ensure uniqueness
         }
-        if full_model_name == model_number:
-            model_data.pop('model_number', None)
         if fieldset:
             model_data['fieldset_id'] = fieldset['id']
 
