@@ -243,11 +243,14 @@ class AssetMatcher:
         # 2. If we have specific hardware data, handle specific model
         if manufacturer_name and model_name and not is_generic_model_name:
             self._handle_specific_model(payload, asset_data, manufacturer_name, model_name, category_obj)
+        
+        # Ensure category is set even if model logic fails but category was found
+        if category_obj and 'category_id' not in payload:
+            payload['category_id'] = category_obj['id']
 
         # 3. If no specific model was assigned (or model name was missing), assign Generic based on Device Type
         if 'model_id' not in payload:
             self._assign_generic_model(payload, asset_data, category_obj)
-
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
         """Extracts and cleans manufacturer and model names from asset data."""
         raw_mfr = asset_data.get('manufacturer')
@@ -411,7 +414,7 @@ class AssetMatcher:
                 # If we know the category (e.g. 'Virtual Machines'), ensure the Generic Model matches it.
                 if category_obj:
                     payload['category_id'] = category_obj['id']
-                    current_cat_id = (generic_model_obj.get('category') or {}).get('id')
+                    current_cat_id = (generic_model_obj.get('category') or {}).get('id') 
                     
                     if current_cat_id != category_obj['id']:
                         print(f"   [REPAIR] Generic Model '{generic_model_name}': Fix Category {current_cat_id} -> {category_obj['id']}")
@@ -587,17 +590,18 @@ class AssetMatcher:
         if self.debug:
             print(f"[_determine_category] Categorization for '{asset_data.get('name')}': {classification}")
         
-        category_value = classification.get('category', 'Other Assets')
-        if isinstance(category_value, dict):
-            return category_value
-    
-        category_obj = self.category_service.get_by_name(category_value)
+        category_name = classification.get('category', 'Other Assets')
+        if isinstance(category_name, dict):
+            category_name = category_name.get('name', 'Other Assets')
+
+        # Use get_or_create to ensure the category exists.
+        category_obj = self.category_service.get_or_create({
+            'name': category_name,
+            'category_type': 'asset' # Default to 'asset' type on creation
+        })
+
         if category_obj:
             return category_obj
-        
-        # Fallback to a default category if the determined one isn't found
-        fallback_obj = self.category_service.get_by_name('Other Assets')
-        return fallback_obj if fallback_obj else {'id': 18, 'name': 'Other Assets'}
         
     def _generate_asset_tag(self, asset_data: Dict) -> str:
         """Generate a unique asset tag."""
