@@ -227,23 +227,26 @@ class AssetMatcher:
         return bool(asset_data.get('asset_tag'))
 
     def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
-        """Determine and assign manufacturer, model, and category, creating them if necessary."""
+        """Determine and assign manufacturer, model, and category."""
+        
+        # 1. Run Categorization ALWAYS, regardless of whether we have a specific model name
+        # This ensures asset_data['device_type'] is populated for generic assignment
+        category_obj = self._determine_category(asset_data)
+        
         manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)
 
         if self.debug:
             print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
-            if not manufacturer_name:
-                print(f"WARNING: Missing manufacturer for asset: {asset_data.get('name', 'Unknown')}")
-            if not model_name:
-                print(f"WARNING: Missing model for asset: {asset_data.get('name', 'Unknown')}")
 
         is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
 
+        # 2. If we have specific hardware data, handle specific model
         if manufacturer_name and model_name and not is_generic_model_name:
-            self._handle_specific_model(payload, asset_data, manufacturer_name, model_name)
+            self._handle_specific_model(payload, asset_data, manufacturer_name, model_name, category_obj)
 
+        # 3. If no specific model was assigned (or model name was missing), assign Generic based on Device Type
         if 'model_id' not in payload:
-            self._assign_generic_model(payload, asset_data)
+            self._assign_generic_model(payload, asset_data, category_obj)
 
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
         """Extracts and cleans manufacturer and model names from asset data."""
@@ -257,27 +260,50 @@ class AssetMatcher:
 
         return str(raw_mfr or '').strip(), str(raw_model or '').strip()
 
-    def _handle_specific_model(self, payload: Dict, asset_data: Dict, manufacturer_name: str, model_name: str):
+    def _handle_specific_model(self, payload: Dict, asset_data: Dict, manufacturer_name: str, model_name: str, category_obj: Dict):
         """Handles the logic for finding, creating, and assigning a specific model."""
         manufacturer = self.manufacturer_service.get_or_create({'name': manufacturer_name})
         if not manufacturer:
             return
+        
+        # Category is passed in now, no need to re-calculate
+        if not category_obj:
+            return # Should not happen if determine_category works, but safety check
 
         payload['manufacturer_id'] = manufacturer['id']
-        category_obj = self._determine_category(asset_data)
-        if not category_obj:
-            return
-
         payload['category_id'] = category_obj['id']
         fieldset = self._determine_fieldset(category_obj, asset_data)
 
         full_model_name = self._build_full_model_name(manufacturer_name, model_name)
-
         model = self._get_or_create_model(full_model_name, manufacturer, category_obj, fieldset, model_name)
 
         if model:
             payload['model_id'] = model['id']
-            self._update_model_if_needed(model, category_obj, fieldset)
+            
+            # --- REPAIR LOGIC ---
+            updates_needed = {}
+            
+            # Check Manufacturer Mismatch
+            existing_mfr_id = (model.get('manufacturer') or {}).get('id')
+            if existing_mfr_id != manufacturer['id']:
+                print(f"   [REPAIR] Model '{full_model_name}': Fix Manufacturer {existing_mfr_id} -> {manufacturer['id']}")
+                updates_needed['manufacturer_id'] = manufacturer['id']
+
+            # Check Category Mismatch
+            existing_cat_id = (model.get('category') or {}).get('id')
+            if existing_cat_id != category_obj['id']:
+                print(f"   [REPAIR] Model '{full_model_name}': Fix Category {existing_cat_id} -> {category_obj['id']}")
+                updates_needed['category_id'] = category_obj['id']
+
+            # Check Fieldset Mismatch
+            target_fieldset_id = fieldset['id'] if fieldset else None
+            existing_fieldset_id = (model.get('fieldset') or {}).get('id')
+            if target_fieldset_id and existing_fieldset_id != target_fieldset_id:
+                 print(f"   [REPAIR] Model '{full_model_name}': Fix Fieldset")
+                 updates_needed['fieldset_id'] = target_fieldset_id
+
+            if updates_needed:
+                self.model_service.update(model['id'], updates_needed)
 
     def _determine_fieldset(self, category_obj: Dict, asset_data: Dict) -> Optional[Dict]:
         """Determines the correct fieldset based on the asset's category."""
@@ -365,54 +391,50 @@ class AssetMatcher:
                 print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
             self.model_service.update(model['id'], update_payload)
 
-    def _assign_generic_model(self, payload: Dict, asset_data: Dict):
-        """Assigns a generic model and ensures it has the correct fieldset."""
+    def _assign_generic_model(self, payload: Dict, asset_data: Dict, category_obj: Optional[Dict] = None):
+        """Assigns a generic model based on the pre-calculated device type."""
         if 'model_id' not in payload:
+            # Use the device_type determined earlier
             device_type = str(asset_data.get('device_type') or '').lower()
             generic_model_name = self._determine_model_name(device_type)
             generic_model_obj = self.model_service.get_by_name(generic_model_name)
             
             if self.debug:
-                print(f"No specific model assigned. Looking for generic: '{generic_model_name}'")
+                print(f"No specific model. Assigning generic: '{generic_model_name}' based on type '{device_type}'")
 
             if generic_model_obj:
                 payload['model_id'] = generic_model_obj['id']
-                # Set category from generic model if not already set
-                if 'category_id' not in payload and generic_model_obj.get('category'):
-                    payload['category_id'] = generic_model_obj.get('category', {}).get('id')
-                    if self.debug:
-                        print(f"Assigned generic model ID: {payload['model_id']}")
+                
+                updates_needed = {}
 
-                # Ensure assets get the correct fieldset based on their source
+                # 1. Enforce Category on the Generic Model
+                # If we know the category (e.g. 'Virtual Machines'), ensure the Generic Model matches it.
+                if category_obj:
+                    payload['category_id'] = category_obj['id']
+                    current_cat_id = (generic_model_obj.get('category') or {}).get('id')
+                    
+                    if current_cat_id != category_obj['id']:
+                        print(f"   [REPAIR] Generic Model '{generic_model_name}': Fix Category {current_cat_id} -> {category_obj['id']}")
+                        updates_needed['category_id'] = category_obj['id']
+                elif 'category_id' not in payload and generic_model_obj.get('category'):
+                     payload['category_id'] = generic_model_obj.get('category', {}).get('id')
+
+                # (Keep your existing fieldset logic here...)
                 fieldset_service = self.fieldset_service
                 source = asset_data.get('_source', 'nmap')
-                
-                if source == 'microsoft365':
-                    target_fieldset_name = 'Managed and Discovered Assets'
-                else: # Default for nmap or other simple discovery
-                    target_fieldset_name = 'Discovered Assets (Nmap Only)'
-
+                target_fieldset_name = 'Managed and Discovered Assets' if source == 'microsoft365' else 'Discovered Assets (Nmap Only)'
                 target_fieldset = fieldset_service.get_by_name(target_fieldset_name)
                 
                 current_fieldset_id = (generic_model_obj.get('fieldset') or {}).get('id')
                 target_fieldset_id = target_fieldset.get('id') if target_fieldset else None
 
                 if target_fieldset_id and current_fieldset_id != target_fieldset_id:
-                    if self.debug:
-                        print(f"[_assign_generic_model] Updating generic model '{generic_model_name}' to use fieldset '{target_fieldset_name}'.")
-                    update_payload = {
-                        'fieldset_id': target_fieldset_id,
-                        'manufacturer_id': (generic_model_obj.get('manufacturer') or {}).get('id')
-                    }
-                    self.model_service.update(generic_model_obj['id'], update_payload)
-                elif not target_fieldset:
-                    print(f"[ERROR] Could not find the required fieldset '{target_fieldset_name}' in Snipe-IT.")
-
+                    print(f"   [REPAIR] Generic Model '{generic_model_name}': Fix Fieldset {current_fieldset_id} -> {target_fieldset_id}")
+                    updates_needed['fieldset_id'] = target_fieldset_id
+                if updates_needed:
+                    self.model_service.update(generic_model_obj['id'], updates_needed)
             else:
-                raise ValueError(
-                    f"FATAL: The required generic model '{generic_model_name}' was not found in Snipe-IT. "
-                    f"Please ensure the initialization script has been run and the model exists."
-                )
+                print(f"[FATAL] Generic model '{generic_model_name}' not found.")
     
     def _populate_standard_fields(self, payload: Dict, asset_data: Dict, is_update: bool):
         """Populate standard, non-custom fields in the payload."""

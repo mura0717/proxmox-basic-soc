@@ -2,6 +2,11 @@
 Centralized Rule Definitions for Asset Categorization
 """
 
+NIC_VENDORS = {
+    'liteon', 'universal global scientific industrial', 'intel', 'realtek', 
+    'lcfc(hefei) electronics technology', 'hon hai precision', 'murata', 'azurewave'
+}
+
 NETWORK_DEVICE_RULES = {
     'Firewall': {
         'vendors': ['cisco', 'meraki', 'fortinet', 'palo alto', 'sonicwall', 'juniper', 'checkpoint', 'sophos'],
@@ -9,7 +14,8 @@ NETWORK_DEVICE_RULES = {
     },
     'Switch': {
         'vendors': ['cisco', 'juniper', 'aruba', 'hp', 'dell', 'meraki', 'ubiquiti', 'd-link', 'netgear', 'tp-link'],
-        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'unifi switch', 'dgs', 'sg', 'tl-sg', 'usw']
+        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'unifi switch', 'dgs', 'sg', 'usw'],
+        'hostname_prefixes': ['sw', 'switch', 'tl', 'tl-', 'tl-sg', 'hp-switch', 'dgs-'] 
     },
     'Router': {
         'vendors': ['cisco', 'juniper', 'mikrotik', 'ubiquiti', 'netgear', 'tp-link'],
@@ -18,7 +24,7 @@ NETWORK_DEVICE_RULES = {
     'Access Point': {
         'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link', 'unifi'],
         'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap'],
-        'hostname_prefixes': ['ap', 'ap-', 'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8']
+        'hostname_prefixes': ['ap', 'ap-', 'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8', 'uap']
     }
 }
 
@@ -52,7 +58,7 @@ COMPUTER_RULES = {
         'probook', 'spectre', 'envy', 'surface laptop', 'studiobook',
         'proart', 'macbook', 'macbook pro', 'macbook air',
     },
-    'laptop_hostname_keywords': {'laptop'},
+    'laptop_hostname_keywords': {'laptop', 'book', 'mob', 'nb'},
     'laptop_vendor_prefixes': {
         'lenovo': ['20', '21', '40']
     },
@@ -64,7 +70,7 @@ COMPUTER_RULES = {
         'imac', 'mac mini', 'mac studio', 'mac pro', 'zbook', 'z840',
         'z640', 'z440', 'z240', 'z620', 'precision', 'proart station'
     },
-    'desktop_hostname_keywords': {'pc', 'desktop'},
+    'desktop_hostname_keywords': {'pc', 'desktop', 'wkst', 'workstation'},
     'desktop_vendor_prefixes': {
         'lenovo': ['10', '11', '12', '30']
     },
@@ -94,7 +100,7 @@ SERVICE_RULES = {
     'Web Server': {
         'service_keywords': ['http', 'https', 'nginx', 'apache', 'iis']
     },
-    'Network Device': { # Generic fallback if SNMP is seen
+    'Network Device': { 
         'service_keywords': ['snmp']
     }
 }

@@ -12,49 +12,61 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
 
-# Set the ID of the Snipe-IT asset to test the update against.
-ASSET_ID_TO_TEST = 612  # <--- CHANGE THIS TO A REAL ASSET ID
+# --- CONFIGURATION: CHOOSE ONE IDENTIFIER ---
+# Use the Asset ID, Asset Tag, OR Serial Number to find the asset you want to test.
+ASSET_ID_TO_TEST = 0  # Option 1: Direct Asset ID (e.g., 612)
+ASSET_TAG_TO_TEST = "AUTO-20251120155438-D879A8"  # Option 2: Asset Tag (e.g., "My-Asset-123")
+ASSET_SERIAL_TO_TEST = "" # Option 3: Serial Number
 
 # New Nmap scan data that should trigger a re-categorization.
 NEW_NMAP_DATA = {
-    "last_seen_ip": "192.168.1.64",
-    "nmap_last_scan": "2025-11-20T10:00:00.000000+00:00",
+    "last_seen_ip": "192.168.1.67",
+    "nmap_last_scan": "2025-11-20T14:54:14.896372+00:00",
     "nmap_scan_profile": "discovery",
-    "name": "ap7-reception.diabetes.local",  # This hostname is key for categorization
-    "dns_hostname": "ap7-reception.diabetes.local",
+    "name": "TL-SG108PE.Diabetes.local",
+    "dns_hostname": "TL-SG108PE.Diabetes.local",
     "_source": "nmap",
-    "mac_addresses": "D0:21:F9:C7:97:E7",
-    "manufacturer": "Ubiquiti Networks",
-    "nmap_open_ports": "22/tcp/ssh ( )\n8080/tcp/http-proxy ( )",
-    "open_ports_hash": "d374ef4e815def6c253e48ccae9a36dc",
-    "nmap_services": ["ssh", "http-proxy"],
-    "first_seen_date": "2025-11-19T11:06:54.121518+00:00"
+    "mac_addresses": "3C:52:A1:68:FE:09",
+    "nmap_open_ports": "80/tcp/http ( )",
+    "open_ports_hash": "dedc83e356c7934001cf518f33b4e087",
+    "nmap_services": [
+      "http"
+    ],
+    "first_seen_date": "2025-11-20T14:54:14.896438+00:00"
 }
 
 def main():
     """
     Runs the update test against a single, specified asset.
     """
-    if ASSET_ID_TO_TEST == 0:
-        print("ERROR: Please set the ASSET_ID_TO_TEST variable in this script.")
+    if not ASSET_ID_TO_TEST and not ASSET_TAG_TO_TEST and not ASSET_SERIAL_TO_TEST:
+        print("ERROR: Please set one of ASSET_ID_TO_TEST, ASSET_TAG_TO_TEST, or ASSET_SERIAL_TO_TEST.")
         sys.exit(1)
-
-    print(f"--- Starting Update Test for Asset ID: {ASSET_ID_TO_TEST} ---")
 
     matcher = AssetMatcher()
     matcher.debug = True
 
     # Fetch the existing asset data from Snipe-IT
     print("\n[DEBUG] Fetching existing asset data from Snipe-IT...")
-    existing_asset = matcher.asset_service.get_by_id(ASSET_ID_TO_TEST)
+    existing_asset = None
+    if ASSET_ID_TO_TEST:
+        print(f"  -> Searching by Asset ID: {ASSET_ID_TO_TEST}")
+        existing_asset = matcher.asset_service.get_by_id(ASSET_ID_TO_TEST)
+    elif ASSET_TAG_TO_TEST:
+        print(f"  -> Searching by Asset Tag: '{ASSET_TAG_TO_TEST}'")
+        existing_asset = matcher.asset_service.search_by_asset_tag(ASSET_TAG_TO_TEST)
+    elif ASSET_SERIAL_TO_TEST:
+        print(f"  -> Searching by Serial Number: '{ASSET_SERIAL_TO_TEST}'")
+        existing_asset = matcher.asset_service.search_by_serial(ASSET_SERIAL_TO_TEST)
+
     if not existing_asset:
-        print(f"ERROR: Could not find asset with ID {ASSET_ID_TO_TEST} in Snipe-IT.")
+        print(f"ERROR: Could not find the specified asset in Snipe-IT.")
         sys.exit(1)
 
+    asset_id = existing_asset['id']
+    print(f"\n--- Starting Update Test for Asset ID: {asset_id} ---")
     print(f"  > Found asset: '{existing_asset.get('name')}'")
     print(f"  > Current Category: {existing_asset.get('category', {}).get('name', 'N/A')}")
-
-    # Simulate the main processing loop for a single update
     print("\n[DEBUG] Simulating asset update process...")
 
     # Manually merge data, bypassing asset finding to force an update on the fetched asset.
@@ -73,9 +85,9 @@ def main():
     print("\n[DEBUG] --- DATA AFTER MERGE ---")
     print(f"[DEBUG] Merged data contains {len(merged_data)} keys. Preparing to build final payload.")
     # Call the internal update method directly to test the payload generation and API call.
-    matcher._update_asset(ASSET_ID_TO_TEST, merged_data, 'nmap')
+    matcher._update_asset(asset_id, merged_data, 'nmap')
 
-    print(f"\n--- Test for Asset ID: {ASSET_ID_TO_TEST} Complete ---")
+    print(f"\n--- Test for Asset ID: {asset_id} Complete ---")
     print("Check the console output above to see the merge logic and final payload.")
 
 if __name__ == "__main__":

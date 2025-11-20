@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import utils.text_utils as text_utils
 
-inputs = ["iPad Pro (11\")(2nd generation)", "iPad Pro (10.5\")"]
+inputs = ["TL-SG108PE.Diabetes.local"]
 
 for input in range (len(inputs)):
     after_display_normalized = text_utils.normalize_for_display(name=inputs[input])

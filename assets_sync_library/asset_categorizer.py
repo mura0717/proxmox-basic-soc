@@ -25,34 +25,55 @@ class AssetCategorizer:
         if not ip_address:
             return None
         return network_config.STATIC_IP_MAP.get(ip_address)
+    @classmethod
+    def _normalize_hardware_identity(cls, manufacturer: str, model: str) -> tuple[str, str]:
+        """
+        Cleans up noisy Nmap data.
+        1. If manufacturer is a NIC vendor (LiteON), try to find real vendor in model string.
+        2. Returns cleaned (manufacturer, model).
+        """
+        mfr_lower = manufacturer.lower()
+        model_lower = model.lower()
 
+        # logic to rescue Lenovo/Dell/HP from NIC manufacturers
+        if any(nic in mfr_lower for nic in categorization_rules.NIC_VENDORS):
+            if 'lenovo' in model_lower:
+                return 'Lenovo', model.replace('LCFC HeFei Electronics Technology LENOVO', '').strip()
+            if 'dell' in model_lower:
+                return 'Dell', model
+            if 'hp' in model_lower or 'hewlett' in model_lower:
+                return 'HP', model
+            # If we can't find a better vendor, return Generic so we don't overwrite existing good data
+            return 'Generic', model
+        
+        return manufacturer, model
+    
     @classmethod
     def _categorize_network_device(cls, model: str, manufacturer: str, device_name: str) -> str | None:
         """Categorizes network devices using a structured rule set."""
-        device_type_priority = ['Firewall', 'Switch', 'Router', 'Access Point']
-
-        for device_type in device_type_priority:
-            rule_set = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
-
-            # Rule 1: Hostname prefix is the strongest signal.
-            hostname_match = any(device_name.startswith(prefix) for prefix in rule_set.get('hostname_prefixes', []))
-            if hostname_match:
-                if debug_logger.is_enabled:
-                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on hostname prefix.")
+        priority_order = ['Firewall', 'Switch', 'Router', 'Access Point']
+        """
+        1. Hostname (Strongest Signal) checked for ALL device types.
+        2. Hardware (Vendor + Model) checked for ALL device types.
+        """
+        clean_device_name = normalize_for_comparison(device_name)
+        # --- TIER 1: Hostname Prefix Check (Highest Priority) ---
+        for device_type in priority_order:
+            rules = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
+            if any(clean_device_name.startswith(prefix) for prefix in rules.get('hostname_prefixes', [])):
                 return device_type
 
-            # Rule 2: Vendor AND Model keyword match is a strong signal.
-            vendor_match = any(vendor in manufacturer for vendor in rule_set.get('vendors', []))
-            if vendor_match and model and any(keyword in model for keyword in rule_set.get('model_keywords', [])):
-                if debug_logger.is_enabled:
-                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on vendor '{manufacturer}' and model '{model}'.")
+        # --- TIER 2: Vendor AND Model Check (Medium Priority) ---
+        # If no hostname match, we look for specific hardware matches.
+        for device_type in priority_order:
+            rules = categorization_rules.NETWORK_DEVICE_RULES.get(device_type, {})
+            
+            vendor_match = any(vendor in manufacturer for vendor in rules.get('vendors', []))
+            
+            # We strictly require a model match here to avoid false positives
+            if vendor_match and model and any(keyword in model for keyword in rules.get('model_keywords', [])):
                 return device_type
 
-            # Rule 3: Vendor-only match (weakest signal).
-            if vendor_match and not model and not rule_set.get('model_keywords'):
-                if debug_logger.is_enabled:
-                    print(f"[DEBUG] Matched '{device_name}' as '{device_type}' based on vendor-only ('{manufacturer}') and empty model.")
-                return device_type
         return None
     
     @classmethod
@@ -92,8 +113,10 @@ class AssetCategorizer:
     def _categorize_server(cls, os_type: str, model: str, device_name: str) -> Optional[str]:
         """Categorize a device as a Server."""
         if any(kw in os_type for kw in categorization_rules.SERVER_RULES['os_keywords']) or \
-           any(kw in model for kw in categorization_rules.SERVER_RULES['model_keywords']) or \
-           any(kw in device_name for kw in categorization_rules.SERVER_RULES.get('hostname_keywords', [])):
+           any(kw in model for kw in categorization_rules.SERVER_RULES['model_keywords']):
+            return 'Server'
+        clean_name = normalize_for_comparison(device_name)
+        if any(kw in clean_name for kw in categorization_rules.SERVER_RULES.get('hostname_keywords', [])):
             return 'Server'
         return None
 
@@ -121,31 +144,30 @@ class AssetCategorizer:
 
     @classmethod
     def _categorize_computer(cls, os_type: str, model: str, manufacturer: str, device_name: str) -> Optional[str]:
-        """Categorize a computer as a Laptop or Desktop."""
-        if 'windows' not in os_type and 'mac' not in os_type:
-            return None
-
-        # Check for Laptop
-        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
-            return 'Laptop'
-        if manufacturer in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'] and \
-           any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['laptop_vendor_prefixes'][manufacturer]):
-            return 'Laptop'
+        """
+        Categorize a computer as a Laptop or Desktop.
+        PRIORITY: Hostname > Model > OS
+        """
+        # 1. Hostname Check (Highest Priority - Overrides bad Manufacturer data)
         if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['laptop_hostname_keywords']):
             return 'Laptop'
-
-        # Check for Desktop
-        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
-            return 'Desktop'
-        if manufacturer in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'] and \
-           any(model.startswith(p) for p in categorization_rules.COMPUTER_RULES['desktop_vendor_prefixes'][manufacturer]):
-            return 'Desktop'
         if any(kw in device_name for kw in categorization_rules.COMPUTER_RULES['desktop_hostname_keywords']):
             return 'Desktop'
-        if any(kw in os_type for kw in categorization_rules.COMPUTER_RULES['desktop_os_keywords']):
+
+        # 2. Model Keyword Check
+        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['laptop_keywords']):
+            return 'Laptop'
+        if any(marker in model for marker in categorization_rules.COMPUTER_RULES['desktop_keywords']):
             return 'Desktop'
-            
-        return 'Desktop' # Default for a computer if not explicitly a laptop
+
+        # 3. OS Check 
+        if 'windows' in os_type or 'mac' in os_type:
+             if any(kw in os_type for kw in categorization_rules.COMPUTER_RULES['desktop_os_keywords']):
+                return 'Desktop'
+             # If it runs Windows but we can't determine form factor, default to Desktop
+             return 'Desktop'
+
+        return None
 
     @classmethod
     def _categorize_generic_os_device(cls, os_type: str, model: str) -> Optional[str]:
@@ -159,9 +181,12 @@ class AssetCategorizer:
         return None
 
     @classmethod
-    def _categorize_iot(cls, model: str, os_type: str, device_name: str) -> Optional[str]:
+    def _categorize_iot(cls, model: str, manufacturer: str, os_type: str, device_name: str) -> Optional[str]:
         """Categorize a device as IoT."""
         clean_device_name = normalize_for_comparison(device_name)
+        
+        if any(kw in manufacturer for kw in categorization_rules.IOT_RULES.get('manufacturer_keywords', [])):
+             return 'IoT Devices'
                
         if any(kw in model for kw in categorization_rules.IOT_RULES['model_keywords']) or \
            any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']) or \
@@ -259,7 +284,15 @@ class AssetCategorizer:
             # Extract name from Snipe-IT manufacturer object
             raw_mfr = raw_mfr.get('name', '') or ''
         
-        raw_serial = (device_data.get('serial') or '') # Only for debugging - for easier search in logs
+        # --- NEW: Hardware Normalization ---
+        # Fixes "LiteON" vs "Lenovo" issues
+        norm_mfr, norm_model = cls._normalize_hardware_identity(str(raw_mfr), str(raw_model))
+        
+        # Update the device_data so AssetMatcher uses the clean values later
+        if norm_mfr != raw_mfr:
+            device_data['manufacturer'] = norm_mfr
+        if norm_model != raw_model:
+            device_data['model'] = norm_model
         
         # Normalized for Comparison Logic
         device_name = raw_name.lower()
@@ -270,6 +303,7 @@ class AssetCategorizer:
         
         # -------------DEBUG---------------
         """Device data log for debugging"""
+        raw_serial = (device_data.get('serial') or '') # For easier search in logs
         log_entry = (
             f"--- Device: {raw_name or 'Unknown'} ---\n"
             f"  Serial:       {raw_serial}\n"
@@ -291,7 +325,7 @@ class AssetCategorizer:
                 cls._categorize_vm(manufacturer, model, device_name) or
                 
                 # 2. IoT Devices (Yealink, etc. - check before general Android)
-                cls._categorize_iot(model, os_type, device_name) or
+                cls._categorize_iot(model, manufacturer, os_type, device_name) or
                 
                 # 3. Network Infrastructure (Switches, Routers, etc.)
                 cls._categorize_network_device(model, manufacturer, device_name) or
