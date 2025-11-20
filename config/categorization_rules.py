@@ -110,7 +110,7 @@ CATEGORY_MAP = {
     'Desktop': 'Desktops',
     'Tablet': 'Tablets',
     'Mobile Phone': 'Mobile Phones',
-    'Virtual Machine': 'Virtual Machines (On-Premises)',
+    'Virtual Machine': 'Virtual Machines',
     'IoT Devices': 'IoT Devices',
     # Map inferred models to existing categories
     'Windows Server': 'Servers',

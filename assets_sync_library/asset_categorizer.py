@@ -82,8 +82,8 @@ class AssetCategorizer:
     @classmethod
     def _categorize_vm(cls, manufacturer: str, model: str, device_name: str) -> Optional[str]:
         """Categorize a device as a Virtual Machine."""
-        if any(vendor in manufacturer for vendor in categorization_rules.VIRTUAL_MACHINE_RULES['vendors']) and \
-           any(kw in model for kw in categorization_rules.VIRTUAL_MACHINE_RULES['model_keywords']) or \
+        if (any(vendor in manufacturer for vendor in categorization_rules.VIRTUAL_MACHINE_RULES['vendors']) and \
+           any(kw in model for kw in categorization_rules.VIRTUAL_MACHINE_RULES['model_keywords'])) or \
            any(kw in device_name for kw in categorization_rules.VIRTUAL_MACHINE_RULES.get('hostname_keywords', [])):
             return 'Virtual Machine'
         return None

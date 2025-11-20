@@ -286,7 +286,7 @@ class AssetMatcher:
             'Laptops': 'Managed and Discovered Assets', 'Desktops': 'Managed and Discovered Assets',
             'Mobile Phones': 'Managed and Discovered Assets', 'Tablets': 'Managed and Discovered Assets',
             'IoT Devices': 'Managed and Discovered Assets', 'Servers': 'Managed and Discovered Assets',
-            'Virtual Machines (On-Premises)': 'Managed and Discovered Assets',
+            'Virtual Machines': 'Managed and Discovered Assets',
             'Cloud Resources': 'Cloud Resources (Azure)', 'Switches': 'Network Infrastructure',
             'Routers': 'Network Infrastructure', 'Firewalls': 'Network Infrastructure',
             'Access Points': 'Network Infrastructure', 'Network Devices': 'Network Infrastructure',
