@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Debug script to check if Nmap-discovered assets are categorized correctly
-Reads from parsed_asset_data.log (requires prior run with NMAP_DEBUG=1)
+Reads from nmap_raw_unparsed_data.log (requires prior run with NMAP_DEBUG=1)
 """
 
 import os
@@ -49,10 +49,8 @@ class NmapDebugCategorization:
                     json_text = chunk[json_start:]
                     assets.append(json.loads(json_text))
                 except json.JSONDecodeError as e:
-                    if self.debug:
-                        print(f"Warning: Failed to decode a JSON chunk. Error: {e}")
-                        continue
-                        
+                    print(f"Warning: Failed to decode a JSON chunk. Error: {e}")
+                    continue
         except Exception as e:
             print(f"Error reading {self.raw_log_path}: {e}")
             return []
@@ -113,9 +111,9 @@ class NmapDebugCategorization:
         
         print(f"\n✅ Wrote categorized results to: {output_path}")
         print(f"📊 Summary:")
-        self._print_summary(output_path, raw_assets)
+        self._print_summary(output_path)
 
-    def _reconstruct_parsed_asset(self, raw_asset: Dict) -> Dict:
+    def _reconstruct_parsed_asset(self, raw_asset: Dict) -> Dict: # type: ignore
         """
         Reconstructs a "parsed" asset dictionary from the raw log data.
         This mimics the data structure that AssetCategorizer expects.
@@ -140,7 +138,7 @@ class NmapDebugCategorization:
                     asset['nmap_services'].append(info.get('name', 'unknown'))
         return {k: v for k, v in asset.items() if v}
 
-    def _print_summary(self, output_path: str, parsed_assets: List[Dict]):
+    def _print_summary(self, output_path: str):
         
         # Generate summary statistics
         category_stats = {}
