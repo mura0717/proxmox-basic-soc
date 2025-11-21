@@ -23,9 +23,11 @@ DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
 NO_ROOT_COMMANDS = ['web', 'list', 'help']
 COMMAND = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
+IS_CATEGORIZATION_DEBUG = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
 
 # Auto-elevate to root for scan commands.
-if COMMAND not in NO_ROOT_COMMANDS:
+# Only attempt to elevate if we are NOT in categorization debug mode.
+if not IS_CATEGORIZATION_DEBUG and COMMAND not in NO_ROOT_COMMANDS:
     if os.geteuid() != 0:
         user_euid = os.geteuid()
         command_to_run = ['sudo', sys.executable] + sys.argv

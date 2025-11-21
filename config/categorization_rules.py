@@ -117,7 +117,7 @@ CATEGORY_MAP = {
     'Tablet': 'Tablets',
     'Mobile Phone': 'Mobile Phones',
     'Virtual Machine': 'Virtual Machines',
-    'IoT Devices': 'IoT Devices',
+    'IoT Device': 'IoT Devices',
     # Map inferred models to existing categories
     'Windows Server': 'Servers',
     'Linux Server': 'Servers',

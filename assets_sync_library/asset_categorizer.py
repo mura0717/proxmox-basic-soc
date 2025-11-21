@@ -136,7 +136,7 @@ class AssetCategorizer:
             return None
             
         if any(kw in model for kw in categorization_rules.ANDROID_RULES['iot_keywords']):
-            return 'IoT Devices'
+            return 'IoT Device'
         if any(kw in model for kw in categorization_rules.ANDROID_RULES['tablet_keywords']) or \
            any(vendor in manufacturer for vendor in categorization_rules.ANDROID_RULES['tablet_vendors']):
             return 'Tablet'
@@ -186,13 +186,13 @@ class AssetCategorizer:
         clean_device_name = normalize_for_comparison(device_name)
         
         if any(kw in manufacturer for kw in categorization_rules.IOT_RULES.get('manufacturer_keywords', [])):
-             return 'IoT Devices'
+             return 'IoT Device'
                
         if any(kw in model for kw in categorization_rules.IOT_RULES['model_keywords']) or \
            any(kw in os_type for kw in categorization_rules.IOT_RULES['os_keywords']) or \
            any(kw in clean_device_name for kw in categorization_rules.IOT_RULES.get('hostname_keywords', [])):
                
-            return 'IoT Devices'
+            return 'IoT Device'
         return None
 
     @classmethod

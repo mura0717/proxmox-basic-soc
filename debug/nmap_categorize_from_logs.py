@@ -44,9 +44,12 @@ class NmapDebugCategorization:
             for chunk in chunks[1:]: # Skip the first item which is before the first marker
                 try:
                     json_start = chunk.find('{')
-                    if json_start == -1: continue
+                    # Find the matching closing brace for the main object
+                    json_end = chunk.rfind('}')
+                    if json_start == -1 or json_end == -1:
+                        continue
                     
-                    json_text = chunk[json_start:]
+                    json_text = chunk[json_start : json_end + 1]
                     assets.append(json.loads(json_text))
                 except json.JSONDecodeError as e:
                     print(f"Warning: Failed to decode a JSON chunk. Error: {e}")
