@@ -283,22 +283,17 @@ class AssetMatcher:
             # Model Repair Logic: Corrects mismatches on existing models.
             updates_needed = {}
             
-            # Check and fix Manufacturer, Category, and Fieldset mismatches on the existing model.
-            if (model.get('manufacturer') or {}).get('id') != manufacturer['id']:
-                if debug_logger.enabled:
-                    print(f"   [REPAIR] Model '{full_model_name}': Fix Manufacturer {existing_mfr_id} -> {manufacturer['id']}")
+            existing_mfr_id = (model.get('manufacturer') or {}).get('id')
+            if existing_mfr_id != manufacturer.get('id'):
                 updates_needed['manufacturer_id'] = manufacturer['id']
 
-            if (model.get('category') or {}).get('id') != category_obj['id']:
-                if debug_logger.enabled:
-                        print(f"   [REPAIR] Model '{full_model_name}': Fix Category {existing_cat_id} -> {category_obj['id']}")
-            if (model.get('category') or {}).get('id') != category_obj['id']:
+            existing_cat_id = (model.get('category') or {}).get('id')
+            if existing_cat_id != category_obj.get('id'):
                 updates_needed['category_id'] = category_obj['id']
 
             target_fieldset_id = fieldset['id'] if fieldset else None
             existing_fieldset_id = (model.get('fieldset') or {}).get('id')
             if target_fieldset_id and existing_fieldset_id != target_fieldset_id:
-                 print(f"   [REPAIR] Model '{full_model_name}': Fix Fieldset")
                  updates_needed['fieldset_id'] = target_fieldset_id
 
             if updates_needed:
