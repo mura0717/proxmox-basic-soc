@@ -73,7 +73,8 @@ microsoft365_debug_categorization = Microsoft365DebugCategorization()
 if __name__ == "__main__":
     if microsoft365_debug_categorization.debug:
         from debug.asset_debug_logger import debug_logger
-        debug_logger.clear_logs('microsoft365')
         microsoft365_debug_categorization.write_m365_assets_to_logfile()
     else:
         print("To debug categorization, set MICROSOFT365_CATEGORIZATION_DEBUG=1 and run this script.")
+        from debug.asset_debug_logger import debug_logger
+        debug_logger.clear_logs('microsoft365')

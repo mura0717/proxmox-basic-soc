@@ -124,22 +124,26 @@ class TeamsScanner:
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
 
     def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
-        """Write both raw and transformed assets to debug logs"""
-        debug_logger.clear_logs('teams') 
-        teams_debug_categorization.write_teams_assets_to_logfile() 
+        """Write raw assets to debug logs. Assumes logs have been cleared."""
         for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
             asset_id = raw_asset.get('id', 'Unknown')
             debug_logger.log_raw_host_data('teams', asset_id, raw_asset)
             debug_logger.log_parsed_asset_data('teams', transformed_asset)
 
-
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
-        """Fetches and transforms all assets from Teams."""
+        """Fetches and transforms all assets from Teams, handling debug logic."""
+        # If categorization debug is on, just run that and exit.
+        if teams_debug_categorization.debug:
+            print("Running Teams categorization from existing logs...")
+            teams_debug_categorization.write_teams_assets_to_logfile()
+            return [], [] # Return empty lists as no new scan was performed
+
         print("Fetching and transforming Teams assets...")
         raw_assets = self.get_teams_assets()
         transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in raw_assets]
 
         if debug_logger.teams_debug:
+            debug_logger.clear_logs('teams') # Clear logs before writing new data
             self.write_to_logs(raw_assets, transformed_assets)
 
         return raw_assets, transformed_assets

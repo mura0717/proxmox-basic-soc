@@ -187,21 +187,26 @@ class IntuneScanner:
         return {k: v for k, v in transformed.items() if v is not None and v != ""}
     
     def write_to_logs(self, raw_assets: List[Dict], transformed_assets: List[Dict]):
-        """Write both raw and transformed assets to debug logs"""
-        debug_logger.clear_logs('intune')
-        intune_debug_categorization.write_managed_assets_to_logfile()  
+        """Write raw assets to debug logs. Assumes logs have been cleared."""
         for raw_asset, transformed_asset in zip(raw_assets, transformed_assets):
             asset_id = raw_asset.get('id', 'Unknown')
             debug_logger.log_raw_host_data('intune', asset_id, raw_asset)
             debug_logger.log_parsed_asset_data('intune', transformed_asset)
         
     def get_transformed_assets(self) -> tuple[List[Dict], List[Dict]]:
-        """Fetches and transforms all assets from Intune."""
+        """Fetches and transforms all assets from Intune, handling debug logic."""
+        # If categorization debug is on, just run that and exit.
+        if intune_debug_categorization.debug:
+            print("Running Intune categorization from existing logs...")
+            intune_debug_categorization.write_managed_assets_to_logfile()
+            return [], [] # Return empty lists as no new scan was performed
+
         print("Fetching and transforming Intune assets...")
         raw_assets = self.get_intune_assets()
         transformed_assets = [self.transform_intune_to_snipeit(asset) for asset in raw_assets]
         
         if debug_logger.intune_debug:
+            debug_logger.clear_logs('intune') # Clear logs before writing new data
             self.write_to_logs(raw_assets, transformed_assets)
         
         return raw_assets, transformed_assets
