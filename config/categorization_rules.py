@@ -7,6 +7,14 @@ NIC_VENDORS = {
     'lcfc(hefei) electronics technology', 'hon hai precision', 'murata', 'azurewave'
 }
 
+MANUFACTURER_CLEANUP_RULES = {
+    "lcfc(hefei) electronics technology": {
+        "target_manufacturer": "Lenovo",
+        "remove_from_model": "LCFC HeFei Electronics Technology LENOVO"
+    }
+    # Add other complex rules here in the future
+}
+
 NETWORK_DEVICE_RULES = {
     'Firewall': {
         'vendors': ['cisco', 'meraki', 'fortinet', 'palo alto', 'sonicwall', 'juniper', 'checkpoint', 'sophos'],
