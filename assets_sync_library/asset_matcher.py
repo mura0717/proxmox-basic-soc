@@ -230,25 +230,24 @@ class AssetMatcher:
     def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
         """Determine and assign manufacturer, model, and category."""
         
-        # Run categorization to ensure asset_data['device_type'] is populated for later steps.
+        # 1. Always run categorization first to get the device_type and target category.
         category_obj = self._determine_category(asset_data)
         
-        manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)        
-        print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
+        manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)
+        if debug_logger.enabled:        
+            print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
 
         is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
 
-        # If we have specific hardware data, handle the specific model.
+        # 3. If we have specific hardware data, handle the specific model. Otherwise, assign a generic one.
         if manufacturer_name and model_name and not is_generic_model_name:
             self._handle_specific_model(payload, asset_data, manufacturer_name, model_name, category_obj)
-        
-        # Fallback to ensure category is set if model logic didn't set it.
-        if category_obj and 'category_id' not in payload:
-            payload['category_id'] = category_obj['id']
-
-        # If no specific model was assigned, assign a generic one based on device type.
-        if 'model_id' not in payload:
+        else:
             self._assign_generic_model(payload, asset_data, category_obj)
+
+        # 4. Final fallback to ensure category is set if model logic somehow failed to set it.
+        if category_obj and 'category_id' not in payload: # Failsafe
+            payload['category_id'] = category_obj['id']
     
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
         """Extracts and cleans manufacturer and model names from asset data."""
@@ -284,14 +283,16 @@ class AssetMatcher:
             # Model Repair Logic: Corrects mismatches on existing models.
             updates_needed = {}
             
-            existing_mfr_id = (model.get('manufacturer') or {}).get('id')
-            if existing_mfr_id != manufacturer['id']:
-                print(f"   [REPAIR] Model '{full_model_name}': Fix Manufacturer {existing_mfr_id} -> {manufacturer['id']}")
+            # Check and fix Manufacturer, Category, and Fieldset mismatches on the existing model.
+            if (model.get('manufacturer') or {}).get('id') != manufacturer['id']:
+                if debug_logger.enabled:
+                    print(f"   [REPAIR] Model '{full_model_name}': Fix Manufacturer {existing_mfr_id} -> {manufacturer['id']}")
                 updates_needed['manufacturer_id'] = manufacturer['id']
 
-            existing_cat_id = (model.get('category') or {}).get('id')
-            if existing_cat_id != category_obj['id']:
-                print(f"   [REPAIR] Model '{full_model_name}': Fix Category {existing_cat_id} -> {category_obj['id']}")
+            if (model.get('category') or {}).get('id') != category_obj['id']:
+                if debug_logger.enabled:
+                        print(f"   [REPAIR] Model '{full_model_name}': Fix Category {existing_cat_id} -> {category_obj['id']}")
+            if (model.get('category') or {}).get('id') != category_obj['id']:
                 updates_needed['category_id'] = category_obj['id']
 
             target_fieldset_id = fieldset['id'] if fieldset else None
@@ -301,6 +302,7 @@ class AssetMatcher:
                  updates_needed['fieldset_id'] = target_fieldset_id
 
             if updates_needed:
+                print(f"   [REPAIR] Correcting metadata for model '{full_model_name}' (ID: {model['id']})")
                 self.model_service.update(model['id'], updates_needed)
 
     def _determine_fieldset(self, category_obj: Dict, asset_data: Dict) -> Optional[Dict]:
@@ -356,10 +358,8 @@ class AssetMatcher:
                     print(f"[_get_or_create_model] Successfully created model: {full_model_name} (ID: {new_model.get('id')})")
                 return new_model
             else:
-                error_response = getattr(self.model_service, 'last_error', "No specific error message.")
-                print(f"[_get_or_create_model] ERROR: Model creation failed for '{full_model_name}'. API Error: {error_response}")
+                # Another process might have created it. Retry the lookup.
                 print(f"[_get_or_create_model] WARNING: Retrying lookup for '{full_model_name}'...")
-                self.model_service.get_all(refresh_cache=True)
                 return self.model_service.get_by_name(full_model_name)
         except Exception as e:
             print(f"[_get_or_create_model] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
@@ -389,45 +389,41 @@ class AssetMatcher:
 
     def _assign_generic_model(self, payload: Dict, asset_data: Dict, category_obj: Optional[Dict] = None):
         """Assigns a generic model based on the pre-calculated device type."""
-        if 'model_id' not in payload:
-            device_type = str(asset_data.get('device_type') or '').lower()
-            generic_model_name = self._determine_model_name(device_type)
-            generic_model_obj = self.model_service.get_by_name(generic_model_name)
-            
-            if self.debug:
-                print(f"No specific model. Assigning generic: '{generic_model_name}' based on type '{device_type}'")
+        if 'model_id' in payload: return
 
-            if generic_model_obj:
-                payload['model_id'] = generic_model_obj['id']
-                
-                updates_needed = {}
+        device_type = str(asset_data.get('device_type') or '').lower()
+        generic_model_name = self._determine_model_name(device_type)
+        generic_model_obj = self.model_service.get_by_name(generic_model_name)
+        
+        if not generic_model_obj:
+            print(f"[FATAL] Generic model '{generic_model_name}' not found.")
+            return
 
-                # Enforce Category on the Generic Model.
-                if category_obj:
-                    payload['category_id'] = category_obj['id']
-                    current_cat_id = (generic_model_obj.get('category') or {}).get('id') 
-                    
-                    if current_cat_id != category_obj['id']:
-                        print(f"   [REPAIR] Generic Model '{generic_model_name}': Fix Category {current_cat_id} -> {category_obj['id']}")
-                        updates_needed['category_id'] = category_obj['id']
-                elif 'category_id' not in payload and generic_model_obj.get('category'):
-                     payload['category_id'] = generic_model_obj.get('category', {}).get('id')
+        payload['model_id'] = generic_model_obj['id']
+        updates_needed = {}
 
-                fieldset_service = self.fieldset_service
-                source = asset_data.get('_source', 'nmap')
-                target_fieldset_name = 'Managed and Discovered Assets' if source == 'microsoft365' else 'Discovered Assets (Nmap Only)'
-                target_fieldset = fieldset_service.get_by_name(target_fieldset_name)
-                
-                current_fieldset_id = (generic_model_obj.get('fieldset') or {}).get('id')
-                target_fieldset_id = target_fieldset.get('id') if target_fieldset else None
+        # Enforce Category on the Generic Model.
+        if category_obj:
+            payload['category_id'] = category_obj['id']
+            if (generic_model_obj.get('category') or {}).get('id') != category_obj['id']:
+                updates_needed['category_id'] = category_obj['id']
+        elif 'category_id' not in payload and generic_model_obj.get('category'):
+             payload['category_id'] = generic_model_obj.get('category', {}).get('id')
 
-                if target_fieldset_id and current_fieldset_id != target_fieldset_id:
-                    print(f"   [REPAIR] Generic Model '{generic_model_name}': Fix Fieldset {current_fieldset_id} -> {target_fieldset_id}")
-                    updates_needed['fieldset_id'] = target_fieldset_id
-                if updates_needed:
-                    self.model_service.update(generic_model_obj['id'], updates_needed)
-            else:
-                print(f"[FATAL] Generic model '{generic_model_name}' not found.")
+        # Enforce Fieldset on the Generic Model.
+        source = asset_data.get('_source', 'nmap')
+        target_fieldset_name = 'Managed and Discovered Assets' if source == 'microsoft365' else 'Discovered Assets (Nmap Only)'
+        target_fieldset = self.fieldset_service.get_by_name(target_fieldset_name)
+        
+        current_fieldset_id = (generic_model_obj.get('fieldset') or {}).get('id')
+        target_fieldset_id = target_fieldset.get('id') if target_fieldset else None
+
+        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
+            updates_needed['fieldset_id'] = target_fieldset_id
+
+        if updates_needed:
+            print(f"   [REPAIR] Correcting metadata for generic model '{generic_model_name}'")
+            self.model_service.update(generic_model_obj['id'], updates_needed)
     
     def _populate_standard_fields(self, payload: Dict, asset_data: Dict, is_update: bool):
         """Populate standard, non-custom fields in the payload."""
@@ -451,10 +447,8 @@ class AssetMatcher:
         # Location
         location_name = asset_data.get('location')
         if location_name:
-            if isinstance(location_name, dict):
-                location_name = location_name.get('name')
-
-            location = self.location_service.get_by_name(location_name)
+            location_name_str = location_name.get('name') if isinstance(location_name, dict) else location_name
+            location = self.location_service.get_by_name(location_name_str)
             if not location:
                 print(f"  -> Location '{location_name}' not found. Creating it now...")
                 location = self.location_service.create({'name': location_name})
@@ -492,11 +486,25 @@ class AssetMatcher:
                     print(f"[WARNING] Could not find server mapping for keys: {missing}")
             AssetMatcher._hydrated = True
         
+    def _format_custom_field_value(self, field_key: str, value: Any, field_def: Dict) -> Optional[str]:
+        """Formats a value for a custom field based on its type."""
+        BOOLEAN_TEXT_FIELDS = {k for k, v in CUSTOM_FIELDS.items() if v['format'] == 'BOOLEAN'}
+
+        if field_key in BOOLEAN_TEXT_FIELDS:
+            if isinstance(value, bool): return "1" if value else "0"
+            if isinstance(value, int): return "1" if value == 1 else "0"
+            if isinstance(value, str):
+                if value.lower() in ('true', '1', 'yes', 'on'): return "1"
+                if value.lower() in ('false', '0', 'no', 'off'): return "0"
+        elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
+            return json.dumps(value, indent=2)
+        elif isinstance(value, dict):
+            return value.get('name') or json.dumps(value)
+        return ', '.join(map(str, value)) if isinstance(value, list) else str(value)
+
     def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
         """Populate custom fields into the main payload using their DB column names."""
 
-        BOOLEAN_TEXT_FIELDS = {field_key for field_key, field_def in CUSTOM_FIELDS.items() if field_def['format'] == 'BOOLEAN'}
-        
         if not AssetMatcher._hydrated:
             self._hydrate_field_map()
             
@@ -504,40 +512,15 @@ class AssetMatcher:
             if field_key in asset_data and asset_data[field_key] is not None:
                 
                 db_key = AssetMatcher._custom_field_map.get(field_key)
-                if not db_key:
-                    if self.debug:
-                        print(f"[WARNING] No DB key for custom field '{field_def.get('name')}'. Skipping.")
-                    continue
+                if not db_key: continue
 
                 value = asset_data[field_key]
-                if isinstance(value, str) and value.strip() in ["", "Unknown"]:
+                if isinstance(value, str) and not value.strip():
                     continue
-
-                if field_key in BOOLEAN_TEXT_FIELDS:
-                    if isinstance(value, bool):
-                        value = "1" if value else "0"
-                    elif isinstance(value, int):
-                        value = "1" if value == 1 else "0"
-                    elif isinstance(value, str):
-                        if value.lower() in ('true', '1', 'yes', 'on'):
-                            value = "1"
-                        elif value.lower() in ('false', '0', 'no', 'off'):
-                            value = "0"
                 
-                    if self.debug:
-                        print(f"[DEBUG] Boolean field '{field_key}' converted to: '{value}'")
-                    
-                elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
-                    value = json.dumps(value, indent=2)
-                elif isinstance(value, dict):
-                    value = value['name'] or json.dumps(value)
-                elif isinstance(value, list):
-                    value = ', '.join(map(str, value))
-                
-                payload[db_key] = value
-                
-                if self.debug:
-                    print(f"[DEBUG] Setting custom field '{db_key}' = '{value}'")
+                formatted_value = self._format_custom_field_value(field_key, value, field_def)
+                if formatted_value is not None:
+                    payload[db_key] = formatted_value
                 
     def _determine_status(self, payload: Dict, asset_data: Dict):
         """Determines and sets the status_id for the asset."""
