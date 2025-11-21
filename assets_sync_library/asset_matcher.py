@@ -60,8 +60,8 @@ class AssetMatcher:
         self.status_service._cache.clear()
         self.category_service._cache.clear()
         self.manufacturer_service._cache.clear()
-        self.model_service._cache.clear()
-        self.finder._all_assets_cache = None # Clear finder's asset cache
+        self.model_service._cache.clear() # type: ignore
+        self.finder._all_assets_cache = None
     
     def process_scan_data(self, scan_type: str, scan_data: List[Dict]) -> Dict:
         """Process scan data from various sources (main entry point).
@@ -79,7 +79,7 @@ class AssetMatcher:
         if self.debug:
             print(f"[SEARCHING EXISTING ASSET]: {asset_data.get('name', 'Unknown')}")
 
-        # The order of these calls defines the matching priority
+        # The order of these calls defines the matching priority.
         found_asset = (
             self.finder.by_serial(asset_data.get('serial')) or
             self.finder.by_asset_tag(asset_data.get('asset_tag')) or
@@ -99,22 +99,20 @@ class AssetMatcher:
 
     def merge_asset_data(self, *data_sources: Dict) -> Dict:
         """Merge data from multiple sources with priority handling."""
-        # Lower number = higher priority. This makes it easier to find the min.
         source_priority = {
-            'intune': 1,
-            'teams': 2,
-            'nmap': 3,
-            'snmp': 4,
-            'existing': 99
+            'intune': 1,      # Highest priority
+            'teams': 2,       #
+            'nmap': 3,        #
+            'snmp': 4,        #
+            'existing': 99    # Lowest priority
         }
 
-        # Start with the lowest priority data source and layer higher priority ones on top.
+        # Sort sources from lowest to highest priority, so higher priority data overwrites lower.
         sorted_sources = sorted(data_sources, key=lambda d: source_priority.get(d.get('_source', 'existing'), 99), reverse=True)
 
         merged = {}
         for source_data in sorted_sources:
             for key, value in source_data.items():
-                # Ignore internal keys
                 if key.startswith('_') and key != '_source':
                     continue
                 # Add the value if key doesn't exist, OR if new value is truthy.
@@ -128,7 +126,7 @@ class AssetMatcher:
         for asset_data in scan_data:
             asset_data['_source'] = scan_type
 
-            # 1. Enrich with static IP mapping data first
+            # Enrich with static IP mapping data first.
             self._enrich_with_static_map(asset_data)
 
             existing = self.find_existing_asset(asset_data)
@@ -141,9 +139,8 @@ class AssetMatcher:
                 if isinstance(flattened_existing.get('manufacturer'), dict):
                     flattened_existing['manufacturer'] = flattened_existing['manufacturer'].get('name')
                     
-                # Merge with existing data and update
                 merged_data = self.merge_asset_data({'_source': 'existing', **flattened_existing}, asset_data)
-                # Ensure the source from the new scan is preserved for categorization.
+                # Ensure the new scan's source is preserved for categorization.
                 merged_data['_source'] = scan_type
 
                 if self._update_asset(existing['id'], merged_data, scan_type):
@@ -152,7 +149,7 @@ class AssetMatcher:
                 else:
                     results['failed'] += 1
             else:
-                # Create new asset if it has sufficient data
+                # Create a new asset if it has sufficient data.
                 if self._has_sufficient_data(asset_data):
                     new_asset = self._create_asset(asset_data, scan_type)
                     if new_asset:
@@ -196,7 +193,7 @@ class AssetMatcher:
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
         payload = {}
-
+        
         # Use trusted hostname from static map as the definitive asset name.
         if asset_data.get('host_name'):
             asset_data['name'] = asset_data['host_name']
@@ -209,10 +206,10 @@ class AssetMatcher:
     
     def _has_sufficient_data(self, asset_data: Dict) -> bool:
         """Determine if we have enough data to create a new asset."""
-        # An IP-only asset will be created but flagged for review.
+        # An IP-only asset will be created but flagged for review, so it's "sufficient".
         if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
             return True
-        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:  # An IP in our trusted static map is sufficient.
+        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
             return True
         if asset_data.get('serial'):
             return True
@@ -233,8 +230,7 @@ class AssetMatcher:
     def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
         """Determine and assign manufacturer, model, and category."""
         
-        # 1. Run Categorization ALWAYS, regardless of whether we have a specific model name
-        # This ensures asset_data['device_type'] is populated for generic assignment
+        # Run categorization to ensure asset_data['device_type'] is populated for later steps.
         category_obj = self._determine_category(asset_data)
         
         manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)        
@@ -242,7 +238,7 @@ class AssetMatcher:
 
         is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]
 
-        # 2. If we have specific hardware data, handle specific model
+        # If we have specific hardware data, handle the specific model.
         if manufacturer_name and model_name and not is_generic_model_name:
             self._handle_specific_model(payload, asset_data, manufacturer_name, model_name, category_obj)
         
@@ -272,10 +268,9 @@ class AssetMatcher:
         if not manufacturer:
             return
         
-        # Category is passed in now, no need to re-calculate
         if not category_obj:
-            return # Should not happen if determine_category works, but safety check
-
+            return
+        
         payload['manufacturer_id'] = manufacturer['id']
         payload['category_id'] = category_obj['id']
         fieldset = self._determine_fieldset(category_obj, asset_data)
@@ -286,22 +281,19 @@ class AssetMatcher:
         if model:
             payload['model_id'] = model['id']
             
-            # --- Model Repair Logic ---
+            # Model Repair Logic: Corrects mismatches on existing models.
             updates_needed = {}
             
-            # Check for Manufacturer Mismatch
             existing_mfr_id = (model.get('manufacturer') or {}).get('id')
             if existing_mfr_id != manufacturer['id']:
                 print(f"   [REPAIR] Model '{full_model_name}': Fix Manufacturer {existing_mfr_id} -> {manufacturer['id']}")
                 updates_needed['manufacturer_id'] = manufacturer['id']
 
-            # Check for Category Mismatch
             existing_cat_id = (model.get('category') or {}).get('id')
             if existing_cat_id != category_obj['id']:
                 print(f"   [REPAIR] Model '{full_model_name}': Fix Category {existing_cat_id} -> {category_obj['id']}")
                 updates_needed['category_id'] = category_obj['id']
 
-            # Check for Fieldset Mismatch
             target_fieldset_id = fieldset['id'] if fieldset else None
             existing_fieldset_id = (model.get('fieldset') or {}).get('id')
             if target_fieldset_id and existing_fieldset_id != target_fieldset_id:
@@ -364,7 +356,6 @@ class AssetMatcher:
                     print(f"[_get_or_create_model] Successfully created model: {full_model_name} (ID: {new_model.get('id')})")
                 return new_model
             else:
-                # Handle API error or race condition where another process created it
                 error_response = getattr(self.model_service, 'last_error', "No specific error message.")
                 print(f"[_get_or_create_model] ERROR: Model creation failed for '{full_model_name}'. API Error: {error_response}")
                 print(f"[_get_or_create_model] WARNING: Retrying lookup for '{full_model_name}'...")
@@ -399,7 +390,6 @@ class AssetMatcher:
     def _assign_generic_model(self, payload: Dict, asset_data: Dict, category_obj: Optional[Dict] = None):
         """Assigns a generic model based on the pre-calculated device type."""
         if 'model_id' not in payload:
-            # Use the device_type determined earlier
             device_type = str(asset_data.get('device_type') or '').lower()
             generic_model_name = self._determine_model_name(device_type)
             generic_model_obj = self.model_service.get_by_name(generic_model_name)
@@ -412,8 +402,7 @@ class AssetMatcher:
                 
                 updates_needed = {}
 
-                # 1. Enforce Category on the Generic Model
-                # If we know the category (e.g. 'Virtual Machines'), ensure the Generic Model matches it.
+                # Enforce Category on the Generic Model.
                 if category_obj:
                     payload['category_id'] = category_obj['id']
                     current_cat_id = (generic_model_obj.get('category') or {}).get('id') 
@@ -424,7 +413,6 @@ class AssetMatcher:
                 elif 'category_id' not in payload and generic_model_obj.get('category'):
                      payload['category_id'] = generic_model_obj.get('category', {}).get('id')
 
-                # 2. Enforce Fieldset on the Generic Model
                 fieldset_service = self.fieldset_service
                 source = asset_data.get('_source', 'nmap')
                 target_fieldset_name = 'Managed and Discovered Assets' if source == 'microsoft365' else 'Discovered Assets (Nmap Only)'
@@ -448,11 +436,10 @@ class AssetMatcher:
             if field in asset_data and asset_data[field]:
                 payload[field] = asset_data[field]
         
-        # MAC ADDRESS (built-in field)
+        # Use the first MAC for the built-in 'mac_address' field.
         if 'mac_addresses' in asset_data and asset_data['mac_addresses']:
             macs = asset_data['mac_addresses']
             if isinstance(macs, str):
-                # Take the first MAC for the built-in field
                 first_mac = macs.split('\n')[0] if '\n' in macs else macs
                 if first_mac:
                     payload['mac_address'] = normalize_mac(first_mac.strip())
@@ -464,7 +451,6 @@ class AssetMatcher:
         # Location
         location_name = asset_data.get('location')
         if location_name:
-            # Ensure location_name is a string, not a dictionary
             if isinstance(location_name, dict):
                 location_name = location_name.get('name')
 
@@ -558,7 +544,7 @@ class AssetMatcher:
         if 'status_id' in payload:
             return
 
-        # Check if this is a low-information asset (IP only)
+        # Check if this is a low-information asset (IP only).
         is_ip_only_asset = (
             asset_data.get('last_seen_ip') and
             not asset_data.get('serial') and
@@ -585,18 +571,17 @@ class AssetMatcher:
 
     def _determine_category(self, asset_data: Dict) -> str:
         """Determine asset category based on data by calling the AssetCategorizer."""
-        classification = AssetCategorizer.categorize(asset_data)
-        # Store device_type back into asset_data for later use in generic model assignment.
+        classification = AssetCategorizer.categorize(asset_data) # type: ignore
+        # Store device_type back into asset_data for use in generic model assignment.
         asset_data['device_type'] = classification.get('device_type')
         
         if self.debug:
             print(f"[_determine_category] Categorization for '{asset_data.get('name')}': {classification}")
         
         category_name = classification.get('category', 'Other Assets')
-        if isinstance(category_name, dict):
+        if isinstance(category_name, dict): # type: ignore
             category_name = category_name.get('name', 'Other Assets')
 
-        # Use get_or_create to ensure the category exists.
         category_obj = self.category_service.get_or_create({
             'name': category_name,
             'category_type': 'asset' # Default to 'asset' type on creation
