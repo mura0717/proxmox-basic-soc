@@ -21,7 +21,6 @@ class NmapDebugCategorization:
     
     def __init__(self):
         self.debug = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
-        # Use the centralized log paths from the debug_logger instance
         self.raw_log_path = debug_logger.log_files['nmap']['raw']
         self.categorization_log_path = debug_logger.log_files['nmap']['categorization']
 
@@ -65,7 +64,7 @@ class NmapDebugCategorization:
         raw_assets = self.get_raw_nmap_assets_from_log()
         
         if not raw_assets:
-            print("No Nmap assets found in log. Ensure you've run:")
+            print("No Nmap assets found in log. Ensure NMAP_DEBUG=1 andyou've run:")
             print("  NMAP_DEBUG=1 python scanners/nmap_scanner.py [profile]")
             print("  Example: NMAP_DEBUG=1 python scanners/nmap_scanner.py discovery")
             return
@@ -83,8 +82,7 @@ class NmapDebugCategorization:
             for i, raw_asset in enumerate(raw_assets, 1):
                 # We need to simulate the transformation from raw to parsed
                 # The NmapScanner._parse_host method needs the nmap object, which we don't have.
-                # However, the raw log contains the necessary fields to reconstruct the parsed asset.
-                # This is a simplified reconstruction for categorization purposes.
+                # However, the raw log contains the necessary fields to reconstruct the parsed asset
                 parsed_asset = self._reconstruct_parsed_asset(raw_asset)
                 
                 categorization = AssetCategorizer.categorize(parsed_asset)
