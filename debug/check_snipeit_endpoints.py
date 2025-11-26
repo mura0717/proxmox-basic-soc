@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-# check_assets.py
 
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from snipe_api.services.base import BaseCRUDService
+from snipe_api.services.crudbase import BaseCRUDService
 
 endpoints = [
     ('/api/v1/hardware', 'Assets'),
