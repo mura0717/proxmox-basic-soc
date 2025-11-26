@@ -33,16 +33,12 @@ class Microsoft365DebugCategorization:
         try:
             with open(self.parsed_log_path, 'r', encoding='utf-8') as file:
                 content = file.read()
-            
-            # The parsed log file contains a JSON array of assets.
-            # We need to find the start and end of the array to isolate it from headers/footers.
-            start_index = content.find('[')
-            end_index = content.rfind(']')
-            
-            if start_index != -1 and end_index != -1:
-                json_text = content[start_index : end_index + 1]
-                assets = json.loads(json_text)
-        except Exception as e:
+            # The parsed log file contains a JSON array of assets, but may also contain headers.
+            # We find the start of the JSON array `[` and parse from there.
+            json_start = content.find('[')
+            if json_start != -1:
+                assets = json.loads(content[json_start:])
+        except json.JSONDecodeError as e:
             print(f"Error reading or parsing log file: {e}")
 
         return assets
