@@ -48,21 +48,6 @@ class AssetMatcher:
         if not AssetMatcher._hydrated:
             self._hydrate_field_map()
     
-    def generate_asset_hash(self, identifiers: Dict) -> str:
-        """Generate unique hash for asset identification"""
-        hash_string = json.dumps(identifiers, sort_keys=True)
-        return hashlib.md5(hash_string.encode()).hexdigest()
-    
-    def clear_all_caches(self):
-        """Clears the internal caches of all services to ensure fresh data."""
-        print("Clearing all local service caches...")
-        self.asset_service._cache.clear()
-        self.status_service._cache.clear()
-        self.category_service._cache.clear()
-        self.manufacturer_service._cache.clear()
-        self.model_service._cache.clear() # type: ignore
-        self.finder._all_assets_cache = None
-    
     def process_scan_data(self, scan_type: str, scan_data: List[Dict]) -> Dict:
         """Process scan data from various sources (main entry point).
         Args:
@@ -73,6 +58,16 @@ class AssetMatcher:
         """
         results = self._initialize_results()
         return self._process_assets(scan_type, scan_data, results)
+
+    def clear_all_caches(self):
+        """Clears the internal caches of all services to ensure fresh data."""
+        print("Clearing all local service caches...")
+        self.asset_service._cache.clear()
+        self.status_service._cache.clear()
+        self.category_service._cache.clear()
+        self.manufacturer_service._cache.clear()
+        self.model_service._cache.clear()
+        self.finder._all_assets_cache = None
     
     def find_existing_asset(self, asset_data: Dict) -> Optional[Dict]:
         """Find an existing asset using a prioritized chain of matching strategies."""
@@ -121,13 +116,14 @@ class AssetMatcher:
                     merged[key] = value
         return merged
 
+    # --- Core Orchestration (Private) ---
+
     def _process_assets(self, scan_type: str, scan_data: List[Dict], results: Dict) -> Dict:
         """Iterate through scan data and process each asset."""
         for asset_data in scan_data:
             asset_data['_source'] = scan_type
 
-            # Enrich with static IP mapping data first.
-            self._enrich_with_static_map(asset_data)
+            self._enrich_with_static_map(asset_data) # Enrich with static IP mapping data first.
 
             existing = self.find_existing_asset(asset_data)
             
@@ -163,12 +159,6 @@ class AssetMatcher:
         
         return results
 
-    def _enrich_with_static_map(self, asset_data: Dict):
-        """If the asset's IP is in the static map, enrich the asset data with it."""
-        ip_address = asset_data.get('last_seen_ip')
-        if ip_address and ip_address in STATIC_IP_MAP:
-            asset_data.update(STATIC_IP_MAP[ip_address])
-
     def _create_asset(self, asset_data: Dict, scan_type: str) -> Optional[Dict]:
         """Prepare and create a new asset in Snipe-IT."""
         payload = self._prepare_asset_payload(asset_data)
@@ -189,6 +179,8 @@ class AssetMatcher:
             
         result = self.asset_service.update(asset_id, payload)
         return result is not None
+
+    # --- Payload Preparation (Private) ---
     
     def _prepare_asset_payload(self, asset_data: Dict, is_update: bool = False) -> Dict:
         """Orchestrate the preparation of the asset data payload for the Snipe-IT API."""
@@ -203,29 +195,6 @@ class AssetMatcher:
         self._populate_custom_fields(payload, asset_data)
         
         return payload
-    
-    def _has_sufficient_data(self, asset_data: Dict) -> bool:
-        """Determine if we have enough data to create a new asset."""
-        # An IP-only asset will be created but flagged for review, so it's "sufficient".
-        if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
-            return True
-        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
-            return True
-        if asset_data.get('serial'):
-            return True
-        if asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac'):
-            return True
-        if asset_data.get('intune_device_id'):
-            return True
-        if asset_data.get('azure_ad_id'):
-            return True
-        dns_hostname = asset_data.get('dns_hostname', '')
-        if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
-            return True
-        name = (asset_data.get('name') or '').strip()
-        if name and not name.lower().startswith('device-'):
-            return True
-        return bool(asset_data.get('asset_tag'))
 
     def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
         """Determine and assign manufacturer, model, and category."""
@@ -248,18 +217,6 @@ class AssetMatcher:
         # 4. Final fallback to ensure category is set if model logic somehow failed to set it.
         if category_obj and 'category_id' not in payload: # Failsafe
             payload['category_id'] = category_obj['id']
-    
-    def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
-        """Extracts and cleans manufacturer and model names from asset data."""
-        raw_mfr = asset_data.get('manufacturer')
-        raw_model = asset_data.get('model')
-
-        if isinstance(raw_mfr, dict):
-            raw_mfr = raw_mfr.get('name') or ''
-        if isinstance(raw_model, dict):
-            raw_model = raw_model.get('name') or raw_model.get('model_number') or ''
-
-        return str(raw_mfr or '').strip(), str(raw_model or '').strip()
 
     def _handle_specific_model(self, payload: Dict, asset_data: Dict, manufacturer_name: str, model_name: str, category_obj: Dict):
         """Handles the logic for finding, creating, and assigning a specific model."""
@@ -299,88 +256,6 @@ class AssetMatcher:
             if updates_needed:
                 print(f"   [REPAIR] Correcting metadata for model '{full_model_name}' (ID: {model['id']})")
                 self.model_service.update(model['id'], updates_needed)
-
-    def _determine_fieldset(self, category_obj: Dict, asset_data: Dict) -> Optional[Dict]:
-        """Determines the correct fieldset based on the asset's category name."""
-        category_name = category_obj.get('name') if isinstance(category_obj, dict) else str(category_obj)
-        fieldset_map = {
-            'Laptops': 'Managed and Discovered Assets', 'Desktops': 'Managed and Discovered Assets',
-            'Mobile Phones': 'Managed and Discovered Assets', 'Tablets': 'Managed and Discovered Assets',
-            'IoT Devices': 'Managed and Discovered Assets', 'Servers': 'Managed and Discovered Assets',
-            'Virtual Machines': 'Managed and Discovered Assets',
-            'Cloud Resources': 'Cloud Resources (Azure)', 'Switches': 'Network Infrastructure',
-            'Routers': 'Network Infrastructure', 'Firewalls': 'Network Infrastructure',
-            'Access Points': 'Network Infrastructure', 'Network Devices': 'Network Infrastructure',
-            'Printers': 'Discovered Assets (Nmap Only)',
-        }
-        fieldset_name = fieldset_map.get(category_name, 'Managed and Discovered Assets')
-        fieldset = self.fieldset_service.get_by_name(fieldset_name)
-
-        if not fieldset:
-            print(f"[ERROR] Fieldset '{fieldset_name}' not found. Asset '{asset_data.get('name', 'Unknown')}' may have issues with custom fields.")
-        return fieldset
-
-    def _build_full_model_name(self, manufacturer_name: str, model_name: str) -> str:
-        """Constructs the full model name, avoiding manufacturer duplication."""
-        norm_model = normalize_for_comparison(model_name)
-        norm_mfr = normalize_for_comparison(manufacturer_name)
-        if norm_model.startswith(norm_mfr) or norm_mfr.startswith(norm_model):
-            return model_name
-        return f"{manufacturer_name} {model_name}"
-
-    def _get_or_create_model(self, full_model_name: str, manufacturer: Dict, category: Dict, fieldset: Optional[Dict], model_number: str) -> Optional[Dict]:
-        """Finds an existing model by name or creates a new one."""
-        model = self.model_service.get_by_name(full_model_name)
-        if model:
-            return model
-
-        if self.debug:
-            print(f"[_get_or_create_model] Model '{full_model_name}' not found. Attempting to create...")
-
-        model_data = {
-            'name': full_model_name,
-            'manufacturer_id': manufacturer['id'],
-            'category_id': category['id'],
-            'model_number': full_model_name  # Use the full name to ensure uniqueness
-        }
-        if fieldset:
-            model_data['fieldset_id'] = fieldset['id']
-
-        try:
-            new_model = self.model_service.create(model_data)
-            if new_model:
-                if self.debug:
-                    print(f"[_get_or_create_model] Successfully created model: {full_model_name} (ID: {new_model.get('id')})")
-                return new_model
-            else:
-                # Another process might have created it. Retry the lookup.
-                print(f"[_get_or_create_model] WARNING: Retrying lookup for '{full_model_name}'...")
-                return self.model_service.get_by_name(full_model_name)
-        except Exception as e:
-            print(f"[_get_or_create_model] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
-            return None
-
-    def _update_model_if_needed(self, model: Dict, category: Dict, fieldset: Optional[Dict]):
-        """Updates an existing model's category or fieldset if they are incorrect."""
-        update_payload = {}
-        if category and model.get('category', {}).get('id') != category['id']:
-            update_payload['category_id'] = category['id']
-
-        current_fieldset_id = (model.get('fieldset') or {}).get('id')
-        target_fieldset_id = fieldset['id'] if fieldset else None
-
-        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
-            update_payload['fieldset_id'] = target_fieldset_id
-
-        if update_payload:
-            if self.debug:
-                old_category = (model.get('category') or {}).get('name')
-                old_fieldset = (model.get('fieldset') or {}).get('name')
-                new_fieldset_name = fieldset.get('name') if fieldset else 'None'
-                print(f"[_update_model_if_needed] Updating model '{model.get('name')}'")
-                print(f"  Category: '{old_category}' -> '{category['name']}'")
-                print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
-            self.model_service.update(model['id'], update_payload)
 
     def _assign_generic_model(self, payload: Dict, asset_data: Dict, category_obj: Optional[Dict] = None):
         """Assigns a generic model based on the pre-calculated device type."""
@@ -439,23 +314,51 @@ class AssetMatcher:
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)
        
-        # Location
-        location_name = asset_data.get('location')
-        if location_name:
-            location_name_str = location_name.get('name') if isinstance(location_name, dict) else location_name
-            location = self.location_service.get_by_name(location_name_str)
-            if not location:
-                print(f"  -> Location '{location_name}' not found. Creating it now...")
-                location = self.location_service.create({'name': location_name})
-
-            if location and location.get('id'):
-                payload['location_id'] = location['id']
-            else:
-                print(f"  [ERROR] Failed to find or create location '{location_name}'. Asset will have no location.")
-        
-        # Status
+        self._assign_location(payload, asset_data)
         self._determine_status(payload, asset_data)
+
+    def _determine_fieldset(self, category_obj: Dict, asset_data: Dict) -> Optional[Dict]:
+        """Determines the correct fieldset based on the asset's category name."""
+        category_name = category_obj.get('name') if isinstance(category_obj, dict) else str(category_obj)
+        fieldset_map = {
+            'Laptops': 'Managed and Discovered Assets', 'Desktops': 'Managed and Discovered Assets',
+            'Mobile Phones': 'Managed and Discovered Assets', 'Tablets': 'Managed and Discovered Assets',
+            'IoT Devices': 'Managed and Discovered Assets', 'Servers': 'Managed and Discovered Assets',
+            'Virtual Machines': 'Managed and Discovered Assets',
+            'Cloud Resources': 'Cloud Resources (Azure)', 'Switches': 'Network Infrastructure',
+            'Routers': 'Network Infrastructure', 'Firewalls': 'Network Infrastructure',
+            'Access Points': 'Network Infrastructure', 'Network Devices': 'Network Infrastructure',
+            'Printers': 'Discovered Assets (Nmap Only)',
+        }
+        fieldset_name = fieldset_map.get(category_name, 'Managed and Discovered Assets')
+        fieldset = self.fieldset_service.get_by_name(fieldset_name)
+
+        if not fieldset:
+            print(f"[ERROR] Fieldset '{fieldset_name}' not found. Asset '{asset_data.get('name', 'Unknown')}' may have issues with custom fields.")
+        return fieldset
     
+    def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
+        """Populate custom fields into the main payload using their DB column names."""
+
+        if not AssetMatcher._hydrated:
+            self._hydrate_field_map()
+            
+        for field_key, field_def in CUSTOM_FIELDS.items():
+            if field_key in asset_data and asset_data[field_key] is not None:
+                
+                db_key = AssetMatcher._custom_field_map.get(field_key)
+                if not db_key: continue
+
+                value = asset_data[field_key]
+                if isinstance(value, str) and not value.strip():
+                    continue
+                
+                formatted_value = self._format_custom_field_value(field_key, value, field_def)
+                if formatted_value is not None:
+                    payload[db_key] = formatted_value
+
+    # --- Data Lookup & Matching (Private) ---
+
     def _hydrate_field_map(self):
         """Map internal config keys to Snipe-IT's database column names for custom fields."""
         if not AssetMatcher._hydrated:
@@ -480,43 +383,69 @@ class AssetMatcher:
                     missing = [k for k in CUSTOM_FIELDS if k not in AssetMatcher._custom_field_map]
                     print(f"[WARNING] Could not find server mapping for keys: {missing}")
             AssetMatcher._hydrated = True
-        
-    def _format_custom_field_value(self, field_key: str, value: Any, field_def: Dict) -> Optional[str]:
-        """Formats a value for a custom field based on its type."""
-        BOOLEAN_TEXT_FIELDS = {k for k, v in CUSTOM_FIELDS.items() if v['format'] == 'BOOLEAN'}
 
-        if field_key in BOOLEAN_TEXT_FIELDS:
-            if isinstance(value, bool): return "1" if value else "0"
-            if isinstance(value, int): return "1" if value == 1 else "0"
-            if isinstance(value, str):
-                if value.lower() in ('true', '1', 'yes', 'on'): return "1"
-                if value.lower() in ('false', '0', 'no', 'off'): return "0"
-        elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
-            return json.dumps(value, indent=2)
-        elif isinstance(value, dict):
-            return value.get('name') or json.dumps(value)
-        return ', '.join(map(str, value)) if isinstance(value, list) else str(value)
+    def _build_full_model_name(self, manufacturer_name: str, model_name: str) -> str:
+        """Constructs the full model name, avoiding manufacturer duplication."""
+        norm_model = normalize_for_comparison(model_name)
+        norm_mfr = normalize_for_comparison(manufacturer_name)
+        if norm_model.startswith(norm_mfr) or norm_mfr.startswith(norm_model):
+            return model_name
+        return f"{manufacturer_name} {model_name}"
 
-    def _populate_custom_fields(self, payload: Dict, asset_data: Dict):
-        """Populate custom fields into the main payload using their DB column names."""
+    def _get_or_create_model(self, full_model_name: str, manufacturer: Dict, category: Dict, fieldset: Optional[Dict], model_number: str) -> Optional[Dict]:
+        """Finds an existing model by name or creates a new one."""
+        model = self.model_service.get_by_name(full_model_name)
+        if model:
+            return model
 
-        if not AssetMatcher._hydrated:
-            self._hydrate_field_map()
-            
-        for field_key, field_def in CUSTOM_FIELDS.items():
-            if field_key in asset_data and asset_data[field_key] is not None:
-                
-                db_key = AssetMatcher._custom_field_map.get(field_key)
-                if not db_key: continue
+        if self.debug:
+            print(f"[_get_or_create_model] Model '{full_model_name}' not found. Attempting to create...")
 
-                value = asset_data[field_key]
-                if isinstance(value, str) and not value.strip():
-                    continue
-                
-                formatted_value = self._format_custom_field_value(field_key, value, field_def)
-                if formatted_value is not None:
-                    payload[db_key] = formatted_value
-                
+        model_data = {
+            'name': full_model_name,
+            'manufacturer_id': manufacturer['id'],
+            'category_id': category['id'],
+            'model_number': full_model_name  # To ensure uniqueness
+        }
+        if fieldset:
+            model_data['fieldset_id'] = fieldset['id']
+
+        try:
+            new_model = self.model_service.create(model_data)
+            if new_model:
+                if self.debug:
+                    print(f"[_get_or_create_model] Successfully created model: {full_model_name} (ID: {new_model.get('id')})")
+                return new_model
+            else:
+                # Another process might have created it. Retry the lookup.
+                print(f"[_get_or_create_model] WARNING: Retrying lookup for '{full_model_name}'...")
+                return self.model_service.get_by_name(full_model_name)
+        except Exception as e:
+            print(f"[_get_or_create_model] ERROR: Exception during model creation for '{full_model_name}': {str(e)}")
+            return None
+
+    def _update_model_if_needed(self, model: Dict, category: Dict, fieldset: Optional[Dict]):
+        """Updates an existing model's category or fieldset if they are incorrect."""
+        update_payload = {}
+        if category and model.get('category', {}).get('id') != category['id']:
+            update_payload['category_id'] = category['id']
+
+        current_fieldset_id = (model.get('fieldset') or {}).get('id')
+        target_fieldset_id = fieldset['id'] if fieldset else None
+
+        if target_fieldset_id and current_fieldset_id != target_fieldset_id:
+            update_payload['fieldset_id'] = target_fieldset_id
+
+        if update_payload:
+            if self.debug:
+                old_category = (model.get('category') or {}).get('name')
+                old_fieldset = (model.get('fieldset') or {}).get('name')
+                new_fieldset_name = fieldset.get('name') if fieldset else 'None'
+                print(f"[_update_model_if_needed] Updating model '{model.get('name')}'")
+                print(f"  Category: '{old_category}' -> '{category['name']}'")
+                print(f"  Fieldset: '{old_fieldset}' -> '{new_fieldset_name}'")
+            self.model_service.update(model['id'], update_payload)
+
     def _determine_status(self, payload: Dict, asset_data: Dict):
         """Determines and sets the status_id for the asset."""
         if 'status_id' in payload:
@@ -543,10 +472,6 @@ class AssetMatcher:
         if status:
             payload['status_id'] = status['id']
 
-    def _initialize_results(self) -> Dict:
-        """Returns a clean dictionary for tracking sync results."""
-        return {'created': 0, 'updated': 0, 'failed': 0, 'skipped_insufficient_data': 0, 'assets': []}
-
     def _determine_category(self, asset_data: Dict) -> str:
         """Determine asset category based on data by calling the AssetCategorizer."""
         classification = AssetCategorizer.categorize(asset_data) # type: ignore
@@ -567,12 +492,6 @@ class AssetMatcher:
 
         if category_obj:
             return category_obj
-        
-    def _generate_asset_tag(self, asset_data: Dict) -> str:
-        """Generate a unique asset tag."""
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        hash_part = self.generate_asset_hash(asset_data)[:6].upper()
-        return f"AUTO-{timestamp}-{hash_part}"
         
     def _determine_model_name(self, device_type: str) -> str:
         """Determine model name based on device type"""
@@ -603,3 +522,94 @@ class AssetMatcher:
                 return model_name
         
         return 'Generic Unknown Device'
+
+    def _assign_location(self, payload: Dict, asset_data: Dict):
+        """Finds or creates a location and assigns its ID to the payload."""
+        location_name = asset_data.get('location')
+        if not location_name:
+            return
+
+        location_name_str = location_name.get('name') if isinstance(location_name, dict) else location_name
+        location = self.location_service.get_by_name(location_name_str)
+        if not location:
+            print(f"  -> Location '{location_name}' not found. Creating it now...")
+            location = self.location_service.create({'name': location_name})
+
+        if location and location.get('id'):
+            payload['location_id'] = location['id']
+        else:
+            print(f"  [ERROR] Failed to find or create location '{location_name}'. Asset will have no location.")
+
+    # --- Utility Helpers (Private) ---
+
+    def _initialize_results(self) -> Dict:
+        """Returns a clean dictionary for tracking sync results."""
+        return {'created': 0, 'updated': 0, 'failed': 0, 'skipped_insufficient_data': 0, 'assets': []}
+
+    def _has_sufficient_data(self, asset_data: Dict) -> bool:
+        """Determine if we have enough data to create a new asset."""
+        # An IP-only asset will be created but flagged for review, so it's "sufficient".
+        if asset_data.get('last_seen_ip') and not (asset_data.get('serial') or asset_data.get('mac_addresses') or asset_data.get('intune_device_id')):
+            return True
+        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
+            return True
+        if asset_data.get('serial'):
+            return True
+        if asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac'):
+            return True
+        if asset_data.get('intune_device_id'):
+            return True
+        if asset_data.get('azure_ad_id'):
+            return True
+        dns_hostname = asset_data.get('dns_hostname', '')
+        if dns_hostname and not dns_hostname.startswith('Device-') and dns_hostname not in ['', '_gateway']:
+            return True
+        name = (asset_data.get('name') or '').strip()
+        if name and not name.lower().startswith('device-'):
+            return True
+        return bool(asset_data.get('asset_tag'))
+
+    def _enrich_with_static_map(self, asset_data: Dict):
+        """If the asset's IP is in the static map, enrich the asset data with it."""
+        ip_address = asset_data.get('last_seen_ip')
+        if ip_address and ip_address in STATIC_IP_MAP:
+            asset_data.update(STATIC_IP_MAP[ip_address])
+
+    def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple[str, str]:
+        """Extracts and cleans manufacturer and model names from asset data."""
+        raw_mfr = asset_data.get('manufacturer')
+        raw_model = asset_data.get('model')
+
+        if isinstance(raw_mfr, dict):
+            raw_mfr = raw_mfr.get('name') or ''
+        if isinstance(raw_model, dict):
+            raw_model = raw_model.get('name') or raw_model.get('model_number') or ''
+
+        return str(raw_mfr or '').strip(), str(raw_model or '').strip()
+
+    def _generate_asset_tag(self, asset_data: Dict) -> str:
+        """Generate a unique asset tag."""
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        hash_part = self.generate_asset_hash(asset_data)[:6].upper()
+        return f"AUTO-{timestamp}-{hash_part}"
+
+    def generate_asset_hash(self, identifiers: Dict) -> str:
+        """Generate unique hash for asset identification"""
+        hash_string = json.dumps(identifiers, sort_keys=True)
+        return hashlib.md5(hash_string.encode()).hexdigest()
+
+    def _format_custom_field_value(self, field_key: str, value: Any, field_def: Dict) -> Optional[str]:
+        """Formats a value for a custom field based on its type."""
+        BOOLEAN_TEXT_FIELDS = {k for k, v in CUSTOM_FIELDS.items() if v['format'] == 'BOOLEAN'}
+
+        if field_key in BOOLEAN_TEXT_FIELDS:
+            if isinstance(value, bool): return "1" if value else "0"
+            if isinstance(value, int): return "1" if value == 1 else "0"
+            if isinstance(value, str):
+                if value.lower() in ('true', '1', 'yes', 'on'): return "1"
+                if value.lower() in ('false', '0', 'no', 'off'): return "0"
+        elif field_def['element'] == 'textarea' and isinstance(value, (dict, list)):
+            return json.dumps(value, indent=2)
+        elif isinstance(value, dict):
+            return value.get('name') or json.dumps(value)
+        return ', '.join(map(str, value)) if isinstance(value, list) else str(value)
