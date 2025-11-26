@@ -36,28 +36,28 @@ class AssetDebugLogger:
         # Purpose-based log files
         self.log_files = {
             'intune': {
-                'raw': os.path.join(base_log_dir, 'intune_logs', 'raw_data.log'),
-                'parsed': os.path.join(base_log_dir, 'intune_logs', 'parsed_data.log'),
-                'categorization': os.path.join(base_log_dir, 'intune_logs', 'categorization.log'),
+                'raw': os.path.join(base_log_dir, 'intune_logs', 'intun_raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'intune_logs', 'intune_parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'intune_logs', 'intune_categorization.log'),
             },
             'teams': {
-                'raw': os.path.join(base_log_dir, 'teams_logs', 'raw_data.log'),
-                'parsed': os.path.join(base_log_dir, 'teams_logs', 'parsed_data.log'),
-                'categorization': os.path.join(base_log_dir, 'teams_logs', 'categorization.log'),
+                'raw': os.path.join(base_log_dir, 'teams_logs', 'teams_raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'teams_logs', 'teams_parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'teams_logs', 'teams_categorization.log'),
             },
             'nmap': {
-                'raw': os.path.join(base_log_dir, 'nmap_logs', 'raw_data.log'),
-                'parsed': os.path.join(base_log_dir, 'nmap_logs', 'parsed_data.log'),
-                'categorization': os.path.join(base_log_dir, 'nmap_logs', 'categorization.log'),
-                'summary': os.path.join(base_log_dir, 'nmap_logs', 'summary.log'),
-                'final_payload': os.path.join(base_log_dir, 'nmap_logs', 'final_payload.log'),
+                'raw': os.path.join(base_log_dir, 'nmap_logs', 'nmap_raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'nmap_logs', 'nmap_parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'nmap_logs', 'nmap_categorization.log'),
+                'summary': os.path.join(base_log_dir, 'nmap_logs', 'nmap_summary.log'),
+                'final_payload': os.path.join(base_log_dir, 'nmap_logs', 'nmap_final_payload.log'),
             },
             'ms365': {
-                'raw': os.path.join(base_log_dir, 'ms365_logs', 'raw_merged_data.log'),
-                'parsed': os.path.join(base_log_dir, 'ms365_logs', 'parsed_data.log'),
-                'categorization': os.path.join(base_log_dir, 'ms365_logs', 'categorization.log'),
-                'summary': os.path.join(base_log_dir, 'ms365_logs', 'summary.log'),
-                'final_payload': os.path.join(base_log_dir, 'ms365_logs', 'final_payload.log'),
+                'raw': os.path.join(base_log_dir, 'ms365_logs', 'ms365_raw_merged_data.log'),
+                'parsed': os.path.join(base_log_dir, 'ms365_logs', 'ms365_parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'ms365_logs', 'ms365_categorization.log'),
+                'summary': os.path.join(base_log_dir, 'ms365_logs', 'ms365_summary.log'),
+                'final_payload': os.path.join(base_log_dir, 'ms365_logs', 'ms365_final_payload.log'),
             }
         }
         # Create all necessary subdirectories
