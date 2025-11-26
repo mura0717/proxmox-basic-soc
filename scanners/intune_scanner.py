@@ -14,9 +14,9 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
-from debug.asset_debug_logger import debug_logger 
+from debug.tools.asset_debug_logger import debug_logger 
 from config.ms365_service import Microsoft365Service 
-from debug.tools.intune_categorize_from_logs import intune_debug_categorization 
+from debug.categorize_from_logs.intune_categorize_from_logs import intune_debug_categorization 
 from utils.mac_utils import combine_macs, normalize_mac
 
 class IntuneScanner:

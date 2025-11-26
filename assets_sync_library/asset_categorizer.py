@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 from ipaddress import ip_address, AddressValueError
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from debug.asset_debug_logger import debug_logger
+from debug.tools.asset_debug_logger import debug_logger
 from config import categorization_rules
 from utils.text_utils import normalize_for_comparison
 from config import network_config

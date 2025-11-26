@@ -9,7 +9,8 @@ import sys
 import json
 from typing import List, Dict
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the project root directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from assets_sync_library.asset_categorizer import AssetCategorizer
 
@@ -72,9 +73,9 @@ microsoft365_debug_categorization = Microsoft365DebugCategorization()
 
 if __name__ == "__main__":
     if microsoft365_debug_categorization.debug:
-        from debug.asset_debug_logger import debug_logger
+        from debug.tools.asset_debug_logger import debug_logger
         microsoft365_debug_categorization.write_m365_assets_to_logfile()
     else:
         print("To debug categorization, set MICROSOFT365_CATEGORIZATION_DEBUG=1 and run this script.")
-        from debug.asset_debug_logger import debug_logger
+        from debug.tools.asset_debug_logger import debug_logger
         debug_logger.clear_logs('microsoft365')

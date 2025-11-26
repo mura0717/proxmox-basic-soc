@@ -24,7 +24,7 @@ from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS, MODELS
 from config.network_config import STATIC_IP_MAP
-from debug.asset_debug_logger import debug_logger
+from debug.tools.asset_debug_logger import debug_logger
 from utils.mac_utils import normalize_mac
 from utils.text_utils import normalize_for_comparison
 
@@ -203,7 +203,7 @@ class AssetMatcher:
         category_obj = self._determine_category(asset_data)
         
         manufacturer_name, model_name = self._extract_mfr_and_model_names(asset_data)
-        if debug_logger.enabled:        
+        if debug_logger.is_enabled:        
             print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{manufacturer_name}', Model: '{model_name}'")
 
         is_generic_model_name = normalize_for_comparison(model_name) in [normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']]

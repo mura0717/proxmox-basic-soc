@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_matcher import AssetMatcher
-from debug.asset_debug_logger import debug_logger 
+from debug.tools.asset_debug_logger import debug_logger 
 from config.ms365_service import Microsoft365Service
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
@@ -59,13 +59,13 @@ class Microsoft365Sync:
             teams_asset = teams_assets_by_serial.get(serial)
     
             if teams_asset:
-                if debug_logger.microsoft365_debug:
+                if debug_logger.ms365_debug:
                     print(f"  ✓ Merging Teams data for: {serial}")
                 teams_asset['_source'] = 'teams'
                 # Use the robust, centralized merge function
                 merged_asset = self.asset_matcher.merge_asset_data(teams_asset, intune_asset)
             else:
-                if debug_logger.microsoft365_debug:
+                if debug_logger.ms365_debug:
                     print(f"  ✓ Intune only: {serial}")
                 merged_asset = intune_asset
             
@@ -76,7 +76,7 @@ class Microsoft365Sync:
 
     def _handle_unmatched_teams_assets(self, merged_assets: List[Dict], processed_serials: set, teams_data: List[Dict], intune_data: List[Dict]):
         """Handles Teams assets not matched by serial, with a fallback merge on user ID."""
-        if debug_logger.microsoft365_debug:
+        if debug_logger.ms365_debug:
             print("Processing unmatched Teams-only assets...")
         intune_assets_by_user_id = {
             asset['primary_user_id']: asset 
@@ -94,18 +94,18 @@ class Microsoft365Sync:
             if intune_match and intune_serial in merged_assets_by_serial:
                 # Fallback merge logic for shared user accounts
                 if not serial:
-                    if debug_logger.microsoft365_debug:
+                    if debug_logger.ms365_debug:
                         print(f"  ✓ Fallback merge for user ID {user_id} (Intune S/N: {intune_serial}, Teams asset has no S/N)")
                     merged_assets_by_serial[intune_serial].update(teams_asset)
                 else:
-                    if debug_logger.microsoft365_debug:
+                    if debug_logger.ms365_debug:
                         print(f"  ✗ Not merging for user ID {user_id}. Assets have different serials ({intune_serial} vs {serial}). Treating as separate devices.")
                     teams_asset['last_update_source'] = 'microsoft365'
                     teams_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
                     merged_assets.append(teams_asset)
             else:
                 # This is a truly unmatched Teams asset
-                if debug_logger.microsoft365_debug:
+                if debug_logger.ms365_debug:
                     print(f"  ✓ Teams only: {serial or teams_asset.get('name', 'Unknown')}")
                 # Ensure source metadata is set for truly unmatched Teams assets
                 teams_asset['last_update_source'] = 'microsoft365'
@@ -114,7 +114,7 @@ class Microsoft365Sync:
     
     def _handle_unmatched_intune_assets(self, merged_assets: List[Dict], intune_data: List[Dict]):
         """Adds Intune assets that did not have a serial number."""
-        if debug_logger.microsoft365_debug:
+        if debug_logger.ms365_debug:
             print("Processing unmatched Intune assets (without serial numbers)...")
         for intune_asset in intune_data:
             if not intune_asset.get('serial'):
@@ -150,9 +150,9 @@ class Microsoft365Sync:
             raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
             
             # Log raw API data if debugging is enabled
-            if debug_logger.microsoft365_debug:
+            if debug_logger.ms365_debug:
                 combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
-                debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
+                debug_logger.log_raw_host_data('ms365', 'raw-unmerged-data', combined_raw_data)
         
         # Prepare dictionaries keyed by serial number for efficient merging
         intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data) # This can be simplified now
@@ -172,21 +172,21 @@ class Microsoft365Sync:
         
         self.asset_matcher.clear_all_caches()
         # Clear previous debug logs for this source at the start of the sync
-        if debug_logger.microsoft365_debug:
-            debug_logger.clear_logs('microsoft365')
+        if debug_logger.ms365_debug:
+            debug_logger.clear_logs('ms365')
 
         # Get the final, merged list of assets
         merged_assets = self.merge_data()
         print(f"Total of {len(merged_assets)} unique assets after merging Intune and Teams data.")
         # Log the final transformed payload before sending to the matcher
-        if debug_logger.microsoft365_debug:
-            debug_logger.log_parsed_asset_data('microsoft365', merged_assets)
+        if debug_logger.ms365_debug:
+            debug_logger.log_parsed_asset_data('ms365', merged_assets)
         
         # Process the final list with the asset matcher
-        results = self.asset_matcher.process_scan_data('microsoft365', merged_assets)
+        results = self.asset_matcher.process_scan_data('ms365', merged_assets)
         
-        if debug_logger.microsoft365_debug:
-            debug_logger.log_sync_summary('microsoft365', results)
+        if debug_logger.ms365_debug:
+            debug_logger.log_sync_summary('ms365', results)
         
         print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results
@@ -201,22 +201,26 @@ class Microsoft365Sync:
         combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
 
         # 2. Clear old logs and write the new raw data log
-        debug_logger.clear_logs('microsoft365')
-        debug_logger.log_raw_host_data('microsoft365', 'raw-unmerged-data', combined_raw_data)
-        print(f"\nRaw data log file has been created at: {debug_logger.log_files['microsoft365']['raw']}")
+        debug_logger.clear_logs('ms365')
+        debug_logger.log_raw_host_data('ms365', 'raw-unmerged-data', combined_raw_data)
+        print(f"\nRaw data log file has been created at: {debug_logger.log_files['ms365']['raw']}")
 
         # 3. Merge the already-fetched data and write the parsed data log
         merged_assets = self.merge_data(intune_data=transformed_intune, teams_data=transformed_teams)
         print(f"Found {len(merged_assets)} unique assets from Intune and Teams")
-        debug_logger.log_parsed_asset_data('microsoft365', merged_assets)
-        print(f"\nMerged transformed data log file has been created at: {debug_logger.log_files['microsoft365']['parsed']}")
+        debug_logger.log_parsed_asset_data('ms365', merged_assets)
+        print(f"\nMerged transformed data log file has been created at: {debug_logger.log_files['ms365']['parsed']}")
 
-if __name__ == "__main__":
+def main():
+    """Main execution function for Microsoft 365 sync."""
     sync = Microsoft365Sync()
-    if debug_logger.microsoft365_debug:
-        sync.sync_to_logs()
+    if debug_logger.ms365_debug:
+        sync.sync_to_logs() 
+        return 
     sync.sync_to_snipeit()
  
+if __name__ == "__main__":
+    main()
 
   
     

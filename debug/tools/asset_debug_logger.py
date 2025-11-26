@@ -26,8 +26,11 @@ class AssetDebugLogger:
               f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug})."
               )
 
+        # Determine the project root directory (three levels up from this file's location)
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
         # Create log directory
-        base_log_dir = os.path.join("logs", "debug_logs")
+        base_log_dir = os.path.join(project_root, "logs", "debug_logs")
         os.makedirs(base_log_dir, exist_ok=True)
         
         # Purpose-based log files
