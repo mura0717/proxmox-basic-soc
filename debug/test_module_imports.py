@@ -14,13 +14,13 @@ except Exception as e:
     print(f"✗ Config import failed: {e}")
 
 try:
-    from snipe_api.api_client import make_api_request
+    from snipe_api.snipe_client import make_api_request
     print("✓ API client import works")
 except Exception as e:
     print(f"✗ API client import failed: {e}")
 
 try:
-    from crud.base import BaseCRUDService
+    from snipe_api.services.crudbase import BaseCRUDService
     print("✓ CRUD base import works")
 except Exception as e:
     print(f"✗ CRUD base import failed: {e}")

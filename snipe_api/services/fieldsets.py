@@ -5,9 +5,9 @@ from typing import List, Dict, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.base import BaseCRUDService
-from crud.fields import FieldService
-from snipe_api.api_client import make_api_request
+from snipe_api.services.crudbase import BaseCRUDService
+from services.fields import FieldService
+from snipe_api.snipe_client import make_api_request
 
 class FieldsetService(BaseCRUDService):
     """Service for managing fieldsets"""

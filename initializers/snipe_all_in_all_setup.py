@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
-from crud.assets import AssetService
-from crud.base import BaseCRUDService
+from endpoints.assets import AssetService
+from endpoints.base import BaseCRUDService
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 # Only for testing when self-signed certs are used.

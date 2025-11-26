@@ -9,15 +9,15 @@ import json
 import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.fields import FieldService
-from crud.fieldsets import FieldsetService
-from crud.assets import AssetService
-from crud.models import ModelService
-from crud.categories import CategoryService
-from crud.manufacturers import ManufacturerService
-from crud.status_labels import StatusLabelService
-from crud.base import BaseCRUDService
-from snipe_api.api_client import make_api_request
+from snipe_api.services.fields import FieldService
+from snipe_api.services.fieldsets import FieldsetService
+from snipe_api.services.assets import AssetService
+from snipe_api.services.models import ModelService
+from snipe_api.services.categories import CategoryService
+from snipe_api.services.manufacturers import ManufacturerService
+from snipe_api.services.status_labels import StatusLabelService
+from snipe_api.services.crudbase import BaseCRUDService
+from snipe_api.snipe_client import make_api_request
 
 # Colors for output
 GREEN = '\033[92m'

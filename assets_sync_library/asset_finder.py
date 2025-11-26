@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.assets import AssetService
+from snipe_api.services.assets import AssetService
 from config import network_config
 from config.snipe_schema import CUSTOM_FIELDS
 from utils.mac_utils import macs_from_keys, macs_from_any, intersect_mac_sets

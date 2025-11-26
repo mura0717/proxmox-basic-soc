@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.base import BaseCRUDService
+from snipe_api.services.crudbase import BaseCRUDService
 
 class AssetService(BaseCRUDService):
     """Service for managing categories"""
@@ -14,7 +14,7 @@ class AssetService(BaseCRUDService):
         super().__init__('/api/v1/hardware', 'hardware')
         
     def search_by_serial(self, serial: str) -> Optional[Dict]:
-        from snipe_api.api_client import make_api_request
+        from snipe_api.snipe_client import make_api_request
         resp = make_api_request("GET", f"{self.endpoint}/byserial/{serial}")
         if not resp:
             return None
@@ -28,7 +28,7 @@ class AssetService(BaseCRUDService):
     
     def search_by_asset_tag(self, asset_tag: str) -> Optional[Dict]:
         """Search for asset by asset tag"""
-        from snipe_api.api_client import make_api_request
+        from snipe_api.snipe_client import make_api_request
         response = make_api_request("GET", f"{self.endpoint}/bytag/{asset_tag}")
         if response and response.json().get("id"):
             return response.json()

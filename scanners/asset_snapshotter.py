@@ -4,13 +4,13 @@ import json
 from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from snipe_api.services.assets import AssetService
 
-class SnipeItSnapshotter:
+class AssetSnapshotter:
     """
     Captures a snapshot of current Snipe-IT assets.
     """
     def __init__(self):
-        from crud.assets import AssetService
         self.asset_service = AssetService()
         self.snapshot_dir = "snapshots"
         os.makedirs(self.snapshot_dir, exist_ok=True)
@@ -52,7 +52,7 @@ class SnipeItSnapshotter:
 
 if __name__ == "__main__":
     from datetime import datetime
-    snapshotter = SnipeItSnapshotter()
+    snapshotter = AssetSnapshotter()
     
     if len(sys.argv) > 1:
         command = sys.argv[1]

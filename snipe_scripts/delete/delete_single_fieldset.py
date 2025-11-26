@@ -12,8 +12,8 @@ import urllib3
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from crud.fieldsets import FieldsetService
-from crud.base import BaseCRUDService
+from endpoints.fieldsets import FieldsetService
+from endpoints.base import BaseCRUDService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

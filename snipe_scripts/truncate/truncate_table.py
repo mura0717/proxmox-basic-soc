@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 # Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from crud.base import BaseCRUDService
+from endpoints.base import BaseCRUDService
 
 def truncate_table(table_name: str):
     """

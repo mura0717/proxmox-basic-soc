@@ -11,14 +11,14 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.fields import FieldService
-from crud.fieldsets import FieldsetService
-from crud.manufacturers import ManufacturerService
-from crud.models import ModelService
-from crud.status_labels import StatusLabelService
-from crud.categories import CategoryService
-from crud.locations import LocationService
-from crud.base import BaseCRUDService
+from endpoints.fields import FieldService
+from endpoints.fieldsets import FieldsetService
+from endpoints.manufacturers import ManufacturerService
+from endpoints.models import ModelService
+from endpoints.status_labels import StatusLabelService
+from endpoints.categories import CategoryService
+from endpoints.locations import LocationService
+from endpoints.base import BaseCRUDService
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 

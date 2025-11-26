@@ -1,6 +1,7 @@
 # Paste your definitions from your existing script:
 # CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, LOCATIONS
 
+# Define Custom Fields
 CUSTOM_FIELDS = {
     # Identity / IDs
     'azure_ad_id': {"name": "Azure AD Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Entra ID (formerly Azure AD)"},
@@ -160,7 +161,7 @@ CUSTOM_FIELDS = {
     'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY', "help_text": "Th last scan that the device was seen."}
 }
 
-# Define which fields belong to which fieldset, using our reference keys
+# Define Custom Fieldsets
 CUSTOM_FIELDSETS = {
     # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.).
     # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.

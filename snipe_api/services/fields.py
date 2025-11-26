@@ -4,8 +4,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.base import BaseCRUDService
-from snipe_api.api_client import make_api_request
+from snipe_api.services.crudbase import BaseCRUDService
+from snipe_api.snipe_client import make_api_request
 
 class FieldService(BaseCRUDService):
     """Service for managing custom fields"""

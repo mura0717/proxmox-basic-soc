@@ -10,7 +10,6 @@ import requests
 import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from msal import ConfidentialClientApplication
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

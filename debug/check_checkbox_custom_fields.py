@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.fields import FieldService
+from snipe_api.services.fields import FieldService
 
 # The problematic checkbox fields
 CHECKBOX_FIELDS = [

@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.base import BaseCRUDService
+from snipe_api.services.crudbase import BaseCRUDService
 
 class StatusLabelService(BaseCRUDService):
     """Service for managing status labels"""

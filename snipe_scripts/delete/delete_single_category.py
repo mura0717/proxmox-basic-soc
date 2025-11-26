@@ -12,8 +12,8 @@ import urllib3
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from crud.categories import CategoryService
-from crud.base import BaseCRUDService
+from endpoints.categories import CategoryService
+from endpoints.base import BaseCRUDService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from snipe_api.api_client import make_api_request
+from snipe_api.snipe_client import make_api_request
 from utils.text_utils import normalize_for_comparison, normalize_for_display
 from snipe_db.snipe_db_connection import SnipeItDbConnection
 
@@ -231,12 +231,11 @@ class BaseCRUDService:
         print(f"-> Running official Snipe-IT purge command: {' '.join(command)}")
         try:
             # We run the command from within the Snipe-IT directory
-            # We pipe 'yes' to stdin to automatically confirm the prompt.
             result = subprocess.run(
                 command,
                 cwd=snipe_it_path,
                 capture_output=True, text=True, check=True,
-                input='yes\n'
+                input='yes\n' # We pipe 'yes' to automatically confirm the prompt.
             )
             print("  " + result.stdout.strip().replace('\n', '\n  '))
             print("✓ Purge command completed successfully.")

@@ -12,14 +12,14 @@ from typing import Dict, List, Optional, Any
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crud.status_labels import StatusLabelService
-from crud.categories import CategoryService
-from crud.manufacturers import ManufacturerService
-from crud.models import ModelService
-from crud.assets import AssetService
-from crud.locations import LocationService
-from crud.fields import FieldService
-from crud.fieldsets import FieldsetService
+from snipe_api.services.status_labels import StatusLabelService
+from snipe_api.services.categories import CategoryService
+from snipe_api.services.manufacturers import ManufacturerService
+from snipe_api.services.models import ModelService
+from snipe_api.services.assets import AssetService
+from snipe_api.services.locations import LocationService
+from snipe_api.services.fields import FieldService
+from snipe_api.services.fieldsets import FieldsetService
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from assets_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS, MODELS
