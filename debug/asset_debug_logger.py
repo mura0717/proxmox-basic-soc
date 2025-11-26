@@ -13,50 +13,54 @@ class AssetDebugLogger:
         self.intune_debug = os.getenv('INTUNE_DEBUG', '0') == '1'
         self.nmap_debug = os.getenv('NMAP_DEBUG', '0') == '1'
         self.teams_debug = os.getenv('TEAMS_DEBUG', '0') == '1'
-        self.microsoft365_debug = os.getenv('MICROSOFT365_DEBUG', '0') == '1'
+        self.ms365_debug = os.getenv('MS365_DEBUG', '0') == '1'
         self.snmp_debug = os.getenv('SNMP_DEBUG', '0') == '1' # Not yet implemented
         
         
         # Master flag for convenience
-        self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug or self.microsoft365_debug
+        self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug or self.ms365_debug
         
         print(f"[DEBUG_LOGGER]: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
               f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}, "
               f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}). "
-              f"MICROSOFT365_DEBUG={os.getenv('MICROSOFT365_DEBUG', '0')} (internal: {self.microsoft365_debug})."
+              f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug})."
               )
 
         # Create log directory
-        self.log_dir = os.path.join("logs", "debug_logs")
-        os.makedirs(self.log_dir, exist_ok=True)
+        base_log_dir = os.path.join("logs", "debug_logs")
+        os.makedirs(base_log_dir, exist_ok=True)
         
         # Purpose-based log files
         self.log_files = {
             'intune': {
-                'raw': os.path.join(self.log_dir, 'intune_raw_unparsed_data.log'),
-                'parsed': os.path.join(self.log_dir, 'intune_parsed_asset_data.log'),
-                'categorization': os.path.join(self.log_dir, 'intune_categorization_details.log'),
+                'raw': os.path.join(base_log_dir, 'intune', 'raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'intune', 'parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'intune', 'categorization.log'),
             },
             'teams': {
-                'raw': os.path.join(self.log_dir, 'teams_raw_unparsed_data.log'),
-                'parsed': os.path.join(self.log_dir, 'teams_parsed_asset_data.log'),
-                'categorization': os.path.join(self.log_dir, 'teams_categorization_details.log'),
+                'raw': os.path.join(base_log_dir, 'teams', 'raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'teams', 'parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'teams', 'categorization.log'),
             },
             'nmap': {
-                'raw': os.path.join(self.log_dir, 'nmap_raw_unparsed_data.log'),
-                'parsed': os.path.join(self.log_dir, 'nmap_parsed_asset_data.log'),
-                'categorization': os.path.join(self.log_dir, 'nmap_categorization_details.log'),
-                'summary': os.path.join(self.log_dir, 'nmap_sync_summary.log'),
-                'final_payload': os.path.join(self.log_dir, 'nmap_final_payload.log'),
+                'raw': os.path.join(base_log_dir, 'nmap', 'raw_data.log'),
+                'parsed': os.path.join(base_log_dir, 'nmap', 'parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'nmap', 'categorization.log'),
+                'summary': os.path.join(base_log_dir, 'nmap', 'summary.log'),
+                'final_payload': os.path.join(base_log_dir, 'nmap', 'final_payload.log'),
             },
-            'microsoft365': {
-                'raw': os.path.join(self.log_dir, 'microsoft365_raw_merged_data.log'),
-                'parsed': os.path.join(self.log_dir, 'microsoft365_parsed_asset_data.log'),
-                'categorization': os.path.join(self.log_dir, 'microsoft365_categorization_details.log'),
-                'summary': os.path.join(self.log_dir, 'microsoft365_sync_summary.log'),
-                'final_payload': os.path.join(self.log_dir, 'microsoft365_final_payload.log'),
+            'ms365': {
+                'raw': os.path.join(base_log_dir, 'ms365', 'raw_merged_data.log'),
+                'parsed': os.path.join(base_log_dir, 'ms365', 'parsed_data.log'),
+                'categorization': os.path.join(base_log_dir, 'ms365', 'categorization.log'),
+                'summary': os.path.join(base_log_dir, 'ms365', 'summary.log'),
+                'final_payload': os.path.join(base_log_dir, 'ms365', 'final_payload.log'),
             }
         }
+        # Create all necessary subdirectories
+        for source_logs in self.log_files.values():
+            for log_path in source_logs.values():
+                os.makedirs(os.path.dirname(log_path), exist_ok=True)
     
     def _get_log_path(self, source: str, purpose: str) -> str | None:
         """Helper to get the correct log file path for a source and purpose."""  
@@ -71,7 +75,7 @@ class AssetDebugLogger:
         elif source_lower == 'nmap': result = self.nmap_debug
         elif source_lower == 'teams': result = self.teams_debug
         elif source_lower == 'snmp': result = self.snmp_debug
-        elif source_lower == 'microsoft365': result = self.microsoft365_debug
+        elif source_lower == 'ms365': result = self.ms365_debug
         else: result = False
         return result
     
