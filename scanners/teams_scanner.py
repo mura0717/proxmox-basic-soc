@@ -147,3 +147,14 @@ class TeamsScanner:
             self.write_to_logs(raw_assets, transformed_assets)
 
         return raw_assets, transformed_assets
+
+def main():
+    # If categorization debug is on, just run that and exit.
+    if teams_debug_categorization.debug:
+        print("Running Teams categorization from existing logs...")
+        teams_debug_categorization.write_teams_assets_to_logfile()
+        return
+    print("This script is not intended to be run directly. Use ms365_sync.py instead.")
+
+if __name__ == "__main__":
+    main()

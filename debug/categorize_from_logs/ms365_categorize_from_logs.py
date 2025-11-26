@@ -18,38 +18,43 @@ from debug.tools.asset_debug_logger import debug_logger
 class Microsoft365DebugCategorization:
     """Determines asset type and category for merged M365 devices from log files."""
     def __init__(self):
-        self.debug = os.getenv('MICROSOFT365_CATEGORIZATION_DEBUG', '0') == '1'
-    def get_raw_m365_assets_from_log(self) -> List[Dict]:
-        """Fetches all merged M365 assets from its specific raw log file."""
-        if not os.path.exists(self.raw_log_path):
-            print(f"Error: Log file not found at {self.raw_log_path}")
-            print("Please run a Microsoft 365 sync with MICROSOFT365_DEBUG=1 first.")
+        self.debug = os.getenv('MS365_CATEGORIZATION_DEBUG', '0') == '1'
+        self.parsed_log_path = debug_logger.log_files['ms365']['parsed']
+        self.categorization_log_path = debug_logger.log_files['ms365']['categorization']
+
+    def get_parsed_ms365_assets_from_log(self) -> List[Dict]:
+        """Fetches all transformed and merged M365 assets from the parsed log file."""
+        if not os.path.exists(self.parsed_log_path):
+            print(f"Error: Log file not found at {self.parsed_log_path}")
+            print("Please run a Microsoft 365 sync with MS365_DEBUG=1 first to generate the log.")
             return []
 
         assets = []
         try:
-            with open(self.raw_log_path, 'r', encoding='utf-8') as file:
+            with open(self.parsed_log_path, 'r', encoding='utf-8') as file:
                 content = file.read()
-
-            # The log contains one large JSON object under a 'merged-data' host
-            json_start = content.find('{\n    "assets": [')
-            if json_start != -1:
-                data = json.loads(content[json_start:])
-                assets = data.get('assets', [])
+            
+            # The parsed log file contains a JSON array of assets.
+            # We need to find the start and end of the array to isolate it from headers/footers.
+            start_index = content.find('[')
+            end_index = content.rfind(']')
+            
+            if start_index != -1 and end_index != -1:
+                json_text = content[start_index : end_index + 1]
+                assets = json.loads(json_text)
         except Exception as e:
             print(f"Error reading or parsing log file: {e}")
 
         return assets
 
     def write_m365_assets_to_logfile(self):
-        """Categorizes raw merged M365 assets, writing the result to a log."""
-        raw_assets = self.get_raw_m365_assets_from_log()
-        print(f"Loaded {len(raw_assets)} raw merged assets from Microsoft 365 log.")
+        """Categorizes merged M365 assets from the parsed log file."""
+        parsed_assets = self.get_parsed_ms365_assets_from_log()
+        print(f"Loaded {len(parsed_assets)} parsed assets from Microsoft 365 log.")
 
         output_path = self.categorization_log_path
         with open(output_path, 'w', encoding='utf-8') as f:
-            for asset in raw_assets:
-                # The asset is already transformed, so we just categorize it
+            for asset in parsed_assets:
                 categorization = AssetCategorizer.categorize(asset)
                 out = {
                     "name": asset.get("name"),
@@ -64,13 +69,11 @@ class Microsoft365DebugCategorization:
                 f.write(json.dumps(out, indent=2) + "\n")
         print(f"Wrote categorized results to {output_path}")
 
-microsoft365_debug_categorization = Microsoft365DebugCategorization()
+ms365_debug_categorization = Microsoft365DebugCategorization()
 
 if __name__ == "__main__":
-    if microsoft365_debug_categorization.debug:
+    if ms365_debug_categorization.debug:
         from debug.tools.asset_debug_logger import debug_logger
-        microsoft365_debug_categorization.write_m365_assets_to_logfile()
+        ms365_debug_categorization.write_m365_assets_to_logfile()
     else:
-        print("To debug categorization, set MICROSOFT365_CATEGORIZATION_DEBUG=1 and run this script.")
-        from debug.tools.asset_debug_logger import debug_logger
-        debug_logger.clear_logs('microsoft365')
+        print("To debug categorization, set MS365_CATEGORIZATION_DEBUG=1 and run this script.")

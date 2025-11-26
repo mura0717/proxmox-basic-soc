@@ -18,6 +18,9 @@ class IntuneDebugCategorization:
     """Determines asset type and category based on attributes.""" 
     def __init__(self):
         self.debug = os.getenv('INTUNE_CATEGORIZATION_DEBUG', '0') == '1'
+        self.raw_log_path = debug_logger.log_files['intune']['raw']
+        self.categorization_log_path = debug_logger.log_files['intune']['categorization']
+    
     def get_raw_intune_assets_from_log(self) -> List[Dict]:
         """Fetches all Intune assets from its specific raw log file."""
         if not os.path.exists(self.raw_log_path):

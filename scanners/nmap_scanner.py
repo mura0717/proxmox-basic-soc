@@ -195,7 +195,7 @@ class NmapScanner:
         return results
 
 def main():
-    """Command-line interface"""
+        # If categorization debug is on, just run that and exit.
     if nmap_debug_categorization.debug: 
         nmap_debug_categorization.write_nmap_assets_to_logfile()
         return

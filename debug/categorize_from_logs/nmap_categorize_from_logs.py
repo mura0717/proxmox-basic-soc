@@ -10,7 +10,7 @@ import json
 from typing import List, Dict
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from assets_sync_library.asset_categorizer import AssetCategorizer
 from debug.tools.asset_debug_logger import debug_logger
@@ -104,9 +104,8 @@ class NmapDebugCategorization:
                 
                 f.write(json.dumps(output_data, indent=2))
                 f.write("\n" + "-"*80 + "\n\n")
-                
-                if i % 10 == 0:  # Print progress every 10 assets
-                    print(f"Processed {i}/{len(raw_assets)} assets...")
+               
+            print(f"Processed {i}/{len(raw_assets)} assets...")
         
         print(f"\n✅ Wrote categorized results to: {output_path}")
         print(f"📊 Summary:")

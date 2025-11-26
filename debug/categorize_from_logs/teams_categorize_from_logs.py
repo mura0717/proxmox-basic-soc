@@ -18,6 +18,9 @@ class TeamsDebugCategorization:
     """Determines asset type and category for Teams devices from log files."""
     def __init__(self):
         self.debug = os.getenv('TEAMS_CATEGORIZATION_DEBUG', '0') == '1'
+        self.raw_log_path = debug_logger.log_files['teams']['raw']
+        self.categorization_log_path = debug_logger.log_files['teams']['categorization']
+        
     def get_raw_teams_assets_from_log(self) -> List[Dict]:
         """Fetches all Teams assets from its specific raw log file."""
         if not os.path.exists(self.raw_log_path):

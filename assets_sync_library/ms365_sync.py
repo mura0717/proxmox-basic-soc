@@ -14,6 +14,7 @@ from config.ms365_service import Microsoft365Service
 from scanners.intune_scanner import IntuneScanner
 from scanners.teams_scanner import TeamsScanner
 from utils.mac_utils import normalize_mac
+from debug.categorize_from_logs.ms365_categorize_from_logs import ms365_debug_categorization
 from config.mac_config import CTP18
 
 class Microsoft365Sync:
@@ -213,6 +214,12 @@ class Microsoft365Sync:
 
 def main():
     """Main execution function for Microsoft 365 sync."""
+    # If categorization debug is on, just run that and exit.
+    if ms365_debug_categorization.debug:
+        print("Running Microsoft 365 categorization from existing logs...")
+        ms365_debug_categorization.write_m365_assets_to_logfile()
+        return
+
     sync = Microsoft365Sync()
     if debug_logger.ms365_debug:
         sync.sync_to_logs() 
