@@ -71,7 +71,6 @@ class NmapDebugCategorization:
         
         print(f"Loaded {len(raw_assets)} raw Nmap assets from log.")
 
-        # Categorize each asset
         output_path = self.categorization_log_path
         
         with open(output_path, 'w', encoding='utf-8') as f:
@@ -106,8 +105,7 @@ class NmapDebugCategorization:
                 f.write(json.dumps(output_data, indent=2))
                 f.write("\n" + "-"*80 + "\n\n")
                 
-                # Print progress every 10 assets
-                if i % 10 == 0:
+                if i % 10 == 0:  # Print progress every 10 assets
                     print(f"Processed {i}/{len(raw_assets)} assets...")
         
         print(f"\n✅ Wrote categorized results to: {output_path}")

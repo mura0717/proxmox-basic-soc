@@ -12,17 +12,12 @@ from typing import List, Dict
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from assets_sync_library.asset_categorizer import AssetCategorizer
+from debug.tools.asset_debug_logger import debug_logger
 
 class TeamsDebugCategorization:
     """Determines asset type and category for Teams devices from log files."""
     def __init__(self):
         self.debug = os.getenv('TEAMS_CATEGORIZATION_DEBUG', '0') == '1'
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        self.log_dir = os.path.join(base_dir, "../logs/debug_logs")
-        os.makedirs(self.log_dir, exist_ok=True)
-        self.teams_categorized_assets_from_log = os.path.join(self.log_dir, "teams_categorized_assets_from.log")
-        self.raw_log_path = os.path.join(self.log_dir, "teams_raw_unparsed_data.log")
-
     def get_raw_teams_assets_from_log(self) -> List[Dict]:
         """Fetches all Teams assets from its specific raw log file."""
         if not os.path.exists(self.raw_log_path):
@@ -58,7 +53,7 @@ class TeamsDebugCategorization:
         raw_assets = self.get_raw_teams_assets_from_log()
         print(f"Loaded {len(raw_assets)} raw assets from Teams log.")
 
-        output_path = self.teams_categorized_assets_from_log
+        output_path = self.categorization_log_path
         with open(output_path, 'w', encoding='utf-8') as f:
             for asset in raw_assets:
                 transformed = sync.transform_teams_to_snipeit(asset)
