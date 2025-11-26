@@ -1,21 +1,24 @@
+"""
+Captures a snapshot of current Snipe-IT assets.
+"""
+
 import os
 import sys
 import json
-from typing import List, Dict
+from typing import List, Dict, Optional
+from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from snipe_api.services.assets import AssetService
 
 class AssetSnapshotter:
-    """
-    Captures a snapshot of current Snipe-IT assets.
-    """
+
     def __init__(self):
         self.asset_service = AssetService()
-        self.snapshot_dir = "snapshots"
+        self.snapshot_dir = os.path.join("logs", "snipe_snapshots")
         os.makedirs(self.snapshot_dir, exist_ok=True)
 
-    def take_snapshot(self, filename: str = None) -> str:
+    def take_snapshot(self, filename: Optional[str] = None) -> str:
         """
         Fetches all assets from Snipe-IT and saves them to a JSON file.
         """
@@ -51,11 +54,20 @@ class AssetSnapshotter:
         return assets
 
 if __name__ == "__main__":
-    from datetime import datetime
     snapshotter = AssetSnapshotter()
     
-    if len(sys.argv) > 1:
+    # If no arguments are given, default to taking a snapshot for cron jobs.
+    if len(sys.argv) == 1:
+        snapshotter.take_snapshot()
+    else:
         command = sys.argv[1]
-        
         if command == "take":
-            snapshotter.take
+            custom_filename = sys.argv[2] if len(sys.argv) > 2 else None
+            snapshotter.take_snapshot(filename=custom_filename)
+        elif command == "load":
+            if len(sys.argv) > 2:
+                snapshotter.load_snapshot(sys.argv[2])
+            else:
+                print("Error: Please provide a filename to load.")
+        else:
+            print(f"Unknown command: {command}")
