@@ -6,7 +6,11 @@ These should cover all subnets where assets might be found.
 NMAP_SCAN_RANGES = [
     "192.168.1.0/24",    # Glostrup Main
     "192.168.2.0/24",    # Glostrup DMZ
-    "192.168.4.0/22",    # Glostrup Extended (covers 192.168.4.0 - 192.168.7.255)
+    "192.168.4.0/24",    # Glostrup Extended
+    "192.168.5.0/24",    # Glostrup Extended
+    "192.168.6.0/24",    # Glostrup Extended
+    "192.168.7.0/24",    # Glostrup Extended
+    "10.255.255.0/24",   # Glostrup Hikvision Cameras
     "192.168.200.0/24",  # Odense Main
 ]
 
