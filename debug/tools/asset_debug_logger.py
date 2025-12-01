@@ -16,7 +16,6 @@ class AssetDebugLogger:
         self.ms365_debug = os.getenv('MS365_DEBUG', '0') == '1'
         self.snmp_debug = os.getenv('SNMP_DEBUG', '0') == '1' # Not yet implemented
         
-        
         # Master flag for convenience
         self.is_enabled = self.intune_debug or self.nmap_debug or self.teams_debug or self.ms365_debug
         
