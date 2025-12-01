@@ -14,7 +14,6 @@ NMAP_SCAN_RANGES = [
     "192.168.200.0/24",  # Odense Main
 ]
 
-
 """
 DHCP Scope for both Glsotrup and Odense
 """
@@ -38,7 +37,6 @@ DHCP_SCOPES = [
         'notes': 'Main client DHCP scope for the Odense location.'
     }
 ]
-
 
 """
 Static IP Address Mapping

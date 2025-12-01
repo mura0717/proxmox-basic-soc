@@ -39,26 +39,60 @@ if os.geteuid() != 0:
 
 nm = nmap.PortScanner()
 
-ip_addr = '192.168.1.1' 
+# --- CONFIGURATION ---
+# Set this to 'discovery' or 'detailed' to choose the scan type.
+SCAN_TYPE = 'discovery'
+ip_addr = '192.168.1.1'
 ip_addr_range = '192.168.1.0/24'
-ports = '-1024'
-tcp_scan_args = '-v -sS -sV -O -A --osscan-guess'
-udp_scan_args = '-v -sU'
+
+# --- Scan Profiles ---
+SCAN_PROFILES = {
+    'discovery': {
+        'args': '-sn',  # Ping scan, no ports
+        'ports': None
+    },
+    'detailed': {
+        'args': '-v -sS -sV -O -A --osscan-guess',
+        'ports': '1-1024'
+    }
+}
 
 print("Starting Nmap scan...")
-nm.scan(hosts=ip_addr, ports=ports, arguments=tcp_scan_args)
+
+# --- Run Scan ---
+profile = SCAN_PROFILES[SCAN_TYPE]
+nm.scan(hosts=ip_addr_range, ports=profile['ports'], arguments=profile['args'])
 
 assets = []
 for host in nm.all_hosts():
-    if nm[host].state() == 'up':
+    if nm[host].state() != 'up':
+        continue
+
+    # --- Parse Host Data ---
+    if SCAN_TYPE == 'discovery':
         asset = {
             'ip': host,
-            'hostname': nm[host].hostname(), 
-            'os': nm[host]['osmatch'][0]['name'] if 'osmatch' in nm[host] else 'Unknown',
-            'type': nm[host]['osmatch'][0]['type'] if 'type' in nm[host] else 'Unknown',
+            'hostname': nm[host].hostname() or 'Unknown',
             'mac': nm[host]['addresses'].get('mac', 'Unknown'),
             'state': nm[host].state(),
+            'manufacturer': list(nm[host].get('vendor', {}).values())[0] if nm[host].get('vendor') else 'Unknown'
+        }
+        assets.append(asset)
+
+    elif SCAN_TYPE == 'detailed':
+        # Safely get OS match and vendor info
+        os_match = nm[host].get('osmatch', [])
+        vendor = nm[host].get('vendor', {})
+        
+        asset = {
+            'ip': host,
+            'hostname': nm[host].hostname() or 'Unknown',
+            'os': os_match[0]['name'] if os_match else 'Unknown',
+            'mac': nm[host]['addresses'].get('mac', 'Unknown'),
+            'state': nm[host].state(),
+            'manufacturer': list(vendor.values())[0] if vendor else 'Unknown',
             'protocols': {},
+            # The following fields are kept for compatibility but parsed safely
             'manufacturer': list(nm[host]['vendor'].values())[0] if 'vendor' in nm[host] else 'Unknown',
             'product_113': nm[host]['tcp'][0]['product'] if 'product' in nm[host] else 'Unknown',
             'product_443': nm[host]['tcp'][1]['product'] if 'product' in nm[host] else 'Unknown',
@@ -66,11 +100,19 @@ for host in nm.all_hosts():
             'version_443': nm[host]['tcp'][1]['version'] if 'version' in nm[host] else 'Unknown',
             'extra_info_113': nm[host]['tcp'][0]['extrainfo'] if 'extrainfo' in nm[host] else 'Unknown',
             'extra_info_443': nm[host]['tcp'][1]['extrainfo'] if 'extrainfo' in nm[host] else 'Unknown',
-           
+            'manufacturer': list(nm[host].get('vendor', {}).values())[0] if nm[host].get('vendor') else 'Unknown'
         }
+        # Safely parse protocol and port information
         for proto in nm[host].all_protocols():
-            lport = nm[host][proto].keys()
-            asset['protocols'][proto] = [{'port': port, 'state': nm[host][proto][port]['state']} for port in lport]
+            asset['protocols'][proto] = []
+            for port, port_info in nm[host][proto].items():
+                asset['protocols'][proto].append({
+                    'port': port,
+                    'state': port_info.get('state', 'unknown'),
+                    'product': port_info.get('product', ''),
+                    'version': port_info.get('version', ''),
+                    'extrainfo': port_info.get('extrainfo', '')
+                })
         assets.append(asset)
         
 print("Scan Info:", nm.scaninfo())
