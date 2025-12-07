@@ -7,6 +7,7 @@ It doesn't need to Intune or Snipe-It via API since it uses raw_intune_log.txt f
 import os
 import sys
 import json
+from json import decoder
 from typing import List, Dict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -29,6 +30,7 @@ class IntuneDebugCategorization:
             return []
             
         assets = []
+        decoder = json.JSONDecoder()
         try:
             with open(self.raw_log_path, 'r', encoding='utf-8') as file:
                 content = file.read()
@@ -39,8 +41,8 @@ class IntuneDebugCategorization:
                 try:
                     json_start = chunk.find('{')
                     if json_start == -1: continue
-                    json_text = chunk[json_start:] # JSON is the rest of the chunk
-                    assets.append(json.loads(json_text))
+                    asset, _ = decoder.raw_decode(chunk, json_start)
+                    assets.append(asset)
                 except json.JSONDecodeError as e:
                     print(f"Warning: Failed to decode a JSON chunk. Error: {e}")
                     continue
