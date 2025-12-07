@@ -35,7 +35,7 @@ class AssetDebugLogger:
         # Purpose-based log files
         self.log_files = {
             'intune': {
-                'raw': os.path.join(base_log_dir, 'intune_logs', 'intun_raw_data.log'),
+                'raw': os.path.join(base_log_dir, 'intune_logs', 'intune_raw_data.log'),
                 'parsed': os.path.join(base_log_dir, 'intune_logs', 'intune_parsed_data.log'),
                 'categorization': os.path.join(base_log_dir, 'intune_logs', 'intune_categorization_details.log'),
             },
@@ -52,7 +52,7 @@ class AssetDebugLogger:
                 'final_payload': os.path.join(base_log_dir, 'nmap_logs', 'nmap_final_payload.log'),
             },
             'ms365': {
-                'raw': os.path.join(base_log_dir, 'ms365_logs', 'ms365_raw_merged_data.log'),
+                'raw': os.path.join(base_log_dir, 'ms365_logs', 'ms365_raw_data.log'),
                 'parsed': os.path.join(base_log_dir, 'ms365_logs', 'ms365_parsed_data.log'),
                 'categorization': os.path.join(base_log_dir, 'ms365_logs', 'ms365_categorization_details.log'),
                 'summary': os.path.join(base_log_dir, 'ms365_logs', 'ms365_summary.log'),

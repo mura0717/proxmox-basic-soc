@@ -180,8 +180,9 @@ class Microsoft365Sync:
         merged_assets = self.merge_data()
         print(f"Total of {len(merged_assets)} unique assets after merging Intune and Teams data.")
         # Log the final transformed payload before sending to the matcher
-        if debug_logger.ms365_debug:
-            debug_logger.log_parsed_asset_data('ms365', merged_assets)
+        if debug_logger.ms365_debug: # Log each asset individually to the parsed log
+            for asset in merged_assets:
+                debug_logger.log_parsed_asset_data('ms365', asset)
         
         # Process the final list with the asset matcher
         results = self.asset_matcher.process_scan_data('ms365', merged_assets)
@@ -209,7 +210,8 @@ class Microsoft365Sync:
         # 3. Merge the already-fetched data and write the parsed data log
         merged_assets = self.merge_data(intune_data=transformed_intune, teams_data=transformed_teams)
         print(f"Found {len(merged_assets)} unique assets from Intune and Teams")
-        debug_logger.log_parsed_asset_data('ms365', merged_assets)
+        for asset in merged_assets: # Log each asset individually to the parsed log
+            debug_logger.log_parsed_asset_data('ms365', asset)
         print(f"\nMerged transformed data log file has been created at: {debug_logger.log_files['ms365']['parsed']}")
 
 def main():
