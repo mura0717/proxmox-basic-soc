@@ -325,6 +325,7 @@ class AssetMatcher:
             'Mobile Phones': 'Managed and Discovered Assets', 'Tablets': 'Managed and Discovered Assets',
             'IoT Devices': 'Managed and Discovered Assets', 'Servers': 'Managed and Discovered Assets',
             'Virtual Machines': 'Managed and Discovered Assets',
+            'Cameras': 'Network Infrastructure',
             'Cloud Resources': 'Cloud Resources (Azure)', 'Switches': 'Network Infrastructure',
             'Routers': 'Network Infrastructure', 'Firewalls': 'Network Infrastructure',
             'Access Points': 'Network Infrastructure', 'Network Devices': 'Network Infrastructure',
@@ -499,6 +500,7 @@ class AssetMatcher:
         
         model_map = {
             'server': 'Generic Server',
+            'camera': 'Generic Camera',
             'desktop': 'Generic Desktop',
             'laptop': 'Generic Laptop',
             'switch': 'Generic Switch',

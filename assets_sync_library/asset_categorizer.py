@@ -196,6 +196,18 @@ class AssetCategorizer:
         return None
 
     @classmethod
+    def _categorize_camera(cls, manufacturer: str, model: str, device_name: str) -> Optional[str]:
+        """Categorize a device as a Camera."""
+        clean_name = normalize_for_comparison(device_name)
+        if any(vendor in manufacturer for vendor in categorization_rules.CAMERA_RULES.get('vendors', [])):
+            return 'Camera'
+        if any(kw in model for kw in categorization_rules.CAMERA_RULES.get('model_keywords', [])):
+            return 'Camera'
+        if any(kw in clean_name for kw in categorization_rules.CAMERA_RULES.get('hostname_keywords', [])):
+            return 'Camera'
+        return None
+
+    @classmethod
     def _determine_cloud_provider(self, intune_device: Dict) -> str | None: 
         """ Determines the cloud provider based on device manufacturer and model. """ 
         raw_manufacturer = intune_device.get('manufacturer') or ''
@@ -312,6 +324,7 @@ class AssetCategorizer:
         if not device_type:
             device_type = (
                 cls._categorize_vm(manufacturer, model, device_name) or
+                cls._categorize_camera(manufacturer, model, device_name) or
                 cls._categorize_iot(model, manufacturer, os_type, device_name) or
                 cls._categorize_network_device(model, manufacturer, device_name) or
                 cls._categorize_ios(os_type, model, device_name) or

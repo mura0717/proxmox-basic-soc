@@ -353,6 +353,12 @@ STATUS_LABELS = {
 
 # Define Categories
 CATEGORIES = {
+    "Cameras": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
     "Desktops": {
         "category_type": "asset", 
         "use_default_eula": False,
@@ -465,6 +471,7 @@ CATEGORIES = {
 
 # Define Generic Models
 MODELS = [
+    {'name': 'Generic Camera', 'category': 'Cameras', 'manufacturer': 'Generic'},
     {'name': 'Generic Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},

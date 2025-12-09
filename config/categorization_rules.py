@@ -92,6 +92,12 @@ IOT_RULES = {
     'os_keywords': ['iot', 'androidaosp']
 }
 
+CAMERA_RULES = {
+    'vendors': ['hikvision'],
+    'model_keywords': ['camera', 'ipc'],
+    'hostname_keywords': ['cam', 'camera']
+}
+
 SERVICE_RULES = {
     'Domain Controller': {
         'service_keywords': ['domain', 'ldap', 'kerberos']
@@ -114,6 +120,7 @@ SERVICE_RULES = {
 }
 
 CATEGORY_MAP = {
+    'Camera': 'Cameras',
     'Server': 'Servers',
     'Switch': 'Switches',
     'Router': 'Routers',
