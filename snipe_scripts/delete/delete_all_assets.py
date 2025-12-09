@@ -1,0 +1,33 @@
+""" Removes all assets for a clean start. """
+
+import os
+import sys
+from dotenv import load_dotenv
+import urllib3
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
+# Only for testing when self-signed certs are used.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+from endpoints.assets import AssetService
+from endpoints.base import BaseCRUDService
+
+load_dotenv()
+
+asset_service = AssetService()
+assets = asset_service.get_all(limit=10000, refresh_cache=True)
+
+if assets != []:
+    print("Asset deletion started...")
+    for asset in assets:
+        asset_service.delete(asset['id'])
+        print(f"Soft-deleted asset: {asset.get('name', 'Unnamed')} (ID: {asset['id']})")
+    print("Soft-deletion of assets completed.")
+    print("\n--- Purging soft-deleted records from the database ---")
+    BaseCRUDService.purge_deleted_via_database()
+    print("Purging completed.")
+else:
+    print("There are no assets to delete.")
+ 
