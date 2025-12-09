@@ -113,7 +113,7 @@ class OpenVASScanner:
     
     def scan_all_assets(self) -> Dict:
         """Scan all known assets for vulnerabilities"""
-        from crud.base import BaseCRUDService
+        from snipe_api.services.crudbase import BaseCRUDService
         
         # Get all assets from Snipe-IT
         asset_service = BaseCRUDService('/api/v1/hardware', 'asset')

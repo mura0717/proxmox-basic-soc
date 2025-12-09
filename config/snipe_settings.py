@@ -1,5 +1,6 @@
-# Configuration and constants for Snipe-IT setup
-
+"""
+Configuration and constants for Snipe-IT setup
+"""
 import os
 from dotenv import load_dotenv
 
@@ -10,6 +11,7 @@ load_dotenv(dotenv_path=config_path)
 # API Configuration
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")
 SNIPE_API_TOKEN = os.getenv("SNIPE_API_TOKEN")
+SNIPE_CONFIG_DEBUG = os.getenv('SNIPE_CONFIG_DEBUG', '0') == '1'
 
 ssl_verify_str = os.getenv("VERIFY_SSL", "False").lower()
 VERIFY_SSL = ssl_verify_str in ['true', '1', 't', 'y', 'yes']
@@ -23,5 +25,5 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
-#---DEBUG PRINT---
-#print(f"SNIPE_URL: {SNIPE_URL} " + f"SNIPE_API_TOKEN: {SNIPE_API_TOKEN} " + f"SSL_VERIFY: {VERIFY_SSL}")
+if SNIPE_CONFIG_DEBUG:
+    print(f"SNIPE_URL: {SNIPE_URL} " + f"SNIPE_API_TOKEN: {SNIPE_API_TOKEN} " + f"SSL_VERIFY: {VERIFY_SSL}")

@@ -2,6 +2,19 @@
 Centralized Rule Definitions for Asset Categorization
 """
 
+NIC_VENDORS = {
+    'liteon', 'universal global scientific industrial', 'intel', 'realtek', 
+    'lcfc(hefei) electronics technology', 'hon hai precision', 'murata', 'azurewave'
+}
+
+MANUFACTURER_CLEANUP_RULES = {
+    "lcfc(hefei) electronics technology": {
+        "target_manufacturer": "Lenovo",
+        "remove_from_model": "LCFC HeFei Electronics Technology LENOVO"
+    }
+    # Add other complex rules here in the future
+}
+
 NETWORK_DEVICE_RULES = {
     'Firewall': {
         'vendors': ['cisco', 'meraki', 'fortinet', 'palo alto', 'sonicwall', 'juniper', 'checkpoint', 'sophos'],
@@ -9,23 +22,24 @@ NETWORK_DEVICE_RULES = {
     },
     'Switch': {
         'vendors': ['cisco', 'juniper', 'aruba', 'hp', 'dell', 'meraki', 'ubiquiti', 'd-link', 'netgear', 'tp-link'],
-        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'dgs', 'sg', 'tl-sg', 'usw']
+        'model_keywords': ['switch', 'catalyst', 'nexus', 'comware', 'procurve', 'ex', 'ms', 'edgeswitch', 'unifi switch', 'dgs', 'sg', 'usw'],
+        'hostname_prefixes': ['sw', 'switch', 'tl', 'tl-', 'tl-sg', 'hp-switch', 'dgs-'] 
     },
     'Router': {
         'vendors': ['cisco', 'juniper', 'mikrotik', 'ubiquiti', 'netgear', 'tp-link'],
-        'model_keywords': ['router', 'isr', 'asr', 'edgerouter']
+        'model_keywords': ['router', 'isr', 'asr', 'edgerouter', 'unifi gateway']
     },
     'Access Point': {
         'vendors': ['cisco', 'meraki', 'aruba', 'ubiquiti', 'ruckus', 'tp-link', 'unifi'],
         'model_keywords': ['access point', 'ap', 'aironet', 'unifi', 'mr', 'wap'],
-        'hostname_prefixes': ['ap']
+        'hostname_prefixes': ['ap', 'ap-', 'ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6', 'ap7', 'ap8', 'uap']
     }
 }
 
 VIRTUAL_MACHINE_RULES = {
     'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation'],
     'model_keywords': ['virtual machine', 'vm'],
-    'specific_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # These are temporary
+    'hostname_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # Temporary
 }
 
 SERVER_RULES = {
@@ -52,7 +66,7 @@ COMPUTER_RULES = {
         'probook', 'spectre', 'envy', 'surface laptop', 'studiobook',
         'proart', 'macbook', 'macbook pro', 'macbook air',
     },
-    'laptop_hostname_keywords': {'laptop'},
+    'laptop_hostname_keywords': {'laptop', 'book', 'mob', 'nb'},
     'laptop_vendor_prefixes': {
         'lenovo': ['20', '21', '40']
     },
@@ -64,7 +78,7 @@ COMPUTER_RULES = {
         'imac', 'mac mini', 'mac studio', 'mac pro', 'zbook', 'z840',
         'z640', 'z440', 'z240', 'z620', 'precision', 'proart station'
     },
-    'desktop_hostname_keywords': {'pc', 'desktop'},
+    'desktop_hostname_keywords': {'pc', 'desktop', 'wkst', 'workstation'},
     'desktop_vendor_prefixes': {
         'lenovo': ['10', '11', '12', '30']
     },
@@ -72,9 +86,16 @@ COMPUTER_RULES = {
 }
 
 IOT_RULES = {
-    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'a20', 'a30', 'poly'],
+    'manufacturer_keywords': ['yealink'],
+    'model_keywords': ['iot', 'meetingbar', 'roompanel', 'ctp', 'ctp18', 'a20', 'a30', 'poly', 'core2kit'],
     'hostname_keywords': ['meetingbar', 'roompanel', 'ctp', 'poly'],
-    'os_keywords': ['iot', 'androidaosp'] # Rely on model for Nmap, Intune handles Android OS better
+    'os_keywords': ['iot', 'androidaosp']
+}
+
+CAMERA_RULES = {
+    'vendors': ['hikvision'],
+    'model_keywords': ['camera', 'ipc'],
+    'hostname_keywords': ['cam', 'camera']
 }
 
 SERVICE_RULES = {
@@ -93,12 +114,13 @@ SERVICE_RULES = {
     'Web Server': {
         'service_keywords': ['http', 'https', 'nginx', 'apache', 'iis']
     },
-    'Network Device': { # Generic fallback if SNMP is seen
+    'Network Device': { 
         'service_keywords': ['snmp']
     }
 }
 
 CATEGORY_MAP = {
+    'Camera': 'Cameras',
     'Server': 'Servers',
     'Switch': 'Switches',
     'Router': 'Routers',
@@ -109,8 +131,8 @@ CATEGORY_MAP = {
     'Desktop': 'Desktops',
     'Tablet': 'Tablets',
     'Mobile Phone': 'Mobile Phones',
-    'Virtual Machine': 'Virtual Machines (On-Premises)',
-    'IoT Devices': 'IoT Devices',
+    'Virtual Machine': 'Virtual Machines',
+    'IoT Device': 'IoT Devices',
     # Map inferred models to existing categories
     'Windows Server': 'Servers',
     'Linux Server': 'Servers',

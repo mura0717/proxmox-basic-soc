@@ -1,6 +1,7 @@
 # Paste your definitions from your existing script:
 # CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, LOCATIONS
 
+# Define Custom Fields
 CUSTOM_FIELDS = {
     # Identity / IDs
     'azure_ad_id': {"name": "Azure AD Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Entra ID (formerly Azure AD)"},
@@ -12,6 +13,15 @@ CUSTOM_FIELDS = {
     'device_type': {"name": "Device Type", "element": "text", "format": "ANY", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
     'udid': {"name": "UDID", "element": "text", "format": "ANY", "help_text": "Unique Device Identifier"},
     'serial_number': {"name": "Serial Number", "element": "text", "format": "ANY", "help_text": "Serial number of the device"},
+     # Teams Specific Fields
+    'teams_device_id': {"name": "Teams Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Teams"},
+    'teams_device_type': {"name": "Teams Device Type", "element": "text", "format": "ANY", "help_text": "Type of Teams device (e.g., collaborationBar, teamsRoom)"},
+    'teams_health_status': {"name": "Teams Health Status", "element": "text", "format": "ANY", "help_text": "Health status reported by Teams (e.g., Healthy, Non-urgent)"},
+    'teams_activity_state': {"name": "Teams Activity State", "element": "text", "format": "ANY", "help_text": "Activity state reported by Teams (e.g., Idle, InUse)"},
+    'teams_last_modified': {"name": "Teams Last Modified", "element": "text", "format": "ANY", "help_text": "Last modified timestamp from Teams (ISO 8601)"},
+    'teams_created_date': {"name": "Teams Created Date", "element": "text", "format": "ANY", "help_text": "Creation timestamp from Teams (ISO 8601)"},
+    'teams_last_modified_by_id': {"name": "Teams Last Modified By ID", "element": "text", "format": "ANY", "help_text": "AAD User ID of the person who last modified the device in Teams"},
+    'teams_last_modified_by_name': {"name": "Teams Last Modified By Name", "element": "text", "format": "ANY", "help_text": "Display name of the person who last modified the device in Teams"},
 
     # Enrollment / Management
     'intune_managed': {"name": "Intune Managed", "element": "text", "format": "BOOLEAN", "help_text": "Is this device managed by Intune?"},
@@ -55,6 +65,7 @@ CUSTOM_FIELDS = {
     'primary_user_email': {"name": "Primary User Email", "element": "text", "format": "ANY", "help_text": "Primary user's email address"},
     'primary_user_display_name': {"name": "Primary User Display Name", "element": "text", "format": "ANY", "help_text": "Primary user's display name"},
     'managed_device_name': {"name": "Managed Device Name", "element": "text", "format": "ANY", "help_text": "The name of the device in Intune"},
+    'identity_type': {'name': 'Identity Type', 'element': 'text', 'format': 'ANY', 'help_text': 'User identity type (e.g., aadUser)'},
     'user_display_name': {"name": "User Display Name", "element": "text", "format": "ANY", "help_text": "Display name of the user"},
 
     # Software Inventory
@@ -67,7 +78,6 @@ CUSTOM_FIELDS = {
     'dns_hostname': {"name": "DNS Hostname", "element": "text", "format": "ANY", "help_text": "Hostname from DNS or discovery"},
     'mac_addresses': {"name": "MAC Addresses", "element": "textarea", "format": "ANY", "help_text": "Newline-separated list of all MACs (Wi-Fi/Ethernet)"},
     'last_seen_ip': {"name": "Last Seen IP", "element": "text", "format": "ANY", "help_text": "Last observed IP on the network"},
-    'intune_wifi_ipv4': {"name": "Intune WiFi IPv4", "element": "text", "format": "ANY", "help_text": "WiFi IPv4 address reported by Intune"},
     'wifi_subnet_id': {"name": "WiFi Subnet ID", "element": "text", "format": "ANY", "help_text": "WiFi subnet ID reported by Intune"},
     'wifi_mac': {"name": "WiFi MAC Address", "element": "text", "format": "ANY", "help_text": "MAC address for WiFi interface"},
     'ethernet_mac': {"name": "Ethernet MAC Address", "element": "text", "format": "ANY", "help_text": "MAC address for Ethernet interface"},
@@ -137,11 +147,6 @@ CUSTOM_FIELDS = {
     'certificates': {"name": "Certificates", "element": "textarea", "format": "ANY", "help_text": "JSON list of certificates and expiry dates"},
     'cert_expiry_warning': {"name": "Certificate Expiry Warning", "element": "text", "format": "ANY", "help_text": "Earliest certificate expiry date"},
 
-    # Asset Relationships
-    'parent_device_id': {"name": "Parent Device ID", "element": "text", "format": "ANY", "help_text": "ID of parent device (for VMs, containers)"},
-    'hypervisor_host': {"name": "Hypervisor Host", "element": "text", "format": "ANY", "help_text": "Host server for virtual machines"},
-    'connected_switch_port': {"name": "Connected Switch Port", "element": "text", "format": "ANY", "help_text": "Switch and port this device connects to"},
-
     # Cloud Resource Information
     'cloud_provider': {"name": "Cloud Provider", "element": "text", "format": "ANY", "help_text": "Cloud provider (Azure, AWS, GCP, On-Premise)"},
     'azure_resource_id': {"name": "Azure Resource ID", "element": "text", "format": "ANY", "help_text": "ARM resource ID"},
@@ -156,28 +161,26 @@ CUSTOM_FIELDS = {
     'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY', "help_text": "Th last scan that the device was seen."}
 }
 
-# Define which fields belong to which fieldset, using our reference keys
+# Define Custom Fieldsets
 CUSTOM_FIELDSETS = {
-    # Comprehensive fieldset for all managed assets
-     "Managed Assets (Intune)": [
-        'azure_ad_id', 'intune_device_id', 'managed_device_name', 'intune_managed',
-        'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
-        'intune_compliance', 'management_state', 'primary_user_upn',
-        'primary_user_display_name', 'os_platform', 'os_version',
-        'manufacturer', 'model', 'encrypted', 'supervised', 'jailbroken',
-        'total_storage', 'free_storage',
-        'last_update_source', 'last_update_at'   
-    ],
-    
-    "Managed Assets (Intune+Nmap)": [
+    # This is the primary, comprehensive fieldset for all managed endpoints (Laptops, Desktops, etc.).
+    # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.
+    "Managed and Discovered Assets": [
         # Identity / IDs
         'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
 
         # Enrollment / Management
         'intune_managed', 'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
         'managed_by', 'management_name', 'intune_category', 'ownership', 'device_state', 'management_state',
-        'intune_compliance', 'compliance_grace_expiration', 'management_cert_expiration',
-        'enrollment_profile_name', 'require_user_enrollment_approval', 'activation_lock_bypass_code',
+        'intune_compliance', 'compliance_grace_expiration', 'management_cert_expiration', 'enrollment_profile_name', 
+        'require_user_enrollment_approval', 'activation_lock_bypass_code',
+        
+        # Teams Specific Fields
+        'teams_device_id', 'teams_device_type', 'teams_health_status', 'teams_activity_state',
+        'teams_last_modified', 'teams_created_date', 'teams_last_modified_by_id', 'teams_last_modified_by_name',
+        
+        # User Identity Type
+        'identity_type',
 
         # OS / Platform
         'os_platform', 'os_version', 'sku_family', 'join_type', 'product_name',
@@ -192,7 +195,8 @@ CUSTOM_FIELDSETS = {
         'installed_software', 'software_count', 'last_software_scan', 'configuration_manager_client_enabled_features',
 
         # Networking
-        'dns_hostname', 'mac_addresses', 'wifi_mac', 'ethernet_mac', 'last_seen_ip', 'intune_wifi_ipv4', 'wifi_subnet_id', 'device_type',
+        'dns_hostname', 'device_type', 'mac_addresses', 
+        'wifi_mac', 'ethernet_mac', 'last_seen_ip', 'wifi_subnet_id', 'wifi_ipv4', 'wifi_subnet',
 
         # Cellular / Device comms
         'phone_number', 'imei', 'iccid', 'meid', 'eid', 'subscriber_carrier', 'cellular_technology',
@@ -201,7 +205,8 @@ CUSTOM_FIELDSETS = {
         'total_storage', 'free_storage', 'physical_memory_in_bytes',
 
         # EAS
-        'eas_activation_id', 'eas_activated', 'eas_activation_date', 'eas_last_sync', 'eas_reason', 'eas_status', 'exchange_access_state', 'exchange_access_state_reason',
+        'eas_activation_id', 'eas_activated', 'eas_activation_date', 'eas_last_sync', 
+        'eas_reason', 'eas_status', 'exchange_access_state', 'exchange_access_state_reason',
 
         # Nmap
         'first_seen_date', 'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 'nmap_open_ports',
@@ -214,27 +219,7 @@ CUSTOM_FIELDSETS = {
         'cybersec_risk_level', 'cybersec_needs_investigation', 'cybersec_last_seen',
 
         # Notes
-        'discovery_note',
-    ],
-
-    # Focused fieldset for core managed asset details
-    "Managed Assets - Core Info": [
-        'azure_ad_id', 'intune_device_id', 'primary_user_upn', 'primary_user_display_name',
-        'ownership', 'device_state', 'intune_compliance', 'intune_last_sync',
-        'os_platform', 'os_version', 'product_name', 'device_type'
-    ],
-
-    # Focused fieldset for network and security details
-    "Managed Assets - Network and Security": [
-        'dns_hostname', 'mac_addresses', 'intune_wifi_ipv4', 'wifi_subnet_id', 'last_seen_ip',
-        'encrypted', 'supervised', 'jailbroken', 'security_patch_level',
-        'nmap_last_scan', 'nmap_open_ports', 'open_ports_hash', 'connected_switch_port'
-    ],
-
-    # Focused fieldset for hardware and system details
-    "Managed Assets - Hardware Details": [
-        'total_storage', 'free_storage', 'processor_architecture', 'tpm_manufacturer_id',
-        'tpm_manufacturer_version', 'bios_version', 'sku_family', 'parent_device_id', 'hypervisor_host'
+        'discovery_note', 'notes'
     ],
 
     # Software inventory details
@@ -257,7 +242,7 @@ CUSTOM_FIELDSETS = {
         'first_seen_date', 'last_update_source', 'last_update_at',
         'nmap_last_scan', 'nmap_os_guess', 'os_accuracy', 
         'nmap_open_ports', 'open_ports_hash', 'nmap_discovered_services', 'nmap_script_output',
-        'discovery_note', 'last_update_source', 'last_update_at'
+        'discovery_note'
     ],
     
     # Cellular and mobile device specifics
@@ -279,11 +264,10 @@ CUSTOM_FIELDSETS = {
         'cloud_provider', 'azure_resource_id', 'azure_subscription_id', 'azure_resource_group',
         'azure_region', 'azure_tags_json', 'last_update_source', 'last_update_at'
     ],
-
     # All network identifiers for easy reference
     "All Network Identifiers": [
         'dns_hostname', 'wifi_mac', 'ethernet_mac', 'mac_addresses', 'wifi_ipv4',
-        'wifi_subnet', 'last_seen_ip', 'connected_switch_port'
+        'wifi_subnet', 'last_seen_ip'
     ],
     
     # Exchange and Remote Assistance
@@ -301,10 +285,22 @@ CUSTOM_FIELDSETS = {
 STATUS_LABELS = {
     "Managed - Intune": {
         "type": "deployable", 
-        "color": "#3498db",
+        "color": "#36a9e0",
         "show_in_nav": False,
         "default_label": False
         },
+    "Managed - M365": {
+        "type": "deployable",
+        "color": "#0078d4",
+        "show_in_nav": True,
+        "default_label": False
+    },
+    "Managed - Teams": {
+        "type": "deployable",
+        "color": "#4b53bc",
+        "show_in_nav": True,
+        "default_label": False
+    },
     "Discovered - Nmap": {
         "type": "deployable", 
         "color": "#f1c40f",
@@ -357,6 +353,12 @@ STATUS_LABELS = {
 
 # Define Categories
 CATEGORIES = {
+    "Cameras": {
+        "category_type": "asset",
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+    },
     "Desktops": {
         "category_type": "asset", 
         "use_default_eula": False,
@@ -441,7 +443,7 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
         },
-    "Virtual Machines (On-Premises)": {
+    "Virtual Machines": {
         "category_type": "asset", 
         "use_default_eula": False,
         "require_acceptance": False,
@@ -469,6 +471,7 @@ CATEGORIES = {
 
 # Define Generic Models
 MODELS = [
+    {'name': 'Generic Camera', 'category': 'Cameras', 'manufacturer': 'Generic'},
     {'name': 'Generic Unknown Device', 'category': 'Other Assets', 'manufacturer': 'Generic'},
     {'name': 'Generic Desktop', 'category': 'Desktops', 'manufacturer': 'Generic'},
     {'name': 'Generic Laptop', 'category': 'Laptops', 'manufacturer': 'Generic'},
@@ -483,7 +486,7 @@ MODELS = [
     {'name': 'Generic Tablet', 'category': 'Tablets', 'manufacturer': 'Generic'},
     {'name': 'Generic IoT Device', 'category': 'IoT Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Storage Device', 'category': 'Storage Devices', 'manufacturer': 'Generic'},
-    {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines (On-Premises)', 'manufacturer': 'Generic'},
+    {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines', 'manufacturer': 'Generic'},
     {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},    
     {'name': 'Generic Domain Controller', 'category': 'Servers', 'manufacturer': 'Generic'},
     {'name': 'Generic Database Server', 'category': 'Servers', 'manufacturer': 'Generic'},
