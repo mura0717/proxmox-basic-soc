@@ -11,14 +11,14 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from endpoints.fields import FieldService
-from endpoints.fieldsets import FieldsetService
-from endpoints.manufacturers import ManufacturerService
-from endpoints.models import ModelService
-from endpoints.status_labels import StatusLabelService
-from endpoints.categories import CategoryService
-from endpoints.locations import LocationService
-from endpoints.base import BaseCRUDService
+from snipe_api.services.fields import FieldService
+from snipe_api.services.fieldsets import FieldsetService
+from snipe_api.services.manufacturers import ManufacturerService
+from snipe_api.services.models import ModelService
+from snipe_api.services.status_labels import StatusLabelService
+from snipe_api.services.categories import CategoryService
+from snipe_api.services.locations import LocationService
+from snipe_api.services.crudbase import BaseCRUDService
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
