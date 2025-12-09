@@ -1,2 +1,1 @@
-# snipe-it-asset-management
-snipe it asset management automation for an ubuntu server for a cyber-security project
+A basic Security Operations Center built upon proxmox cluster.
