@@ -7,7 +7,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_settings import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.snipe_config import SNIPE_URL, HEADERS, VERIFY_SSL
 
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

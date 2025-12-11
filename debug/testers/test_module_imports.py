@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 print("Testing module imports...")
 
 try:
-    from config.snipe_settings import SNIPE_URL
+    from config.snipe_config import SNIPE_URL
     print("✓ Config import works")
 except Exception as e:
     print(f"✗ Config import failed: {e}")

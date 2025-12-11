@@ -11,7 +11,7 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_settings import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.snipe_config import SNIPE_URL, HEADERS, VERIFY_SSL
 
 def get_valid_defaults():
     """Get first available model, status, and category IDs"""
