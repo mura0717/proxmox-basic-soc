@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-env_config_path = os.getenv("ENV_FILE")
+env_config_path = os.getenv("ENV_FILE_PATH")
 load_dotenv(dotenv_path=env_config_path)
 
 # API Configuration

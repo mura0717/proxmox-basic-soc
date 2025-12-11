@@ -16,6 +16,7 @@ ZABBIX_USER=
 ZABBIX_PASS=
 
 # WAZUH Configuration
+WAZUH_MANAGER_IP=
 WAZUH_URL=
 WAZUH_USER=
 WAZUH_PASS=
@@ -36,7 +37,9 @@ APACHE_CONF_FILE =
 SNIPE_IT_ENV_FILE = 
 SNIPE_IT_DIR = 
 
-ENV_FILE = # Path to .env file that is used by various scripts
+ENV_FILE_PATH = # Path to .env file that is used by various scripts
+
+PROXY_HOST=
 
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0

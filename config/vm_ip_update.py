@@ -13,13 +13,17 @@ It will prompt for a password if not run as root.
 import os
 import sys
 import subprocess
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+ENV_FILE_PATH = os.getenv("ENV_FILE_PATH") or "/opt/diabetes/proxmox-basic-soc/.env"
+load_dotenv(ENV_FILE_PATH)
 
 # --- Configuration ---
 NGINX_CONF_FILE = os.getenv("NGINX_CONF_FILE") or "/etc/nginx/sites-available/snipe-it"
 APACHE_CONF_FILE = os.getenv("APACHE_CONF_FILE") or "/etc/apache2/sites-available/snipe-it.conf"
 SNIPE_IT_ENV_FILE = os.getenv("SNIPE_IT_ENV_FILE") or "/var/www/snipe-it/.env"
 SNIPE_IT_DIR = os.getenv("SNIPE_IT_DIR") or "/var/www/snipe-it"
-ENV_FILE = os.getenv("ENV_FILE") or "/opt/diabetes/proxmox-basic-soc/.env"
 
 # --- Sudo Elevation ---
 # If the script is not run as root, re-launch it with sudo.
@@ -91,7 +95,7 @@ def main():
     update_config_file(NGINX_CONF_FILE, ip_address)
     update_config_file(APACHE_CONF_FILE, ip_address)
     update_config_file(SNIPE_IT_ENV_FILE, ip_address)
-    update_config_file(ENV_FILE, ip_address)
+    update_config_file(ENV_FILE_PATH, ip_address)
 
     print("\n--- Restarting Services ---")
     if os.path.exists("/etc/nginx/sites-enabled/snipe-it"):
