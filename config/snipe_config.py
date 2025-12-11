@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-config_path = "/opt/snipeit-sync/snipe-it-asset-management/.env"
-load_dotenv(dotenv_path=config_path)
+env_config_path = os.getenv("ENV_FILE")
+load_dotenv(dotenv_path=env_config_path)
 
 # API Configuration
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")

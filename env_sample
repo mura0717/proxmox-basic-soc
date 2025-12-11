@@ -29,6 +29,15 @@ AZURE_CLIENT_ID=
 AZURE_CLIENT_SECRET=
 AZURE_DEBUG=0
 
+# Config Paths
+NGINX_CONF_FILE = 
+APACHE_CONF_FILE = 
+
+SNIPE_IT_ENV_FILE = 
+SNIPE_IT_DIR = 
+
+ENV_FILE = # Path to .env file that is used by various scripts
+
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0
 
