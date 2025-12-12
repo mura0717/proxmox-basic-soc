@@ -26,7 +26,7 @@ except Exception as e:
     print(f"✗ CRUD base import failed: {e}")
 
 try:
-    from assets_sync_library.asset_matcher import AssetMatcher
+    from asset_sync_library.asset_matcher import AssetMatcher
     print("✓ Asset matcher import works")
 except Exception as e:
     print(f"✗ Asset matcher import failed: {e}")

@@ -12,7 +12,7 @@ from typing import List, Dict
 # Add the project root directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from assets_sync_library.asset_categorizer import AssetCategorizer
+from asset_sync_library.asset_categorizer import AssetCategorizer
 from debug.tools.asset_debug_logger import debug_logger
 
 class Microsoft365DebugCategorization:

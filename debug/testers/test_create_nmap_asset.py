@@ -9,7 +9,7 @@ from pprint import pprint
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.asset_matcher import AssetMatcher
+from asset_sync_library.asset_matcher import AssetMatcher
 
 SAMPLE_PARSED_ASSET_DATA =   {
     "last_seen_ip": "192.168.1.176",

@@ -20,8 +20,8 @@ from snipe_api.services.assets import AssetService
 from snipe_api.services.locations import LocationService
 from snipe_api.services.fields import FieldService
 from snipe_api.services.fieldsets import FieldsetService
-from assets_sync_library.asset_categorizer import AssetCategorizer
-from assets_sync_library.asset_finder import AssetFinder
+from asset_sync_library.asset_categorizer import AssetCategorizer
+from asset_sync_library.asset_finder import AssetFinder
 from config.snipe_schema import CUSTOM_FIELDS, MODELS
 from config.network_config import STATIC_IP_MAP
 from debug.tools.asset_debug_logger import debug_logger

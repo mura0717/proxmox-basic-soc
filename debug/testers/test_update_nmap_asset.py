@@ -10,7 +10,7 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.asset_matcher import AssetMatcher
+from asset_sync_library.asset_matcher import AssetMatcher
 
 # --- CONFIGURATION: CHOOSE ONE IDENTIFIER ---
 # Use the Asset ID, Asset Tag, OR Serial Number to find the asset you want to test.
