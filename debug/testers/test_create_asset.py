@@ -53,10 +53,10 @@ def test_create_asset():
         
     try:
         response = requests.post(
-            f"{SNIPE_URL}/api/v1/hardware",
-            headers=HEADERS,
+            f"{SNIPE.url}/api/v1/hardware",
+            headers=SNIPE.headers,
             json=test_asset,
-            verify=VERIFY_SSL
+            verify=SNIPE.verify_ssl
         )
         
         print(f"Status Code: {response.status_code}")
