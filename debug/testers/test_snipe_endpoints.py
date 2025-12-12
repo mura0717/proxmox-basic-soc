@@ -9,7 +9,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_config import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.settings import SNIPE
 
 endpoints = [
     ('/api/v1/hardware', 'Assets'),
@@ -45,7 +45,7 @@ def check_endpoints():
     for endpoint, name in endpoints:
         print(f"Checking {name} endpoint...")    
         try:
-            response = requests.get(f"{SNIPE_URL}{endpoint}", headers=HEADERS, verify=VERIFY_SSL)
+            response = requests.get(f"{SNIPE.url}{endpoint}", headers=SNIPE.headers, verify=SNIPE.verify_ssl)
             if response.status_code == 200:
                 positive_results.append((name, "✓ ", response.status_code))
             else:

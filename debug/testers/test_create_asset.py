@@ -11,21 +11,21 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_config import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.settings import SNIPE
 
 def get_valid_defaults():
     """Get first available model, status, and category IDs"""
     try:
         # Get first model
-        model_resp = requests.get(f"{SNIPE_URL}/api/v1/models?limit=1", headers=HEADERS, verify=VERIFY_SSL)
+        model_resp = requests.get(f"{SNIPE.url}/api/v1/models?limit=1", headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         model_id = model_resp.json().get('rows', [{}])[0].get('id', 1) if model_resp.status_code == 200 else 1
         
         # Get first status
-        status_resp = requests.get(f"{SNIPE_URL}/api/v1/statuslabels?limit=1", headers=HEADERS, verify=VERIFY_SSL)
+        status_resp = requests.get(f"{SNIPE.url}/api/v1/statuslabels?limit=1", headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         status_id = status_resp.json().get('rows', [{}])[0].get('id', 1) if status_resp.status_code == 200 else 1
         
         # Get first category
-        category_resp = requests.get(f"{SNIPE_URL}/api/v1/categories?limit=1", headers=HEADERS, verify=VERIFY_SSL)
+        category_resp = requests.get(f"{SNIPE.url}/api/v1/categories?limit=1", headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         category_id = category_resp.json().get('rows', [{}])[0].get('id', 1) if category_resp.status_code == 200 else 1
         
         return model_id, status_id, category_id

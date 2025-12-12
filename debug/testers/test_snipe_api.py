@@ -11,7 +11,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_config import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.settings import SNIPE
 
 def snipeit_api_debug():
     print("=== Snipe-IT Asset Debug ===")
@@ -19,8 +19,8 @@ def snipeit_api_debug():
     # Test API connection
     print("1. Testing API connection...")
     try:
-        response = requests.get(f"{SNIPE_URL}/api/v1/statuslabels", 
-                              headers=HEADERS, verify=VERIFY_SSL)
+        response = requests.get(f"{SNIPE.url}/api/v1/statuslabels", 
+                              headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             print("✓ API connection successful")
         else:
@@ -33,8 +33,8 @@ def snipeit_api_debug():
     # Check total assets
     print("\n2. Checking total assets...")
     try:
-        response = requests.get(f"{SNIPE_URL}/api/v1/hardware?limit=1", 
-                              headers=HEADERS, verify=VERIFY_SSL)
+        response = requests.get(f"{SNIPE.url}/api/v1/hardware?limit=1", 
+                              headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()
             total = data.get('total', 0)
@@ -47,8 +47,8 @@ def snipeit_api_debug():
     # Get all assets with details
     print("\n3. Checking recent assets...")
     try:
-        response = requests.get(f"{SNIPE_URL}/api/v1/hardware?limit=100&sort=created_at&order=desc", 
-                              headers=HEADERS, verify=VERIFY_SSL)
+        response = requests.get(f"{SNIPE.url}/api/v1/hardware?limit=100&sort=created_at&order=desc", 
+                              headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()
             assets = data.get('rows', [])
@@ -69,8 +69,8 @@ def snipeit_api_debug():
     # Check custom fields setup
     print("\n4. Checking custom fields...")
     try:
-        response = requests.get(f"{SNIPE_URL}/api/v1/fields", 
-                              headers=HEADERS, verify=VERIFY_SSL)
+        response = requests.get(f"{SNIPE.url}/api/v1/fields", 
+                              headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()
             fields = data.get('rows', [])
