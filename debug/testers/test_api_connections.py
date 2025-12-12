@@ -25,6 +25,7 @@ def print_status(service, status, message):
 
 def test_snipe():
     print("\n--- Testing Snipe-IT ---")
+    print(f"Target URL: {SNIPE.url}")
     try:
         # Test connectivity and auth by fetching current user info
         response = requests.get(
@@ -44,6 +45,7 @@ def test_snipe():
 
 def test_zabbix():
     print("\n--- Testing Zabbix ---")
+    print(f"Target URL: {ZABBIX.url}")
     
     # 1. Test Version (No Auth required usually for apiinfo.version)
     try:
@@ -67,6 +69,8 @@ def test_zabbix():
                 print_status("Zabbix Version", False, f"Unexpected response: {result}")
         else:
             print_status("Zabbix Version", False, f"HTTP {response.status_code}")
+            if response.status_code == 404:
+                print("    -> Hint: Zabbix URL might need '/zabbix' prefix (e.g., http://ip/zabbix/api_jsonrpc.php)")
     except Exception as e:
         print_status("Zabbix API", False, f"Connection Error: {e}")
         return
@@ -77,8 +81,8 @@ def test_zabbix():
             "jsonrpc": "2.0",
             "method": "user.login",
             "params": {
-                "user": ZABBIX.user,
-                "password": ZABBIX.password
+                "user": ZABBIX.zabbix_user,
+                "password": ZABBIX.zabbix_pass
             },
             "id": 2
         }
@@ -89,6 +93,11 @@ def test_zabbix():
             verify=False,
             timeout=10
         )
+        
+        if response.status_code != 200:
+            print_status("Zabbix Auth", False, f"HTTP {response.status_code}")
+            return
+            
         result = response.json()
         
         if 'result' in result:
@@ -114,11 +123,13 @@ def test_zabbix():
 
 def test_wazuh():
     print("\n--- Testing Wazuh ---")
+    print(f"API URL: {WAZUH.api_url}")
+    print(f"API User: {WAZUH.wazuh_user}")
     
     # 1. Wazuh API
     try:
         # Wazuh API usually uses Basic Auth to get a JWT token
-        auth = (WAZUH.api_user, WAZUH.api_password)
+        auth = (WAZUH.wazuh_user, WAZUH.wazuh_pass)
         
         # Attempt to authenticate
         response = requests.get(
@@ -147,6 +158,8 @@ def test_wazuh():
 
     # 2. Wazuh Indexer (OpenSearch)
     try:
+        print(f"Indexer URL: {WAZUH.indexer_url}")
+        
         auth = (WAZUH.indexer_user, WAZUH.indexer_password)
         response = requests.get(
             WAZUH.indexer_url,

@@ -67,21 +67,26 @@ class SnipeConfig:
 
 @dataclass
 class ZabbixConfig:
-    user: str = os.getenv('ZABBIX_USER')
-    password: str = os.getenv('ZABBIX_PASS')
+    zabbix_user: str = os.getenv('ZABBIX_USER')
+    zabbix_pass: str = os.getenv('ZABBIX_PASS')
     
     if USE_PROXY:
-        url: str = os.getenv('ZABBIX_URL', f'http://{PROXY_HOST}:{PROXY_PORTS["zabbix"]}/api_jsonrpc.php')
+        url: str = os.getenv('ZABBIX_URL', f'http://{PROXY_HOST}:{PROXY_PORTS["zabbix"]}/zabbix/api_jsonrpc.php')
     else:
-        url: str = os.getenv('ZABBIX_URL', f'http://{DIRECT_IPS["zabbix"]}:{DIRECT_PORTS["zabbix"]}/api_jsonrpc.php')
+        url: str = os.getenv('ZABBIX_URL', f'http://{DIRECT_IPS["zabbix"]}:{DIRECT_PORTS["zabbix"]}/zabbix/api_jsonrpc.php')
     
+    def __post_init__(self):
+        # Auto-correct URL if /zabbix is missing (common config error)
+        if self.url and '/api_jsonrpc.php' in self.url and '/zabbix/' not in self.url:
+            self.url = self.url.replace('/api_jsonrpc.php', '/zabbix/api_jsonrpc.php')
+
 
 @dataclass
 class WazuhConfig:
     indexer_user: str = os.getenv('WAZUH_INDEXER_USER')
     indexer_password: str = os.getenv('WAZUH_INDEXER_PASSWORD')
-    api_user: str = os.getenv('WAZUH_API_USER')
-    api_password: str = os.getenv('WAZUH_API_PASSWORD')
+    wazuh_user: str = os.getenv('WAZUH_USER')
+    wazuh_pass: str = os.getenv('WAZUH_PASS')
     
     event_log: Path = Path('/opt/diabetes/proxmox-basic-soc/logs/wazuh_events.jsonl')
     
@@ -92,12 +97,18 @@ class WazuhConfig:
         api_url: str = os.getenv('WAZUH_API_URL', f'https://{DIRECT_IPS["wazuh"]}:{DIRECT_PORTS["wazuh_api"]}').rstrip('/')
         indexer_url: str = os.getenv('WAZUH_INDEXER_URL', f'https://{DIRECT_IPS["wazuh"]}:{DIRECT_PORTS["wazuh_indexer"]}').rstrip('/')
 
+    def __post_init__(self):
+        if not self.wazuh_user or not self.wazuh_pass:
+            print("WARNING: Wazuh API credentials (WAZUH_API_USER, WAZUH_API_PASSWORD) are missing from .env")
+
+
 # 4. Singleton Instances
 SNIPE = SnipeConfig()
 ZABBIX = ZabbixConfig()
 WAZUH = WazuhConfig()
 
 if HYDRA_DEBUG:
-    print(f"SNIPE_URL: {SNIPE.url} " + f"SNIPE_API_TOKEN: {SNIPE.snipe_api_key} " + f"SSL_VERIFY: {SNIPE.verify_ssl}")
-    print(f"ZABBIX_URL: {ZABBIX.url} " + f"ZABBIX_USER: {ZABBIX.user} " + f"ZABBIX_PASS: {ZABBIX.password}")
+    masked_key = SNIPE.snipe_api_key[:5] + "..." if SNIPE.snipe_api_key else "None"
+    print(f"SNIPE_URL: {SNIPE.url} " + f"SNIPE_API_TOKEN: {masked_key} " + f"SSL_VERIFY: {SNIPE.verify_ssl}")
+    print(f"ZABBIX_URL: {ZABBIX.url} " + f"ZABBIX_USER: {ZABBIX.zabbix_user} " + f"ZABBIX_PASS: {ZABBIX.zabbix_pass}")
     print(f"WAZUH_API_URL: {WAZUH.api_url} " + f"WAZUH_INDEXER_URL: {WAZUH.indexer_url}")
