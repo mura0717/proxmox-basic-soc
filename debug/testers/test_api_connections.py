@@ -156,28 +156,27 @@ def test_wazuh():
     except Exception as e:
         print_status("Wazuh API", False, f"Connection Error: {e}")
 
-    # 2. Wazuh Indexer (OpenSearch)
+    # 2. Wazuh Ingestion (Log File Check) - REPLACED INDEXER CHECK
+    print(f"Ingestion Method: Log File + Agent")
+    print(f"Log Path: {WAZUH.event_log}")
+    
     try:
-        print(f"Indexer URL: {WAZUH.wazuh_indexer_url}")
-        
-        auth = (WAZUH.indexer_user, WAZUH.indexer_password)
-        response = requests.get(
-            WAZUH.wazuh_indexer_url,
-            auth=auth,
-            verify=False,
-            timeout=10
-        )
-        if response.status_code == 200:
-            data = response.json()
-            # OpenSearch/Elasticsearch root endpoint returns version info
-            version_info = data.get('version', {})
-            distro = version_info.get('distribution', 'Elasticsearch')
-            number = version_info.get('number', 'Unknown')
-            print_status("Wazuh Indexer", True, f"Connected to {distro} {number}")
+        # Check if directory exists
+        log_dir = WAZUH.event_log.parent
+        if not log_dir.exists():
+             print_status("Wazuh Log", False, f"Directory does not exist: {log_dir}")
+             return
+
+        # Check write permissions
+        if os.access(log_dir, os.W_OK):
+             print_status("Wazuh Log", True, "Log directory is writable")
         else:
-            print_status("Wazuh Indexer", False, f"HTTP {response.status_code}")
+             print_status("Wazuh Log", False, "Permission Denied writing to log directory")
+             
+        print("    ! Note: Direct Indexer connection skipped (Using Log+Agent method)")
+
     except Exception as e:
-        print_status("Wazuh Indexer", False, f"Connection Error: {e}")
+        print_status("Wazuh Log", False, f"Error: {e}")
 
 if __name__ == "__main__":
     print("=== Central API Connectivity Test ===")

@@ -93,13 +93,16 @@ class WazuhConfig:
             host = PROXY_HOST
             api_port = PROXY_PORTS['wazuh_api']
             idx_port = PROXY_PORTS['wazuh_indexer']
+            
+            self.wazuh_api_url = f"http://{host}:{api_port}"
+            self.wazuh_indexer_url = f"http://{host}:{idx_port}"
         else:
             host = HOST_IPS['wazuh']
             api_port = DIRECT_PORTS['wazuh_api']
             idx_port = DIRECT_PORTS['wazuh_indexer']
 
-        self.wazuh_api_url = f"https://{host}:{api_port}"
-        self.wazuh_indexer_url = f"https://{host}:{idx_port}"
+            self.wazuh_api_url = f"https://{host}:{api_port}"
+            self.wazuh_indexer_url = f"https://{host}:{idx_port}"
 
 # 4. Singleton Instances
 SNIPE = SnipeConfig()

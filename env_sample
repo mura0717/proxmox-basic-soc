@@ -20,15 +20,15 @@ ZABBIX_PASS=
 
 # WAZUH Configuration
 WAZUH_HOST_IP=
-WAZUH_API_URL=
-WAZUH_INDEXER_URL=
 WAZUH_DIRECT_API_PORT=
 WAZUH_DIRECT_INDEXER_PORT=
 WAZUH_PROXY_API_PORT=
 WAZUH_PROXY_INDEXER_PORT=
 WAZUH_API_USER=
 WAZUH_API_PASS=
-WAZUH_EVENT_LOG_PATH=
+WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/
+WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read.
+WAZUH_EVENT_LOG_PATH= # Could be at ./proxmox-basic-soc/logs/wazuh_logs & It could be JSONL or plain text format.
 
 # Verification of SSL certs
 SSL_VERIFY=False
