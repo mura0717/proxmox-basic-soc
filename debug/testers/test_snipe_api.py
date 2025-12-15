@@ -19,7 +19,7 @@ def snipeit_api_debug():
     # Test API connection
     print("1. Testing API connection...")
     try:
-        response = requests.get(f"{SNIPE.url}/api/v1/statuslabels", 
+        response = requests.get(f"{SNIPE.snipe_url}/api/v1/statuslabels", 
                               headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             print("✓ API connection successful")
@@ -33,7 +33,7 @@ def snipeit_api_debug():
     # Check total assets
     print("\n2. Checking total assets...")
     try:
-        response = requests.get(f"{SNIPE.url}/api/v1/hardware?limit=1", 
+        response = requests.get(f"{SNIPE.snipe_url}/api/v1/hardware?limit=1", 
                               headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()
@@ -47,7 +47,7 @@ def snipeit_api_debug():
     # Get all assets with details
     print("\n3. Checking recent assets...")
     try:
-        response = requests.get(f"{SNIPE.url}/api/v1/hardware?limit=100&sort=created_at&order=desc", 
+        response = requests.get(f"{SNIPE.snipe_url}/api/v1/hardware?limit=100&sort=created_at&order=desc", 
                               headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()
@@ -69,7 +69,7 @@ def snipeit_api_debug():
     # Check custom fields setup
     print("\n4. Checking custom fields...")
     try:
-        response = requests.get(f"{SNIPE.url}/api/v1/fields", 
+        response = requests.get(f"{SNIPE.snipe_url}/api/v1/fields", 
                               headers=SNIPE.headers, verify=SNIPE.verify_ssl)
         if response.status_code == 200:
             data = response.json()

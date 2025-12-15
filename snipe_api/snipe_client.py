@@ -22,7 +22,7 @@ def make_api_request(method, endpoint, max_retries=3, **kwargs):
         **kwargs: Additional arguments for requests
     """
     
-    url = f"{SNIPE.url}{endpoint}" if not endpoint.startswith(SNIPE.url) else endpoint
+    url = f"{SNIPE.snipe_url}{endpoint}" if not endpoint.startswith(SNIPE.snipe_url) else endpoint
     
     for attempt in range(max_retries+1): # +1 to include initial attempt
         try:

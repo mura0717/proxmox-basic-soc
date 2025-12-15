@@ -25,11 +25,11 @@ def print_status(service, status, message):
 
 def test_snipe():
     print("\n--- Testing Snipe-IT ---")
-    print(f"Target URL: {SNIPE.url}")
+    print(f"Target URL: {SNIPE.snipe_url}")
     try:
         # Test connectivity and auth by fetching current user info
         response = requests.get(
-            f"{SNIPE.url}/api/v1/users/me", 
+            f"{SNIPE.snipe_url}/api/v1/users/me", 
             headers=SNIPE.headers, 
             verify=SNIPE.verify_ssl,
             timeout=10
@@ -45,7 +45,7 @@ def test_snipe():
 
 def test_zabbix():
     print("\n--- Testing Zabbix ---")
-    print(f"Target URL: {ZABBIX.url}")
+    print(f"Target URL: {ZABBIX.zabbix_url}")
     
     # 1. Test Version (No Auth required usually for apiinfo.version)
     try:
@@ -56,7 +56,7 @@ def test_zabbix():
             "id": 1
         }
         response = requests.post(
-            ZABBIX.url,
+            ZABBIX.zabbix_url,
             json=payload,
             verify=False,
             timeout=10
@@ -81,14 +81,14 @@ def test_zabbix():
             "jsonrpc": "2.0",
             "method": "user.login",
             "params": {
-                "username": ZABBIX.zabbix_user,
+                "username": ZABBIX.zabbix_username,
                 "password": ZABBIX.zabbix_pass
             },
             "id": 2
         }
         
         response = requests.post(
-            ZABBIX.url,
+            ZABBIX.zabbix_url,
             json=payload,
             verify=False,
             timeout=10
@@ -112,7 +112,7 @@ def test_zabbix():
                 "id": 3,
                 "auth": auth_token
             }
-            requests.post(ZABBIX.url, json=logout_payload, verify=False)
+            requests.post(ZABBIX.zabbix_url, json=logout_payload, verify=False)
             
         elif 'error' in result:
             error_msg = result['error'].get('data') or result['error'].get('message')
@@ -123,17 +123,17 @@ def test_zabbix():
 
 def test_wazuh():
     print("\n--- Testing Wazuh ---")
-    print(f"API URL: {WAZUH.api_url}")
-    print(f"API User: {WAZUH.wazuh_user}")
+    print(f"API URL: {WAZUH.wazuh_api_url}")
+    print(f"API User: {WAZUH.wazuh_api_user}")
     
     # 1. Wazuh API
     try:
         # Wazuh API usually uses Basic Auth to get a JWT token
-        auth = (WAZUH.wazuh_user, WAZUH.wazuh_pass)
+        auth = (WAZUH.wazuh_api_user, WAZUH.wazuh_api_pass)
         
         # Attempt to authenticate
         response = requests.get(
-            f"{WAZUH.api_url}/security/user/authenticate",
+            f"{WAZUH.wazuh_api_url}/security/user/authenticate",
             auth=auth,
             verify=False,
             timeout=10
@@ -146,7 +146,7 @@ def test_wazuh():
             # Optional: Get Manager Info using the token
             if token:
                 headers = {"Authorization": f"Bearer {token}"}
-                info_resp = requests.get(f"{WAZUH.api_url}/manager/info", headers=headers, verify=False)
+                info_resp = requests.get(f"{WAZUH.wazuh_api_url}/manager/info", headers=headers, verify=False)
                 if info_resp.status_code == 200:
                     ver = info_resp.json().get('data', {}).get('version')
                     print(f"    > Manager Version: {ver}")
@@ -158,11 +158,11 @@ def test_wazuh():
 
     # 2. Wazuh Indexer (OpenSearch)
     try:
-        print(f"Indexer URL: {WAZUH.indexer_url}")
+        print(f"Indexer URL: {WAZUH.wazuh_indexer_url}")
         
         auth = (WAZUH.indexer_user, WAZUH.indexer_password)
         response = requests.get(
-            WAZUH.indexer_url,
+            WAZUH.wazuh_indexer_url,
             auth=auth,
             verify=False,
             timeout=10
