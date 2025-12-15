@@ -52,7 +52,7 @@ class SnipeConfig:
         url: str = os.getenv("SNIPE_URL", f"http://{PROXY_HOST}:{PROXY_PORTS['snipe']}").rstrip("/")
     else:
         url: str = os.getenv("SNIPE_URL", f"http://{DIRECT_IPS['snipe']}:{DIRECT_PORTS['snipe']}").rstrip("/")
-        
+    
     def __post_init__(self):
         if not self.snipe_api_key:
             raise RuntimeError("CRITICAL: SNIPE_API_TOKEN is missing from .env")
@@ -74,7 +74,7 @@ class ZabbixConfig:
         url: str = os.getenv('ZABBIX_URL', f'http://{PROXY_HOST}:{PROXY_PORTS["zabbix"]}/zabbix/api_jsonrpc.php')
     else:
         url: str = os.getenv('ZABBIX_URL', f'http://{DIRECT_IPS["zabbix"]}:{DIRECT_PORTS["zabbix"]}/zabbix/api_jsonrpc.php')
-    
+        
     def __post_init__(self):
         # Auto-correct URL if /zabbix is missing (common config error)
         if self.url and '/api_jsonrpc.php' in self.url and '/zabbix/' not in self.url:
@@ -85,8 +85,8 @@ class ZabbixConfig:
 class WazuhConfig:
     indexer_user: str = os.getenv('WAZUH_INDEXER_USER')
     indexer_password: str = os.getenv('WAZUH_INDEXER_PASSWORD')
-    wazuh_user: str = os.getenv('WAZUH_USER')
-    wazuh_pass: str = os.getenv('WAZUH_PASS')
+    wazuh_user: str = os.getenv('WAZUH_API_USER')
+    wazuh_pass: str = os.getenv('WAZUH_API_PASS')
     
     event_log: Path = Path('/opt/diabetes/proxmox-basic-soc/logs/wazuh_events.jsonl')
     

@@ -81,7 +81,7 @@ def test_zabbix():
             "jsonrpc": "2.0",
             "method": "user.login",
             "params": {
-                "user": ZABBIX.zabbix_user,
+                "username": ZABBIX.zabbix_user,
                 "password": ZABBIX.zabbix_pass
             },
             "id": 2
