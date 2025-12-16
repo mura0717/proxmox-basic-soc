@@ -3,12 +3,12 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 print("Testing module imports...")
 
 try:
-    from config.snipe_config import SNIPE_URL
+    from config.settings import SNIPE
     print("✓ Config import works")
 except Exception as e:
     print(f"✗ Config import failed: {e}")

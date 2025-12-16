@@ -16,6 +16,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from config.settings import SNIPE, ZABBIX, WAZUH
+from snipe_api.snipe_client import make_api_request
 
 def print_status(service, status, message):
     symbol = "✓" if status else "✗"
@@ -28,18 +29,16 @@ def test_snipe():
     print(f"Target URL: {SNIPE.snipe_url}")
     try:
         # Test connectivity and auth by fetching current user info
-        response = requests.get(
-            f"{SNIPE.snipe_url}/api/v1/users/me", 
-            headers=SNIPE.headers, 
-            verify=SNIPE.verify_ssl,
-            timeout=10
-        )
-        if response.status_code == 200:
+        # Using make_api_request ensures we test the exact logic used by the app
+        response = make_api_request("GET", "/api/v1/users/me", timeout=10)
+        
+        if response and response.status_code == 200:
             data = response.json()
             user = data.get('username', 'Unknown')
             print_status("Snipe-IT API", True, f"Connected as '{user}'")
         else:
-            print_status("Snipe-IT API", False, f"HTTP {response.status_code} - {response.text[:100]}")
+            status = response.status_code if response else "No Response"
+            print_status("Snipe-IT API", False, f"HTTP {status}")
     except Exception as e:
         print_status("Snipe-IT API", False, f"Connection Error: {e}")
 
