@@ -1,25 +1,19 @@
 import os
-import sys
-import requests
 import urllib3
-import json
-import time
 import subprocess
+from pathlib import Path
 from dotenv import load_dotenv
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
-from endpoints.assets import AssetService
-from endpoints.base import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
+from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+
 
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
-# Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from dotenv import load_dotenv
-config_path = "/opt/snipeit-sync/snipe-it-asset-management/.env"
-load_dotenv(dotenv_path=config_path)
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 SNIPE_URL = (os.getenv("SNIPE_URL") or "").rstrip("/")
 SNIPE_API_TOKEN = os.getenv("SNIPE_API_TOKEN")
@@ -34,39 +28,6 @@ HEADERS = {
 }
 
 VERIFY_SSL = False # Set to True in production if using valid certs
-
-def make_api_request(method, url, max_retries=3, **kwargs):
-    # Helper function to make API requests with retry logic
-    for attempt in range(max_retries+1): # +1 to include initial attempt
-        try:
-            response = requests.request(method, url, headers=HEADERS, verify=VERIFY_SSL, **kwargs)
-            if response.status_code == 429:
-                if attempt < max_retries:
-                    try:
-                        error_data = response.json()
-                        retry_after = int(error_data.get("retryAfter", 15)) + 1
-                    except (ValueError, json.JSONDecodeError):
-                        retry_after = 15 # Default if parsing fails
-                    print(f"-> Rate limited on {method} {url}. Retrying in {retry_after}s... (Attempt {attempt+1}/{max_retries})")
-                    time.sleep(retry_after)
-                    continue
-                else:
-                    print(f"-> Max retries exceeded for {method} {url}. Aborting this request.")
-                    response.raise_for_status() # Raise the final 429 error
-
-            # For any other non-successful status code, raise an exception
-            response.raise_for_status()
-
-            return response
-
-        except requests.exceptions.RequestException as e:
-            if attempt < max_retries:
-                print(f"-> Network error ({e}). Retrying in 10s... (Attempt {attempt+1}/{max_retries})")
-                time.sleep(10)
-            else:
-                print(f"-> A persistent network error occurred. Aborting.")
-                raise e
-    return None
 
 def get_allfields_map():
     """Fetches all fields from Snipe-IT. Now automatically robust."""

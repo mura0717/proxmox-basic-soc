@@ -1,20 +1,12 @@
 """ Removes all models for a clean start. """
 
-import os
-import sys
-from dotenv import load_dotenv
 import urllib3
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
-# Only for testing when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from endpoints.models import ModelService
-from endpoints.base import BaseCRUDService
-
-load_dotenv()
+from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 model_service = ModelService()
 models = model_service.get_all(limit=10000, refresh_cache=True)

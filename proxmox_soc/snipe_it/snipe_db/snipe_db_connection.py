@@ -5,13 +5,16 @@ Snipe-IT DB connection.
 
 import os
 import pymysql
+from pathlib import Path
 from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 class SnipeItDbConnection():
     
     def __init__(self):
-        load_dotenv()
-        self.db_host = os.getenv("DB_HOST", "snipeit-db")
+        self.db_host = os.getenv("DB_HOST")
         self.db_user = os.getenv("DB_USER")
         self.db_pass = os.getenv("DB_PASS")
         self.db_name = os.getenv("DB_NAME")
@@ -25,7 +28,6 @@ class SnipeItDbConnection():
             return connection
         except Exception as e:
             print(f"✗ Database connection failed: {e}")
-            # If connection failed, return None
             return None
     
     def db_disconnect(self, connection):

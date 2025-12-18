@@ -12,8 +12,8 @@ import urllib3
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from endpoints.categories import CategoryService
-from endpoints.base import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

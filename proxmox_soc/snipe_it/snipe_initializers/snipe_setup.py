@@ -4,21 +4,17 @@ Snipe-IT Setup Script
 Initializes Snipe-IT with custom fields, fieldsets, status labels, categories, and locations
 """
 
-import os
-import sys
 import argparse
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from snipe_api.services.fields import FieldService
-from snipe_api.services.fieldsets import FieldsetService
-from snipe_api.services.manufacturers import ManufacturerService
-from snipe_api.services.models import ModelService
-from snipe_api.services.status_labels import StatusLabelService
-from snipe_api.services.categories import CategoryService
-from snipe_api.services.locations import LocationService
-from snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
+from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
+from proxmox_soc.snipe_it.snipe_api.services.manufacturers import ManufacturerService
+from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
+from proxmox_soc.snipe_it.snipe_api.services.status_labels import StatusLabelService
+from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
+from proxmox_soc.snipe_it.snipe_api.services.locations import LocationService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 

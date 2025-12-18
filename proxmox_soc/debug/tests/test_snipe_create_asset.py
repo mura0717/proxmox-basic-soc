@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Test creating a single asset via API with default valid values
 """

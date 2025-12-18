@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Nmap scanner with integrated sudo handling
+Nmap Scanner 
 """
 import os
 import sys
@@ -10,14 +10,12 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from asset_engine.asset_matcher import AssetMatcher
-from debug.tools.asset_debug_logger import debug_logger
-from debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
-from utils.mac_utils import normalize_mac
-from config.network_config import NMAP_SCAN_RANGES
-from config.nmap_profiles import SCAN_PROFILES
+from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
+from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
+from proxmox_soc.config.network_config import NMAP_SCAN_RANGES
+from proxmox_soc.config.nmap_profiles import SCAN_PROFILES
+from proxmox_soc.utils.mac_utils import normalize_mac
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"

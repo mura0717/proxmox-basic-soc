@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 """
-SNMP Scanner for network device discovery
+SNMP Scanner for network device discovery 
+!NOT YET IMPLEMENTED!
 """
 
 import os
-import sys
+import ipaddress
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
-import ipaddress
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from asset_engine.asset_matcher import AssetMatcher
 from pysnmp.hlapi import (
     getCmd,
     SnmpEngine,
@@ -21,6 +17,8 @@ from pysnmp.hlapi import (
     ObjectType,
     ObjectIdentity
 )
+
+from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
 
 class SNMPScanner:
     """SNMP network device scanner"""

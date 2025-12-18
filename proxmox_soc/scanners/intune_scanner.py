@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 """
-Intune Integration for Snipe-IT
-Syncs assets from Microsoft Intune to Snipe-IT
+Intune Integration
+Syncs assets from Microsoft Intune to Asset Engine
 """
 
-import os
-import sys
 import requests
 import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from asset_engine.asset_matcher import AssetMatcher
-from debug.tools.asset_debug_logger import debug_logger 
-from config.ms365_service import Microsoft365Service 
-from debug.categorize_from_logs.intune_categorize_from_logs import intune_debug_categorization 
-from utils.mac_utils import combine_macs, normalize_mac
+from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
+from proxmox_soc.config.ms365_service import Microsoft365Service 
+from proxmox_soc.debug.categorize_from_logs.intune_categorize_from_logs import intune_debug_categorization 
+from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac
 
 class IntuneScanner:
     """Microsoft Intune synchronization service"""

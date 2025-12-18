@@ -2,16 +2,16 @@
 
 """
 A simple Nmap scanner class for demonstration and testing purposes.
-This class is not intended for production use.
 """
 
 import os
 import sys
 import nmap
 import json
+from pathlib import Path
 from datetime import datetime
 
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class SimpleNmapScanner:
 
@@ -26,7 +26,7 @@ class SimpleNmapScanner:
 
     def log_result(self, data: list, log_file: str = 'simple_nmap_scan_result.log'):
         """Logs the scan result data to a file."""
-        log_dir = os.path.join(project_root, "logs", "debug_logs", "nmap_logs")
+        log_dir = os.path.join(BASE_DIR, "logs", "debug_logs", "nmap_logs")
         full_log_path = os.path.join(log_dir, log_file)
 
         timestamp = datetime.now().isoformat()

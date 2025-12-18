@@ -1,13 +1,10 @@
-import os
-import sys
+#!/usr/bin/env python3
 import urllib3
 import json
 import time
 import requests
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from config.settings import SNIPE
+from proxmox_soc.config.settings import SNIPE
 
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

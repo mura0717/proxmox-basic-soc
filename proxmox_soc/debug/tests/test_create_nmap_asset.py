@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Test single Nmap discovered asset synchronization via Asset Matcher to Snipe-IT
 for debugging purposes with regards to categorization and matching.

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 OpenVAS Vulnerability Scanner Integration
+!NOT YET IMPLEMENTED!
 """
 
 import os
 import time
 from datetime import datetime, timezone
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import Gmp
 from gvm.transforms import EtreeTransform

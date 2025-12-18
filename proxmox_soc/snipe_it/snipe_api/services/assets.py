@@ -1,11 +1,8 @@
 """CRUD service for Snipe-IT assets"""
-import os
-import sys
+
 from typing import Dict, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 class AssetService(BaseCRUDService):
     """Service for managing categories"""

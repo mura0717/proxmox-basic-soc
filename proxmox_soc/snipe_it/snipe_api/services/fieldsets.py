@@ -1,13 +1,10 @@
 """CRUD service for Snipe-IT fieldsets"""
-import os
-import sys
-from typing import List, Dict, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from typing import List, Dict
 
-from snipe_api.services.crudbase import BaseCRUDService
-from services.fields import FieldService
-from snipe_api.snipe_client import make_api_request
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
+from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
 class FieldsetService(BaseCRUDService):
     """Service for managing fieldsets"""

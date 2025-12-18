@@ -1,6 +1,10 @@
+"""
+SNMP GET test using pysnmp and asyncio
+!NOT YET IMPLEMENTED!
+"""
+
 import asyncio
 from pysnmp.hlapi.v3arch.asyncio import *
-
 
 async def run():
     snmpEngine = SnmpEngine()

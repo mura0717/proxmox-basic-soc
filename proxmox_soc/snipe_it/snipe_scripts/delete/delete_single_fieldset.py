@@ -6,14 +6,10 @@ This script is designed for cleanup and maintenance. It will prompt for
 confirmation before deleting any assets.
 """
 
-import os
-import sys
 import urllib3
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-from endpoints.fieldsets import FieldsetService
-from endpoints.base import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
