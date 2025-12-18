@@ -13,7 +13,7 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.asset_matcher import AssetMatcher
+from asset_sync_library.asset_matcher import AssetMatcher
 from debug.tools.asset_debug_logger import debug_logger
 from config.ms365_service import Microsoft365Service
 from debug.categorize_from_logs.teams_categorize_from_logs import teams_debug_categorization
