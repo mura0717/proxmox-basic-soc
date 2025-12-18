@@ -3,7 +3,6 @@ Test single Nmap asset UPDATE synchronization via Asset Matcher to Snipe-IT.
 This script is designed to debug the update workflow for an existing asset.
 """
 
-import os
 import sys
 
 from proxmox_soc.asset_engine.asset_matcher import AssetMatcher

@@ -5,15 +5,17 @@ Checks connections and authentication for Snipe-IT, Zabbix, and Wazuh (API & Ind
 """
 
 import os
-import sys
 import requests
 import urllib3
+from pathlib import Path
 
 # Suppress insecure request warnings for self-signed certs
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from proxmox_soc.config.settings import SNIPE, ZABBIX, WAZUH
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+
+CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "settings.py"
 
 def print_status(service, status, message):
     symbol = "✓" if status else "✗"
@@ -176,7 +178,7 @@ def test_wazuh():
 
 if __name__ == "__main__":
     print("=== Central API Connectivity Test ===")
-    print(f"Loaded Settings from: {os.path.abspath(os.path.dirname(sys.modules['config.settings'].__file__))}")
+    print(f"Loaded Settings from: {CONFIG_PATH}")
     
     test_snipe()
     test_zabbix()
