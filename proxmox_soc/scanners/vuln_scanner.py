@@ -11,7 +11,8 @@ from typing import Dict, Optional
 from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import Gmp
 from gvm.transforms import EtreeTransform
-from ..asset_engine.asset_matcher import AssetMatcher
+from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
 
 class OpenVASScanner:
     """OpenVAS/GVM vulnerability scanner integration"""
@@ -114,7 +115,6 @@ class OpenVASScanner:
     
     def scan_all_assets(self) -> Dict:
         """Scan all known assets for vulnerabilities"""
-        from snipe_api.services.crudbase import BaseCRUDService
         
         # Get all assets from Snipe-IT
         asset_service = BaseCRUDService('/api/v1/hardware', 'asset')
