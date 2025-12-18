@@ -5,11 +5,10 @@ Debug script to API responses
 
 import os
 import sys
-import requests
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from config.snipe_settings import SNIPE_URL, HEADERS, VERIFY_SSL
+from snipe_api.snipe_client import make_api_request
 
 endpoints = [
     ('/api/v1/hardware', 'Assets'),
@@ -45,9 +44,15 @@ def check_endpoints():
     for endpoint, name in endpoints:
         print(f"Checking {name} endpoint...")    
         try:
-            response = requests.get(f"{SNIPE_URL}{endpoint}", headers=HEADERS, verify=VERIFY_SSL)
-            if response.status_code == 200:
-                positive_results.append((name, "✓ ", response.status_code))
+            response = make_api_request("GET", endpoint)
+            if response and response.status_code == 200:
+                data = response.json()
+                info = "✓"
+                # Check for list response to show count (merged from test_snipeit_endpoints.py)
+                if isinstance(data, dict) and 'total' in data:
+                    info = f"✓ ({data['total']} items)"
+                
+                positive_results.append((name, info, response.status_code))
             else:
                 negative_results.append((name, "✗ ", response.status_code))
                 # Continue to the next endpoint instead of stopping

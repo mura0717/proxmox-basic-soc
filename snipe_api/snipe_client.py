@@ -7,7 +7,7 @@ import requests
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config.snipe_settings import SNIPE_URL, HEADERS, VERIFY_SSL
+from config.settings import SNIPE
 
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -22,11 +22,11 @@ def make_api_request(method, endpoint, max_retries=3, **kwargs):
         **kwargs: Additional arguments for requests
     """
     
-    url = f"{SNIPE_URL}{endpoint}" if not endpoint.startswith(SNIPE_URL) else endpoint
+    url = f"{SNIPE.snipe_url}{endpoint}" if not endpoint.startswith(SNIPE.snipe_url) else endpoint
     
     for attempt in range(max_retries+1): # +1 to include initial attempt
         try:
-            response = requests.request(method, url, headers=HEADERS, verify=VERIFY_SSL, **kwargs)
+            response = requests.request(method, url, headers=SNIPE.headers, verify=SNIPE.verify_ssl, **kwargs)
             if response.status_code == 429:
                 if attempt < max_retries:
                     try:

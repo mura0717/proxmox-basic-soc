@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-A utility script to update the IP address for the Snipe-IT instance
-across various configuration files.
+A utility script to update the IP address for the Snipe-IT application
+in the Nginx configuration and .env files after a VM reboot.
 
 This is useful for development environments on a VM where the IP may
 change after a reboot.
@@ -13,12 +13,17 @@ It will prompt for a password if not run as root.
 import os
 import sys
 import subprocess
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+ENV_FILE_PATH = os.getenv("ENV_FILE_PATH") or "/opt/diabetes/proxmox-basic-soc/.env"
+load_dotenv(ENV_FILE_PATH)
 
 # --- Configuration ---
-NGINX_CONF_FILE = "/etc/nginx/sites-available/snipe-it"
-SNIPE_IT_ENV_FILE = "/var/www/snipe-it/.env"
-SNIPE_SYNC_ENV_FILE = "/opt/snipeit-sync/snipe-it-asset-management/.env"
-SNIPE_IT_DIR = "/var/www/snipe-it"
+NGINX_CONF_FILE = os.getenv("NGINX_CONF_FILE") or "/etc/nginx/sites-available/snipe-it"
+APACHE_CONF_FILE = os.getenv("APACHE_CONF_FILE") or "/etc/apache2/sites-available/snipe-it.conf"
+SNIPE_IT_ENV_FILE = os.getenv("SNIPE_IT_ENV_FILE") or "/var/www/snipe-it/.env"
+SNIPE_IT_DIR = os.getenv("SNIPE_IT_DIR") or "/var/www/snipe-it"
 
 # --- Sudo Elevation ---
 # If the script is not run as root, re-launch it with sudo.
@@ -76,6 +81,7 @@ def update_config_file(file_path: str, new_ip: str):
         fr"sed -i -E "
         f"'s|(APP_URL=https?://)[^/]+|\\1{new_ip}|g; "
         f"s|(server_name )[^;]+;|\\1{new_ip};|g; "
+        f"s|(ServerName\\s+)[^\\s]+|\\1{new_ip}|g; "
         f"s|(SNIPE_URL=https?://)[^/]+|\\1{new_ip}|g' "
         f"{file_path}"
     )
@@ -87,11 +93,15 @@ def main():
 
     print("\n--- Updating Configuration Files ---")
     update_config_file(NGINX_CONF_FILE, ip_address)
+    update_config_file(APACHE_CONF_FILE, ip_address)
     update_config_file(SNIPE_IT_ENV_FILE, ip_address)
-    update_config_file(SNIPE_SYNC_ENV_FILE, ip_address)
+    update_config_file(ENV_FILE_PATH, ip_address)
 
     print("\n--- Restarting Services ---")
-    run_command("systemctl restart nginx", "Restarting Nginx")
+    if os.path.exists("/etc/nginx/sites-enabled/snipe-it"):
+        run_command("systemctl restart nginx", "Restarting Nginx")
+    if os.path.exists("/etc/apache2/sites-enabled/snipe-it.conf"):
+        run_command("systemctl restart apache2", "Restarting Apache")
 
     print("\n--- Clearing Snipe-IT Caches ---")
     # Run artisan commands as the 'www-data' user from the correct directory.

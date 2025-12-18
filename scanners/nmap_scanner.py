@@ -12,7 +12,7 @@ from typing import List, Dict, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.asset_matcher import AssetMatcher
+from asset_sync_library.asset_matcher import AssetMatcher
 from debug.tools.asset_debug_logger import debug_logger
 from debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
 from utils.mac_utils import normalize_mac

@@ -2,7 +2,6 @@ requests
 python-dotenv
 python-crontab
 msal
-msgraph_beta
 pysnmp
 python-gvm
 pyzabbix

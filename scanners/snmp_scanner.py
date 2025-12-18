@@ -11,7 +11,7 @@ import ipaddress
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from assets_sync_library.asset_matcher import AssetMatcher
+from asset_sync_library.asset_matcher import AssetMatcher
 from pysnmp.hlapi import (
     getCmd,
     SnmpEngine,

@@ -3,12 +3,12 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 print("Testing module imports...")
 
 try:
-    from config.snipe_settings import SNIPE_URL
+    from config.settings import SNIPE
     print("✓ Config import works")
 except Exception as e:
     print(f"✗ Config import failed: {e}")
@@ -26,7 +26,7 @@ except Exception as e:
     print(f"✗ CRUD base import failed: {e}")
 
 try:
-    from assets_sync_library.asset_matcher import AssetMatcher
+    from asset_sync_library.asset_matcher import AssetMatcher
     print("✓ Asset matcher import works")
 except Exception as e:
     print(f"✗ Asset matcher import failed: {e}")
