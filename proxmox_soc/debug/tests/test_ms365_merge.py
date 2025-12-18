@@ -6,7 +6,7 @@ to display the final combined asset.
 
 import json
 
-from proxmox_soc.asset_engine.ms365_sync import Microsoft365Sync
+from proxmox_soc.workflows.ms365_aggregator import Microsoft365Sync
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
 from proxmox_soc.scanners.teams_scanner import TeamsScanner
 
