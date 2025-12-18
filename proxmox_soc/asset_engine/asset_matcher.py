@@ -4,29 +4,26 @@ Consolidates data from multiple sources and syncs with Snipe-IT
 """
 
 import os
-import sys
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Dict, List, Optional, Any
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from snipe_api.services.status_labels import StatusLabelService
-from snipe_api.services.categories import CategoryService
-from snipe_api.services.manufacturers import ManufacturerService
-from snipe_api.services.models import ModelService
-from snipe_api.services.assets import AssetService
-from snipe_api.services.locations import LocationService
-from snipe_api.services.fields import FieldService
-from snipe_api.services.fieldsets import FieldsetService
-from asset_engine.asset_categorizer import AssetCategorizer
-from asset_engine.asset_finder import AssetFinder
-from config.snipe_schema import CUSTOM_FIELDS, MODELS
-from config.network_config import STATIC_IP_MAP
-from debug.tools.asset_debug_logger import debug_logger
-from utils.mac_utils import normalize_mac
-from utils.text_utils import normalize_for_comparison
+from proxmox_soc.snipe_it.snipe_api.services.status_labels import StatusLabelService
+from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
+from proxmox_soc.snipe_it.snipe_api.services.manufacturers import ManufacturerService
+from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
+from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
+from proxmox_soc.snipe_it.snipe_api.services.locations import LocationService
+from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
+from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
+from proxmox_soc.asset_engine.asset_categorizer import AssetCategorizer
+from proxmox_soc.asset_engine.asset_finder import AssetFinder
+from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, MODELS
+from proxmox_soc.config.network_config import STATIC_IP_MAP
+from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
+from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.text_utils import normalize_for_comparison
 
 class AssetMatcher:
     

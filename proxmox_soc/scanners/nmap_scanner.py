@@ -23,8 +23,7 @@ NO_ROOT_COMMANDS = ['web', 'list', 'help']
 COMMAND = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
 IS_CATEGORIZATION_DEBUG = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
 
-# Auto-elevate to root for scan commands.
-# Only attempt to elevate if we are NOT in categorization debug mode.
+# Auto-elevate to root for scan commands if NOT in categorization debug mode.
 if not IS_CATEGORIZATION_DEBUG and COMMAND not in NO_ROOT_COMMANDS:
     if os.geteuid() != 0:
         user_euid = os.geteuid()
