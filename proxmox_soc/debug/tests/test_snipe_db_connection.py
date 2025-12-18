@@ -13,9 +13,7 @@ from proxmox_soc.snipe_it.snipe_db.snipe_db_connection import SnipeItDbConnectio
 def main():
     db_manager = SnipeItDbConnection()
     connection = db_manager.db_connect()
-    # The connection is only returned if successful
     if connection: 
-        # If you were to do work, it would be here.
         print("Closing the test connection.")
         db_manager.db_disconnect(connection)
                 

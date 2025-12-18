@@ -22,8 +22,9 @@ class SnipeItDbConnection():
     def db_connect(self):
         """Establishes and returns a database connection."""
         connection = None
+        print("Attempting to connect to Snipe-IT database...")
         try:
-            connection = pymysql.connect(host=self.db_host, user=self.db_user, password=self.db_pass, database=self.db_name)
+            connection = pymysql.connect(host=self.db_host, user=self.db_user, password=self.db_pass, database=self.db_name, connect_timeout=5)
             print("✓ Database connection successful")
             return connection
         except Exception as e:

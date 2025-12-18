@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Test script for module imports
+Verifies that key modules can be imported without errors.
+"""
+
 print("Testing module imports...")
 
 try:
