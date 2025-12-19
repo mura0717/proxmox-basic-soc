@@ -8,7 +8,7 @@ import urllib3
 # Suppress insecure request warnings for self-signed certs 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from proxmox_soc.snipe_it.snipe_db.snipe_db_connection import SnipeItDbConnection
+from proxmox_soc.snipe_it.snipe_db.snipe_db_connect import SnipeItDbConnection
 
 def main():
     db_manager = SnipeItDbConnection()
