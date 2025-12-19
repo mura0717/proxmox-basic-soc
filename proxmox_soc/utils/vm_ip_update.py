@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 A utility script to update the IP address for the Snipe-IT application
 in the Nginx configuration and .env files after a VM reboot.

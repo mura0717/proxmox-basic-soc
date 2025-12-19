@@ -107,12 +107,12 @@ def ms365_merge_tester():
     ms365_sync = Microsoft365Sync()
 
     # 2. Transform the raw data into the standardized Snipe-IT format
-    transformed_raw_intune = intune_scanner.transform_intune_to_snipeit(intune_asset_raw_sample)
+    transformed_raw_intune = intune_scanner.normalize_asset(intune_asset_raw_sample)
     print("\n--- Transformed Intune Asset ---")
     print(json.dumps(transformed_raw_intune, indent=2))
     print("--- End of Transformed Intune Asset ---")
     
-    transformed_raw_teams = teams_scanner.transform_teams_to_snipeit(teams_asset_raw_sample)
+    transformed_raw_teams = teams_scanner.normalize_asset(teams_asset_raw_sample)
     print("\n--- Transformed Teams Asset ---")
     print(json.dumps(transformed_raw_teams, indent=2))
     print("--- End of Transformed Teams Asset ---")

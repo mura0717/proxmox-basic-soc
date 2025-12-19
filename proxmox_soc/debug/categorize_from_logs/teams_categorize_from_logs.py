@@ -57,7 +57,7 @@ class TeamsDebugCategorization:
         output_path = self.categorization_log_path
         with open(output_path, 'w', encoding='utf-8') as f:
             for asset in raw_assets:
-                transformed = sync.transform_teams_to_snipeit(asset)
+                transformed = sync.normalize_asset(asset)
                 categorization = AssetCategorizer.categorize(transformed)
                 out = {
                     "display_name": transformed.get("primary_user_display_name"),

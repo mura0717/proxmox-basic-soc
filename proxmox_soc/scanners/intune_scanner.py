@@ -78,7 +78,7 @@ class IntuneScanner:
             macs.append(normalize_mac(asset['ethernetMacAddress']))
         return combine_macs(macs)
     
-    def transform_intune_to_snipeit(self, intune_asset: Dict) -> Dict:
+    def normalize_asset(self, intune_asset: Dict) -> Dict:
         """Transform Intune asset data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
         
@@ -198,7 +198,7 @@ class IntuneScanner:
 
         print("Fetching and transforming Intune assets...")
         raw_assets = self.get_intune_assets()
-        transformed_assets = [self.transform_intune_to_snipeit(asset) for asset in raw_assets]
+        transformed_assets = [self.normalize_asset(asset) for asset in raw_assets]
         
         if debug_logger.intune_debug:
             debug_logger.clear_logs('intune') # Clear logs before writing new data

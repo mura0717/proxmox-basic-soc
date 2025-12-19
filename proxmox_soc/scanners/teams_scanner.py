@@ -69,7 +69,7 @@ class TeamsScanner:
         return assets
  
             
-    def transform_teams_to_snipeit(self, teams_asset: Dict) -> Dict:
+    def normalize_asset(self, teams_asset: Dict) -> Dict:
         """Transform Teams asset data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
         hardware_details = teams_asset.get('hardwareDetail', {})
@@ -136,7 +136,7 @@ class TeamsScanner:
 
         print("Fetching and transforming Teams assets...")
         raw_assets = self.get_teams_assets()
-        transformed_assets = [self.transform_teams_to_snipeit(asset) for asset in raw_assets]
+        transformed_assets = [self.normalize_asset(asset) for asset in raw_assets]
 
         if debug_logger.teams_debug:
             debug_logger.clear_logs('teams') # Clear logs before writing new data

@@ -16,9 +16,9 @@ from proxmox_soc.snipe_it.snipe_api.services.locations import LocationService
 from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
 from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
 from proxmox_soc.asset_engine.asset_categorizer import AssetCategorizer
-from config.snipe_schema import CUSTOM_FIELDS, MODELS
-from utils.mac_utils import normalize_mac
-from utils.text_utils import normalize_for_comparison
+from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, MODELS
+from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.text_utils import normalize_for_comparison
 
 class SnipePayloadBuilder:
     """
