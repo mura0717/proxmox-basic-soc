@@ -29,8 +29,8 @@ WAZUH_PROXY_API_PORT=
 WAZUH_PROXY_INDEXER_PORT=
 WAZUH_API_USER=
 WAZUH_API_PASS=
-WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/
-WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read.
+WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
+WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
 WAZUH_EVENT_LOG_PATH= # Could be at ./proxmox-basic-soc/logs/wazuh_logs & It could be JSONL or plain text format.
 
 # Verification of SSL certs
@@ -55,6 +55,12 @@ ENV_FILE_PATH = # Path to .env file that is used by various scripts
 USE_PROXY=False
 PROXY_HOST=
 
+
+# DEBUGGING and LOGGING Flags
+
+# Hydra Debugging flags
+HYDRA_DEBUG=0
+
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0
 
@@ -69,9 +75,15 @@ TEAMS_CATEGORIZATION_DEBUG=0
 #Asset Matcher Configuration
 ASSET_MATCHER_DEBUG=0
 
-# Network Configuration
+ZABBIX_DISPATCHER_DEBUG=0
+SNIPEIT_DISPATCHER_DEBUG=0
+WAZUH_DISPATCHER_DEBUG=0
+
+
+# NETWORK CONFIGURATION
+
 # Networks to scan
-NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24”
+NMAP_TARGETS=
 DNS_SERVERS=
 
 # 0=discovery only 1= port scan

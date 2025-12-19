@@ -164,7 +164,7 @@ class Microsoft365Sync:
 
         return merged_assets
     
-    def sync_to_snipeit(self): # NEEDS TO BE RENAMED
+    def collect_assets(self):
         """Fetches, merges, and syncs all Microsoft 365 assets to Snipe-IT."""
         print("Starting Microsoft 365 synchronization...")
         
@@ -223,7 +223,7 @@ def main():
     if debug_logger.ms365_debug:
         sync.sync_to_logs() 
         return 
-    sync.sync_to_snipeit()
+    sync.collect_assets()
  
 if __name__ == "__main__":
     main()

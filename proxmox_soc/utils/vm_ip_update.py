@@ -97,7 +97,7 @@ def main():
     update_config_file(NGINX_CONF_FILE, ip_address)
     update_config_file(APACHE_CONF_FILE, ip_address)
     update_config_file(SNIPE_IT_ENV_FILE, ip_address)
-    update_config_file(ENV_FILE_PATH, ip_address)
+    update_config_file(SNIPE_IT_ENV_FILE, ip_address)
 
     print("\n--- Restarting Services ---")
     if os.path.exists("/etc/nginx/sites-enabled/snipe-it"):

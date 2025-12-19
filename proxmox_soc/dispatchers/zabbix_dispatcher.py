@@ -2,7 +2,10 @@
 Zabbix Dispatcher Module
 """
 
+import os
 import requests
+from typing import List, Dict, Any, Optional
+
 from proxmox_soc.config.settings import ZABBIX
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
@@ -11,17 +14,44 @@ class ZabbixDispatcher(BaseDispatcher):
     def __init__(self):
         self.auth = None
         self.req_id = 0
-        self.builder = ZabbixPayloadBuilder() # Clean
+        self.builder = ZabbixPayloadBuilder()
+        self.authenticated = self.authenticate()
+        self.debug = os.getenv('ZABBIX_DISPATCHER_DEBUG', '0') == '1'
 
+    def authenticate(self) -> bool:
+        try:
+            self.auth = self._rpc("user.login", {"username": ZABBIX.zabbix_username, "password": ZABBIX.zabbix_pass})
+            return True
+        except Exception as e:
+            print(f"Zabbix authentication failed: {e}")
+            return False
+    
     def _rpc(self, method, params):
         self.req_id += 1
         payload = {"jsonrpc": "2.0", "method": method, "params": params, "id": self.req_id}
         if self.auth: payload['auth'] = self.auth
-        return requests.post(ZABBIX.zabbix_url, json=payload, verify=False).json().get('result')
-
-    def sync(self, assets: list):
-        print(f"\n[ZABBIX] Syncing assets...")
-        self.auth = self._rpc("user.login", {"username": ZABBIX.zabbix_username, "password": ZABBIX.zabbix_pass})
+        result = requests.post(ZABBIX.zabbix_url, json=payload, verify=False, timeout=30).json().get('result')
+        if 'error' in result:
+            raise RuntimeError(f"Zabbix API error: {result['error']}")
+        return result 
+    
+    def sync(self, assets: List[Dict[str, Any]]) -> Dict[str, int]:
+        results = {"created": 0, "updated": 0, "skipped": 0, "failed": 0}
+        print(f"\n[ZABBIX] Syncing {len(assets)} assets...")
+        
+        if self.authenticated:
+            self._sync_asset(assets)
+        else:
+            print("Zabbix authentication failed. Cannot sync assets.")
+            results["failed"] = len(assets)
+    
+    def _sync_asset(self, assets: Dict[str, Any]) -> str:
+        """Sync single asset. Returns 'created', 'updated', 'skipped', or 'failed'."""
+        canonical = asset.get('canonical_data', {})
+        ip = canonical.get('last_seen_ip')
+        
+        if not ip:
+            return "skipped"
         
         for asset in assets:
             # 1. Use Builder logic

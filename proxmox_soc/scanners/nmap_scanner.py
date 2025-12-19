@@ -172,7 +172,7 @@ class NmapScanner:
         asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
         return {k: v for k, v in asset.items() if v is not None and v != '' and v != []}
     
-    def sync_to_snipeit(self, profile: str = 'discovery') -> Dict: # NEEDS TO BE RENAMED
+    def scan_network(self, profile: str = 'discovery') -> Dict:
         """Run scan and sync to Snipe-IT"""
         print(f"Starting Nmap {profile} scan...")
         
@@ -205,7 +205,7 @@ def main():
         command = sys.argv[1]
         
         if command in SCAN_PROFILES:
-            scanner.sync_to_snipeit(command)
+            scanner.scan_network(command)
         elif command == 'list':
             print("\nAvailable scan profiles:")
             for name, config in SCAN_PROFILES.items():
@@ -214,7 +214,7 @@ def main():
             print(f"Unknown command: {command}")
             print("Usage: nmap_scanner.py [profile_name|list]")
     else:
-        scanner.sync_to_snipeit('discovery')
+        scanner.scan_network('discovery')
 
 if __name__ == "__main__":
     main()
