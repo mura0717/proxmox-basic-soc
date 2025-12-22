@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Intune Integration
-Syncs assets from Microsoft Intune to Asset Engine
+Sends assets from Microsoft Intune to MS365 Aggregator
 """
 
 import requests
@@ -9,7 +9,6 @@ import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.config.ms365_service import Microsoft365Service 
 from proxmox_soc.debug.categorize_from_logs.intune_categorize_from_logs import intune_debug_categorization 
@@ -18,8 +17,7 @@ from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac
 class IntuneScanner:
     """Microsoft Intune synchronization service"""
     
-    def __init__(self, asset_matcher: Optional[AssetMatcher] = None):
-        self.asset_matcher = asset_matcher or AssetMatcher()
+    def __init__(self):
         self.graph_url = "https://graph.microsoft.com/v1.0"
         self.ms365_service = Microsoft365Service() 
     
@@ -54,7 +52,7 @@ class IntuneScanner:
                 data = response.json()
                 
                 if not data.get('value'):
-                    print(f"DEBUG: API call to {url} returned an empty 'value' array.") # Keep this for immediate feedback
+                    print(f"DEBUG: API call to {url} returned an empty 'value' array.")
                     print(f"DEBUG: Full API Response: {json.dumps(data, indent=2)}")
                 
                 assets.extend(data.get('value', []))

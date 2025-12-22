@@ -36,7 +36,7 @@ class SnipePayloadBuilder:
         self.location_service = LocationService()
         self.field_service = FieldService()
         self.fieldset_service = FieldsetService()
-        self.debug = os.getenv('ASSET_MATCHER_DEBUG', '0') == '1'
+        self.debug = os.getenv('SNIPE_BUILDER_DEBUG', '0') == '1'
         
         if not SnipePayloadBuilder._hydrated:
             self._hydrate_field_map()
@@ -60,7 +60,10 @@ class SnipePayloadBuilder:
     def _assign_model_manufacturer_category(self, payload: Dict, asset_data: Dict):
         category_obj = self._determine_category(asset_data)
         mfr_name, model_name = self._extract_mfr_and_model_names(asset_data)
-        
+
+        if self.debug:
+            print(f"Processing model for asset '{asset_data.get('name', 'Unknown')}'. Manufacturer: '{mfr_name}', Model: '{model_name}'")
+
         is_generic = normalize_for_comparison(model_name) in [
             normalize_for_comparison(m['name']) for m in MODELS if 'Generic' in m['name']
         ]
@@ -105,6 +108,9 @@ class SnipePayloadBuilder:
         classification = AssetCategorizer.categorize(asset_data)
         asset_data['device_type'] = classification.get('device_type')
         
+        if self.debug:
+            print(f"[_determine_category] Categorization for '{asset_data.get('name')}': {classification}")
+        
         cat_name = classification.get('category', 'Other Assets')
         if isinstance(cat_name, dict): cat_name = cat_name.get('name')
         
@@ -141,8 +147,15 @@ class SnipePayloadBuilder:
         model = self.model_service.get_by_name(name)
         if model: return model
         
+        if self.debug:
+            print(f"[_get_or_create_model] Model '{name}' not found. Attempting to create...")
+        
         data = {'name': name, 'manufacturer_id': mfr['id'], 'category_id': cat['id'], 'model_number': name}
         if fieldset: data['fieldset_id'] = fieldset['id']
+        
+        if self.debug:
+                    print(f"[_get_or_create_model] Successfully created model: {data['name']} (ID: {data['id']})")
+        
         return self.model_service.create(data)
 
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple:
@@ -216,6 +229,11 @@ class SnipePayloadBuilder:
             key = config_map.get(name)
             if key and field.get('db_column_name'):
                 SnipePayloadBuilder._custom_field_map[key] = field['db_column_name']
+        if self.debug:
+                print(f"[DEBUG] Hydrated {len(SnipePayloadBuilder._custom_field_map)} custom field mappings.")
+                if len(SnipePayloadBuilder._custom_field_map) < len(CUSTOM_FIELDS):
+                    missing = [k for k in CUSTOM_FIELDS if k not in SnipePayloadBuilder._custom_field_map]
+                    print(f"[WARNING] Could not find server mapping for keys: {missing}")
         SnipePayloadBuilder._hydrated = True
 
     def _format_custom_value(self, key: str, val: Any, field_def: Dict) -> Optional[str]:

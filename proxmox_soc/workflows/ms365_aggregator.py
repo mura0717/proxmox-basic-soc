@@ -5,7 +5,6 @@ Utility for merging raw data coming from Microsoft365 API calls.
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
@@ -18,7 +17,6 @@ class Microsoft365Sync:
     """Microsoft365 data merging service"""
     
     def __init__(self):
-        self.asset_matcher = AssetMatcher()
         self.microsoft365 = Microsoft365Service()
         self.intune_sync = IntuneScanner(self.asset_matcher)
         self.teams_sync = TeamsScanner(self.asset_matcher)

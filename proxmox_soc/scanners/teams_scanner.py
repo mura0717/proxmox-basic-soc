@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Teams Integration
-Syncs assets from Microsoft Teams to Asset Engine
+Syncs assets from Microsoft Teams to MS365 Aggregator
 """
 
 import requests
@@ -9,7 +9,6 @@ import json
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.debug.categorize_from_logs.teams_categorize_from_logs import teams_debug_categorization
@@ -18,8 +17,7 @@ from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac
 class TeamsScanner:
     """Microsoft Teams synchronization service"""
     
-    def __init__(self, asset_matcher: Optional[AssetMatcher] = None):
-        self.asset_matcher = asset_matcher or AssetMatcher()
+    def __init__(self):
         self.graph_url = "https://graph.microsoft.com/beta"
         self.ms365_service = Microsoft365Service()
     

@@ -12,7 +12,7 @@ from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 class SnipeITDispatcher(BaseDispatcher):
     
     def __init__(self):
-        self.debug = os.getenv('SNIPEIT_DISPATCHER_DEBUG', '0') == '1'
+        self.debug = os.getenv('SNIPE_DISPATCHER_DEBUG', '0') == '1'
         
     def sync(self, assets: List[Dict[str, Any]]) -> Dict[str, int]:
         results = {"created": 0, "updated": 0, "failed": 0}

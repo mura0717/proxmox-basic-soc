@@ -10,7 +10,6 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
 from proxmox_soc.config.network_config import NMAP_SCAN_RANGES
@@ -57,7 +56,6 @@ class NmapScanner:
         else:
             self.network_ranges = network_ranges
         self.nm = nmap.PortScanner()
-        self.asset_matcher = AssetMatcher()
     
     def run_scan(self, profile: str = 'discovery', targets: Optional[List[str]] = None) -> List[Dict]:
         """Run Nmap scan with specified profile"""
