@@ -79,12 +79,14 @@ class IntuneScanner:
     def normalize_asset(self, intune_asset: Dict) -> Dict:
         """Transform Intune asset data to Snipe-IT format"""
         current_time = datetime.now(timezone.utc).isoformat()
+        serial_raw = intune_asset.get("serialNumber") or ""
+        serial = serial_raw.upper() if serial_raw else None
         
         # Map Intune fields to Snipe-IT custom fields
         transformed = {
             # Identity
             'name': intune_asset.get('deviceName'),
-            'serial': (intune_asset.get('serialNumber')).upper(),
+            'serial': serial,
             'azure_ad_id': intune_asset.get('azureADDeviceId'),
             'intune_device_id': intune_asset.get('id'),
             'device_enrollment_type': intune_asset.get('deviceEnrollmentType'),

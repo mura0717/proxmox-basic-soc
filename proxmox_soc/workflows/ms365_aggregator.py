@@ -8,20 +8,18 @@ from typing import Dict, List, Optional
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
 from proxmox_soc.scanners.teams_scanner import TeamsScanner
-from proxmox_soc.snipe_it.snipe_scripts.cache.clear_cache import SnipeCacheClearer
 from proxmox_soc.utils.mac_utils import normalize_mac
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.debug.categorize_from_logs.ms365_categorize_from_logs import ms365_debug_categorization
 from proxmox_soc.config.mac_config import CTP18
 
-class Microsoft365Sync:
+class Microsoft365Aggregator:
     """Microsoft365 data merging service"""
     
     def __init__(self):
         self.microsoft365 = Microsoft365Service()
         self.intune_sync = IntuneScanner()
         self.teams_sync = TeamsScanner()
-        self.snipe_cache_clearer = SnipeCacheClearer()
         
     def _prepare_asset_dictionaries(self, intune_data: List[Dict], teams_data: List[Dict]) -> tuple[Dict, Dict]:
         """Creates dictionaries of assets keyed by serial number for quick lookups."""
@@ -164,31 +162,21 @@ class Microsoft365Sync:
 
         return merged_assets
     
-    def collect_assets(self):
-        """Fetches, merges, and syncs all Microsoft 365 assets to Snipe-IT."""
-        print("Starting Microsoft 365 synchronization...")
+    def collect_assets(self) -> List[Dict]:
+        """Fetches and merges all Microsoft 365 assets. Returns the list."""
+        print("Starting Microsoft 365 collection...")
         
-        self.snipe_cache_clearer.clear_all_caches()
-        # Clear previous debug logs for this source at the start of the sync
         if debug_logger.ms365_debug:
             debug_logger.clear_logs('ms365')
 
-        # Get the final, merged list of assets
         merged_assets = self.merge_data()
-        print(f"Total of {len(merged_assets)} unique assets after merging Intune and Teams data.")
-        # Log the final transformed payload before sending to the matcher
-        if debug_logger.ms365_debug: # Log each asset individually to the parsed log
+        print(f"Total of {len(merged_assets)} unique assets collected.")
+        
+        if debug_logger.ms365_debug:
             for asset in merged_assets:
                 debug_logger.log_parsed_asset_data('ms365', asset)
         
-        # Process the final list with the asset matcher
-        results = self.asset_matcher.process_scan_data('ms365', merged_assets)
-        
-        if debug_logger.ms365_debug:
-            debug_logger.log_sync_summary('ms365', results)
-        
-        print(f"Sync complete: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
-        return results
+        return merged_assets
 
     def sync_to_logs(self):
         """Fetches live data and generates the raw and parsed log files for debugging."""
@@ -212,19 +200,19 @@ class Microsoft365Sync:
         print(f"\nMerged transformed data log file has been created at: {debug_logger.log_files['ms365']['parsed']}")
 
 def main():
-    """Main execution function for Microsoft 365 sync."""
-    # If categorization debug is on, just run that and exit.
+    """CLI entry point for standalone execution."""
     if ms365_debug_categorization.debug:
         print("Running Microsoft 365 categorization from existing logs...")
         ms365_debug_categorization.write_m365_assets_to_logfile()
         return
 
-    sync = Microsoft365Sync()
+    aggregator = Microsoft365Aggregator()
     if debug_logger.ms365_debug:
-        sync.sync_to_logs() 
-        return 
-    sync.collect_assets()
- 
+        aggregator.sync_to_logs() 
+    else:
+        assets = aggregator.collect_assets()
+        print(f"\n MS365 Asset Collection complete. Found {len(assets)} assets.")
+         
 if __name__ == "__main__":
     main()
 

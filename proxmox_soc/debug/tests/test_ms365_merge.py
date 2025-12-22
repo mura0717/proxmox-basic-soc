@@ -6,7 +6,7 @@ to display the final combined asset.
 
 import json
 
-from proxmox_soc.workflows.ms365_aggregator import Microsoft365Sync
+from proxmox_soc.workflows.ms365_aggregator import Microsoft365Aggregator
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
 from proxmox_soc.scanners.teams_scanner import TeamsScanner
 
@@ -104,7 +104,7 @@ def ms365_merge_tester():
     # 1. Instantiate scanners and the main sync class
     intune_scanner = IntuneScanner()
     teams_scanner = TeamsScanner()
-    ms365_sync = Microsoft365Sync()
+    ms365_sync = Microsoft365Aggregator()
 
     # 2. Transform the raw data into the standardized Snipe-IT format
     transformed_raw_intune = intune_scanner.normalize_asset(intune_asset_raw_sample)
