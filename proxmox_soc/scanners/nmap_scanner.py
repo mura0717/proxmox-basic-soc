@@ -138,38 +138,48 @@ class NmapScanner:
 
         assets = self.run_scan(profile)
         
-        if assets and debug_logger.nmap_debug:
-            debug_logger.log_parsed_asset_data('nmap', assets)
+        if not assets:
+            print("No hosts found.")
+        else:
+            print(f"Found {len(assets)} hosts")
+            if debug_logger.nmap_debug:
+                debug_logger.log_parsed_asset_data('nmap', assets)
         
         return assets
 
 def main():
+    """CLI entry point for standalone execution."""
     from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
     
+    # If categorization debug is on, just run that and exit
     if nmap_debug_categorization.debug: 
         nmap_debug_categorization.write_nmap_assets_to_logfile()
         return
 
     command = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
     
-    is_categorization_debug = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
-
-    if not is_categorization_debug and command in NMAP_SCAN_PROFILES:
-        elevate_to_root()
-
-    debug_logger.clear_logs('nmap')
-    
-    scanner = NmapScanner()
-    
-    if command in NMAP_SCAN_PROFILES:
-        scanner.collect_assets(command)
-    elif command == 'list':
+    if command == 'list':
         print("\nAvailable scan profiles:")
         for name, config in NMAP_SCAN_PROFILES.items():
             print(f"  {name:12} - {config['description']}")
-    else:
+        return
+    
+    if command not in NMAP_SCAN_PROFILES:
         print(f"Unknown command: {command}")
         print("Usage: nmap_scanner.py [profile_name|list]")
+        return
+
+    # Elevate to root for actual scans
+    elevate_to_root()
+    
+    scanner = NmapScanner()
+    assets = scanner.collect_assets(command)
+    
+    # When run standalone, just print results
+    print(f"\nScan complete. Found {len(assets)} assets.")
+    if os.getenv('NMAP_DEBUG', '0') == '1':
+        import json
+        print(json.dumps(assets, indent=2, default=str))
 
 if __name__ == "__main__":
     main()
