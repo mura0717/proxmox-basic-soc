@@ -3,7 +3,7 @@ Nmap Scan Profiles
 This file contains the configuration for different Nmap scan profiles.
 """
 
-SCAN_PROFILES = {
+NMAP_SCAN_PROFILES = {
     # LEVEL 1: Fast Discovery (No DNS, fastest)
     'fast-discovery': {
         'args': '-sn -PR -T4',

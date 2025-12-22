@@ -5,11 +5,12 @@ Utility for merging raw data coming from Microsoft365 API calls.
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
 from proxmox_soc.scanners.teams_scanner import TeamsScanner
+from proxmox_soc.snipe_it.snipe_scripts.cache.clear_cache import SnipeCacheClearer
 from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.debug.categorize_from_logs.ms365_categorize_from_logs import ms365_debug_categorization
 from proxmox_soc.config.mac_config import CTP18
 
@@ -18,9 +19,10 @@ class Microsoft365Sync:
     
     def __init__(self):
         self.microsoft365 = Microsoft365Service()
-        self.intune_sync = IntuneScanner(self.asset_matcher)
-        self.teams_sync = TeamsScanner(self.asset_matcher)
-    
+        self.intune_sync = IntuneScanner()
+        self.teams_sync = TeamsScanner()
+        self.snipe_cache_clearer = SnipeCacheClearer()
+        
     def _prepare_asset_dictionaries(self, intune_data: List[Dict], teams_data: List[Dict]) -> tuple[Dict, Dict]:
         """Creates dictionaries of assets keyed by serial number for quick lookups."""
         print("Preparing asset dictionaries...")
@@ -166,7 +168,7 @@ class Microsoft365Sync:
         """Fetches, merges, and syncs all Microsoft 365 assets to Snipe-IT."""
         print("Starting Microsoft 365 synchronization...")
         
-        self.asset_matcher.clear_all_caches()
+        self.snipe_cache_clearer.clear_all_caches()
         # Clear previous debug logs for this source at the start of the sync
         if debug_logger.ms365_debug:
             debug_logger.clear_logs('ms365')

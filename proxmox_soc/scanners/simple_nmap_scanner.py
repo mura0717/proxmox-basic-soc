@@ -12,14 +12,15 @@ from pathlib import Path
 from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
+
+from proxmox_soc.utils.sudo_utils import elevate_to_root
 
 class SimpleNmapScanner:
 
     def __init__(self):
-        if os.geteuid() != 0:
-            print("ERROR: Root privileges are required to run this scanner for most scan types.")
-            print(f"Please run with: sudo {sys.executable} {' '.join(sys.argv)}")
-            sys.exit(1)
+        elevate_to_root()
         self.nm = nmap.PortScanner()
         self.log_files = {}
         self.logging_enabled_sources = []

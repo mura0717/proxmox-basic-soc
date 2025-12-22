@@ -10,42 +10,16 @@ import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
+from proxmox_soc.snipe_it.snipe_scripts.cache.clear_cache import SnipeCacheClearer
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
 from proxmox_soc.config.network_config import NMAP_SCAN_RANGES
-from proxmox_soc.config.nmap_profiles import SCAN_PROFILES
+from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
 from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.sudo_utils import elevate_to_root
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
 DNS_ARGS = f"--dns-servers {DNS_SERVERS} -R" if DNS_SERVERS else "-R"
-NO_ROOT_COMMANDS = ['web', 'list', 'help']
-COMMAND = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
-IS_CATEGORIZATION_DEBUG = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
-
-# Auto-elevate to root for scan commands if NOT in categorization debug mode.
-if not IS_CATEGORIZATION_DEBUG and COMMAND not in NO_ROOT_COMMANDS:
-    if os.geteuid() != 0:
-        user_euid = os.geteuid()
-        command_to_run = ['sudo', sys.executable] + sys.argv
-        print(f"\nDEBUG: The exact command being passed to sudo is: {' '.join(command_to_run)}\nThe user euid is: {user_euid}\n")
-        
-        cmd = ['sudo', '-n', sys.executable, '-c', 'exit(0)']
-        result = subprocess.run(cmd, capture_output=True, timeout=5)
-        can_sudo = result.returncode == 0
-
-        if can_sudo:
-            try:
-                print("Attempting to elevate to root privileges for scan...")
-                subprocess.run(['sudo', sys.executable] + sys.argv, check=True)
-                sys.exit(0)
-            except (FileNotFoundError, subprocess.CalledProcessError) as e:
-                print(f"\nERROR: Failed to auto-elevate even with passwordless sudo rights: {e}")
-                sys.exit(1)
-        else:
-            print("\nERROR: Root privileges are required for this scan.")
-            print("This script cannot auto-elevate because 'sudo' requires a password.")
-            print(f"Please run it manually with: sudo {sys.executable} {' '.join(sys.argv)}")
-            sys.exit(1)
 
 class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""
@@ -56,15 +30,16 @@ class NmapScanner:
         else:
             self.network_ranges = network_ranges
         self.nm = nmap.PortScanner()
+        self.snipe_cache_clearer = SnipeCacheClearer()
     
     def run_scan(self, profile: str = 'discovery', targets: Optional[List[str]] = None) -> List[Dict]:
         """Run Nmap scan with specified profile"""
         
-        if profile not in SCAN_PROFILES:
+        if profile not in NMAP_SCAN_PROFILES:
             print(f"Unknown profile: {profile}")
             return []
         
-        scan_config = SCAN_PROFILES[profile]
+        scan_config = NMAP_SCAN_PROFILES[profile]
         args = scan_config['args']
         if scan_config.get('use_dns'):
             args = f"{args} {DNS_ARGS}"
@@ -174,8 +149,7 @@ class NmapScanner:
         """Run scan and sync to Snipe-IT"""
         print(f"Starting Nmap {profile} scan...")
         
-        self.asset_matcher.clear_all_caches()
-        
+        self.snipe_cache_clearer.clear_all_caches
         assets = self.run_scan(profile)
         
         if not assets:
@@ -195,24 +169,28 @@ def main():
         nmap_debug_categorization.write_nmap_assets_to_logfile()
         return
 
+    # Determine command and handle elevation
+    command = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
+    is_categorization_debug = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
+
+    # Only elevate if we are running a valid scan profile.
+    # This prevents sudo prompts for 'list', '--help', or typos.
+    if not is_categorization_debug and command in NMAP_SCAN_PROFILES:
+        elevate_to_root()
+
     debug_logger.clear_logs('nmap')
     
     scanner = NmapScanner()
     
-    if len(sys.argv) > 1:
-        command = sys.argv[1]
-        
-        if command in SCAN_PROFILES:
-            scanner.scan_network(command)
-        elif command == 'list':
-            print("\nAvailable scan profiles:")
-            for name, config in SCAN_PROFILES.items():
-                print(f"  {name:12} - {config['description']}")
-        else:
-            print(f"Unknown command: {command}")
-            print("Usage: nmap_scanner.py [profile_name|list]")
+    if command in NMAP_SCAN_PROFILES:
+        scanner.scan_network(command)
+    elif command == 'list':
+        print("\nAvailable scan profiles:")
+        for name, config in NMAP_SCAN_PROFILES.items():
+            print(f"  {name:12} - {config['description']}")
     else:
-        scanner.scan_network('discovery')
+        print(f"Unknown command: {command}")
+        print("Usage: nmap_scanner.py [profile_name|list]")
 
 if __name__ == "__main__":
     main()
