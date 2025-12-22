@@ -75,7 +75,11 @@ class AssetMatcher:
         )
 
     def _merge_data(self, existing: Dict, new_data: Dict, scan_type: str) -> Dict:
-        merged = {**existing, **new_data} # Simplified merge
+        data_to_merge = new_data.copy()
+        if 'first_seen_date' in data_to_merge: # Prevent overwriting 'first_seen_date' on updates.
+            del data_to_merge['first_seen_date']
+            
+        merged = {**existing, **data_to_merge}
         merged['_source'] = scan_type
         return merged
 

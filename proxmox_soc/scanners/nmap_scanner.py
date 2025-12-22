@@ -4,15 +4,12 @@ Nmap Scanner
 """
 import os
 import sys
-import subprocess
 import nmap
 import hashlib
 from datetime import datetime, timezone
 from typing import List, Dict, Optional
 
-from proxmox_soc.snipe_it.snipe_scripts.cache.clear_cache import SnipeCacheClearer
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
-from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
 from proxmox_soc.config.network_config import NMAP_SCAN_RANGES
 from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
 from proxmox_soc.utils.mac_utils import normalize_mac
@@ -25,12 +22,8 @@ class NmapScanner:
     """Nmap Scanner with predefined scan profiles and Snipe-IT integration"""
     
     def __init__(self, network_ranges: Optional[List[str]] = None):
-        if network_ranges is None:
-            self.network_ranges = NMAP_SCAN_RANGES
-        else:
-            self.network_ranges = network_ranges
+        self.network_ranges = network_ranges if network_ranges else NMAP_SCAN_RANGES
         self.nm = nmap.PortScanner()
-        self.snipe_cache_clearer = SnipeCacheClearer()
     
     def run_scan(self, profile: str = 'discovery', targets: Optional[List[str]] = None) -> List[Dict]:
         """Run Nmap scan with specified profile"""
@@ -49,7 +42,7 @@ class NmapScanner:
         print(f"Targets: {scan_targets}")
         
         try:
-            self.nm.scan(hosts=scan_targets, arguments=scan_config['args'])
+            self.nm.scan(hosts=scan_targets, arguments=args)
             
             assets = []
             for host in self.nm.all_hosts():
@@ -67,10 +60,7 @@ class NmapScanner:
             return []
     
     def _parse_host(self, host: str, profile: str, scan_config: Dict) -> Dict:
-        """
-        Parse Nmap results for a single host to collect raw data.
-        Categorization logic is handled later by the AssetCategorizer.
-        """
+        """Parse Nmap results for a single host to collect raw data."""
         nmap_host = self.nm[host]
         
         # Log raw nmap data for debugging before parsing.
@@ -95,14 +85,7 @@ class NmapScanner:
             'name': nmap_host.hostname() or f"Device-{host}",
             'dns_hostname': nmap_host.hostname(),
             '_source': 'nmap',
-            'mac_addresses': None,
-            'manufacturer': None,
-            'os_platform': None,
-            'nmap_os_guess': None,
-            'os_accuracy': None,
-            'nmap_open_ports': None,
-            'open_ports_hash': None,
-            'nmap_services': [],
+            'first_seen_date': datetime.now(timezone.utc).isoformat(),
         }
         
         mac_addresses = []
@@ -142,39 +125,35 @@ class NmapScanner:
                 asset['open_ports_hash'] = hashlib.md5(asset['nmap_open_ports'].encode()).hexdigest()
                 asset['nmap_services'] = service_names
                 
-        asset['first_seen_date'] = datetime.now(timezone.utc).isoformat()
         return {k: v for k, v in asset.items() if v is not None and v != '' and v != []}
     
-    def scan_network(self, profile: str = 'discovery') -> Dict:
-        """Run scan and sync to Snipe-IT"""
+    def collect_assets(self, profile: str = 'discovery') -> Dict:
+        """
+         Entry point for orchestrator - Runs scan and returns normalized asset list.
+        """
         print(f"Starting Nmap {profile} scan...")
         
-        self.snipe_cache_clearer.clear_all_caches
+        if debug_logger.nmap_debug:
+            debug_logger.clear_logs('nmap')
+
         assets = self.run_scan(profile)
         
-        if not assets:
-            print("No hosts found.")
-            print(f"Found {len(assets)} hosts")
+        if assets and debug_logger.nmap_debug:
+            debug_logger.log_parsed_asset_data('nmap', assets)
         
-        debug_logger.log_parsed_asset_data('nmap', assets)  
-        results = self.asset_matcher.process_scan_data('nmap', assets)
-        debug_logger.log_sync_summary('nmap', results)
-        
-        print(f"Sync complete: {results['created']} created, {results['updated']} updated")
-        return results
+        return assets
 
 def main():
-        # If categorization debug is on, just run that and exit.
+    from proxmox_soc.debug.categorize_from_logs.nmap_categorize_from_logs import nmap_debug_categorization
+    
     if nmap_debug_categorization.debug: 
         nmap_debug_categorization.write_nmap_assets_to_logfile()
         return
 
-    # Determine command and handle elevation
     command = sys.argv[1] if len(sys.argv) > 1 else 'discovery'
+    
     is_categorization_debug = os.getenv('NMAP_CATEGORIZATION_DEBUG', '0') == '1'
 
-    # Only elevate if we are running a valid scan profile.
-    # This prevents sudo prompts for 'list', '--help', or typos.
     if not is_categorization_debug and command in NMAP_SCAN_PROFILES:
         elevate_to_root()
 
@@ -183,7 +162,7 @@ def main():
     scanner = NmapScanner()
     
     if command in NMAP_SCAN_PROFILES:
-        scanner.scan_network(command)
+        scanner.collect_assets(command)
     elif command == 'list':
         print("\nAvailable scan profiles:")
         for name, config in NMAP_SCAN_PROFILES.items():

@@ -8,11 +8,9 @@ from pathlib import Path
 from typing import Dict
 from dotenv import load_dotenv
 
-# 1. Load Environment Variables
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env')
 
-# 2. Global Defaults
 HYDRA_DEBUG = os.getenv('HYDRA_DEBUG', '0') == '1'
 USE_PROXY = os.getenv('USE_PROXY', 'False').lower() in ('true', '1', 'yes')
 PROXY_HOST = os.getenv('PROXY_HOST')
@@ -24,19 +22,24 @@ HOST_IPS = {
     'wazuh': os.getenv('WAZUH_HOST_IP'),
 }
 
+# Helper to safely get int ports
+def get_port(key):
+    val = os.getenv(key)
+    return int(val) if val and val.strip().isdigit() else None
+
 # Port mappings
 PROXY_PORTS = {
-    'snipe': os.getenv('SNIPE_PROXY_PORT'),
-    'zabbix': os.getenv('ZABBIX_PROXY_PORT'),
-    'wazuh_api': os.getenv('WAZUH_PROXY_API_PORT'),
-    'wazuh_indexer': os.getenv('WAZUH_PROXY_INDEXER_PORT'),
+    'snipe': get_port('SNIPE_PROXY_PORT'),
+    'zabbix': get_port('ZABBIX_PROXY_PORT'),
+    'wazuh_api': get_port('WAZUH_PROXY_API_PORT'),
+    'wazuh_indexer': get_port('WAZUH_PROXY_INDEXER_PORT'),
 }
 
 DIRECT_PORTS = {
-    'snipe': os.getenv('SNIPE_DIRECT_PORT'),
-    'zabbix': os.getenv('ZABBIX_DIRECT_PORT'),
-    'wazuh_api': os.getenv('WAZUH_DIRECT_API_PORT'),
-    'wazuh_indexer': os.getenv('WAZUH_DIRECT_INDEXER_PORT'),
+    'snipe': get_port('SNIPE_DIRECT_PORT'),
+    'zabbix': get_port('ZABBIX_DIRECT_PORT'),
+    'wazuh_api': get_port('WAZUH_DIRECT_API_PORT'),
+    'wazuh_indexer': get_port('WAZUH_DIRECT_INDEXER_PORT'),
 }
 
 @dataclass
@@ -85,7 +88,7 @@ class ZabbixConfig:
 class WazuhConfig:
     wazuh_api_user: str = os.getenv('WAZUH_API_USER')
     wazuh_api_pass: str = os.getenv('WAZUH_API_PASS')
-    event_log: Path = Path(os.getenv('WAZUH_EVENT_LOG_PATH'))
+    event_log: Path = Path(os.getenv('WAZUH_EVENT_LOG_PATH', './wazuh_events.json'))
     wazuh_api_url: str = field(init=False)
     wazuh_indexer_url: str = field(init=False)
     
@@ -114,6 +117,6 @@ if HYDRA_DEBUG:
     mode = "PROXY" if USE_PROXY else "DIRECT"
     masked_key = SNIPE.snipe_api_key[:5] + "..." if SNIPE.snipe_api_key else "None"
     print(f"--- CONFIG LOADED ({mode} MODE) ---")
-    print(f"SNIPE_URL: {SNIPE.snipe_url} " + f"SNIPE_API_TOKEN: {masked_key} " + f"SSL_VERIFY: {SNIPE.verify_ssl}")
+    print(f"SNIPE_URL: {SNIPE.snipe_url} " + f"SNIPE_API_TOKEN: {masked_key} " + f"VERIFY_SSL: {SNIPE.verify_ssl}")
     print(f"ZABBIX_URL: {ZABBIX.zabbix_url} " + f"ZABBIX_USER: {ZABBIX.zabbix_username} " + f"ZABBIX_PASS: {ZABBIX.zabbix_pass}")
     print(f"WAZUH_API_URL: {WAZUH.wazuh_api_url} " + f"WAZUH_INDEXER_URL: {WAZUH.wazuh_indexer_url}" + f"WAZUH_API_USER: {WAZUH.wazuh_api_user} " + f"WAZUH_API_PASS: {WAZUH.wazuh_api_pass}")

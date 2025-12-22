@@ -34,7 +34,7 @@ WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled
 WAZUH_EVENT_LOG_PATH= # Could be at ./proxmox-basic-soc/logs/wazuh_logs & It could be JSONL or plain text format.
 
 # Verification of SSL certs
-SSL_VERIFY=False
+VERIFY_SSL=False
 
 # Azure/Intune Configuration
 AZURE_TENANT_ID=
