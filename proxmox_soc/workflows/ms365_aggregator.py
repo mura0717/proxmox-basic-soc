@@ -1,5 +1,5 @@
 """
-Utility for merging raw data coming from Microsoft365 API calls.
+Utility for merging raw data coming from Microsoft Intune and Microsoft Teams into a unified asset list.
 """
 
 from datetime import datetime, timezone
@@ -36,13 +36,18 @@ class Microsoft365Aggregator:
         print(f"  Intune assets with serial: {len(intune_assets_by_serial)}")
         print(f"  Teams assets with serial: {len(teams_assets_by_serial)}")
         
-        # Create a lookup for Intune assets by user ID for fallback matching
-        intune_assets_by_user_id = {}
-        for asset in intune_data:
-            if asset.get('primary_user_id'):
-                intune_assets_by_user_id[asset['primary_user_id']] = asset
-        
         return intune_assets_by_serial, teams_assets_by_serial
+    
+    def _merge_asset_data(self, base: Dict, overlay: Dict) -> Dict:
+        """
+        Merge two asset dictionaries with overlay taking precedence for non-empty values.
+        """
+        merged = {**base}
+        for key, value in overlay.items():
+            # Only overlay if value is meaningful
+            if value is not None and value != '' and value != []:
+                merged[key] = value
+        return merged
 
     def _merge_intune_with_teams(self, intune_assets_by_serial: Dict, teams_assets_by_serial: Dict) -> tuple[List[Dict], set]:
         """Merges Teams data into Intune assets, prioritizing Intune data."""
@@ -58,8 +63,7 @@ class Microsoft365Aggregator:
                 if debug_logger.ms365_debug:
                     print(f"  ✓ Merging Teams data for: {serial}")
                 teams_asset['_source'] = 'teams'
-                # Use the robust, centralized merge function
-                merged_asset = self.asset_matcher.merge_asset_data(teams_asset, intune_asset)
+                merged_asset = self._merge_asset_data(teams_asset, intune_asset)
             else:
                 if debug_logger.ms365_debug:
                     print(f"  ✓ Intune only: {serial}")
@@ -70,7 +74,7 @@ class Microsoft365Aggregator:
             
         return merged_assets, processed_serials
 
-    def _handle_unmatched_teams_assets(self, merged_assets: List[Dict], processed_serials: set, teams_data: List[Dict], intune_data: List[Dict]):
+    def _add_unmatched_teams_assets(self, merged_assets: List[Dict], processed_serials: set, teams_data: List[Dict], intune_data: List[Dict]):
         """Handles Teams assets not matched by serial, with a fallback merge on user ID."""
         if debug_logger.ms365_debug:
             print("Processing unmatched Teams-only assets...")
@@ -82,7 +86,7 @@ class Microsoft365Aggregator:
         for teams_asset in teams_data:
             serial = teams_asset.get('serial')
             if serial and serial in processed_serials:
-                continue # Already merged by serial
+                continue
             user_id = teams_asset.get('primary_user_id')
             intune_match = intune_assets_by_user_id.get(user_id)
             intune_serial = intune_match.get('serial') if intune_match else None
@@ -92,7 +96,11 @@ class Microsoft365Aggregator:
                 if not serial:
                     if debug_logger.ms365_debug:
                         print(f"  ✓ Fallback merge for user ID {user_id} (Intune S/N: {intune_serial}, Teams asset has no S/N)")
-                    merged_assets_by_serial[intune_serial].update(teams_asset)
+                    # Use robust merge to preserve Intune data priority while filling gaps from Teams
+                    target_asset = merged_assets_by_serial[intune_serial]
+                    merged_result = self._merge_asset_data(teams_asset, target_asset)
+                    target_asset.clear()
+                    target_asset.update(merged_result)
                 else:
                     if debug_logger.ms365_debug:
                         print(f"  ✗ Not merging for user ID {user_id}. Assets have different serials ({intune_serial} vs {serial}). Treating as separate devices.")
@@ -108,7 +116,7 @@ class Microsoft365Aggregator:
                 teams_asset['last_update_at'] = datetime.now(timezone.utc).isoformat()
                 merged_assets.append(teams_asset)
     
-    def _handle_unmatched_intune_assets(self, merged_assets: List[Dict], intune_data: List[Dict]):
+    def _add_unmatched_intune_assets(self, merged_assets: List[Dict], intune_data: List[Dict]):
         """Adds Intune assets that did not have a serial number."""
         if debug_logger.ms365_debug:
             print("Processing unmatched Intune assets (without serial numbers)...")
@@ -116,11 +124,6 @@ class Microsoft365Aggregator:
             if not intune_asset.get('serial'):
                 merged_assets.append(intune_asset)
 
-    def _add_unmatched_assets(self, merged_assets: List[Dict], processed_serials: set, intune_data: List[Dict], teams_data: List[Dict]):
-        """Orchestrates the addition of assets that were not matched by serial number."""
-        self._handle_unmatched_teams_assets(merged_assets, processed_serials, teams_data, intune_data)
-        self._handle_unmatched_intune_assets(merged_assets, intune_data)
-    
     def _enrich_assets_with_static_macs(self, merged_assets: List[Dict]):
         """Adds MAC addresses from a static MAC address list for missing assets."""
         print("Enriching assets with static MAC addresses from mac_config...")
@@ -145,17 +148,17 @@ class Microsoft365Aggregator:
             raw_intune_data, intune_data = self.intune_sync.get_transformed_assets()
             raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
             
-            # Log raw API data if debugging is enabled
             if debug_logger.ms365_debug:
                 combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
                 debug_logger.log_raw_host_data('ms365', 'raw-unmerged-data', combined_raw_data)
         
-        # Prepare dictionaries keyed by serial number for efficient merging
+        # Prepare dictionaries keyed by serial number for merging
         intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data) # This can be simplified now
         
         # Perform the merge operations
         merged_assets, processed_serials = self._merge_intune_with_teams(intune_assets_by_serial, teams_assets_by_serial)
-        self._add_unmatched_assets(merged_assets, processed_serials, intune_data, teams_data)
+        self._add_unmatched_teams_assets(merged_assets, processed_serials, teams_data, intune_data)
+        self._add_unmatched_intune_assets(merged_assets, intune_data)
         
         # Enrich the final list with static MACs for devices that are missing them
         self._enrich_assets_with_static_macs(merged_assets)
@@ -163,8 +166,8 @@ class Microsoft365Aggregator:
         return merged_assets
     
     def collect_assets(self) -> List[Dict]:
-        """Fetches and merges all Microsoft 365 assets. Returns the list."""
-        print("Starting Microsoft 365 collection...")
+        """Entry point for orchestrator - Fetches and merges all Microsoft 365 assets."""
+        print("Starting Microsoft 365 asset collection...")
         
         if debug_logger.ms365_debug:
             debug_logger.clear_logs('ms365')
