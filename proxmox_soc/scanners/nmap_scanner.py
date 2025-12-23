@@ -127,7 +127,7 @@ class NmapScanner:
                 
         return {k: v for k, v in asset.items() if v is not None and v != '' and v != []}
     
-    def collect_assets(self, profile: str = 'discovery') -> Dict:
+    def collect_assets(self, profile: str = 'discovery') -> List[Dict]:
         """
          Entry point for orchestrator - Runs scan and returns normalized asset list.
         """

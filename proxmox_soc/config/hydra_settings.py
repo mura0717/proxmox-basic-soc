@@ -8,8 +8,13 @@ from pathlib import Path
 from typing import Dict
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-load_dotenv(BASE_DIR / '.env')
+BASE_DIR = Path(__file__).resolve().parents[2]
+ENV_PATH = BASE_DIR / '.env'
+
+if ENV_PATH.exists():
+    load_dotenv(ENV_PATH)
+else:
+    load_dotenv()
 
 HYDRA_DEBUG = os.getenv('HYDRA_DEBUG', '0') == '1'
 USE_PROXY = os.getenv('USE_PROXY', 'False').lower() in ('true', '1', 'yes')
@@ -57,6 +62,9 @@ class SnipeConfig:
         else:
             host = HOST_IPS["snipe"]
             port = DIRECT_PORTS["snipe"]
+        
+        if not host or not port:
+            raise RuntimeError("Snipe host/port not configured (direct/proxy).")
             
         self.snipe_url = f"http://{host}:{port}"
 

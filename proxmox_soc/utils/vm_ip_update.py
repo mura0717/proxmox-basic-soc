@@ -18,8 +18,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-load_dotenv(BASE_DIR / '.env')
+BASE_DIR = Path(__file__).resolve().parents[2]
+ENV_PATH = BASE_DIR / '.env'
+
+if ENV_PATH.exists():
+    load_dotenv(ENV_PATH)
+else:
+    load_dotenv()
 
 # --- Configuration ---
 NGINX_CONF_FILE = os.getenv("NGINX_CONF_FILE") or "/etc/nginx/sites-available/snipe-it"
@@ -96,7 +101,6 @@ def main():
     print("\n--- Updating Configuration Files ---")
     update_config_file(NGINX_CONF_FILE, ip_address)
     update_config_file(APACHE_CONF_FILE, ip_address)
-    update_config_file(SNIPE_IT_ENV_FILE, ip_address)
     update_config_file(SNIPE_IT_ENV_FILE, ip_address)
 
     print("\n--- Restarting Services ---")

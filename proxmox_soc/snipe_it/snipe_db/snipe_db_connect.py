@@ -9,8 +9,13 @@ from pathlib import Path
 from sshtunnel import SSHTunnelForwarder
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-load_dotenv(BASE_DIR / '.env')
+BASE_DIR = Path(__file__).resolve().parents[3]
+ENV_PATH = BASE_DIR / '.env'
+
+if ENV_PATH.exists():
+    load_dotenv(ENV_PATH)
+else:
+    load_dotenv()
 
 class SnipeItDbConnection():
     

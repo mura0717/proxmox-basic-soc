@@ -15,7 +15,7 @@ class ZabbixPayloadBuilder:
         data = asset.get("canonical_data", {})
         payload = asset.get("snipe_payload", {})
         
-        hostname = payload.get("name") or data.get("host_name") or data.get("name")
+        hostname = (payload.get("name") or data.get("host_name") or data.get("name") or "Unknown").strip()
         ip = data.get("last_seen_ip")
         
         # Technical Name (Host key): clean spaces

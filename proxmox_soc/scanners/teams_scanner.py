@@ -73,7 +73,7 @@ class TeamsScanner:
         hardware_details = teams_asset.get('hardwareDetail', {})
         current_user = teams_asset.get('currentUser', {})
         last_modified_by_user = (teams_asset.get('lastModifiedBy') or {}).get('user', {})
-        serial_raw = teams_asset.get("serialNumber") or ""
+        serial_raw = hardware_details.get("serialNumber") or ""
         serial = serial_raw.upper() if serial_raw else None
         
         # Map Teams fields to Snipe-IT custom fields

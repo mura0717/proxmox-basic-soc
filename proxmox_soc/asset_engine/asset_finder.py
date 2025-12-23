@@ -1,11 +1,8 @@
 """
 Utility for finding existing assets in Snipe-IT using various strategies.
 """
-import os
-import sys
-from typing import Dict, List, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from typing import Dict, List, Optional
 
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config import network_config

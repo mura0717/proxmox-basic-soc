@@ -18,6 +18,9 @@ Order of Operations:
 import os
 import sys
 import subprocess
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parents[3]
 
 def print_step(message):
     """Prints a formatted step header."""
@@ -29,7 +32,6 @@ def run_script(script_path: str):
     """Runs a given Python script and checks for errors."""
     print(f"-> Executing: {os.path.basename(script_path)}")
     try:
-        # Ensure we use the same Python interpreter that is running this script
         subprocess.run([sys.executable, script_path], check=True, text=True)
         print(f"✓ Successfully executed {os.path.basename(script_path)}")
     except subprocess.CalledProcessError as e:
@@ -41,12 +43,11 @@ def run_script(script_path: str):
         sys.exit(1)
 
 if __name__ == "__main__":
-    base_dir = os.path.dirname(os.path.abspath(__file__))
 
     print_step("STEP 1: Deleting all existing assets")
-    run_script(os.path.join(base_dir, "deleters", "delete_all_assets.py"))
+    run_script(os.path.join(BASE_DIR, "snipe_it", "snipe_scripts", "delete", "snipe_delete_all_assets.py"))
 
     print_step("STEP 3: Running the main cleanup and setup process")
-    run_script(os.path.join(base_dir, "clean_setup.py"))
+    run_script(os.path.join(BASE_DIR, "snipe_it", "snipe_initializers", "snipe_setup.py"))
 
     print("\n✅ Full reset and setup process completed successfully!")

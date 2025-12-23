@@ -209,7 +209,7 @@ class AssetCategorizer:
         return None
 
     @classmethod
-    def _determine_cloud_provider(self, intune_device: Dict) -> str | None: 
+    def _determine_cloud_provider(cls, intune_device: Dict) -> str | None: 
         """ Determines the cloud provider based on device manufacturer and model. """ 
         raw_manufacturer = intune_device.get('manufacturer') or ''
         if isinstance(raw_manufacturer, dict):

@@ -7,14 +7,18 @@ import sys
 import json
 from typing import List, Dict, Optional
 from datetime import datetime
+from pathlib import Path
 
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
+
+BASE_DIR = Path(__file__).resolve().parents[3]
 
 class AssetSnapshotter:
 
     def __init__(self):
         self.asset_service = AssetService()
-        self.snapshot_dir = os.path.join("logs", "snipe_snapshots")
+        self.snapshot_dir = BASE_DIR / "logs" / "snipe_snapshots"
+        self.snapshot_dir.mkdir(parents=True, exist_ok=True)
         os.makedirs(self.snapshot_dir, exist_ok=True)
 
     def take_snapshot(self, filename: Optional[str] = None) -> str:
@@ -28,9 +32,8 @@ class AssetSnapshotter:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"snipeit_snapshot_{timestamp}.json"
         
-        filepath = os.path.join(self.snapshot_dir, filename)
-        
-        with open(filepath, 'w', encoding='utf-8') as f:
+        filepath = self.snapshot_dir / filename
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(assets, f, indent=2, default=str)
         
         print(f"Snapshot saved to: {filepath}")

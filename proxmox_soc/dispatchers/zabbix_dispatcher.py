@@ -4,7 +4,7 @@ Zabbix Dispatcher Module
 
 import os
 import requests
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 from proxmox_soc.config.hydra_settings import ZABBIX
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
@@ -30,10 +30,15 @@ class ZabbixDispatcher(BaseDispatcher):
         self.req_id += 1
         payload = {"jsonrpc": "2.0", "method": method, "params": params, "id": self.req_id}
         if self.auth: payload['auth'] = self.auth
-        result = requests.post(ZABBIX.zabbix_url, json=payload, verify=False, timeout=30).json().get('result')
-        if 'error' in result:
-            raise RuntimeError(f"Zabbix API error: {result['error']}")
-        return result 
+        
+        resp = requests.post(ZABBIX.zabbix_url, json=payload, verify=False, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        if "error" in data:
+            raise RuntimeError(f"Zabbix API error: {data['error']}")
+
+        return data.get("result") 
     
     def sync(self, assets: List[Dict[str, Any]]) -> Dict[str, int]:
         results = {"created": 0, "updated": 0, "skipped": 0, "failed": 0}

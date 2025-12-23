@@ -2,12 +2,19 @@ import os
 import json
 from pathlib import Path
 from dotenv import load_dotenv
-from datetime import datetime 
+from datetime import datetime
+
+from proxmox_soc.config.hydra_settings import BASE_DIR, ENV_PATH 
 
 class AssetDebugLogger:
     """Determines asset type and category based on attributes."""
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-    load_dotenv(BASE_DIR / '.env')
+    BASE_DIR = Path(__file__).resolve().parents[3]
+    ENV_PATH = BASE_DIR / '.env'
+
+    if ENV_PATH.exists():
+        load_dotenv(ENV_PATH)
+    else:
+        load_dotenv()
     
     def __init__(self):
         # Granular debug flags (can be set independently)
@@ -22,13 +29,15 @@ class AssetDebugLogger:
             self.intune_debug, 
             self.nmap_debug, 
             self.teams_debug, 
-            self.ms365_debug
+            self.ms365_debug,
+            self.snmp_debug
         ])
         
         print(f"[DEBUG_LOGGER]: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
               f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}, "
-              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}). "
-              f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug})."
+              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}), "
+              f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug}), "
+              f"SNMP_DEBUG={os.getenv('SNMP_DEBUG', '0')} (internal: {self.snmp_debug})."
               )
 
         # Determine the project root directory (three levels up from this file's location)
@@ -109,7 +118,7 @@ class AssetDebugLogger:
         log_path = self._get_log_path(source, 'parsed')
         if not log_path: return
         
-        payload, header = (data, f"Found {len(data)} assets.") if isinstance(data, list) else (data, "Found 1 asset.")
+        payload, header = (data, f"Found {len(data)} assets.\n") if isinstance(data, list) else (data, "Found 1 asset.\n")
         
         message = f"\n--- PARSED ASSET DATA ---\n" + \
                   f"{header}\n" + \
