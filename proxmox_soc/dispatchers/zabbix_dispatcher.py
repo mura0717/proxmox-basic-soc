@@ -6,7 +6,7 @@ import os
 import requests
 from typing import List, Dict, Any, Optional
 
-from proxmox_soc.config.settings import ZABBIX
+from proxmox_soc.config.hydra_settings import ZABBIX
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
 
@@ -40,12 +40,24 @@ class ZabbixDispatcher(BaseDispatcher):
         print(f"\n[ZABBIX] Syncing {len(assets)} assets...")
         
         if self.authenticated:
-            self._sync_asset(assets)
+            for asset in assets:
+                try:
+                    status = self._sync_asset(asset)
+                    results[status] += 1
+                    if self.debug:
+                        print(f"  ✓ Status: {status}")
+                except Exception as e:
+                    results["failed"] += 1
+                    if self.debug:
+                        print(f"  ✗ Error: {e}")
         else:
             print("Zabbix authentication failed. Cannot sync assets.")
             results["failed"] = len(assets)
+            
+        print(f"[ZABBIX] Done: {results['created']} created, {results['updated']} updated, {results['skipped']} skipped, {results['failed']} failed")
+        return results
     
-    def _sync_asset(self, assets: Dict[str, Any]) -> str:
+    def _sync_asset(self, asset: Dict[str, Any]) -> str:
         """Sync single asset. Returns 'created', 'updated', 'skipped', or 'failed'."""
         canonical = asset.get('canonical_data', {})
         ip = canonical.get('last_seen_ip')
@@ -53,22 +65,24 @@ class ZabbixDispatcher(BaseDispatcher):
         if not ip:
             return "skipped"
         
-        for asset in assets:
-            # 1. Use Builder logic
-            dt = asset['canonical_data'].get('device_type')
-            group_name = self.builder.get_group_name(dt)
-            
-            # 2. Network Check (Dispatcher Logic)
-            group_check = self._rpc("hostgroup.get", {"filter": {"name": [group_name]}, "output": ["groupid"]})
-            if group_check: group_id = group_check[0]['groupid']
-            else: group_id = self._rpc("hostgroup.create", {"name": group_name})['groupids'][0]
+        # 1. Use Builder logic
+        dt = canonical.get('device_type')
+        group_name = self.builder.get_group_name(dt)
+        
+        # 2. Network Check (Dispatcher Logic)
+        group_check = self._rpc("hostgroup.get", {"filter": {"name": [group_name]}, "output": ["groupid"]})
+        if group_check: group_id = group_check[0]['groupid']
+        else: group_id = self._rpc("hostgroup.create", {"name": group_name})['groupids'][0]
 
-            # 3. Build Payload
-            host_payload = self.builder.build_host(asset, group_id)
-            if not host_payload['interfaces'][0]['ip']: continue # Skip no IP
-
-            # 4. Transmit
-            existing = self._rpc("host.get", {"filter": {"host": [host_payload['host']]}})
-            if not existing:
-                self._rpc("host.create", host_payload)
+        # 3. Build Payload
+        host_payload = self.builder.build_host(asset, group_id)
+        
+        # 4. Transmit
+        existing = self._rpc("host.get", {"filter": {"host": [host_payload['host']]}})
+        if not existing:
+            self._rpc("host.create", host_payload)
+            if self.debug:
                 print(f"  ✓ Created Host: {host_payload['name']}")
+            return "created"
+        
+        return "skipped"

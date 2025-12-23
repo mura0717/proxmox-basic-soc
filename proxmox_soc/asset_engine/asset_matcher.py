@@ -160,7 +160,3 @@ class AssetMatcher:
             for key, value in STATIC_IP_MAP[ip].items():
                 if not asset_data.get(key):
                     asset_data[key] = value
-    
-    def reset_finder_cache(self):
-        """Reset finder cache between scan types in same process."""
-        self.finder._all_assets_cache = None

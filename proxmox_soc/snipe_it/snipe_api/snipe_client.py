@@ -4,7 +4,7 @@ import json
 import time
 import requests
 
-from proxmox_soc.config.settings import SNIPE
+from proxmox_soc.config.hydra_settings import SNIPE
 
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

@@ -8,7 +8,7 @@ Verifies that key modules can be imported without errors.
 print("Testing module imports...")
 
 try:
-    from proxmox_soc.config.settings import SNIPE, ZABBIX, WAZUH
+    from proxmox_soc.config.hydra_settings import SNIPE, ZABBIX, WAZUH
     print("✓ Config import works for SNIPE, ZABBIX, WAZUH")
 except Exception as e:
     print(f"✗ Config import failed for SNIPE, ZABBIX, WAZUH: {e}")

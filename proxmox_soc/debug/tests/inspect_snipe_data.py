@@ -5,7 +5,7 @@ Verifies Snipe-IT API connectivity, lists recent assets and inspects custom-fiel
 Useful for quick troubleshooting of the Snipe-IT integration.
 """
 
-from proxmox_soc.config.settings import SNIPE
+from proxmox_soc.config.hydra_settings import SNIPE
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
 def snipeit_api_debug():

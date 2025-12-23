@@ -5,7 +5,7 @@ Test creating a single asset via API with default valid values
 import json
 from datetime import datetime
 
-from proxmox_soc.config.settings import SNIPE
+from proxmox_soc.config.hydra_settings import SNIPE
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
 def get_valid_defaults():

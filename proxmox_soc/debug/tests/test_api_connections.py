@@ -12,7 +12,7 @@ from pathlib import Path
 # Suppress insecure request warnings for self-signed certs
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from proxmox_soc.config.settings import SNIPE, ZABBIX, WAZUH
+from proxmox_soc.config.hydra_settings import SNIPE, ZABBIX, WAZUH
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "settings.py"

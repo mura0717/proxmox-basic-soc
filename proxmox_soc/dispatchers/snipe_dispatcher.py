@@ -6,7 +6,7 @@ import os
 import requests
 from typing import List, Dict, Any
 
-from proxmox_soc.config.settings import SNIPE
+from proxmox_soc.config.hydra_settings import SNIPE
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 
 class SnipeITDispatcher(BaseDispatcher):
@@ -33,7 +33,8 @@ class SnipeITDispatcher(BaseDispatcher):
                             print(f"  ✓ Created: {name} (ID: {new_id})")
                     else:
                         results["failed"] += 1
-                        print(f"  ✗ Create failed: {name} - {resp.text[:100]}")
+                        if self.debug:
+                            print(f"  ✗ Create failed: {name} - {resp.text[:100]}")
                         
                 elif asset['action'] == 'update' and asset['snipe_id']:
                     resp = requests.patch(f"{SNIPE.snipe_url}/api/v1/hardware/{asset['snipe_id']}", json=payload, headers=SNIPE.headers, verify=SNIPE.verify_ssl)
@@ -47,7 +48,8 @@ class SnipeITDispatcher(BaseDispatcher):
             
             except Exception as e:
                 results["failed"] += 1
-                print(f"  ✗ Error: {asset.get('snipe_payload', {}).get('name', 'Unknown')} - {e}")
-        
+                if self.debug:
+                    print(f"  ✗ Error: {asset.get('snipe_payload', {}).get('name', 'Unknown')} - {e}")
+
         print(f"[SNIPE-IT] Done: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
-        return assets
+        return results

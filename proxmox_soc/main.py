@@ -6,8 +6,16 @@ Flow:
 Scanner (data) -> Matcher (actions w/ canonical_data) -> Builder (snipe_payload) -> Dispatchers
 """
 
+import os
 import argparse
+from pathlib import Path
 from typing import Any, Dict, List
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / '.env')
+
+MAIN_DEBUG = os.getenv('MAIN_DEBUG', '0') == '1'
 
 
 def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: bool, skip_wazuh: bool) -> None:
@@ -39,16 +47,19 @@ def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: b
     print("\n=== DISPATCHING ===")
     # Snipe first so new creates get snipe_id for downstream
     snipe_results = SnipeITDispatcher().sync(actions)
-    print(f"[SNIPE] {snipe_results}")
+    if MAIN_DEBUG:
+        print(f"[SNIPE] {snipe_results}")
 
     if not skip_zabbix:
         zbx_results = ZabbixDispatcher().sync(actions)
-        print(f"[ZABBIX] {zbx_results}")
+        if MAIN_DEBUG:
+            print(f"[ZABBIX] {zbx_results}")
 
     if not skip_wazuh:
         wazuh_results = WazuhDispatcher().sync(actions)
-        print(f"[WAZUH] {wazuh_results}")
-
+        if MAIN_DEBUG:
+            print(f"[WAZUH] {wazuh_results}")
+        # Wazuh dispatcher only prints if debug is on, so we might want to keep this or rely on dispatcher
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Hydra Asset Sync Orchestrator")
