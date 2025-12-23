@@ -5,7 +5,7 @@ Produces action objects
 """
 
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
@@ -82,7 +82,7 @@ class AssetMatcher:
             self.finder.by_fallback_identifiers(asset_data)
         )
     
-    def _create_action_object(self, action, snipe_id, snipe_payload, raw_data):
+    def _create_action_object(self, action, snipe_id, raw_data):
         return {
             "action": action,
             "snipe_id": snipe_id,
@@ -160,3 +160,7 @@ class AssetMatcher:
             for key, value in STATIC_IP_MAP[ip].items():
                 if not asset_data.get(key):
                     asset_data[key] = value
+    
+    def reset_finder_cache(self):
+        """Reset finder cache between scan types in same process."""
+        self.finder._all_assets_cache = None

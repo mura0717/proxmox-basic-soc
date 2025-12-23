@@ -1,105 +1,96 @@
+#!/usr/bin/env python3
 """
-Main Orchestrator for Proxmox SOC Integration
+Hydra / Proxmox SOC Orchestrator
 
-Coordinating the flow: 
-Scanner (Data) -> Matcher (Action) -> Builder (Payload) -> Dispatcher (API)
+Flow:
+Scanner (data) -> Matcher (actions w/ canonical_data) -> Builder (snipe_payload) -> Dispatchers
 """
 
 import argparse
-from typing import List, Dict
+from typing import Any, Dict, List
 
-from proxmox_soc.utils.sudo_utils import elevate_to_root
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
-from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
-from proxmox_soc.dispatchers.snipe_dispatcher import SnipeITDispatcher
-from proxmox_soc.dispatchers.zabbix_dispatcher import ZabbixDispatcher
-from proxmox_soc.dispatchers.wazuh_dispatcher import WazuhDispatcher
-from proxmox_soc.scanners.nmap_scanner import NmapScanner
-from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
 
-def run_pipeline(scan_type: str, assets: List[Dict], args):
-    """
-    The Core Pipeline: Match -> Build -> Dispatch
-    """
+def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: bool, skip_wazuh: bool) -> None:
     if not assets:
         print(f"No assets found for {scan_type}.")
         return
 
-    # 1. MATCHING (Decide what to do)
-    # Returns standardized action objects with 'canonical_data'
-    print(f"--- MATCHING ({scan_type}) ---")
-    matcher = AssetMatcher()
+    # Import here to keep startup light and avoid importing unused deps
+    from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+    from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
+    from proxmox_soc.dispatchers.snipe_dispatcher import SnipeITDispatcher
+    from proxmox_soc.dispatchers.zabbix_dispatcher import ZabbixDispatcher
+    from proxmox_soc.dispatchers.wazuh_dispatcher import WazuhDispatcher
+
+    print(f"\n=== MATCHING ({scan_type}) ===")
+    matcher = AssetMatcher()  # fresh per scan type = avoids stale caches
     actions = matcher.process_scan_data(scan_type, assets)
 
     if not actions:
         print("No actionable assets found.")
         return
 
-    # 2. BUILDING (Format the data)
-    # The orchestrator asks the Builder to transform canonical data into a Snipe-IT compatible payload.
-    print(f"--- BUILDING PAYLOADS ({len(actions)}) ---")
+    print(f"\n=== BUILDING SNIPE PAYLOADS ({len(actions)}) ===")
     builder = SnipePayloadBuilder()
-    
     for action in actions:
-        # Transform canonical data -> Snipe-IT JSON
-        payload = builder.build(action)
-        # Inject payload back into the action object for dispatchers to use
-        action['snipe_payload'] = payload
+        # Your builder expects an action object
+        action["snipe_payload"] = builder.build(action)
 
-    # 3. DISPATCHING (Send the data)
-    print("--- DISPATCHING ---")
-    
-    # Snipe-IT (Primary System of Record)
-    SnipeITDispatcher().sync(actions)
-    
-    # Zabbix (Optional)
-    if not args.skip_zabbix:
-        ZabbixDispatcher().sync(actions)
-    
-    # Wazuh (Optional)
-    if not args.skip_wazuh:
-        WazuhDispatcher().sync(actions)
+    print("\n=== DISPATCHING ===")
+    # Snipe first so new creates get snipe_id for downstream
+    snipe_results = SnipeITDispatcher().sync(actions)
+    print(f"[SNIPE] {snipe_results}")
 
-def main():
+    if not skip_zabbix:
+        zbx_results = ZabbixDispatcher().sync(actions)
+        print(f"[ZABBIX] {zbx_results}")
+
+    if not skip_wazuh:
+        wazuh_results = WazuhDispatcher().sync(actions)
+        print(f"[WAZUH] {wazuh_results}")
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Hydra Asset Sync Orchestrator")
-    
-    # Scan Selection Arguments
-    parser.add_argument("--nmap", metavar="PROFILE", help="Run Nmap scan (e.g., 'discovery', 'full')")
-    parser.add_argument("--ms365", action="store_true", help="Run Microsoft 365 sync")
-    
-    # Dispatcher Flags
+
+    parser.add_argument("--nmap", metavar="PROFILE", help="Run Nmap scan (discovery, full, quick)")
+    parser.add_argument("--ms365", action="store_true", help="Run Microsoft 365 collection")
+    parser.add_argument("--all", action="store_true", help="Run Nmap (discovery) + MS365")
+
     parser.add_argument("--skip-zabbix", action="store_true", help="Skip Zabbix sync")
     parser.add_argument("--skip-wazuh", action="store_true", help="Skip Wazuh logging")
-    
+    parser.add_argument("--list-profiles", action="store_true", help="List available Nmap scan profiles")
+
     args = parser.parse_args()
 
-    # Safety check: Ensure at least one scan type is selected
-    if not (args.nmap or args.ms365):
-        parser.print_help()
-        print("\nError: You must specify a scan type (--nmap or --ms365)")
+    if args.list_profiles:
+        from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
+        print("\nAvailable Nmap scan profiles:")
+        for name, cfg in NMAP_SCAN_PROFILES.items():
+            print(f"  {name:12} - {cfg.get('description','')}")
         return
 
-    # --- Phase 1: Nmap Scan ---
-    if args.nmap:
-        # Nmap requires root privileges for OS fingerprinting
-        elevate_to_root()
-        
-        print(f"\n=== STARTING NMAP SCAN: {args.nmap} ===")
-        scanner = NmapScanner()
-        # Collect raw data (Scanner is dumb, just returns list)
-        assets = scanner.collect_assets(args.nmap)
-        # Run the processing pipeline
-        run_pipeline("nmap", assets, args)
+    if not any([args.nmap, args.ms365, args.all]):
+        parser.print_help()
+        return
 
-    # --- Phase 2: Microsoft 365 Sync ---
-    if args.ms365:
-        print("\n=== STARTING MS365 SYNC ===")
-        # MS365 doesn't need root, but if we elevated for Nmap, we stay elevated.
-        aggregator = Microsoft365Aggregator()
-        # Collect raw data
-        assets = aggregator.collect_assets()
-        # Run the processing pipeline
-        run_pipeline("microsoft365", assets, args)
+    # Nmap
+    if args.all or args.nmap:
+        from proxmox_soc.utils.sudo_utils import elevate_to_root
+        from proxmox_soc.scanners.nmap_scanner import NmapScanner
+
+        profile = "discovery" if args.all else args.nmap
+        elevate_to_root()
+        nmap_assets = NmapScanner().collect_assets(profile)
+        run_pipeline("nmap", nmap_assets, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh)
+
+    # MS365
+    if args.all or args.ms365:
+        from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
+
+        ms365_assets = Microsoft365Aggregator().collect_assets()
+        run_pipeline("microsoft365", ms365_assets, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh)
+
 
 if __name__ == "__main__":
     main()

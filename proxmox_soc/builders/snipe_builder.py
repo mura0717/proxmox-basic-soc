@@ -41,8 +41,11 @@ class SnipePayloadBuilder:
         if not SnipePayloadBuilder._hydrated:
             self._hydrate_field_map()
     
-    def build(self, asset_data: Dict, is_update: bool = False) -> Dict:
+    def build(self, action_obj: Dict) -> Dict:
         """Build the final Snipe-IT JSON payload."""
+        asset_data = action_obj.get('canonical_data', {})
+        is_update = action_obj.get('action') == 'update'
+        
         payload = {}
         
         # Name Priority
