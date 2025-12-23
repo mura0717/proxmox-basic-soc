@@ -63,6 +63,7 @@ HYDRA_DEBUG=0
 
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0
+MS365_CATEGORIZATION_DEBUG=0
 
 # Intune debugging flags
 INTUNE_DEBUG=0
@@ -72,8 +73,9 @@ INTUNE_CATEGORIZATION_DEBUG=0
 TEAMS_DEBUG=0
 TEAMS_CATEGORIZATION_DEBUG=0
 
-# Asset Matcher Debugging flags
-ASSET_MATCHER_DEBUG=0
+# Nmap debugging flags
+NMAP_DEBUG=0  
+NMAP_CATEGORIZATION_DEBUG=0
 
 # Snipe Debugging flags
 SNIPE_BUILDER_DEBUG=0
@@ -96,10 +98,6 @@ DNS_SERVERS=
 
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
-
-# Nmap debugging flags
-NMAP_DEBUG=0  
-NMAP_CATEGORIZATION_DEBUG=0
 
 #SNMP Configuration
 SNMP_COMMUNITY=public

@@ -109,9 +109,11 @@ class AssetDebugLogger:
         log_path = self._get_log_path(source, 'parsed')
         if not log_path: return
         
+        payload, header = (data, f"Found {len(data)} assets.") if isinstance(data, list) else (data, "Found 1 asset.")
+        
         message = f"\n--- PARSED ASSET DATA ---\n" + \
-                  f"Found {len(data)} assets.\n" + \
-                  json.dumps(data, indent=2) + "\n" + "-"*50
+                  f"{header}\n" + \
+                  json.dumps(payload, indent=2, default=str) + "\n" + "-"*50
         self._write_log(message, log_path)
         
     def log_categorization(self, source: str, log_entry: str):

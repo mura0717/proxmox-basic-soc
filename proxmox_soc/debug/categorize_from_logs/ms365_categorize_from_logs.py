@@ -5,7 +5,6 @@ It uses the microsoft365_raw_merged_data.log file and does not require live API 
 """
 
 import os
-import sys
 import json
 from typing import List, Dict
 

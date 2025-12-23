@@ -17,7 +17,7 @@ class WazuhPayloadBuilder:
         payload = asset.get("snipe_payload", {})
         
         # Extract open ports
-        ports = data.get("open_ports", [])
+        ports = data.get("nmap_open_ports", [])
         if isinstance(ports, str):
             ports = [p.strip() for p in ports.split('\n') if p.strip()]
 
@@ -31,7 +31,7 @@ class WazuhPayloadBuilder:
                 "ip": data.get("last_seen_ip"),
                 "mac": data.get("mac_addresses"),
                 "serial": data.get("serial"),
-                "asset_tag": asset.get("asset_tag"),
+                "asset_tag": payload.get("asset_tag"),
             },
             "classification": {
                 "manufacturer": data.get("manufacturer"),

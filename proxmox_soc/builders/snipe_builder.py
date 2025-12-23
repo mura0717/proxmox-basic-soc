@@ -154,7 +154,7 @@ class SnipePayloadBuilder:
         if fieldset: data['fieldset_id'] = fieldset['id']
         
         if self.debug:
-                    print(f"[_get_or_create_model] Successfully created model: {data['name']} (ID: {data['id']})")
+            print(f"[_get_or_create_model] Successfully created model: {data['name']} under manufacturer '{mfr['name']}' and category '{cat['name']}'")
         
         return self.model_service.create(data)
 
