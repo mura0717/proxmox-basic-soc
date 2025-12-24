@@ -15,6 +15,8 @@ from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
 from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
 from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
 
+INTEGRATION_TESTS = os.getenv("HYDRA_INTEGRATION_TESTS", "0") == "1"
+SNIPE_AVAILABLE = bool(os.getenv("SNIPE_API_TOKEN"))
 
 def print_result(test_name: str, passed: bool, details: str = ""):
     symbol = "✓" if passed else "✗"
@@ -312,11 +314,16 @@ def main():
     
     results = []
     
-    results.append(("Matcher", test_matcher()))
-    results.append(("Snipe Builder", test_snipe_builder()))
     results.append(("Zabbix Builder", test_zabbix_builder()))
     results.append(("Wazuh Builder", test_wazuh_builder()))
-    results.append(("Full Pipeline", test_full_pipeline()))
+    
+    if INTEGRATION_TESTS and SNIPE_AVAILABLE:
+        results.append(("Matcher", test_matcher()))
+        results.append(("Snipe Builder", test_snipe_builder()))
+        results.append(("Full Pipeline", test_full_pipeline()))
+    else:
+        print("\n[SKIP] Snipe-IT integration tests")
+        print("       Set HYDRA_INTEGRATION_TESTS=1 and configure SNIPE_API_TOKEN to enable")
     
     print("\n" + "=" * 60)
     print("SUMMARY")

@@ -1,16 +1,34 @@
 #!/bin/bash
-# Ensure we are in the right directory
-cd /opt/diabetes/proxmox-basic-soc
+# Hydra Pipeline Runner
+# Usage: ./run_pipeline.sh [args]
 
-# Activate venv if you use one
-# source venv/bin/activate
+set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
-# Run the orchestrator
-# $@ passes arguments from cron (e.g., --nmap discovery) to python
-/usr/bin/python3 proxmox_soc/orchestrator.py "$@" >> logs/cron_output.log 2>&1
+PROJECT_DIR="/opt/diabetes/proxmox-basic-soc"
+PYTHON="/usr/bin/python3"
+LOG_DIR="${PROJECT_DIR}/logs/cron"
+LOCK_FILE="/tmp/hydra_pipeline.lock"
 
-# Discovery every 4 hours
-0 */4 * * * /opt/diabetes/proxmox-basic-soc/run_pipeline.sh --nmap discovery
+# Ensure log directory exists
+mkdir -p "$LOG_DIR"
 
-# MS365 Sync Daily at 6 AM
-0 6 * * * /opt/diabetes/proxmox-basic-soc/run_pipeline.sh --ms365
+cd "$PROJECT_DIR"
+
+# Timestamp for log entries
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
+echo "[$TIMESTAMP] Starting: $*" >> "${LOG_DIR}/cron.log"
+
+# Use flock to prevent overlapping runs
+# -n = non-blocking (skip if locked)
+# -E 0 = exit 0 if lock fails (don't treat as error)
+flock -n -E 0 "$LOCK_FILE" $PYTHON -u -m proxmox_soc.main "$@" >> "${LOG_DIR}/pipeline.log" 2>&1
+
+EXIT_CODE=$?
+
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "[$TIMESTAMP] Completed: $*" >> "${LOG_DIR}/cron.log"
+else
+    echo "[$TIMESTAMP] Failed (exit $EXIT_CODE): $*" >> "${LOG_DIR}/cron.log"
+fi

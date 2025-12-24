@@ -16,7 +16,7 @@ if ENV_PATH.exists():
 else:
     load_dotenv()
 
-HYDRA_DEBUG = os.getenv('HYDRA_DEBUG', '0') == '1'
+HYDRA_SETTINGS_DEBUG = os.getenv('HYDRA_SETTINGS_DEBUG', '0') == '1'
 USE_PROXY = os.getenv('USE_PROXY', 'False').lower() in ('true', '1', 'yes')
 PROXY_HOST = os.getenv('PROXY_HOST')
 
@@ -121,7 +121,7 @@ SNIPE = SnipeConfig()
 ZABBIX = ZabbixConfig()
 WAZUH = WazuhConfig()
 
-if HYDRA_DEBUG:
+if HYDRA_SETTINGS_DEBUG:
     mode = "PROXY" if USE_PROXY else "DIRECT"
     masked_key = SNIPE.snipe_api_key[:5] + "..." if SNIPE.snipe_api_key else "None"
     print(f"--- CONFIG LOADED ({mode} MODE) ---")

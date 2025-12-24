@@ -58,12 +58,9 @@ PROXY_HOST=
 
 # DEBUGGING and LOGGING Flags
 
-#Main Debugging flags
-MAIN_DEBUG=0
-MAIN_DRY_RUN=0
-
 # Hydra Debugging flags
 HYDRA_DEBUG=0
+HYDRA_SETTINGS_DEBUG=0
 
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0
