@@ -7,10 +7,13 @@ SNIPE_IT_APP_PATH=
 SNIPE_CONFIG_DEBUG=0
 
 # SNIPE-IT DB
-DB_HOST=
 DB_NAME=
 DB_USER=
 DB_PASS=
+DB_HOST=
+DB_SSH_PORT=
+DB_SSH_USER=
+DB_SSH_KEY_PATH=
 
 # ZABBIX Configuration
 ZABBIX_HOST_IP=
@@ -26,12 +29,12 @@ WAZUH_PROXY_API_PORT=
 WAZUH_PROXY_INDEXER_PORT=
 WAZUH_API_USER=
 WAZUH_API_PASS=
-WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/
-WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read.
+WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
+WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
 WAZUH_EVENT_LOG_PATH= # Could be at ./proxmox-basic-soc/logs/wazuh_logs & It could be JSONL or plain text format.
 
 # Verification of SSL certs
-SSL_VERIFY=False
+VERIFY_SSL=False
 
 # Azure/Intune Configuration
 AZURE_TENANT_ID=
@@ -52,8 +55,19 @@ ENV_FILE_PATH = # Path to .env file that is used by various scripts
 USE_PROXY=False
 PROXY_HOST=
 
+
+# DEBUGGING, TEST & LOGGING Flags
+
+# Hydra Test
+HYDRA_INTEGRATION_TESTS=0
+
+# Hydra Debugging flags
+HYDRA_DEBUG=0
+HYDRA_SETTINGS_DEBUG=0
+
 #Microsoft365 Sync debugging flags
 MS365_DEBUG=0
+MS365_CATEGORIZATION_DEBUG=0
 
 # Intune debugging flags
 INTUNE_DEBUG=0
@@ -63,20 +77,31 @@ INTUNE_CATEGORIZATION_DEBUG=0
 TEAMS_DEBUG=0
 TEAMS_CATEGORIZATION_DEBUG=0
 
-#Asset Matcher Configuration
-ASSET_MATCHER_DEBUG=0
+# Nmap debugging flags
+NMAP_DEBUG=0  
+NMAP_CATEGORIZATION_DEBUG=0
 
-# Network Configuration
+# Snipe Debugging flags
+SNIPE_BUILDER_DEBUG=0
+SNIPE_DISPATCHER_DEBUG=0
+
+# Zabbix Debugging flags
+ZABBIX_BUILDER_DEBUG=0
+ZABBIX_DISPATCHER_DEBUG=0
+
+# Wazuh Debugging flags
+WAZUH_BUILDER_DEBUG=0
+WAZUH_DISPATCHER_DEBUG=0
+
+
+# NETWORK CONFIGURATION
+
 # Networks to scan
-NMAP_TARGETS=“192.168.1.0/24 192.168.2.0/24”
+NMAP_TARGETS=
 DNS_SERVERS=
 
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
-
-# Nmap debugging flags
-NMAP_DEBUG=0  
-NMAP_CATEGORIZATION_DEBUG=0
 
 #SNMP Configuration
 SNMP_COMMUNITY=public
