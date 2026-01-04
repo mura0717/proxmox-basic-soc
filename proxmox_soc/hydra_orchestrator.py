@@ -26,7 +26,7 @@ else:
 
 HYDRA_DEBUG = os.getenv('HYDRA_DEBUG', '0') == '1'
 
-def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: bool, skip_wazuh: bool, dry_run: bool = False) -> None:
+def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_snipe: bool, skip_zabbix: bool, skip_wazuh: bool, dry_run: bool = False) -> None:
     if not assets:
         print(f"No assets found for {scan_type}.")
         return
@@ -49,7 +49,6 @@ def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: b
     print(f"\n=== BUILDING SNIPE PAYLOADS ({len(actions)}) ===")
     builder = SnipePayloadBuilder()
     for action in actions:
-        # Your builder expects an action object
         action["snipe_payload"] = builder.build(action)
 
     print("\n=== DISPATCHING ===")
@@ -57,19 +56,27 @@ def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_zabbix: b
     if dry_run:
         print("\n[DRY RUN] Skipping API Dispatch.")
         import json
-        dry_run_dir = BASE_DIR / "logs" / "dry_runs"
+        dry_run_dir = BASE_DIR / "proxmox_soc" / "logs" / "dry_runs"
         dry_run_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         dry_run_file = dry_run_dir / f"dry_run_{scan_type}_{timestamp}.json"
         with open(dry_run_file, "w") as f:
             json.dump(actions, f, indent=2, default=str)
         print(f"[DRY RUN] Payloads written to: {dry_run_file}")
+        
+        print(f"[DRY RUN] Summary: {len(actions)} assets processed.")
+        for action in actions[:5]:
+            print(f"  - {action['action'].upper()}: {action.get('canonical_data', {}).get('name', 'Unknown')}")
+        if len(actions) > 5: print(f"  ... and {len(actions)-5} more.")
         return
     
     # Snipe first so new creates get snipe_id for downstream
-    snipe_results = SnipeITDispatcher().sync(actions)
-    if HYDRA_DEBUG:
-        print(f"[SNIPE] {snipe_results}")
+    if not skip_snipe:
+        snipe_results = SnipeITDispatcher().sync(actions)
+        if HYDRA_DEBUG:
+            print(f"[SNIPE] {snipe_results}")
+    else:
+        print("[SNIPE] Skipping sync (--skip-snipe used)")
 
     if not skip_zabbix:
         zbx_results = ZabbixDispatcher().sync(actions)
@@ -94,6 +101,8 @@ def main() -> None:
     # Skips
     parser.add_argument("--skip-zabbix", action="store_true", help="Skip Zabbix sync")
     parser.add_argument("--skip-wazuh", action="store_true", help="Skip Wazuh logging")
+    parser.add_argument("--skip-snipe", action="store_true", help="Skip Snipe-IT sync")
+    # Profiles
     parser.add_argument("--list-profiles", action="store_true", help="List available Nmap scan profiles")
 
     args = parser.parse_args()
@@ -102,7 +111,7 @@ def main() -> None:
         print("\n=== RUNNING INTEGRATION TESTS (MOCK DATA) ===")
         from proxmox_soc.debug.tests.test_hydra import main as run_tests
         sys.exit(run_tests())
-
+        
     if args.list_profiles:
         from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
         print("\nAvailable Nmap scan profiles:")
@@ -111,6 +120,9 @@ def main() -> None:
         return
 
     if not any([args.nmap, args.ms365, args.all]):
+        if args.dry_run:
+            print("\n[!] Error: You enabled --dry-run but didn't select a scan source.")
+            print("    Usage Example: python3 hydra_orchestrator.py --nmap discovery --dry-run\n")
         parser.print_help()
         return
     
@@ -122,14 +134,14 @@ def main() -> None:
         profile = "discovery" if args.all else args.nmap
         elevate_to_root()
         nmap_assets = NmapScanner().collect_assets(profile)
-        run_pipeline("nmap", nmap_assets, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
+        run_pipeline("nmap", nmap_assets, skip_snipe=args.skip_snipe, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
 
     # MS365
     if args.all or args.ms365:
         from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
 
         ms365_assets = Microsoft365Aggregator().collect_assets()
-        run_pipeline("microsoft365", ms365_assets, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
+        run_pipeline("microsoft365", ms365_assets, skip_snipe=args.skip_snipe, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
