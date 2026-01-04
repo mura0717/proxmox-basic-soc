@@ -6,8 +6,6 @@ Tests the full flow: Scanner -> Matcher -> Builder -> Dispatcher (dry-run)
 
 import os
 import sys
-import json
-from pathlib import Path
 from typing import Dict, List
 
 from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
@@ -25,7 +23,6 @@ def print_result(test_name: str, passed: bool, details: str = ""):
     print(f"[{color}{symbol}{reset}] {test_name}")
     if details:
         print(f"    {details}")
-
 
 def get_mock_nmap_assets() -> List[Dict]:
     """Generate mock Nmap scan data"""
@@ -49,7 +46,6 @@ def get_mock_nmap_assets() -> List[Dict]:
         }
     ]
 
-
 def get_mock_ms365_assets() -> List[Dict]:
     """Generate mock MS365 data"""
     return [
@@ -67,7 +63,6 @@ def get_mock_ms365_assets() -> List[Dict]:
             "_source": "microsoft365"
         }
     ]
-
 
 def test_matcher():
     """Test AssetMatcher with mock data"""
@@ -111,7 +106,6 @@ def test_matcher():
     except Exception as e:
         print_result("AssetMatcher", False, f"Error: {e}")
         return False
-
 
 def test_snipe_builder():
     """Test SnipePayloadBuilder"""
@@ -165,7 +159,6 @@ def test_snipe_builder():
         traceback.print_exc()
         return False
 
-
 def test_zabbix_builder():
     """Test ZabbixPayloadBuilder"""
     print("\n=== Testing ZabbixPayloadBuilder ===")
@@ -212,7 +205,6 @@ def test_zabbix_builder():
         print_result("ZabbixPayloadBuilder", False, f"Error: {e}")
         return False
 
-
 def test_wazuh_builder():
     """Test WazuhPayloadBuilder"""
     print("\n=== Testing WazuhPayloadBuilder ===")
@@ -258,7 +250,6 @@ def test_wazuh_builder():
     except Exception as e:
         print_result("WazuhPayloadBuilder", False, f"Error: {e}")
         return False
-
 
 def test_full_pipeline():
     """Test complete pipeline with mock data"""
@@ -310,6 +301,7 @@ def test_full_pipeline():
 def main():
     print("=" * 60)
     print("HYDRA PIPELINE INTEGRATION TEST")
+    print("Mode: DRY RUN (No Assets will be created/modified)")
     print("=" * 60)
     
     results = []
@@ -323,7 +315,10 @@ def main():
         results.append(("Full Pipeline", test_full_pipeline()))
     else:
         print("\n[SKIP] Snipe-IT integration tests")
-        print("       Set HYDRA_INTEGRATION_TESTS=1 and configure SNIPE_API_TOKEN to enable")
+        if not SNIPE_AVAILABLE:
+            print("       Reason: SNIPE_API_TOKEN is missing in .env")
+        elif not INTEGRATION_TESTS:
+            print("       Reason: HYDRA_INTEGRATION_TESTS environment variable is not set to '1'")
     
     print("\n" + "=" * 60)
     print("SUMMARY")
@@ -339,9 +334,7 @@ def main():
         print(f"  [{color}{symbol}{reset}] {name}")
     
     print(f"\nTotal: {passed}/{total} passed")
-    
     return 0 if passed == total else 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
