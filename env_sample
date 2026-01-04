@@ -56,7 +56,10 @@ USE_PROXY=False
 PROXY_HOST=
 
 
-# DEBUGGING and LOGGING Flags
+# DEBUGGING, TEST & LOGGING Flags
+
+# Hydra Test
+HYDRA_INTEGRATION_TEST=0
 
 # Hydra Debugging flags
 HYDRA_DEBUG=0
