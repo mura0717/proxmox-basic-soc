@@ -7,3 +7,4 @@ python-gvm
 pyzabbix
 python-nmap
 pymysql
+sshtunnel
