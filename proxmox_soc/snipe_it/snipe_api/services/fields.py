@@ -1,9 +1,9 @@
 """CRUD service for Snipe-IT custom fields"""
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
-class FieldService(BaseCRUDService):
+class FieldService(CrudBaseService):
     """Service for managing custom fields"""
     
     def __init__(self):

@@ -12,7 +12,7 @@ from gvm.connections import UnixSocketConnection
 from gvm.protocols.gmp import Gmp
 from gvm.transforms import EtreeTransform
 from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 class OpenVASScanner:
     """OpenVAS/GVM vulnerability scanner integration"""
@@ -117,7 +117,7 @@ class OpenVASScanner:
         """Scan all known assets for vulnerabilities"""
         
         # Get all assets from Snipe-IT
-        asset_service = BaseCRUDService('/api/v1/hardware', 'asset')
+        asset_service = CrudBaseService('/api/v1/hardware', 'asset')
         assets = asset_service.get_all()
         
         vuln_updates = []

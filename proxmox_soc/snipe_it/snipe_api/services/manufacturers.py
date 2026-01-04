@@ -1,8 +1,8 @@
 """CRUD service for Snipe-IT manufacturers"""
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
-class ManufacturerService(BaseCRUDService):
+class ManufacturerService(CrudBaseService):
     """Service for managing asset manufacturers"""
     
     def __init__(self):

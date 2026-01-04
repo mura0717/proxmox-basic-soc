@@ -14,7 +14,7 @@ from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
 from proxmox_soc.snipe_it.snipe_api.services.status_labels import StatusLabelService
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
 from proxmox_soc.snipe_it.snipe_api.services.locations import LocationService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
 class SnipeITSetup:
@@ -278,7 +278,7 @@ class SnipeITSetup:
         This should be run AFTER all cleanup operations.
         """
         print("\n--- Purging all deleted ---")
-        BaseCRUDService.purge_deleted_via_database()
+        CrudBaseService.purge_deleted_via_database()
         print(f"✓ Purged all deleted records")
         
 

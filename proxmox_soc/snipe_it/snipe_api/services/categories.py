@@ -1,8 +1,8 @@
 """CRUD service for Snipe-IT categories"""
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
-class CategoryService(BaseCRUDService):
+class CategoryService(CrudBaseService):
     """Service for managing categories"""
     
     def __init__(self):

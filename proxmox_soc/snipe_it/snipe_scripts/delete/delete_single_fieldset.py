@@ -9,7 +9,7 @@ confirmation before deleting any assets.
 import urllib3
 
 from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -31,7 +31,7 @@ def delete_fieldset(fieldset_name: str):
     if fieldset_service.delete(fieldset['id']) or fieldset_service.delete_by_name(fieldset_name):
         print(f"✓ Successfully soft-deleted fieldset: '{fieldset_name}'")
         print("\n--- Purging soft-deleted record from the database ---")
-        BaseCRUDService.purge_deleted_via_database()
+        CrudBaseService.purge_deleted_via_database()
         print("Purging completed.")
     else:
         print(f"✗ Failed to delete fieldset '{fieldset_name}'. It might be protected if assets are still assigned to it.")

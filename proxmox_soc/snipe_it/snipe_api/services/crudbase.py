@@ -8,7 +8,7 @@ from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 from proxmox_soc.utils.text_utils import normalize_for_comparison, normalize_for_display
 from proxmox_soc.snipe_it.snipe_db.snipe_db_connect import SnipeItDbConnection
 
-class BaseCRUDService:
+class CrudBaseService:
     """Base class for CRUD operations on Snipe-IT entities"""
     
     def __init__(self, endpoint: str, entity_name: str):
@@ -210,7 +210,7 @@ class BaseCRUDService:
             'custom_fields', 'status_labels', 'locations', 'accessories',
             'components', 'consumables', 'licenses'
         ]
-        BaseCRUDService.truncate_tables(all_tables)
+        CrudBaseService.truncate_tables(all_tables)
     
     @staticmethod
     def purge_deleted_via_database():

@@ -6,7 +6,7 @@ Updates a specific category from Snipe-IT.
 import urllib3
 
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 category_service = CategoryService()
 categories = category_service.get_all(limit=10000, refresh_cache=True)
@@ -22,7 +22,7 @@ if categories != []:
         print(f"Deleted category: {category['name']}")
     print("Soft-deletion of categories completed.")
     print("\n--- Purging soft-deleted records from the database ---")
-    BaseCRUDService.purge_deleted_via_database()
+    CrudBaseService.purge_deleted_via_database()
     print("Purging completed.")
 else:
     print("There are no categories to delete.")

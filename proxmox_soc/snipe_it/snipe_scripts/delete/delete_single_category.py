@@ -13,7 +13,7 @@ import urllib3
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 # Suppress InsecureRequestWarning for self-signed certs if needed
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -35,7 +35,7 @@ def delete_category(category_name: str):
     if category_service.delete(category['id']) or category_service.delete_by_name(category_name):
         print(f"✓ Successfully soft-deleted category: '{category_name}'")
         print("\n--- Purging soft-deleted record from the database ---")
-        BaseCRUDService.purge_deleted_via_database()
+        CrudBaseService.purge_deleted_via_database()
         print("Purging completed.")
     else:
         print(f"✗ Failed to delete category '{category_name}'. It might be protected if assets are still assigned to it.")

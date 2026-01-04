@@ -1,8 +1,8 @@
 """CRUD service for Snipe-IT status labels"""
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
-class StatusLabelService(BaseCRUDService):
+class StatusLabelService(CrudBaseService):
     """Service for managing status labels"""
     
     def __init__(self):

@@ -5,7 +5,7 @@ import urllib3
 # Suppress InsecureRequestWarning from urllib3 - unverified HTTPS requests 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 def truncate_table(table_name: str):
     """
@@ -15,8 +15,8 @@ def truncate_table(table_name: str):
         print("✗ Error: No table name provided.")
         return
     
-    BaseCRUDService.truncate_tables([table_name])
+    CrudBaseService.truncate_tables([table_name])
 
 if __name__ == "__main__":
     TABLES_TO_TRUNCATE = ["assets"]
-    BaseCRUDService.truncate_tables(TABLES_TO_TRUNCATE)
+    CrudBaseService.truncate_tables(TABLES_TO_TRUNCATE)

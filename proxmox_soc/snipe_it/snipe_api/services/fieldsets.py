@@ -2,11 +2,11 @@
 
 from typing import List, Dict
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
-class FieldsetService(BaseCRUDService):
+class FieldsetService(CrudBaseService):
     """Service for managing fieldsets"""
     
     def __init__(self):

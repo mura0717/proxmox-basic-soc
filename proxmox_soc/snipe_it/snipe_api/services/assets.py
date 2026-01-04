@@ -2,10 +2,10 @@
 
 from typing import Dict, Optional
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
-class AssetService(BaseCRUDService):
+class AssetService(CrudBaseService):
     """Service for managing categories"""
     
     def __init__(self):

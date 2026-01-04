@@ -1,8 +1,8 @@
 """CRUD service for Snipe-IT locations"""
 
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
-class LocationService(BaseCRUDService):
+class LocationService(CrudBaseService):
     """Service for managing locations"""
     
     def __init__(self):

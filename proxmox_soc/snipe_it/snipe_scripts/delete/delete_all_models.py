@@ -6,7 +6,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
-from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
+from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 
 model_service = ModelService()
 models = model_service.get_all(limit=10000, refresh_cache=True)
@@ -18,7 +18,7 @@ if models != []:
         print(f"Soft-deleted model: {model.get('name', 'Unnamed')} (ID: {model['id']})")
     print("Soft-deletion of models completed.")
     print("\n--- Purging soft-deleted records from the database ---")
-    BaseCRUDService.purge_deleted_via_database()
+    CrudBaseService.purge_deleted_via_database()
 else:
     print("There are no models to delete.")
  
