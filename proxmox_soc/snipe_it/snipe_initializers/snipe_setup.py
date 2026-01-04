@@ -278,7 +278,6 @@ class SnipeITSetup:
         Purges all soft-deleted records by calling the official Snipe-IT artisan command.
         This should be run AFTER all cleanup operations.
         """
-        """Directly purge soft-deleted records from database"""
         print("\n--- Purging all deleted ---")
         BaseCRUDService.purge_deleted_via_database()
         print(f"✓ Purged all deleted records")
