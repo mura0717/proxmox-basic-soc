@@ -15,8 +15,7 @@ from proxmox_soc.snipe_it.snipe_api.services.status_labels import StatusLabelSer
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
 from proxmox_soc.snipe_it.snipe_api.services.locations import LocationService
 from proxmox_soc.snipe_it.snipe_api.services.crudbase import BaseCRUDService
-
-from config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
+from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, CUSTOM_FIELDSETS, STATUS_LABELS, CATEGORIES, MANUFACTURERS, MODELS, LOCATIONS
 
 class SnipeITSetup:
     """Main setup class for Snipe-IT configuration"""
