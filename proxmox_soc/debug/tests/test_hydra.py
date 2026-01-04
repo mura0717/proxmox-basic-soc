@@ -118,6 +118,8 @@ def test_matcher():
         
     except Exception as e:
         print_result("AssetMatcher", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def test_snipe_builder():
@@ -216,6 +218,8 @@ def test_zabbix_builder():
         
     except Exception as e:
         print_result("ZabbixPayloadBuilder", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def test_wazuh_builder():
@@ -262,6 +266,8 @@ def test_wazuh_builder():
         
     except Exception as e:
         print_result("WazuhPayloadBuilder", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def test_full_pipeline():
