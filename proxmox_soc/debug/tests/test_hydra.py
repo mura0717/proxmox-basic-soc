@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Hydra Pipeline Integration Test
 Tests the full flow: Scanner -> Matcher -> Builder -> Dispatcher (dry-run)
@@ -10,18 +11,20 @@ from pathlib import Path
 from typing import Dict, List
 from dotenv import load_dotenv
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
-from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
-from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
-from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
-
+# Setup path to allow imports
 BASE_DIR = Path(__file__).resolve().parents[3]
+sys.path.append(str(BASE_DIR))
 ENV_PATH = BASE_DIR / '.env'
 
 if ENV_PATH.exists():
     load_dotenv(ENV_PATH)
 else:
     load_dotenv()
+
+from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
+from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
+from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
 
 INTEGRATION_TESTS = os.getenv("HYDRA_INTEGRATION_TESTS", "0") == "1"
 SNIPE_AVAILABLE = bool(os.getenv("SNIPE_API_TOKEN"))
