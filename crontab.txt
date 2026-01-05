@@ -58,7 +58,7 @@ MAILTO=""
 # ============================================
 
 # Daily Snipe-IT snapshot at midnight
-0 0 * * * cd /opt/diabetes/proxmox-basic-soc && /usr/bin/python3 -m proxmox_soc.snipe_it.snipe_scripts.snipe_snapshotter take >> logs/cron/snapshots.log 2>&1
+0 0 * * * cd /opt/diabetes/proxmox-basic-soc && /usr/bin/python3 -m proxmox_soc.snipe_it.snipe_scripts.log.snipe_snapshotter take >> logs/snipe_snapshots.log 2>&1
 
 # Weekly log cleanup - Sunday at 23:00
 # Delete logs older than 30 days

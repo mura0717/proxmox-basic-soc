@@ -14,7 +14,8 @@ CUSTOM_FIELDS = {
     'device_type': {"name": "Device Type", "element": "text", "format": "ANY", "help_text": "Type: Computer, Switch, Router, Printer, IoT, etc."},
     'udid': {"name": "UDID", "element": "text", "format": "ANY", "help_text": "Unique Device Identifier"},
     'serial_number': {"name": "Serial Number", "element": "text", "format": "ANY", "help_text": "Serial number of the device"},
-     # Teams Specific Fields
+    
+    # Teams Specific Fields
     'teams_device_id': {"name": "Teams Device ID", "element": "text", "format": "ANY", "help_text": "Unique Identifier from Microsoft Teams"},
     'teams_device_type': {"name": "Teams Device Type", "element": "text", "format": "ANY", "help_text": "Type of Teams device (e.g., collaborationBar, teamsRoom)"},
     'teams_health_status': {"name": "Teams Health Status", "element": "text", "format": "ANY", "help_text": "Health status reported by Teams (e.g., Healthy, Non-urgent)"},
@@ -159,7 +160,10 @@ CUSTOM_FIELDS = {
     # Cybersec Tags
     'cybersec_risk_level': {'name': 'Security Risk Level', 'element': 'listbox', "format": "ANY", 'field_values': 'Low\nMedium\nHigh\nCritical', "help_text": "Security risk level of the device"},
     'cybersec_needs_investigation': {'name': 'Needs Security Investigation', 'element': 'text', "format": "BOOLEAN", "help_text": "Flag to indicate if the device needs security investigation"},
-    'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY', "help_text": "Th last scan that the device was seen."}
+    'cybersec_last_seen': {'name': 'Last Security Scan','element': 'text', 'format': 'ANY', "help_text": "Th last scan that the device was seen."},
+    
+    # Criticality Tag
+    'business_criticality': {'name': 'Business Criticality', 'element': 'listbox', "format": "ANY", 'field_values': 'Low\nMedium\nHigh\nMission Critical', "help_text": "Impact on operations if this asset fails."}
 }
 
 # Define Custom Fieldsets
@@ -168,7 +172,7 @@ CUSTOM_FIELDSETS = {
     # It includes fields from all key data sources: Microsoft 365 (Intune + Teams) and Nmap.
     "Managed and Discovered Assets": [
         # Identity / IDs
-        'azure_ad_id', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
+        'azure_ad_id', 'business_criticality', 'intune_device_id', 'primary_user_id', 'device_enrollment_type', 'device_registration_state', 'device_category_display_name', 'udid', 'serial_number',
 
         # Enrollment / Management
         'intune_managed', 'intune_registered', 'intune_enrollment_date', 'intune_last_sync',
