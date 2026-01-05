@@ -4,9 +4,18 @@
 
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 
-PROJECT_DIR="/opt/diabetes/proxmox-basic-soc"
-PYTHON="/usr/bin/python3"
-LOG_DIR="${PROJECT_DIR}/logs/cron"
+PROJECT_DIR="/opt/diabetes/proxmox-basic-soc/"
+
+# Detect Virtual Environment
+if [ -f "${PROJECT_DIR}/venv/bin/python3" ]; then
+    PYTHON="${PROJECT_DIR}/venv/bin/python3"
+elif [ -f "${PROJECT_DIR}/.venv/bin/python3" ]; then
+    PYTHON="${PROJECT_DIR}/.venv/bin/python3"
+else
+    PYTHON="/usr/bin/python3"
+fi
+
+LOG_DIR="${PROJECT_DIR}/proxmox_soc/logs/cron"
 LOCK_FILE="/tmp/hydra_pipeline.lock"
 
 # Ensure log directory exists
@@ -22,7 +31,7 @@ echo "[$TIMESTAMP] Starting: $*" >> "${LOG_DIR}/cron.log"
 # Use flock to prevent overlapping runs
 # -n = non-blocking (skip if locked)
 # -E 0 = exit 0 if lock fails (don't treat as error)
-flock -n -E 0 "$LOCK_FILE" $PYTHON -u -m proxmox_soc.main "$@" >> "${LOG_DIR}/pipeline.log" 2>&1
+flock -n -E 0 "$LOCK_FILE" $PYTHON -u -m proxmox_soc.hydra_orchestrator "$@" >> "${LOG_DIR}/pipeline.log" 2>&1
 
 EXIT_CODE=$?
 
