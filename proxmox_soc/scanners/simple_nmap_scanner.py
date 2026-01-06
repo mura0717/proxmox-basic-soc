@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
@@ -42,6 +42,7 @@ class SimpleNmapScanner:
             os.makedirs(log_dir, exist_ok=True)
             with open(full_log_path, "a", encoding="utf-8") as f:
                 f.write(log_entry + "\n")
+            print(f"Scan results logged to {full_log_path}")
         except IOError as e:
             print(f"Warning: Could not write to log file {full_log_path}: {e}")
 
@@ -116,8 +117,8 @@ class SimpleNmapScanner:
 
 if __name__ == "__main__":
 
-    SCAN_TYPE_TO_RUN = 'discovery'
-    IP_RANGE_TO_SCAN = '192.168.1.0/24'
+    SCAN_TYPE_TO_RUN = 'detailed'
+    IP_RANGE_TO_SCAN = '172.20.20.201'
 
     scanner = SimpleNmapScanner()
     found_assets = scanner.run_scan(scan_type=SCAN_TYPE_TO_RUN, targets=IP_RANGE_TO_SCAN)
