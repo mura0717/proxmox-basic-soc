@@ -140,3 +140,28 @@ CATEGORY_MAP = {
     'Linux Workstation': 'Desktops',
     'macOS Device': 'Desktops',
 }
+
+BUSINESS_CRITILCALITY_RULES = {
+    'Mission Critical': {
+        'categories': [ 
+            'Servers', 'Firewalls', 'Routers', 'Switches'
+        ]
+    },
+    'High': {
+        'categories': [
+            'Access Points', 'Storage Devices', 'Network Devices',
+            'Cloud Resources'
+        ]
+    },
+    'Medium': {
+        'categories': [
+            'Laptops', 'Desktops', 'Printers', 'Virtual Machines'
+        ]
+    },
+    'Low': {
+        'categories': [
+            'Cameras', 'Tablets', 'Mobile Phones', 
+            'IoT Devices', 'Monitors', 'Other Assets'
+        ]
+    }
+}

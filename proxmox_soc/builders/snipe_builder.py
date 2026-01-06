@@ -110,6 +110,8 @@ class SnipePayloadBuilder:
     def _determine_category(self, asset_data: Dict) -> Dict:
         classification = AssetCategorizer.categorize(asset_data)
         asset_data['device_type'] = classification.get('device_type')
+        if classification.get('business_criticality'):
+            asset_data['business_criticality'] = classification.get('business_criticality')
         
         if self.debug:
             print(f"[_determine_category] Categorization for '{asset_data.get('name')}': {classification}")
