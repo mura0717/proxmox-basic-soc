@@ -27,17 +27,21 @@ cd "$PROJECT_DIR"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
 echo "[$TIMESTAMP] Starting: $*" >> "${LOG_DIR}/cron.log"
+logger -t "hydra-pipeline" "Started: $*"
 
 # Use flock to prevent overlapping runs
 # -n = non-blocking (skip if locked)
 # -E 0 = exit 0 if lock fails (don't treat as error)
+set +e
 flock -n -E 0 "$LOCK_FILE" $PYTHON -u -m proxmox_soc.hydra_orchestrator "$@" >> "${LOG_DIR}/pipeline.log" 2>&1
-
 EXIT_CODE=$?
+set -e
 
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 if [ $EXIT_CODE -eq 0 ]; then
     echo "[$TIMESTAMP] Completed: $*" >> "${LOG_DIR}/cron.log"
+    logger -t "hydra-pipeline" "Completed: $*"
 else
     echo "[$TIMESTAMP] Failed (exit $EXIT_CODE): $*" >> "${LOG_DIR}/cron.log"
+    logger -t "hydra-pipeline" "Failed (exit $EXIT_CODE): $*"
 fi
