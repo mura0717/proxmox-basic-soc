@@ -22,7 +22,6 @@ class AssetDebugLogger:
         self.nmap_debug = os.getenv('NMAP_DEBUG', '0') == '1'
         self.teams_debug = os.getenv('TEAMS_DEBUG', '0') == '1'
         self.ms365_debug = os.getenv('MS365_DEBUG', '0') == '1'
-        self.snmp_debug = os.getenv('SNMP_DEBUG', '0') == '1' # Not yet implemented
         
         # Master flag
         self.is_enabled = any([
@@ -30,15 +29,20 @@ class AssetDebugLogger:
             self.nmap_debug, 
             self.teams_debug, 
             self.ms365_debug,
-            self.snmp_debug
         ])
         
-        print(f"[DEBUG_LOGGER]: Initializing. INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}), "
-              f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}). Overall enabled: {self.is_enabled}, "
-              f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}), "
-              f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug}), "
-              f"SNMP_DEBUG={os.getenv('SNMP_DEBUG', '0')} (internal: {self.snmp_debug})."
-              )
+        if self.is_enabled:
+            print(f"[DEBUG_LOGGER]: Initializing... ")
+            if self.intune_debug:
+                print(f"INTUNE_DEBUG={os.getenv('INTUNE_DEBUG', '0')} (internal: {self.intune_debug}).")
+            elif self.nmap_debug:
+                print(f"NMAP_DEBUG={os.getenv('NMAP_DEBUG', '0')} (internal: {self.nmap_debug}).")
+            elif self.teams_debug:
+                print(f"TEAMS_DEBUG={os.getenv('TEAMS_DEBUG', '0')} (internal: {self.teams_debug}).")
+            elif self.ms365_debug:
+                print(f"MS365_DEBUG={os.getenv('MS365_DEBUG', '0')} (internal: {self.ms365_debug}).")
+            else:
+                print(f"Any enabled: {self.is_enabled}.")
 
         # Determine the project root directory (three levels up from this file's location)
         BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -91,7 +95,6 @@ class AssetDebugLogger:
         if source_lower == 'intune': result = self.intune_debug
         elif source_lower == 'nmap': result = self.nmap_debug
         elif source_lower == 'teams': result = self.teams_debug
-        elif source_lower == 'snmp': result = self.snmp_debug
         elif source_lower == 'ms365': result = self.ms365_debug
         else: result = False
         return result
