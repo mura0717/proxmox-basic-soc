@@ -102,10 +102,3 @@ DNS_SERVERS=
 
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
-
-#SNMP Configuration
-SNMP_COMMUNITY=public
-SNMP_PORT=161
-SNMP_VERSION=2c
-SNMP_TIMEOUT=2
-SNMP_RETRIES=1

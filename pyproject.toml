@@ -7,7 +7,7 @@ name = "proxmox_soc"  # The name of the inner folder containing your code
 version = "0.1.0"
 description = "A basic Security Operations Center built upon proxmox cluster."
 dependencies = [
-    # "requests", "python-dotenv", "python-crontab", "msal", "pysnmp", "python-gvm", "pyzabbix", "python-nmap", "pymysql", "sshtunnel"
+    # "requests", "python-dotenv", "python-crontab", "msal", "pyzabbix", "python-nmap", "pymysql", "sshtunnel"
 ]
 
 [tool.setuptools.packages.find]
