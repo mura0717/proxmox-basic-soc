@@ -20,7 +20,7 @@ import sys
 import subprocess
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parents[3]
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 def print_step(message):
     """Prints a formatted step header."""
@@ -45,9 +45,9 @@ def run_script(script_path: str):
 if __name__ == "__main__":
 
     print_step("STEP 1: Deleting all existing assets")
-    run_script(os.path.join(BASE_DIR, "snipe_it", "snipe_scripts", "delete", "snipe_delete_all_assets.py"))
+    run_script(os.path.join(BASE_DIR, "snipe_it", "snipe_scripts", "delete", "delete_all_assets.py"))
 
-    print_step("STEP 3: Running the main cleanup and setup process")
+    print_step("STEP 2: Running the main cleanup and setup process")
     run_script(os.path.join(BASE_DIR, "snipe_it", "snipe_initializers", "snipe_setup.py"))
 
     print("\n✅ Full reset and setup process completed successfully!")

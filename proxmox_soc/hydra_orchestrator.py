@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Hydra / Proxmox SOC Orchestrator
+Hydra / Proxmox SOC Orchestrator - The main entry point for asset synchronization.
 
 Flow:
 Scanner (data) -> Matcher (actions w/ canonical_data) -> Builder (snipe_payload) -> Dispatchers

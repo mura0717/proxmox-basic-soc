@@ -86,8 +86,7 @@ class AssetCategorizer:
         # Use the normalized string for more reliable matching
         service_str = normalize_for_comparison(' '.join(services))
         
-        dc_keywords = categorization_rules.SERVICE_RULES['Domain Controller']['service_keywords']
-        if all(kw in service_str for kw in dc_keywords):
+        if all(kw in service_str for kw in categorization_rules.SERVICE_RULES['Domain Controller']['service_keywords']):
             return 'Domain Controller'
         if any(svc in service_str for svc in categorization_rules.SERVICE_RULES['Printer']['service_keywords']):
             return 'Printer'
@@ -230,6 +229,17 @@ class AssetCategorizer:
         return 'On-Premise'
     
     @classmethod
+    def _determine_business_criticality(cls, device_category: str) -> str | None:
+        """Assign business criticality based on device category."""
+        if not device_category:
+            return None
+            
+        for criticality, rule in categorization_rules.BUSINESS_CRITILCALITY_RULES.items():
+            if device_category in rule.get('categories', []):
+                return criticality
+        return None
+
+    @classmethod
     def _get_location_from_dhcp_scope(cls, ip: Optional[str]) -> Optional[Dict]:
         """
         Determines the location of a device by checking if its IP falls within a DHCP scope.
@@ -342,5 +352,12 @@ class AssetCategorizer:
         category = device_data.get('category') or categorization_rules.CATEGORY_MAP.get(device_type, 'Other Assets')
         if cloud_provider in ['Azure', 'AWS', 'GCP']:
             category = 'Cloud Resources'
+            
+        business_criticality = cls._determine_business_criticality(category)
 
-        return {'device_type': device_type, 'category': category, 'cloud_provider': cloud_provider}
+        return {
+            'device_type': device_type, 
+            'category': category, 
+            'cloud_provider': cloud_provider,
+            'business_criticality': business_criticality
+        }

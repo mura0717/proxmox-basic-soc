@@ -13,4 +13,4 @@ PATH=/usr/local/bin:/usr/bin:/bin
 0 3 * * 0 /opt/diabetes/proxmox-basic-soc/run_pipeline.sh --nmap detailed
 
 # Daily snapshot
-0 0 * * * cd /opt/diabetes/proxmox-basic-soc && /usr/bin/python3 -m proxmox_soc.snipe_it.snipe_scripts.snipe_snapshotter take
+0 0 * * * cd /opt/diabetes/proxmox-basic-soc && /usr/bin/python3 -m proxmox_soc.snipe_it.snipe_scripts.log.snipe_snapshotter take >> logs/snipe_snapshots.log 2>&1
