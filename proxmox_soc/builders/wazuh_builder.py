@@ -51,7 +51,7 @@ class WazuhPayloadBuilder:
         if ip.startswith("192.168.1."): return "Primary LAN"
         if ip.startswith("192.168.2."): return "DMZ"
         if ip.startswith("192.168.200."): return "Odense Office"
-        if ip.startswith(("192.168.4.", "192.168.5.", "192.168.6.", "192.168.7.")): return "Clients"
+        if ip.startswith(("192.168.4.", "192.168.5.", "192.168.6.", "192.168.7.")): return "Extended"
         if ip.startswith("172.20.20."): return "Guest WiFi"
         if ip.startswith("10.255.255."): return "Security Cameras"
         return "Unknown"
