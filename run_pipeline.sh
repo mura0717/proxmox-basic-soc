@@ -18,12 +18,10 @@ fi
 LOG_DIR="${PROJECT_DIR}/proxmox_soc/logs/cron"
 LOCK_FILE="/tmp/hydra_pipeline.lock"
 
-# Ensure log directory exists
-mkdir -p "$LOG_DIR"
+mkdir -p "$LOG_DIR" # To ensure directory exists
 
 cd "$PROJECT_DIR"
 
-# Timestamp for log entries
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
 echo "[$TIMESTAMP] Starting: $*" >> "${LOG_DIR}/cron.log"
