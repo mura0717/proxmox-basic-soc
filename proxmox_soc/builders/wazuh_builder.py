@@ -11,7 +11,7 @@ class WazuhPayloadBuilder:
     Pure logic.
     """
 
-    def build_event(self, asset: Dict[str, Any]) -> Dict:
+    def build_event(self, asset: Dict[str, Any],asset_id: str, action: str) -> Dict:
         """Transforms canonical asset data into Wazuh Log Event."""
         data = asset.get("canonical_data", {})
         payload = asset.get("snipe_payload", {})
@@ -24,7 +24,8 @@ class WazuhPayloadBuilder:
         return {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "event_type": "hydra_asset_scan",
-            "action": asset.get("action"),
+            "action": action,
+            "wazuh_id": asset_id,
             "source": data.get("_source"),
             "asset": {
                 "name": payload.get("name") or data.get("name"),
@@ -42,6 +43,8 @@ class WazuhPayloadBuilder:
             "snipe_id": asset.get("snipe_id"),
             "security": {
                 "open_ports": ports,
+                "os_guess": data.get("nmap_os_guess"),
+                "compliance": data.get("intune_compliance"),
                 "vlan": self._get_vlan(data.get("last_seen_ip"))
             }
         }
