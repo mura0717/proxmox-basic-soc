@@ -1,148 +1,240 @@
-#!/usr/bin/env python3
 """
-Hydra / Proxmox SOC Orchestrator - The main entry point for asset synchronization.
-
-Flow:
-Scanner (data) -> Matcher (actions w/ canonical_data) -> Builder (snipe_payload) -> Dispatchers
+Main Orchestrator
+Coordinates scanners, resolver, and integration pipelines.
 """
 
-import os
-import sys
 import argparse
-from datetime import datetime
+import sys
+from typing import List, Optional
 from pathlib import Path
-from typing import Any, Dict, List
-from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-sys.path.append(str(BASE_DIR))
+from proxmox_soc.scanners.nmap_scanner import NmapScanner
+from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
+from proxmox_soc.asset_engine.asset_resolver import AssetResolver
 
-ENV_PATH = BASE_DIR / '.env'
+from proxmox_soc.states.snipe_state import SnipeStateManager
+from proxmox_soc.states.wazuh_state import WazuhStateManager
+from proxmox_soc.states.zabbix_state import ZabbixStateManager
 
-if ENV_PATH.exists():
-    load_dotenv(ENV_PATH)
-else:
-    load_dotenv()
+from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
+from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
+from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
 
-HYDRA_DEBUG = os.getenv('HYDRA_DEBUG', '0') == '1'
+from proxmox_soc.dispatchers.snipe_dispatcher import SnipeDispatcher
+from proxmox_soc.dispatchers.wazuh_dispatcher import WazuhDispatcher
+from proxmox_soc.dispatchers.zabbix_dispatcher import ZabbixDispatcher
 
-def run_pipeline(scan_type: str, assets: List[Dict[str, Any]], *, skip_snipe: bool, skip_zabbix: bool, skip_wazuh: bool, dry_run: bool = False) -> None:
-    if not assets:
-        print(f"No assets found for {scan_type}.")
-        return
+from proxmox_soc.pipelines.integration_pipeline import IntegrationPipeline
+from proxmox_soc.config.hydra_settings import WAZUH
 
-    # Import here to keep startup light and avoid importing unused deps
-    from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
-    from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
-    from proxmox_soc.dispatchers.snipe_dispatcher import SnipeITDispatcher
-    from proxmox_soc.dispatchers.zabbix_dispatcher import ZabbixDispatcher
-    from proxmox_soc.dispatchers.wazuh_dispatcher import WazuhDispatcher
 
-    print(f"\n=== MATCHING ({scan_type}) ===")
-    matcher = AssetMatcher()  # fresh per scan type = avoids stale caches
-    actions = matcher.process_scan_data(scan_type, assets)
-
-    if not actions:
-        print("No actionable assets found.")
-        return
-
-    print(f"\n=== BUILDING SNIPE PAYLOADS ({len(actions)}) ===")
-    builder = SnipePayloadBuilder()
-    for action in actions:
-        action["snipe_payload"] = builder.build(action)
-
-    print("\n=== DISPATCHING ===")
+class HydraOrchestrator:
+    """
+    Main entry point for asset synchronization.
+    """
     
-    if dry_run:
-        print("\n[DRY RUN] Skipping API Dispatch.")
-        import json
-        dry_run_dir = BASE_DIR / "proxmox_soc" / "logs" / "dry_runs"
-        dry_run_dir.mkdir(parents=True, exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        dry_run_file = dry_run_dir / f"dry_run_{scan_type}_{timestamp}.json"
-        with open(dry_run_file, "w") as f:
-            json.dump(actions, f, indent=2, default=str)
-        print(f"[DRY RUN] Payloads written to: {dry_run_file}")
+    def __init__(self, dry_run: bool = False, skip_integrations: Optional[List[str]] = None):
+        self.resolver = AssetResolver()
+        self.dry_run = dry_run
+        self.skip_integrations = skip_integrations or []
+        self._pipelines = None
+    
+    @property
+    def pipelines(self):
+        """Lazy initialization of pipelines."""
+        if self._pipelines is None:
+            self._pipelines = self._create_pipelines()
+        return self._pipelines
+    
+    def _create_pipelines(self):
+        """Create integration pipelines."""
+        return {
+            'snipe': IntegrationPipeline(
+                name='Snipe-IT',
+                state=SnipeStateManager(),
+                builder=SnipePayloadBuilder(),
+                dispatcher=SnipeDispatcher(),
+                dry_run=self.dry_run
+            ),
+            'wazuh': IntegrationPipeline(
+                name='Wazuh',
+                state=WazuhStateManager(WAZUH.state_file),
+                builder=WazuhPayloadBuilder(),
+                dispatcher=WazuhDispatcher(),
+                dry_run=self.dry_run
+            ),
+            'zabbix': IntegrationPipeline(
+                name='Zabbix',
+                state=ZabbixStateManager(),
+                builder=ZabbixPayloadBuilder(),
+                dispatcher=ZabbixDispatcher(),
+                dry_run=self.dry_run
+            ),
+        }
+    
+    def run_full_sync(self, integrations: Optional[List[str]] = None, 
+                      sources: Optional[List[str]] = None):
+        """Run complete sync across data sources and integrations."""
         
-        print(f"[DRY RUN] Summary: {len(actions)} assets processed.")
-        for action in actions[:5]:
-            print(f"  - {action['action'].upper()}: {action.get('canonical_data', {}).get('name', 'Unknown')}")
-        if len(actions) > 5: print(f"  ... and {len(actions)-5} more.")
-        return
+        # Collect from sources
+        print("=" * 60)
+        print("COLLECTING DATA FROM SOURCES")
+        print("=" * 60)
+        
+        all_resolved = []
+        active_sources = sources or ['nmap', 'ms365']
+        
+        if 'nmap' in active_sources:
+            nmap_data = NmapScanner().collect_assets()
+            all_resolved.extend(self.resolver.resolve('nmap', nmap_data))
+        
+        if 'ms365' in active_sources:
+            ms365_data = Microsoft365Aggregator().collect_assets()
+            all_resolved.extend(self.resolver.resolve('microsoft365', ms365_data))
+        
+        print(f"\nTotal resolved assets: {len(all_resolved)}")
+        
+        # Run pipelines
+        print("\n" + "=" * 60)
+        print("RUNNING INTEGRATION PIPELINES")
+        if self.dry_run:
+            print("MODE: DRY RUN (no changes will be made)")
+        print("=" * 60)
+        
+        active_integrations = integrations or list(self.pipelines.keys())
+        active_integrations = [i for i in active_integrations if i not in self.skip_integrations]
+        
+        results = {}
+        for name in active_integrations:
+            if name in self.pipelines:
+                results[name] = self.pipelines[name].process(all_resolved)
+        
+        # Summary
+        self._print_final_summary(results)
+        
+        return results
     
-    # Snipe first so new creates get snipe_id for downstream
-    if not skip_snipe:
-        snipe_results = SnipeITDispatcher().sync(actions)
-        if HYDRA_DEBUG:
-            print(f"[SNIPE] {snipe_results}")
-    else:
-        print("[SNIPE] Skipping sync (--skip-snipe used)")
+    def _print_final_summary(self, results):
+        """Print final summary of all pipelines."""
+        print("\n" + "=" * 60)
+        print("FINAL SUMMARY")
+        print("=" * 60)
+        
+        total_created = sum(r.created for r in results.values())
+        total_updated = sum(r.updated for r in results.values())
+        total_skipped = sum(r.skipped for r in results.values())
+        total_failed = sum(r.failed for r in results.values())
+        
+        for name, result in results.items():
+            print(f"  {name}: {result.created} created, {result.updated} updated, "
+                  f"{result.skipped} skipped, {result.failed} failed")
+        
+        print(f"\n  TOTAL: {total_created} created, {total_updated} updated, "
+              f"{total_skipped} skipped, {total_failed} failed")
 
-    if not skip_zabbix:
-        zbx_results = ZabbixDispatcher().sync(actions)
-        if HYDRA_DEBUG:
-            print(f"[ZABBIX] {zbx_results}")
 
-    if not skip_wazuh:
-        wazuh_results = WazuhDispatcher().sync(actions)
-        if HYDRA_DEBUG:
-            print(f"[WAZUH] {wazuh_results}")
-        # Wazuh dispatcher only prints if debug is on, so we might want to keep this or rely on dispatcher
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Hydra Asset Synchronization Pipeline',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                          # Full sync, all sources and integrations
+  %(prog)s --dry-run                # Test run, no changes made
+  %(prog)s --source nmap            # Only sync nmap data
+  %(prog)s --skip-zabbix            # Skip Zabbix integration
+  %(prog)s --only snipe wazuh       # Only sync to Snipe-IT and Wazuh
+        """
+    )
+    
+    parser.add_argument(
+        '--dry-run', '-n',
+        action='store_true',
+        help='Run without making any changes'
+    )
+    
+    parser.add_argument(
+        '--source', '-s',
+        choices=['nmap', 'ms365', 'all'],
+        default='all',
+        help='Data source to collect from (default: all)'
+    )
+    
+    parser.add_argument(
+        '--only', '-o',
+        nargs='+',
+        choices=['snipe', 'wazuh', 'zabbix'],
+        help='Only run specified integrations'
+    )
+    
+    parser.add_argument(
+        '--skip-snipe',
+        action='store_true',
+        help='Skip Snipe-IT integration'
+    )
+    
+    parser.add_argument(
+        '--skip-wazuh',
+        action='store_true',
+        help='Skip Wazuh integration'
+    )
+    
+    parser.add_argument(
+        '--skip-zabbix',
+        action='store_true',
+        help='Skip Zabbix integration'
+    )
+    
+    parser.add_argument(
+        '--test',
+        action='store_true',
+        help='Run in test mode with mock data'
+    )
+    
+    return parser.parse_args()
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Hydra Asset Sync Orchestrator")
-    # Scans
-    parser.add_argument("--nmap", metavar="PROFILE", help="Run Nmap scan (discovery, full, quick)")
-    parser.add_argument("--ms365", action="store_true", help="Run Microsoft 365 collection")
-    parser.add_argument("--all", action="store_true", help="Run Nmap (discovery) + MS365")
-    # Modes
-    parser.add_argument("--dry-run", action="store_true", help="Run matching+building only, do not dispatch")
-    parser.add_argument("--test", action="store_true", help="Run integration tests with mock data")
-    # Skips
-    parser.add_argument("--skip-zabbix", action="store_true", help="Skip Zabbix sync")
-    parser.add_argument("--skip-wazuh", action="store_true", help="Skip Wazuh logging")
-    parser.add_argument("--skip-snipe", action="store_true", help="Skip Snipe-IT sync")
-    # Profiles
-    parser.add_argument("--list-profiles", action="store_true", help="List available Nmap scan profiles")
 
-    args = parser.parse_args()
-
+def main():
+    args = parse_args()
+    
+    # Build skip list
+    skip = []
+    if args.skip_snipe:
+        skip.append('snipe')
+    if args.skip_wazuh:
+        skip.append('wazuh')
+    if args.skip_zabbix:
+        skip.append('zabbix')
+    
+    # Determine sources
+    sources = None
+    if args.source != 'all':
+        sources = [args.source]
+    
+    # Determine integrations
+    integrations = args.only if args.only else None
+    
+    # Test mode
     if args.test:
-        print("\n=== RUNNING INTEGRATION TESTS (MOCK DATA) ===")
+        print("Running in TEST mode with mock data...")
+        # Import and run test suite
         from proxmox_soc.debug.tests.test_hydra import main as run_tests
-        sys.exit(run_tests())
-        
-    if args.list_profiles:
-        from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
-        print("\nAvailable Nmap scan profiles:")
-        for name, cfg in NMAP_SCAN_PROFILES.items():
-            print(f"  {name:12} - {cfg.get('description','')}")
-        return
-
-    if not any([args.nmap, args.ms365, args.all]):
-        if args.dry_run:
-            print("\n[!] Error: You enabled --dry-run but didn't select a scan source.")
-            print("    Usage Example: python3 hydra_orchestrator.py --nmap discovery --dry-run\n")
-        parser.print_help()
-        return
+        return run_tests()
     
-    # Nmap
-    if args.all or args.nmap:
-        from proxmox_soc.utils.sudo_utils import elevate_to_root
-        from proxmox_soc.scanners.nmap_scanner import NmapScanner
-
-        profile = "discovery" if args.all else args.nmap
-        elevate_to_root()
-        nmap_assets = NmapScanner().collect_assets(profile)
-        run_pipeline("nmap", nmap_assets, skip_snipe=args.skip_snipe, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
-
-    # MS365
-    if args.all or args.ms365:
-        from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
-
-        ms365_assets = Microsoft365Aggregator().collect_assets()
-        run_pipeline("microsoft365", ms365_assets, skip_snipe=args.skip_snipe, skip_zabbix=args.skip_zabbix, skip_wazuh=args.skip_wazuh, dry_run=args.dry_run)
+    # Create and run orchestrator
+    orchestrator = HydraOrchestrator(
+        dry_run=args.dry_run,
+        skip_integrations=skip
+    )
+    
+    orchestrator.run_full_sync(
+        integrations=integrations,
+        sources=sources
+    )
+    
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -56,32 +56,38 @@ USE_PROXY=False
 PROXY_HOST=
 
 
-# DEBUGGING, TEST & LOGGING Flags
+# DEBUGGING, TEST & LOGGING Flags - Set to 1 to enable, 0 to disable
+
+# Scanner Debug flags
+# Microsoft365 Sync debugging flags
+MS365_DEBUG=0
+MS365_CATEGORIZATION_DEBUG=0
+
+# Intune Debug flags
+INTUNE_DEBUG=0
+INTUNE_CATEGORIZATION_DEBUG=0
+
+# Teams Debug flags
+TEAMS_DEBUG=0
+TEAMS_CATEGORIZATION_DEBUG=0
+
+# Nmap Debug flags
+NMAP_DEBUG=0  
+NMAP_CATEGORIZATION_DEBUG=0
+
+# Hydra Debug flags
+HYDRA_DEBUG=0
+HYDRA_SETTINGS_DEBUG=0
 
 # Hydra Test
 HYDRA_INTEGRATION_TESTS=0
 
-# Hydra Debugging flags
-HYDRA_DEBUG=0
-HYDRA_SETTINGS_DEBUG=0
+# Pipeline Orchestration
+SNIPE_IT_PIPELINE_DEBUG=0
+WAZUH_PIPELINE_DEBUG=0
+ZABBIX_PIPELINE_DEBUG=0
 
-#Microsoft365 Sync debugging flags
-MS365_DEBUG=0
-MS365_CATEGORIZATION_DEBUG=0
-
-# Intune debugging flags
-INTUNE_DEBUG=0
-INTUNE_CATEGORIZATION_DEBUG=0
-
-# Teams debugging flags
-TEAMS_DEBUG=0
-TEAMS_CATEGORIZATION_DEBUG=0
-
-# Nmap debugging flags
-NMAP_DEBUG=0  
-NMAP_CATEGORIZATION_DEBUG=0
-
-# Asset Matcher Debugging flags
+# Asset Resolver Debug flags
 ASSET_RESOLVER_DEBUG=0
 
 # Snipe Debugging flags

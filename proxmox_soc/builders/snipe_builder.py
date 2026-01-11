@@ -8,6 +8,8 @@ import hashlib
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
+from proxmox_soc.states.base_state import StateResult
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
 from proxmox_soc.snipe_it.snipe_api.services.manufacturers import ManufacturerService
 from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
@@ -20,9 +22,10 @@ from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, MODELS
 from proxmox_soc.utils.mac_utils import normalize_mac
 from proxmox_soc.utils.text_utils import normalize_for_comparison
 
-class SnipePayloadBuilder:
+
+class SnipePayloadBuilder(BasePayloadBuilder):
     """
-    Handles all Snipe-IT specific payload formatting, field mapping, and model resolution.
+    Handles all Snipe-IT specific payload formatting.
     """
     
     _custom_field_map: Dict[str, str] = {}
@@ -41,22 +44,39 @@ class SnipePayloadBuilder:
         if not SnipePayloadBuilder._hydrated:
             self._hydrate_field_map()
     
-    def build(self, action_obj: Dict) -> Dict:
+    def build(self, asset_data: Dict, state_result: StateResult) -> BuildResult:
         """Build the final Snipe-IT JSON payload."""
-        asset_data = action_obj.get('canonical_data', {})
-        is_update = action_obj.get('action') == 'update'
+        is_update = state_result.action == 'update'
         
-        payload = {}
+        # Merge with existing data if updating
+        if is_update and state_result.existing:
+            working_data = self._merge_with_existing(
+                state_result.existing, 
+                asset_data, 
+                asset_data.get('_source', 'unknown')
+            )
+        else:
+            working_data = asset_data.copy()
         
         # Name Priority
-        if asset_data.get('host_name'):
-            asset_data['name'] = asset_data['host_name']
+        if working_data.get('host_name'):
+            working_data['name'] = working_data['host_name']
 
-        self._assign_model_manufacturer_category(payload, asset_data)
-        self._populate_standard_fields(payload, asset_data, is_update)
-        self._populate_custom_fields(payload, asset_data)
+        payload = {}
+        self._assign_model_manufacturer_category(payload, working_data)
+        self._populate_standard_fields(payload, working_data, is_update)
+        self._populate_custom_fields(payload, working_data)
         
-        return payload
+        return BuildResult(
+            payload=payload,
+            asset_id=state_result.asset_id,
+            action=state_result.action,
+            snipe_id=int(state_result.asset_id) if state_result.action == 'update' and state_result.asset_id.isdigit() else None,
+            metadata={
+                'source': asset_data.get('_source'),
+                'name': payload.get('name'),
+            }
+        )
 
     # --- 1. MODEL / MANUFACTURER / CATEGORY LOGIC ---
 
@@ -165,7 +185,6 @@ class SnipePayloadBuilder:
         """Merge new scan data with existing asset data."""
         merged = self._flatten_existing_asset(existing)
         
-        # Fields where new scan data always wins
         priority_fields = {
             'nmap': ['last_seen_ip', 'nmap_last_scan', 'nmap_open_ports', 
                      'nmap_services', 'nmap_os_guess', 'open_ports_hash'],
@@ -176,7 +195,6 @@ class SnipePayloadBuilder:
         for key, value in new_data.items():
             if value in (None, '', []):
                 continue
-            # New data wins for: priority fields, or if existing is empty
             if key in priority_fields or not merged.get(key):
                 merged[key] = value
         
@@ -195,7 +213,6 @@ class SnipePayloadBuilder:
             else:
                 flattened[key] = value
         
-        # Flatten custom fields by matching labels to keys
         for label, field_data in existing.get('custom_fields', {}).items():
             value = field_data.get('value') if isinstance(field_data, dict) else field_data
             for key, field_def in CUSTOM_FIELDS.items():
@@ -204,7 +221,7 @@ class SnipePayloadBuilder:
                     break
         
         return flattened
-
+    
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple:
         mfr = asset_data.get('manufacturer')
         model = asset_data.get('model')

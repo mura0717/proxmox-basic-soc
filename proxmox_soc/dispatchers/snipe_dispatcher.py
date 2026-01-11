@@ -4,30 +4,40 @@ Snipe-IT Dispatcher Module
 
 import os
 import requests
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from proxmox_soc.config.hydra_settings import SNIPE
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
+from proxmox_soc.builders.base_builder import BuildResult
 
-class SnipeITDispatcher(BaseDispatcher):
+
+class SnipeDispatcher(BaseDispatcher):  # Fixed class name
+    """Dispatches assets to Snipe-IT API."""
     
     def __init__(self):
         self.debug = os.getenv('SNIPE_DISPATCHER_DEBUG', '0') == '1'
         
-    def sync(self, assets: List[Dict[str, Any]]) -> Dict[str, int]:
+    def sync(self, build_results: List[BuildResult]) -> Dict[str, int]:
+        """Sync built payloads to Snipe-IT."""
         results = {"created": 0, "updated": 0, "failed": 0}
-        print(f"\n[SNIPE-IT] Syncing {len(assets)} assets...")
+        print(f"\n[SNIPE-IT] Syncing {len(build_results)} assets...")
         
-        for asset in assets:
+        for build_result in build_results:
             try:
-                payload = asset['snipe_payload']
+                payload = build_result.payload
                 name = payload.get('name', 'Unknown')
+                action = build_result.action
                 
-                if asset['action'] == 'create':
-                    resp = requests.post(f"{SNIPE.snipe_url}/api/v1/hardware", json=payload, headers=SNIPE.headers, verify=SNIPE.verify_ssl)
+                if action == 'create':
+                    resp = requests.post(
+                        f"{SNIPE.snipe_url}/api/v1/hardware",
+                        json=payload,
+                        headers=SNIPE.headers,
+                        verify=SNIPE.verify_ssl
+                    )
                     if resp.status_code == 200 and resp.json().get('status') == 'success':
                         new_id = resp.json()['payload']['id']
-                        asset['snipe_id'] = new_id
+                        build_result.snipe_id = new_id  # Store for downstream use
                         results["created"] += 1
                         if self.debug:
                             print(f"  ✓ Created: {name} (ID: {new_id})")
@@ -36,20 +46,26 @@ class SnipeITDispatcher(BaseDispatcher):
                         if self.debug:
                             print(f"  ✗ Create failed: {name} - {resp.text[:100]}")
                         
-                elif asset['action'] == 'update' and asset['snipe_id']:
-                    resp = requests.patch(f"{SNIPE.snipe_url}/api/v1/hardware/{asset['snipe_id']}", json=payload, headers=SNIPE.headers, verify=SNIPE.verify_ssl)
+                elif action == 'update' and build_result.snipe_id:
+                    resp = requests.patch(
+                        f"{SNIPE.snipe_url}/api/v1/hardware/{build_result.snipe_id}",
+                        json=payload,
+                        headers=SNIPE.headers,
+                        verify=SNIPE.verify_ssl
+                    )
                     if resp.status_code == 200:
                         results["updated"] += 1
                         if self.debug:
                             print(f"  ✓ Updated: {name}")
                     else:
                         results["failed"] += 1
-                        print(f"  ✗ Update failed: {name}")
+                        if self.debug:
+                            print(f"  ✗ Update failed: {name}")
             
             except Exception as e:
                 results["failed"] += 1
                 if self.debug:
-                    print(f"  ✗ Error: {asset.get('snipe_payload', {}).get('name', 'Unknown')} - {e}")
+                    print(f"  ✗ Error: {build_result.payload.get('name', 'Unknown')} - {e}")
 
         print(f"[SNIPE-IT] Done: {results['created']} created, {results['updated']} updated, {results['failed']} failed")
         return results

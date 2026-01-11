@@ -43,3 +43,5 @@ else
     echo "[$TIMESTAMP] Failed (exit $EXIT_CODE): $*" >> "${LOG_DIR}/cron.log"
     logger -t "hydra-pipeline" "Failed (exit $EXIT_CODE): $*"
 fi
+
+exit $EXIT_CODE
