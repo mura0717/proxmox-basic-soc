@@ -159,7 +159,51 @@ class SnipePayloadBuilder:
         if self.debug:
             print(f"[_get_or_create_model] Successfully created model: {data['name']} under manufacturer '{mfr['name']}' and category '{cat['name']}'")
         
-        return self.model_service.create(data)
+        return self.model_service.create(data)    
+    
+    def _merge_with_existing(self, existing: Dict, new_data: Dict, scan_type: str) -> Dict:
+        """Merge new scan data with existing asset data."""
+        merged = self._flatten_existing_asset(existing)
+        
+        # Fields where new scan data always wins
+        priority_fields = {
+            'nmap': ['last_seen_ip', 'nmap_last_scan', 'nmap_open_ports', 
+                     'nmap_services', 'nmap_os_guess', 'open_ports_hash'],
+            'microsoft365': ['intune_last_sync', 'intune_compliance', 
+                            'primary_user_upn', 'primary_user_email'],
+        }.get(scan_type, [])
+        
+        for key, value in new_data.items():
+            if value in (None, '', []):
+                continue
+            # New data wins for: priority fields, or if existing is empty
+            if key in priority_fields or not merged.get(key):
+                merged[key] = value
+        
+        merged['_source'] = scan_type
+        return merged
+
+    def _flatten_existing_asset(self, existing: Dict) -> Dict:
+        """Flatten Snipe-IT API response to simple key-value pairs."""
+        flattened = {}
+        
+        for key, value in existing.items():
+            if key == 'custom_fields':
+                continue
+            elif isinstance(value, dict):
+                flattened[key] = value.get('name') or value.get('id')
+            else:
+                flattened[key] = value
+        
+        # Flatten custom fields by matching labels to keys
+        for label, field_data in existing.get('custom_fields', {}).items():
+            value = field_data.get('value') if isinstance(field_data, dict) else field_data
+            for key, field_def in CUSTOM_FIELDS.items():
+                if field_def.get('name') == label:
+                    flattened[key] = value
+                    break
+        
+        return flattened
 
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple:
         mfr = asset_data.get('manufacturer')
