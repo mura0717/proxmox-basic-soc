@@ -6,7 +6,7 @@ import json
 from proxmox_soc.config.hydra_settings import WAZUH
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
-from proxmox_soc.state.wazuh_state import WazuhStateManager
+from proxmox_soc.states.wazuh_state import WazuhStateManager
 
 class WazuhDispatcher(BaseDispatcher):
     def __init__(self):
@@ -40,6 +40,10 @@ class WazuhDispatcher(BaseDispatcher):
                     results["failed"] += 1
                     if self.debug:
                         print(f"  ✗ Failed {action} event for: {asset['canonical_data'].get('name', 'Unknown')} - Error: {e}")
+        
+        # Persist state changes to disk
+        self.state.save()
+
         if self.debug:
             print(f"  ✓ Logged {results['created']} created, {results['updated']} updated, {results['skipped']} skipped, and {results['failed']} failed events.")
         return results
