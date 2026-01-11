@@ -1,19 +1,23 @@
 """
-Wazuh Asset State Manager
+Wazuh State Manager
 Tracks assets sent to Wazuh to prevent duplicates and detect changes.
 """
+
 import json
 import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-class WazuhStateManager:
-    # 1. Identity Fields: Used to generate the Unique ID
-    IDENTITY_FIELDS = ('serial', 'mac_addresses', 'intune_device_id', 'azure_ad_id')
+from proxmox_soc.states.base_state import BaseStateManager, StateResult
+
+
+class WazuhStateManager(BaseStateManager):
+    """
+    File-based state tracking for Wazuh.
+    """
     
-    # 2. Change Detection Fields: Only updates to these trigger a new Wazuh log
-    # We purposefully exclude 'last_seen' or 'timestamp' fields here.
+    IDENTITY_FIELDS = ('serial', 'mac_addresses', 'intune_device_id', 'azure_ad_id')
     CHANGE_FIELDS = (
         'name', 'last_seen_ip', 'nmap_open_ports', 'nmap_os_guess',
         'intune_compliance', 'manufacturer', 'model', 'primary_user_email'
@@ -41,53 +45,71 @@ class WazuhStateManager:
             self._dirty = False
 
     def generate_id(self, asset_data: Dict) -> Optional[str]:
-        """Generates a deterministic ID based on the asset's immutable properties."""
+        """Generate deterministic ID based on asset's immutable properties."""
         for field in self.IDENTITY_FIELDS:
             val = asset_data.get(field)
             if val:
-                # Returns e.g., "serial:XY12345"
                 return f"{field}:{str(val).strip()}"
         
-        # Fallback: If we only have a name and it's not a generic device
-        if asset_data.get('name') and asset_data.get('name') != "Unknown":
-            return f"name:{asset_data['name']}"
+        # Fallback: Use name if it's not generic
+        name = asset_data.get('name')
+        if name and name != "Unknown" and not name.lower().startswith('device-'):
+            return f"name:{name}"
             
         return None
 
-    def _compute_hash(self, asset_data: Dict) -> str:
-        """Hashes only the fields that matter for updates."""
-        relevant = {k: asset_data.get(k) for k in self.CHANGE_FIELDS if asset_data.get(k)}
-        return hashlib.md5(json.dumps(relevant, sort_keys=True, default=str).encode()).hexdigest()
-
-    def process_asset(self, asset_data: Dict) -> tuple[str, Optional[str]]:
-        """
-        Determines the action: 'create', 'update', or 'skip'.
-        Returns: (action, asset_id)
-        """
+    def check(self, asset_data: Dict) -> StateResult:
+        """Determine if asset is new, changed, or unchanged."""
         asset_id = self.generate_id(asset_data)
+        
         if not asset_id:
-            return 'skip', None # Cannot track anonymous assets
-
+            return StateResult(
+                action='skip',
+                asset_id='',
+                existing=None,
+                reason='No suitable identifier'
+            )
+        
         current_hash = self._compute_hash(asset_data)
         
         # Case 1: New Asset
         if asset_id not in self._state:
-            self._update_internal_state(asset_id, current_hash, asset_data)
-            return 'create', asset_id
+            return StateResult(
+                action='create',
+                asset_id=asset_id,
+                existing=None,
+                reason='New asset'
+            )
 
-        # Case 2: Existing Asset - Check Hash
+        # Case 2: Check for changes
         stored_hash = self._state[asset_id].get('data_hash')
-        if current_hash != stored_hash:
-            self._update_internal_state(asset_id, current_hash, asset_data)
-            return 'update', asset_id
+        
+        if current_hash == stored_hash:
+            return StateResult(
+                action='skip',
+                asset_id=asset_id,
+                existing=self._state[asset_id],
+                reason='Data unchanged'
+            )
+        
+        return StateResult(
+            action='update',
+            asset_id=asset_id,
+            existing=self._state[asset_id],
+            reason='Data changed'
+        )
 
-        # Case 3: No Change
-        return 'skip', asset_id
-
-    def _update_internal_state(self, asset_id, data_hash, asset_data):
+    def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
+        """Record that an action was taken."""
         self._state[asset_id] = {
             'last_seen': datetime.now(timezone.utc).isoformat(),
-            'data_hash': data_hash,
-            'name': asset_data.get('name') # Stored just for debugging readability
+            'data_hash': self._compute_hash(asset_data),
+            'last_action': action,
+            'name': asset_data.get('name')
         }
         self._dirty = True
+
+    def _compute_hash(self, asset_data: Dict) -> str:
+        """Hash only the fields that matter for updates."""
+        relevant = {k: asset_data.get(k) for k in self.CHANGE_FIELDS if asset_data.get(k)}
+        return hashlib.md5(json.dumps(relevant, sort_keys=True, default=str).encode()).hexdigest()

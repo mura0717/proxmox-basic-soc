@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-
 """
 Hydra Pipeline Integration Test
-Tests the full flow: Scanner -> Matcher -> Builder -> Dispatcher (dry-run)
+Tests the full flow: Scanner -> Resolver -> State -> Builder -> Dispatcher (dry-run)
 """
 
 import os
@@ -11,7 +10,7 @@ from pathlib import Path
 from typing import Dict, List
 from dotenv import load_dotenv
 
-# Setup path to allow imports
+# Setup path
 BASE_DIR = Path(__file__).resolve().parents[3]
 sys.path.append(str(BASE_DIR))
 ENV_PATH = BASE_DIR / '.env'
@@ -21,13 +20,19 @@ if ENV_PATH.exists():
 else:
     load_dotenv()
 
-from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
+# Import refactored components
+from proxmox_soc.asset_engine.asset_resolver import AssetResolver, ResolvedAsset
+from proxmox_soc.states.snipe_state import SnipeStateManager
+from proxmox_soc.states.wazuh_state import WazuhStateManager
+from proxmox_soc.states.zabbix_state import ZabbixStateManager
 from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
 from proxmox_soc.builders.zabbix_builder import ZabbixPayloadBuilder
 from proxmox_soc.builders.wazuh_builder import WazuhPayloadBuilder
+from proxmox_soc.states.base_state import StateResult
 
 INTEGRATION_TESTS = os.getenv("HYDRA_INTEGRATION_TESTS", "0") == "1"
 SNIPE_AVAILABLE = bool(os.getenv("SNIPE_API_TOKEN"))
+
 
 def print_result(test_name: str, passed: bool, details: str = ""):
     symbol = "✓" if passed else "✗"
@@ -36,6 +41,7 @@ def print_result(test_name: str, passed: bool, details: str = ""):
     print(f"[{color}{symbol}{reset}] {test_name}")
     if details:
         print(f"    {details}")
+
 
 def get_mock_nmap_assets() -> List[Dict]:
     """Generate mock Nmap scan data"""
@@ -49,15 +55,14 @@ def get_mock_nmap_assets() -> List[Dict]:
             "model": "PowerEdge R640",
             "nmap_services": ["ssh", "http", "https"],
             "nmap_open_ports": "22/tcp/ssh\n80/tcp/http\n443/tcp/https",
-            "_source": "nmap"
         },
         {
             "last_seen_ip": "192.168.1.101",
-            "name": "Device-192.168.1.101",  # Generic name - should be skippable
+            "name": "Device-192.168.1.101",
             "dns_hostname": "",
-            "_source": "nmap"
         }
     ]
+
 
 def get_mock_ms365_assets() -> List[Dict]:
     """Generate mock MS365 data"""
@@ -73,97 +78,173 @@ def get_mock_ms365_assets() -> List[Dict]:
             "azure_ad_id": "azure-ad-001",
             "primary_user_upn": "user@company.com",
             "mac_addresses": "11:22:33:44:55:66",
-            "_source": "microsoft365"
         }
     ]
 
-def test_matcher():
-    """Test AssetMatcher with mock data"""
-    print("\n=== Testing AssetMatcher ===")
+
+def test_resolver():
+    """Test AssetResolver"""
+    print("\n=== Testing AssetResolver ===")
     
     try:
-        matcher = AssetMatcher()
+        resolver = AssetResolver()
         
         # Test with Nmap data
         nmap_assets = get_mock_nmap_assets()
-        actions = matcher.process_scan_data("nmap", nmap_assets)
+        resolved = resolver.resolve("nmap", nmap_assets)
         
         print_result(
-            "Matcher processes Nmap data",
-            len(actions) >= 1,
-            f"Generated {len(actions)} actions from {len(nmap_assets)} assets"
+            "Resolver returns ResolvedAsset objects",
+            all(isinstance(r, ResolvedAsset) for r in resolved),
+            f"Got {len(resolved)} ResolvedAsset objects"
         )
         
-        # Verify action structure
-        if actions:
-            action = actions[0]
-            has_required = all(k in action for k in ['action', 'snipe_id', 'canonical_data'])
-            print_result(
-                "Action object has correct structure",
-                has_required,
-                f"Keys: {list(action.keys())}"
-            )
-        
-        # Test with MS365 data
-        ms365_assets = get_mock_ms365_assets()
-        actions_ms365 = matcher.process_scan_data("microsoft365", ms365_assets)
-        
         print_result(
-            "Matcher processes MS365 data",
-            len(actions_ms365) >= 1,
-            f"Generated {len(actions_ms365)} actions"
+            "Source is tagged correctly",
+            all(r.canonical_data.get('_source') == 'nmap' for r in resolved),
+            f"All assets tagged with 'nmap'"
         )
         
         return True
         
     except Exception as e:
-        print_result("AssetMatcher", False, f"Error: {e}")
+        print_result("AssetResolver", False, f"Error: {e}")
         import traceback
         traceback.print_exc()
         return False
+
+
+def test_snipe_state():
+    """Test SnipeStateManager"""
+    print("\n=== Testing SnipeStateManager ===")
+    
+    if not SNIPE_AVAILABLE:
+        print("  [SKIP] Snipe-IT not configured")
+        return True
+    
+    try:
+        state = SnipeStateManager()
+        
+        # Test with asset that has serial
+        asset_with_serial = {"serial": "TEST123", "name": "Test Device"}
+        result = state.check(asset_with_serial)
+        
+        print_result(
+            "State check returns StateResult",
+            isinstance(result, StateResult),
+            f"Action: {result.action}"
+        )
+        
+        print_result(
+            "Generate ID works",
+            state.generate_id(asset_with_serial) is not None,
+            f"ID: {state.generate_id(asset_with_serial)}"
+        )
+        
+        return True
+        
+    except Exception as e:
+        print_result("SnipeStateManager", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def test_wazuh_state():
+    """Test WazuhStateManager"""
+    print("\n=== Testing WazuhStateManager ===")
+    
+    try:
+        from tempfile import TemporaryDirectory
+        
+        with TemporaryDirectory() as tmpdir:
+            state_file = Path(tmpdir) / "wazuh_state.json"
+            state = WazuhStateManager(state_file)
+            
+            # Test new asset
+            asset = {"serial": "WAZUH001", "name": "Test Device", "last_seen_ip": "192.168.1.50"}
+            result = state.check(asset)
+            
+            print_result(
+                "New asset returns 'create'",
+                result.action == 'create',
+                f"Action: {result.action}"
+            )
+            
+            # Record and check again
+            state.record(result.asset_id, asset, 'create')
+            result2 = state.check(asset)
+            
+            print_result(
+                "Unchanged asset returns 'skip'",
+                result2.action == 'skip',
+                f"Action: {result2.action}"
+            )
+            
+            # Modify and check
+            asset['last_seen_ip'] = "192.168.1.60"
+            result3 = state.check(asset)
+            
+            print_result(
+                "Changed asset returns 'update'",
+                result3.action == 'update',
+                f"Action: {result3.action}"
+            )
+            
+        return True
+        
+    except Exception as e:
+        print_result("WazuhStateManager", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 
 def test_snipe_builder():
     """Test SnipePayloadBuilder"""
     print("\n=== Testing SnipePayloadBuilder ===")
     
+    if not SNIPE_AVAILABLE:
+        print("  [SKIP] Snipe-IT not configured")
+        return True
+    
     try:
         builder = SnipePayloadBuilder()
         
-        # Mock action object
-        action = {
-            "action": "create",
-            "snipe_id": None,
-            "canonical_data": {
-                "name": "Test-Device",
-                "serial": "TEST123",
-                "manufacturer": "Dell",
-                "model": "OptiPlex 7090",
-                "mac_addresses": "AA:BB:CC:DD:EE:FF",
-                "_source": "nmap"
-            }
+        asset_data = {
+            "name": "Test-Device",
+            "serial": "TEST123",
+            "manufacturer": "Dell",
+            "model": "OptiPlex 7090",
+            "mac_addresses": "AA:BB:CC:DD:EE:FF",
+            "_source": "nmap"
         }
         
-        payload = builder.build(action)
+        state_result = StateResult(
+            action='create',
+            asset_id='snipe:serial:TEST123',
+            existing=None,
+            reason='New asset'
+        )
         
-        # Check required fields
-        has_name = 'name' in payload
-        has_model_id = 'model_id' in payload
-        has_status_id = 'status_id' in payload
+        build_result = builder.build(asset_data, state_result)
         
         print_result(
-            "Builder generates valid payload",
-            has_name and has_model_id,
-            f"Payload keys: {list(payload.keys())[:8]}..."
+            "Builder returns BuildResult",
+            hasattr(build_result, 'payload'),
+            f"Keys: {list(build_result.payload.keys())[:5]}..."
         )
         
         print_result(
-            "Payload has name",
-            payload.get('name') == "Test-Device"
+            "Payload has required fields",
+            all(k in build_result.payload for k in ['name', 'model_id']),
+            f"Has name and model_id"
         )
         
         print_result(
-            "Payload has asset_tag (auto-generated)",
-            'asset_tag' in payload and payload['asset_tag'].startswith('AUTO-')
+            "Auto-generated asset_tag",
+            build_result.payload.get('asset_tag', '').startswith('AUTO-'),
+            f"Tag: {build_result.payload.get('asset_tag')}"
         )
         
         return True
@@ -174,53 +255,6 @@ def test_snipe_builder():
         traceback.print_exc()
         return False
 
-def test_zabbix_builder():
-    """Test ZabbixPayloadBuilder"""
-    print("\n=== Testing ZabbixPayloadBuilder ===")
-    
-    try:
-        builder = ZabbixPayloadBuilder()
-        
-        action = {
-            "action": "create",
-            "snipe_id": 123,
-            "canonical_data": {
-                "name": "Test-Server",
-                "last_seen_ip": "192.168.1.100",
-                "device_type": "Server",
-                "serial": "SRV001",
-                "_source": "nmap"
-            },
-            "snipe_payload": {"name": "Test-Server"}
-        }
-        
-        group_name = builder.get_group_name("Server")
-        print_result(
-            "Group name mapping works",
-            group_name == "Servers",
-            f"'Server' -> '{group_name}'"
-        )
-        
-        payload = builder.build_host(action, "1")
-        
-        print_result(
-            "Zabbix host payload has required fields",
-            all(k in payload for k in ['host', 'name', 'groups', 'interfaces']),
-            f"Keys: {list(payload.keys())}"
-        )
-        
-        print_result(
-            "Interface has IP",
-            payload['interfaces'][0]['ip'] == "192.168.1.100"
-        )
-        
-        return True
-        
-    except Exception as e:
-        print_result("ZabbixPayloadBuilder", False, f"Error: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
 
 def test_wazuh_builder():
     """Test WazuhPayloadBuilder"""
@@ -229,20 +263,23 @@ def test_wazuh_builder():
     try:
         builder = WazuhPayloadBuilder()
         
-        action = {
-            "action": "create",
-            "snipe_id": 456,
-            "canonical_data": {
-                "name": "Test-Device",
-                "last_seen_ip": "192.168.1.50",
-                "nmap_open_ports": "22/tcp/ssh\n80/tcp/http",
-                "device_type": "Desktop",
-                "_source": "nmap"
-            },
-            "snipe_payload": {"name": "Test-Device", "asset_tag": "AUTO-123"}
+        asset_data = {
+            "name": "Test-Device",
+            "last_seen_ip": "192.168.1.50",
+            "nmap_open_ports": "22/tcp/ssh\n80/tcp/http",
+            "device_type": "Desktop",
+            "_source": "nmap"
         }
         
-        event = builder.build_event(action)
+        state_result = StateResult(
+            action='create',
+            asset_id='serial:TEST123',
+            existing=None,
+            reason='New asset'
+        )
+        
+        build_result = builder.build(asset_data, state_result)
+        event = build_result.payload
         
         print_result(
             "Event has required structure",
@@ -258,7 +295,7 @@ def test_wazuh_builder():
         
         print_result(
             "VLAN detection works",
-            event['security']['vlan'] is not None,
+            event['security']['vlan'] == "Primary LAN",
             f"VLAN: {event['security']['vlan']}"
         )
         
@@ -270,43 +307,97 @@ def test_wazuh_builder():
         traceback.print_exc()
         return False
 
+
+def test_zabbix_builder():
+    """Test ZabbixPayloadBuilder"""
+    print("\n=== Testing ZabbixPayloadBuilder ===")
+    
+    try:
+        builder = ZabbixPayloadBuilder()
+        
+        asset_data = {
+            "name": "Test-Server",
+            "last_seen_ip": "192.168.1.100",
+            "device_type": "Server",
+            "serial": "SRV001",
+            "_source": "nmap"
+        }
+        
+        state_result = StateResult(
+            action='create',
+            asset_id='zabbix:ip:192.168.1.100',
+            existing=None,
+            reason='New host'
+        )
+        
+        build_result = builder.build(asset_data, state_result)
+        payload = build_result.payload
+        
+        print_result(
+            "Group name mapping works",
+            build_result.metadata.get('group_name') == "Servers",
+            f"Group: {build_result.metadata.get('group_name')}"
+        )
+        
+        print_result(
+            "Payload has required fields",
+            all(k in payload for k in ['host', 'name', 'groups', 'interfaces']),
+            f"Keys: {list(payload.keys())}"
+        )
+        
+        print_result(
+            "Interface has correct IP",
+            payload['interfaces'][0]['ip'] == "192.168.1.100",
+            f"IP: {payload['interfaces'][0]['ip']}"
+        )
+        
+        return True
+        
+    except Exception as e:
+        print_result("ZabbixPayloadBuilder", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def test_full_pipeline():
     """Test complete pipeline with mock data"""
     print("\n=== Testing Full Pipeline (Dry Run) ===")
     
+    if not SNIPE_AVAILABLE:
+        print("  [SKIP] Snipe-IT not configured")
+        return True
+    
     try:
-        from proxmox_soc.asset_engine.asset_matcher import AssetMatcher
-        from proxmox_soc.builders.snipe_builder import SnipePayloadBuilder
+        from proxmox_soc.pipelines.integration_pipeline import IntegrationPipeline
+        from tempfile import TemporaryDirectory
         
-        # 1. Matcher
-        matcher = AssetMatcher()
+        resolver = AssetResolver()
         assets = get_mock_nmap_assets()
-        actions = matcher.process_scan_data("nmap", assets)
+        resolved = resolver.resolve("nmap", assets)
         
-        # 2. Builder
-        builder = SnipePayloadBuilder()
-        for action in actions:
-            action['snipe_payload'] = builder.build(action)
-        
-        # 3. Verify final structure
-        valid_actions = sum(1 for a in actions 
-                          if 'snipe_payload' in a and 'canonical_data' in a)
-        
-        print_result(
-            "Pipeline produces valid action objects",
-            valid_actions == len(actions),
-            f"{valid_actions}/{len(actions)} actions have complete data"
-        )
-        
-        # Show sample output
-        if actions:
-            sample = actions[0]
-            print("\n  Sample action object:")
-            print(f"    action: {sample['action']}")
-            print(f"    snipe_id: {sample['snipe_id']}")
-            print(f"    canonical_data.name: {sample['canonical_data'].get('name')}")
-            print(f"    snipe_payload.name: {sample['snipe_payload'].get('name')}")
-            print(f"    snipe_payload.model_id: {sample['snipe_payload'].get('model_id')}")
+        # Test Wazuh pipeline (file-based, always works)
+        with TemporaryDirectory() as tmpdir:
+            state_file = Path(tmpdir) / "wazuh_state.json"
+            
+            pipeline = IntegrationPipeline(
+                name='Wazuh-Test',
+                state=WazuhStateManager(state_file),
+                builder=WazuhPayloadBuilder(),
+                dispatcher=None,  # We'll test with dry_run
+                dry_run=True
+            )
+            
+            # Replace dispatcher.sync to avoid None error
+            pipeline.dispatcher = type('MockDispatcher', (), {'sync': lambda self, x: {'created': len(x), 'updated': 0, 'failed': 0}})()
+            
+            result = pipeline.process(resolved)
+            
+            print_result(
+                "Pipeline processes assets",
+                result.created + result.skipped > 0,
+                f"Created: {result.created}, Skipped: {result.skipped}"
+            )
         
         return True
         
@@ -320,25 +411,30 @@ def test_full_pipeline():
 def main():
     print("=" * 60)
     print("HYDRA PIPELINE INTEGRATION TEST")
-    print("Mode: DRY RUN (No Assets will be created/modified)")
+    print("Mode: DRY RUN (No changes will be made)")
     print("=" * 60)
     
     results = []
     
-    results.append(("Zabbix Builder", test_zabbix_builder()))
+    # Core tests (always run)
+    results.append(("Resolver", test_resolver()))
+    results.append(("Wazuh State", test_wazuh_state()))
     results.append(("Wazuh Builder", test_wazuh_builder()))
+    results.append(("Zabbix Builder", test_zabbix_builder()))
     
+    # Integration tests (require config)
     if INTEGRATION_TESTS and SNIPE_AVAILABLE:
-        results.append(("Matcher", test_matcher()))
+        results.append(("Snipe State", test_snipe_state()))
         results.append(("Snipe Builder", test_snipe_builder()))
         results.append(("Full Pipeline", test_full_pipeline()))
     else:
         print("\n[SKIP] Snipe-IT integration tests")
         if not SNIPE_AVAILABLE:
-            print("       Reason: SNIPE_API_TOKEN is missing in .env")
-        elif not INTEGRATION_TESTS:
-            print("       Reason: HYDRA_INTEGRATION_TESTS environment variable is not set to '1'")
+            print("       Reason: SNIPE_API_TOKEN is missing")
+        if not INTEGRATION_TESTS:
+            print("       Reason: HYDRA_INTEGRATION_TESTS != '1'")
     
+    # Summary
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
@@ -354,6 +450,7 @@ def main():
     
     print(f"\nTotal: {passed}/{total} passed")
     return 0 if passed == total else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

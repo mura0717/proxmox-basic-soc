@@ -1,29 +1,74 @@
-from typing import Dict
+"""
+Snipe-IT State Manager
+Handles asset existence checks against Snipe-IT API.
+"""
+
+from typing import Dict, Optional
+
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config.network_config import STATIC_IP_MAP
 
+
 class SnipeStateManager(BaseStateManager):
+    """
+    Manages asset state against Snipe-IT.
+    
+    Uses AssetFinder to locate existing assets via multiple strategies.
+    """
+    
+    IDENTITY_PRIORITY = ('serial', 'asset_tag', 'mac_addresses', 'intune_device_id')
+    
     def __init__(self):
         self.service = AssetService()
         self.finder = AssetFinder(self.service)
+        self._cache: Dict[str, Dict] = {}
+
+    def generate_id(self, asset_data: Dict) -> Optional[str]:
+        """Generate unique identifier from asset data."""
+        for field in self.IDENTITY_PRIORITY:
+            value = asset_data.get(field)
+            if value:
+                return f"snipe:{field}:{value}"
+        return None
 
     def check(self, asset_data: Dict) -> StateResult:
-        existing = self.find_existing_asset(asset_data)
+        """Check if asset exists in Snipe-IT and determine action."""
+        asset_id = self.generate_id(asset_data)
+        existing = self._find_existing(asset_data)
+        
         if existing:
             return StateResult(
                 action='update',
-                asset_id=existing['id'], # Snipe ID
-                existing=existing
+                asset_id=str(existing['id']),  # Use Snipe ID as asset_id
+                existing=existing,
+                reason=f"Found existing Snipe-IT asset ID: {existing['id']}"
             )
             
         if self._has_sufficient_data(asset_data):
-            return StateResult(action='create', asset_id=None, existing=None)
+            return StateResult(
+                action='create',
+                asset_id=asset_id or '',
+                existing=None,
+                reason='New asset with sufficient data'
+            )
 
-        return StateResult(action='skip', asset_id=None, existing=None)
+        return StateResult(
+            action='skip',
+            asset_id=asset_id or '',
+            existing=None,
+            reason='Insufficient data for creation'
+        )
 
-    def find_existing_asset(self, asset_data: Dict) -> Optional[Dict]:
+    def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
+        """Cache the result (Snipe-IT API handles persistence)."""
+        self._cache[asset_id] = {
+            'action': action,
+            'name': asset_data.get('name'),
+        }
+
+    def _find_existing(self, asset_data: Dict) -> Optional[Dict]:
         """Find existing asset using prioritized matching strategies."""
         return (
             self.finder.by_serial(asset_data.get('serial')) or
@@ -54,6 +99,3 @@ class SnipeStateManager(BaseStateManager):
             return True
         
         return False
-
-    def record(self, asset_id, asset_data, action):
-        pass # Snipe API handles its own persistence
