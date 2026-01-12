@@ -57,6 +57,8 @@ class IntegrationPipeline:
         """Process assets through the pipeline."""
         results = {'created': 0, 'updated': 0, 'skipped': 0, 'failed': 0}
         to_dispatch: List[tuple] = []
+        skipped_details: List[tuple] = []
+        failed_details: List[tuple] = []
         
         print(f"\n[{self.name}] Processing {len(assets)} assets...")
         
@@ -66,6 +68,7 @@ class IntegrationPipeline:
             
             if state_result.action == 'skip':
                 results['skipped'] += 1
+                skipped_details.append((asset, state_result.reason))
                 if self.debug:
                     print(f"  ─ Skip: {asset.canonical_data.get('name')} ({state_result.reason})")
                 continue
@@ -80,12 +83,13 @@ class IntegrationPipeline:
                 
             except Exception as e:
                 results['failed'] += 1
+                failed_details.append((asset, str(e)))
                 if self.debug:
                     print(f"  ✗ Build failed: {asset.canonical_data.get('name')} - {e}")
         
         # Phase 2: Dispatch or Dry Run
         if self.dry_run:
-            self._handle_dry_run(to_dispatch, results)
+            self._handle_dry_run(to_dispatch, results, skipped_details, failed_details)
         else:
             self._handle_dispatch(to_dispatch, results)
         
@@ -103,13 +107,12 @@ class IntegrationPipeline:
             integration=self.name
         )
     
-    def _handle_dry_run(self, to_dispatch: List[tuple], results: Dict):
+    def _handle_dry_run(self, to_dispatch: List[tuple], results: Dict, skipped_details: Optional[List[tuple]] = None, failed_details: Optional[List[tuple]] = None):
         """Handle dry run - write payloads to file and show summary."""
-        print(f"\n[{self.name}] DRY RUN - No changes will be made")
+        skipped_details = skipped_details or []
+        failed_details = failed_details or []
         
-        if not to_dispatch:
-            print(f"[{self.name}] No assets to process")
-            return
+        print(f"\n[{self.name}] DRY RUN - No changes will be made")
         
         # Prepare dry run data
         dry_run_data = []
@@ -159,6 +162,16 @@ class IntegrationPipeline:
                 print(f"    ↻ {entry['name']} (ID: {entry['asset_id']})")
             if len(updates) > 5:
                 print(f"    ... and {len(updates) - 5} more")
+        
+        if skipped_details:
+            print(f"\n  SKIPPED ({len(skipped_details)}):")
+            for asset, reason in skipped_details[:5]:
+                print(f"    ─ {asset.canonical_data.get('name', 'Unknown')} ({reason})")
+        
+        if failed_details:
+            print(f"\n  FAILED ({len(failed_details)}):")
+            for asset, error in failed_details[:5]:
+                print(f"    ✗ {asset.canonical_data.get('name', 'Unknown')} ({error})")
     
     def _handle_dispatch(self, to_dispatch: List[tuple], results: Dict):
         """Handle actual dispatch to target system."""

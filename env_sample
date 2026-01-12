@@ -17,6 +17,7 @@ DB_SSH_KEY_PATH=
 
 # ZABBIX Configuration
 ZABBIX_HOST_IP=
+ZABBIX_DIRECT_PORT=
 ZABBIX_PROXY_PORT=
 ZABBIX_USER=
 ZABBIX_PASS=
@@ -32,6 +33,7 @@ WAZUH_API_PASS=
 WAZUH_INDEXER_USER= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
 WAZUH_INDEXER_PASS= # Not in use in this implementation due to logs being pulled via file read in /logs/wazuh_logs/wazuh_events.jsonl
 WAZUH_EVENT_LOG_PATH= # Could be at ./proxmox-basic-soc/logs/wazuh_logs & It could be JSONL or plain text format.
+WAZUH_STATE_FILE_PATH=/opt/diabetes/proxmox-basic-soc/proxmox_soc/logs/wazuh_logs/wazuh_state.json
 
 # Verification of SSL certs
 VERIFY_SSL=False
@@ -54,7 +56,6 @@ ENV_FILE_PATH = # Path to .env file that is used by various scripts
 # Proxy Configuration
 USE_PROXY=False
 PROXY_HOST=
-
 
 # DEBUGGING, TEST & LOGGING Flags - Set to 1 to enable, 0 to disable
 
@@ -104,10 +105,6 @@ WAZUH_DISPATCHER_DEBUG=0
 
 
 # NETWORK CONFIGURATION
-
-# Networks to scan
-NMAP_TARGETS=
-DNS_SERVERS=
 
 # 0=discovery only 1= port scan
 NMAP_DEEP=0
