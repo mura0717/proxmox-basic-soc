@@ -5,7 +5,7 @@ Defines the contract for all integration state managers.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Optional, Any
+from typing import Dict, Optional
 
 
 @dataclass

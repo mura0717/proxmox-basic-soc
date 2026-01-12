@@ -31,7 +31,8 @@ class SnipePayloadBuilder(BasePayloadBuilder):
     _custom_field_map: Dict[str, str] = {}
     _hydrated = False
     
-    def __init__(self):
+    def __init__(self, dry_run: bool = False):
+        self.dry_run = dry_run
         self.status_service = StatusLabelService()
         self.category_service = CategoryService()
         self.manufacturer_service = ManufacturerService()
@@ -63,9 +64,13 @@ class SnipePayloadBuilder(BasePayloadBuilder):
             working_data['name'] = working_data['host_name']
 
         payload = {}
-        self._assign_model_manufacturer_category(payload, working_data)
-        self._populate_standard_fields(payload, working_data, is_update)
-        self._populate_custom_fields(payload, working_data)
+        
+        if self.dry_run:
+            self._build_dry_run_payload(payload, working_data, is_update)
+        else:    
+            self._assign_model_manufacturer_category(payload, working_data)
+            self._populate_standard_fields(payload, working_data, is_update)
+            self._populate_custom_fields(payload, working_data)
         
         return BuildResult(
             payload=payload,
@@ -77,6 +82,47 @@ class SnipePayloadBuilder(BasePayloadBuilder):
                 'name': payload.get('name'),
             }
         )
+    def _build_dry_run_payload(self, payload: Dict, asset_data: Dict, is_update: bool):
+        """Build a simplified payload for dry run without API calls."""
+        # Core fields
+        payload['name'] = asset_data.get('name', 'Unknown Device')
+        
+        if asset_data.get('serial'):
+            payload['serial'] = asset_data['serial']
+        
+        if asset_data.get('asset_tag'):
+            payload['asset_tag'] = asset_data['asset_tag']
+        elif not is_update:
+            payload['asset_tag'] = self._generate_asset_tag(asset_data)
+        
+        # MAC address
+        if asset_data.get('mac_addresses'):
+            macs = asset_data['mac_addresses']
+            first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
+            if first_mac:
+                payload['mac_address'] = normalize_mac(first_mac.strip())
+        
+        # Metadata (for reference, not actual API IDs)
+        payload['_dry_run'] = True
+        payload['_manufacturer'] = asset_data.get('manufacturer', 'Unknown')
+        payload['_model'] = asset_data.get('model', 'Unknown')
+        payload['_category'] = asset_data.get('category') or asset_data.get('device_type', 'Unknown')
+        payload['_source'] = asset_data.get('_source', 'unknown')
+        payload['_last_seen_ip'] = asset_data.get('last_seen_ip')
+        
+        # Status placeholder
+        source = asset_data.get('_source', 'unknown')
+        if source == 'nmap':
+            payload['_status'] = 'Discovered - Nmap'
+        elif source in ['microsoft365', 'intune']:
+            payload['_status'] = 'Managed - M365'
+        else:
+            payload['_status'] = 'Unknown'
+        
+        # Include key identifiers for review
+        for key in ['intune_device_id', 'azure_ad_id', 'teams_device_id', 'primary_user_upn']:
+            if asset_data.get(key):
+                payload[f'_{key}'] = asset_data[key]
 
     # --- 1. MODEL / MANUFACTURER / CATEGORY LOGIC ---
 
