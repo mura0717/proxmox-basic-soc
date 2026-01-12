@@ -7,6 +7,7 @@ NMAP_SCAN_RANGES = [
     "192.168.1.0/24",    # Glostrup Main 
     "192.168.5.0/22",    # Glostrup Extended
     "192.168.200.0/24",  # Odense Main
+    "172.20.20.0/24"     # Guest Wifi
 ]
 
 """
