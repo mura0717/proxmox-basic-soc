@@ -200,6 +200,44 @@ def test_wazuh_state():
         return False
 
 
+def test_zabbix_state():
+    """Test ZabbixStateManager"""
+    print("\n=== Testing ZabbixStateManager ===")
+    
+    try:
+        state = ZabbixStateManager()
+        
+        # Test monitorable asset (needs IP)
+        asset = {
+            "name": "Test-Zabbix-Host",
+            "last_seen_ip": "192.168.1.200",
+            "mac_addresses": "11:22:33:44:55:66",
+            "device_type": "Server"
+        }
+        
+        result = state.check(asset)
+        
+        print_result(
+            "State check returns StateResult",
+            isinstance(result, StateResult),
+            f"Action: {result.action}"
+        )
+        
+        print_result(
+            "Generate ID works (MAC priority)",
+            result.asset_id == "zabbix:mac:11:22:33:44:55:66",
+            f"ID: {result.asset_id}"
+        )
+        
+        return True
+        
+    except Exception as e:
+        print_result("ZabbixStateManager", False, f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def test_snipe_builder():
     """Test SnipePayloadBuilder"""
     print("\n=== Testing SnipePayloadBuilder ===")
@@ -419,6 +457,7 @@ def main():
     # Core tests (always run)
     results.append(("Resolver", test_resolver()))
     results.append(("Wazuh State", test_wazuh_state()))
+    results.append(("Zabbix State", test_zabbix_state()))
     results.append(("Wazuh Builder", test_wazuh_builder()))
     results.append(("Zabbix Builder", test_zabbix_builder()))
     

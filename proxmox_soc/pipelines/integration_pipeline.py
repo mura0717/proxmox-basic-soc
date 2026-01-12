@@ -4,13 +4,21 @@ Orchestrates state → builder → dispatcher flow for each integration.
 """
 
 import os
-from typing import Dict, List
-from dataclasses import dataclass
+import json
+from pathlib import Path
+from datetime import datetime
+from typing import Dict, List, Optional
+from dataclasses import dataclass, asdict
 
 from proxmox_soc.asset_engine.asset_resolver import ResolvedAsset
 from proxmox_soc.states.base_state import BaseStateManager
 from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
+
+
+# Base directory for logs
+BASE_DIR = Path(__file__).resolve().parents[2]
+DRY_RUN_DIR = BASE_DIR / "proxmox_soc" / "logs" / "dry_runs"
 
 
 @dataclass
@@ -42,7 +50,9 @@ class IntegrationPipeline:
         self.dispatcher = dispatcher
         self.dry_run = dry_run
         self.debug = os.getenv(f'{name.upper().replace("-", "_")}_PIPELINE_DEBUG', '0') == '1'
-    
+        if hasattr(self.builder, 'dry_run'):
+            self.builder.dry_run = dry_run
+            
     def process(self, assets: List[ResolvedAsset]) -> PipelineResult:
         """Process assets through the pipeline."""
         results = {'created': 0, 'updated': 0, 'skipped': 0, 'failed': 0}
@@ -73,31 +83,13 @@ class IntegrationPipeline:
                 if self.debug:
                     print(f"  ✗ Build failed: {asset.canonical_data.get('name')} - {e}")
         
-        # Phase 2: Dispatch (unless dry run)
+        # Phase 2: Dispatch or Dry Run
         if self.dry_run:
-            print(f"[{self.name}] DRY RUN - Would dispatch {len(to_dispatch)} assets")
-            for _, state_result, _ in to_dispatch:
-                if state_result.action == 'create':
-                    results['created'] += 1
-                else:
-                    results['updated'] += 1
+            self._handle_dry_run(to_dispatch, results)
         else:
-            build_results = [br for _, _, br in to_dispatch]
-            if build_results:
-                dispatch_results = self.dispatcher.sync(build_results)
-                results['created'] = dispatch_results.get('created', 0)
-                results['updated'] = dispatch_results.get('updated', 0)
-                results['failed'] += dispatch_results.get('failed', 0)
-            
-            # Phase 3: Record state for successful dispatches
-            for asset, state_result, build_result in to_dispatch:
-                self.state.record(
-                    state_result.asset_id,
-                    asset.canonical_data,
-                    state_result.action
-                )
+            self._handle_dispatch(to_dispatch, results)
         
-        # Save state if applicable (e.g., Wazuh file-based state)
+        # Save state if applicable
         if hasattr(self.state, 'save'):
             self.state.save()
         
@@ -111,9 +103,87 @@ class IntegrationPipeline:
             integration=self.name
         )
     
+    def _handle_dry_run(self, to_dispatch: List[tuple], results: Dict):
+        """Handle dry run - write payloads to file and show summary."""
+        print(f"\n[{self.name}] DRY RUN - No changes will be made")
+        
+        if not to_dispatch:
+            print(f"[{self.name}] No assets to process")
+            return
+        
+        # Prepare dry run data
+        dry_run_data = []
+        for asset, state_result, build_result in to_dispatch:
+            entry = {
+                'action': state_result.action,
+                'asset_id': state_result.asset_id,
+                'name': asset.canonical_data.get('name', 'Unknown'),
+                'source': asset.source,
+                'canonical_data': asset.canonical_data,
+                'payload': build_result.payload,
+                'metadata': build_result.metadata,
+            }
+            dry_run_data.append(entry)
+            
+            if state_result.action == 'create':
+                results['created'] += 1
+            else:
+                results['updated'] += 1
+        
+        # Write to file
+        DRY_RUN_DIR.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = self.name.lower().replace('-', '_').replace(' ', '_')
+        dry_run_file = DRY_RUN_DIR / f"dry_run_{safe_name}_{timestamp}.json"
+        
+        with open(dry_run_file, "w") as f:
+            json.dump(dry_run_data, f, indent=2, default=str)
+        
+        print(f"[{self.name}] Payloads written to: {dry_run_file}")
+        
+        # Show summary
+        print(f"\n[{self.name}] Would process {len(dry_run_data)} assets:")
+        creates = [d for d in dry_run_data if d['action'] == 'create']
+        updates = [d for d in dry_run_data if d['action'] == 'update']
+        
+        if creates:
+            print(f"\n  CREATE ({len(creates)}):")
+            for entry in creates[:5]:
+                print(f"    + {entry['name']}")
+            if len(creates) > 5:
+                print(f"    ... and {len(creates) - 5} more")
+        
+        if updates:
+            print(f"\n  UPDATE ({len(updates)}):")
+            for entry in updates[:5]:
+                print(f"    ↻ {entry['name']} (ID: {entry['asset_id']})")
+            if len(updates) > 5:
+                print(f"    ... and {len(updates) - 5} more")
+    
+    def _handle_dispatch(self, to_dispatch: List[tuple], results: Dict):
+        """Handle actual dispatch to target system."""
+        if not to_dispatch:
+            return
+        
+        build_results = [br for _, _, br in to_dispatch]
+        dispatch_results = self.dispatcher.sync(build_results)
+        
+        results['created'] = dispatch_results.get('created', 0)
+        results['updated'] = dispatch_results.get('updated', 0)
+        results['failed'] += dispatch_results.get('failed', 0)
+        
+        # Record state for successful dispatches
+        for asset, state_result, build_result in to_dispatch:
+            self.state.record(
+                state_result.asset_id,
+                asset.canonical_data,
+                state_result.action
+            )
+    
     def _print_summary(self, results: Dict):
+        """Print sync summary."""
         mode = "[DRY RUN] " if self.dry_run else ""
-        print(f"[{self.name}] {mode}Complete: "
+        print(f"\n[{self.name}] {mode}Complete: "
               f"{results['created']} created, "
               f"{results['updated']} updated, "
               f"{results['skipped']} skipped, "
