@@ -118,7 +118,7 @@ class SimpleNmapScanner:
 if __name__ == "__main__":
 
     SCAN_TYPE_TO_RUN = 'detailed'
-    IP_RANGE_TO_SCAN = '172.20.20.201'
+    IP_RANGE_TO_SCAN = '192.168.200.221'
 
     scanner = SimpleNmapScanner()
     found_assets = scanner.run_scan(scan_type=SCAN_TYPE_TO_RUN, targets=IP_RANGE_TO_SCAN)
