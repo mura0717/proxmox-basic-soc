@@ -4,7 +4,7 @@ import os
 import subprocess
 from typing import Dict, List, Optional
 
-from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+from proxmox_soc.snipe_it.snipe_api.snipe_client import SnipeClient
 from proxmox_soc.utils.text_utils import normalize_for_comparison, normalize_for_display
 from proxmox_soc.snipe_it.snipe_db.snipe_db_connect import SnipeItDbConnection
 
@@ -19,6 +19,7 @@ class CrudBaseService:
             endpoint: API endpoint (e.g., '/api/v1/fields')
             entity_name: Human-readable entity name (e.g., 'field')
         """
+        self.client = SnipeClient()
         self.endpoint = endpoint
         self.entity_name = entity_name
         self._cache = {}
@@ -27,7 +28,7 @@ class CrudBaseService:
         """Get all entities"""
         if not refresh_cache and 'all' in self._cache:
             return self._cache['all']
-        response = make_api_request("GET", self.endpoint, params={"limit": limit})
+        response = self.client.make_api_request("GET", self.endpoint, params={"limit": limit})
         if response:
             data = response.json().get("rows", [])
             self._cache['all'] = data
@@ -36,7 +37,7 @@ class CrudBaseService:
     
     def get_by_id(self, entity_id: int) -> Optional[Dict]:
         """Get entity by ID"""
-        response = make_api_request("GET", f"{self.endpoint}/{entity_id}")
+        response = self.client.make_api_request("GET", f"{self.endpoint}/{entity_id}")
         return response.json() if response else None
     
     def get_by_name(self, name: str) -> Optional[Dict]:
@@ -64,7 +65,7 @@ class CrudBaseService:
         if 'model_number' in data:
             data['model_number'] = normalize_for_display(data['model_number'])
     
-        response = make_api_request("POST", self.endpoint, json=data)
+        response = self.client.make_api_request("POST", self.endpoint, json=data)
         if not response:
             return None
         try:
@@ -86,7 +87,7 @@ class CrudBaseService:
 
     def update(self, entity_id: int, data: Dict) -> Optional[Dict]:
         """Update entity by ID"""
-        response = make_api_request("PATCH", f"{self.endpoint}/{entity_id}", json=data)
+        response = self.client.make_api_request("PATCH", f"{self.endpoint}/{entity_id}", json=data)
         if not response:
             return None
         js = response.json()
@@ -98,7 +99,7 @@ class CrudBaseService:
     
     def delete(self, entity_id: int) -> bool:
         """Delete entity by ID"""
-        response = make_api_request("DELETE", f"{self.endpoint}/{entity_id}")
+        response = self.client.make_api_request("DELETE", f"{self.endpoint}/{entity_id}")
         if response and response.ok:
             self.get_all(refresh_cache=True) # Force a refresh of the cache on the next 'get_all' call.
 

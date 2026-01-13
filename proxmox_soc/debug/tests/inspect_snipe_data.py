@@ -6,15 +6,16 @@ Useful for quick troubleshooting of the Snipe-IT integration.
 """
 
 from proxmox_soc.config.hydra_settings import SNIPE
-from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+from proxmox_soc.snipe_it.snipe_api.snipe_client import SnipeClient
 
 def snipeit_api_debug():
     print("=== Snipe-IT Asset Debug ===")
+    client = SnipeClient()
     
     # Test API connection
     print("1. Testing API connection...")
     try:
-        response = make_api_request("GET", "/api/v1/statuslabels")
+        response = client.make_api_request("GET", "/api/v1/statuslabels")
         if response and response.status_code == 200:
             print("✓ API connection successful")
         else:
@@ -27,7 +28,7 @@ def snipeit_api_debug():
     # Check total assets
     print("\n2. Checking total assets...")
     try:
-        response = make_api_request("GET", "/api/v1/hardware?limit=1")
+        response = client.make_api_request("GET", "/api/v1/hardware?limit=1")
         if response and response.status_code == 200:
             data = response.json()
             total = data.get('total', 0)
@@ -40,7 +41,7 @@ def snipeit_api_debug():
     # Get all assets with details
     print("\n3. Checking recent assets...")
     try:
-        response = make_api_request("GET", "/api/v1/hardware?limit=100&sort=created_at&order=desc")
+        response = client.make_api_request("GET", "/api/v1/hardware?limit=100&sort=created_at&order=desc")
         if response and response.status_code == 200:
             data = response.json()
             assets = data.get('rows', [])
@@ -61,7 +62,7 @@ def snipeit_api_debug():
     # Check custom fields setup
     print("\n4. Checking custom fields...")
     try:
-        response = make_api_request("GET", "/api/v1/fields")
+        response = client.make_api_request("GET", "/api/v1/fields")
         if response and response.status_code == 200:
             data = response.json()
             fields = data.get('rows', [])

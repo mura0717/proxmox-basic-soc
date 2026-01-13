@@ -27,9 +27,9 @@ class ZabbixClient:
         except Exception as e:
             print(f"[Zabbix Client] Authentication failed: {e}")
 
-    def call(self, method: str, params: Dict[str, Any]) -> Any:
+    def call(self, method: str, params: Dict[str, Any], require_auth: bool = True) -> Any:
         """Public method to make API calls."""
-        return self._rpc_call(method, params)
+        return self._rpc_call(method, params, require_auth)
 
     def _rpc_call(self, method: str, params: Dict[str, Any], require_auth: bool = True) -> Any:
         """Internal RPC handler."""
