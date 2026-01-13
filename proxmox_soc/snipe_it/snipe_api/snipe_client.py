@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+"""
+Snipe-IT API Client
+"""
+
 import urllib3
 import json
 import time
@@ -9,44 +12,49 @@ from proxmox_soc.config.hydra_settings import SNIPE
 # To suppress unverified HTTPS requests - Only when self-signed certs are used.
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def make_api_request(method, endpoint, max_retries=3, **kwargs):
+class SnipeClient:
     """
-    Make API request with retry logic
-    Args:
-        method: HTTP method (GET, POST, PUT, DELETE)
-        endpoint: API endpoint (e.g., "/api/v1/fields")
-        max_retries: Number of retries for failed requests
-        **kwargs: Additional arguments for requests
+    Client for interacting with the Snipe-IT API.
     """
     
-    url = f"{SNIPE.snipe_url}{endpoint}" if not endpoint.startswith(SNIPE.snipe_url) else endpoint
-    
-    for attempt in range(max_retries+1): # +1 to include initial attempt
-        try:
-            response = requests.request(method, url, headers=SNIPE.headers, verify=SNIPE.verify_ssl, **kwargs)
-            if response.status_code == 429:
+    def make_api_request(self, method, endpoint, max_retries=3, **kwargs):
+        """
+        Make API request with retry logic
+        Args:
+            method: HTTP method (GET, POST, PUT, DELETE)
+            endpoint: API endpoint (e.g., "/api/v1/fields")
+            max_retries: Number of retries for failed requests
+            **kwargs: Additional arguments for requests
+        """
+        
+        url = f"{SNIPE.snipe_url}{endpoint}" if not endpoint.startswith(SNIPE.snipe_url) else endpoint
+        
+        for attempt in range(max_retries+1): # +1 to include initial attempt
+            try:
+                response = requests.request(method, url, headers=SNIPE.headers, verify=SNIPE.verify_ssl, **kwargs)
+                if response.status_code == 429:
+                    if attempt < max_retries:
+                        try:
+                            error_data = response.json()
+                            retry_after = int(error_data.get("retryAfter", 15)) + 1
+                        except (ValueError, json.JSONDecodeError):
+                            retry_after = 15 # Default if parsing fails
+                        print(f"-> Rate limited on {method} {url}. Retrying in {retry_after}s... (Attempt {attempt+1}/{max_retries})")
+                        time.sleep(retry_after)
+                        continue
+                    else:
+                        print(f"-> Max retries exceeded for {method} {url}. Aborting this request.")
+                        response.raise_for_status() # Raise the final 429 error
+
+                response.raise_for_status()
+                
+                return response
+
+            except requests.exceptions.RequestException as e:
                 if attempt < max_retries:
-                    try:
-                        error_data = response.json()
-                        retry_after = int(error_data.get("retryAfter", 15)) + 1
-                    except (ValueError, json.JSONDecodeError):
-                        retry_after = 15 # Default if parsing fails
-                    print(f"-> Rate limited on {method} {url}. Retrying in {retry_after}s... (Attempt {attempt+1}/{max_retries})")
-                    time.sleep(retry_after)
-                    continue
+                    print(f"-> Network error ({e}). Retrying in 10s... (Attempt {attempt+1}/{max_retries})")
+                    time.sleep(10)
                 else:
-                    print(f"-> Max retries exceeded for {method} {url}. Aborting this request.")
-                    response.raise_for_status() # Raise the final 429 error
-
-            response.raise_for_status()
-            
-            return response
-
-        except requests.exceptions.RequestException as e:
-            if attempt < max_retries:
-                print(f"-> Network error ({e}). Retrying in 10s... (Attempt {attempt+1}/{max_retries})")
-                time.sleep(10)
-            else:
-                print(f"-> A persistent network error occurred. Aborting.")
-                raise e
-    return None
+                    print(f"-> A persistent network error occurred. Aborting.")
+                    raise e
+        return None

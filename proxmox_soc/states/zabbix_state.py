@@ -4,7 +4,7 @@ Handles host existence checks against Zabbix API.
 """
 
 import os
-from typing import Dict, Optional, List
+from typing import Dict, Optional
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
@@ -82,10 +82,6 @@ class ZabbixStateManager(BaseStateManager):
         except Exception as e:
             print(f"  [Zabbix State] Load failed: {e}")
             self._cache_loaded = True
-
-    
-    test_mac = "00:1A:2B:3C:4D:5E"
-    print(normalize_mac_no_semicolon(test_mac))
         
     def generate_id(self, asset_data: Dict) -> Optional[str]:
         for field, prefix in self.IDENTITY_PRIORITY:
