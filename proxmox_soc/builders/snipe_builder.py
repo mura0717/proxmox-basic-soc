@@ -8,6 +8,8 @@ import hashlib
 from typing import Dict, Any, Optional
 from datetime import datetime
 
+from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
+from proxmox_soc.states.base_state import StateResult
 from proxmox_soc.snipe_it.snipe_api.services.categories import CategoryService
 from proxmox_soc.snipe_it.snipe_api.services.manufacturers import ManufacturerService
 from proxmox_soc.snipe_it.snipe_api.services.models import ModelService
@@ -20,15 +22,17 @@ from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, MODELS
 from proxmox_soc.utils.mac_utils import normalize_mac
 from proxmox_soc.utils.text_utils import normalize_for_comparison
 
-class SnipePayloadBuilder:
+
+class SnipePayloadBuilder(BasePayloadBuilder):
     """
-    Handles all Snipe-IT specific payload formatting, field mapping, and model resolution.
+    Handles all Snipe-IT specific payload formatting.
     """
     
     _custom_field_map: Dict[str, str] = {}
     _hydrated = False
     
-    def __init__(self):
+    def __init__(self, dry_run: bool = False):
+        self.dry_run = dry_run
         self.status_service = StatusLabelService()
         self.category_service = CategoryService()
         self.manufacturer_service = ManufacturerService()
@@ -41,22 +45,84 @@ class SnipePayloadBuilder:
         if not SnipePayloadBuilder._hydrated:
             self._hydrate_field_map()
     
-    def build(self, action_obj: Dict) -> Dict:
+    def build(self, asset_data: Dict, state_result: StateResult) -> BuildResult:
         """Build the final Snipe-IT JSON payload."""
-        asset_data = action_obj.get('canonical_data', {})
-        is_update = action_obj.get('action') == 'update'
+        is_update = state_result.action == 'update'
         
-        payload = {}
+        # Merge with existing data if updating
+        if is_update and state_result.existing:
+            working_data = self._merge_with_existing(
+                state_result.existing, 
+                asset_data, 
+                asset_data.get('_source', 'unknown')
+            )
+        else:
+            working_data = asset_data.copy()
         
         # Name Priority
-        if asset_data.get('host_name'):
-            asset_data['name'] = asset_data['host_name']
+        if working_data.get('host_name'):
+            working_data['name'] = working_data['host_name']
 
-        self._assign_model_manufacturer_category(payload, asset_data)
-        self._populate_standard_fields(payload, asset_data, is_update)
-        self._populate_custom_fields(payload, asset_data)
+        payload = {}
         
-        return payload
+        if self.dry_run:
+            self._build_dry_run_payload(payload, working_data, is_update)
+        else:    
+            self._assign_model_manufacturer_category(payload, working_data)
+            self._populate_standard_fields(payload, working_data, is_update)
+            self._populate_custom_fields(payload, working_data)
+        
+        return BuildResult(
+            payload=payload,
+            asset_id=state_result.asset_id,
+            action=state_result.action,
+            snipe_id=int(state_result.asset_id) if state_result.action == 'update' and state_result.asset_id.isdigit() else None,
+            metadata={
+                'source': asset_data.get('_source'),
+                'name': payload.get('name'),
+            }
+        )
+    def _build_dry_run_payload(self, payload: Dict, asset_data: Dict, is_update: bool):
+        """Build a simplified payload for dry run without API calls."""
+        # Core fields
+        payload['name'] = asset_data.get('name', 'Unknown Device')
+        
+        if asset_data.get('serial'):
+            payload['serial'] = asset_data['serial']
+        
+        if asset_data.get('asset_tag'):
+            payload['asset_tag'] = asset_data['asset_tag']
+        elif not is_update:
+            payload['asset_tag'] = self._generate_asset_tag(asset_data)
+        
+        # MAC address
+        if asset_data.get('mac_addresses'):
+            macs = asset_data['mac_addresses']
+            first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
+            if first_mac:
+                payload['mac_address'] = normalize_mac(first_mac.strip())
+        
+        # Metadata (for reference, not actual API IDs)
+        payload['_dry_run'] = True
+        payload['_manufacturer'] = asset_data.get('manufacturer', 'Unknown')
+        payload['_model'] = asset_data.get('model', 'Unknown')
+        payload['_category'] = asset_data.get('category') or asset_data.get('device_type', 'Unknown')
+        payload['_source'] = asset_data.get('_source', 'unknown')
+        payload['_last_seen_ip'] = asset_data.get('last_seen_ip')
+        
+        # Status placeholder
+        source = asset_data.get('_source', 'unknown')
+        if source == 'nmap':
+            payload['_status'] = 'Discovered - Nmap'
+        elif source in ['microsoft365', 'intune']:
+            payload['_status'] = 'Managed - M365'
+        else:
+            payload['_status'] = 'Unknown'
+        
+        # Include key identifiers for review
+        for key in ['intune_device_id', 'azure_ad_id', 'teams_device_id', 'primary_user_upn']:
+            if asset_data.get(key):
+                payload[f'_{key}'] = asset_data[key]
 
     # --- 1. MODEL / MANUFACTURER / CATEGORY LOGIC ---
 
@@ -159,8 +225,49 @@ class SnipePayloadBuilder:
         if self.debug:
             print(f"[_get_or_create_model] Successfully created model: {data['name']} under manufacturer '{mfr['name']}' and category '{cat['name']}'")
         
-        return self.model_service.create(data)
+        return self.model_service.create(data)    
+    
+    def _merge_with_existing(self, existing: Dict, new_data: Dict, scan_type: str) -> Dict:
+        """Merge new scan data with existing asset data."""
+        merged = self._flatten_existing_asset(existing)
+        
+        priority_fields = {
+            'nmap': ['last_seen_ip', 'nmap_last_scan', 'nmap_open_ports', 
+                     'nmap_services', 'nmap_os_guess', 'open_ports_hash'],
+            'microsoft365': ['intune_last_sync', 'intune_compliance', 
+                            'primary_user_upn', 'primary_user_email'],
+        }.get(scan_type, [])
+        
+        for key, value in new_data.items():
+            if value in (None, '', []):
+                continue
+            if key in priority_fields or not merged.get(key):
+                merged[key] = value
+        
+        merged['_source'] = scan_type
+        return merged
 
+    def _flatten_existing_asset(self, existing: Dict) -> Dict:
+        """Flatten Snipe-IT API response to simple key-value pairs."""
+        flattened = {}
+        
+        for key, value in existing.items():
+            if key == 'custom_fields':
+                continue
+            elif isinstance(value, dict):
+                flattened[key] = value.get('name') or value.get('id')
+            else:
+                flattened[key] = value
+        
+        for label, field_data in existing.get('custom_fields', {}).items():
+            value = field_data.get('value') if isinstance(field_data, dict) else field_data
+            for key, field_def in CUSTOM_FIELDS.items():
+                if field_def.get('name') == label:
+                    flattened[key] = value
+                    break
+        
+        return flattened
+    
     def _extract_mfr_and_model_names(self, asset_data: Dict) -> tuple:
         mfr = asset_data.get('manufacturer')
         model = asset_data.get('model')

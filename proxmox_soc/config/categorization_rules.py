@@ -37,15 +37,15 @@ NETWORK_DEVICE_RULES = {
 }
 
 VIRTUAL_MACHINE_RULES = {
-    'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation'],
-    'model_keywords': ['virtual machine', 'vm'],
-    'hostname_keywords': ['kaanubuntu', 'zabbix-proxy.diabetes.local'] # Temporary
+    'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation', 'proxmox', 'red hat', 'bochs'],
+    'model_keywords': ['virtual machine', 'vm', 'kvm', 'hyper-v', 'virtualbox', 'vmware virtual platform','bochs', 'qemu'],
+    'hostname_keywords': ['ubuntu', 'debian', 'centos', 'vm', 'vcenter', 'esx', 'hyperv', 'hyper-v', 'zabbix-proxy.diabetes.local']
 }
 
 SERVER_RULES = {
     'os_keywords': ['windows server', 'esxi'],
     'model_keywords': ['server'],
-    'hostname_keywords': ['zabbix', 'ubuntu', 'veeam', 'vcenter', 'esx', 'dc', 'filesrvr', 'terminal', 'consult']
+    'hostname_keywords': ['zabbix', 'veeam', 'vcenter', 'esx', 'dc', 'filesrvr', 'terminal', 'consult']
 }
 
 IOS_RULES = {

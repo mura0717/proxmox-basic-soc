@@ -4,17 +4,18 @@ Ensures every dispatcher implements the 'sync' method.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Union, Any
+from proxmox_soc.builders.base_builder import BuildResult
 
 class BaseDispatcher(ABC):
     
     @abstractmethod
-    def sync(self, assets: List[Dict[str, Any]]) -> Dict[str, int]:
+    def sync(self, build_results: List[BuildResult]) -> Dict[str, int]:
         """
-        Sync assets to the destination system.
+        Sync built payloads to the destination system.
         
         Args:
-            assets: List of standardized action objects (from AssetMatcher)
+            build_results: List of BuildResult objects (output from Builder)
             
         Returns:
             Dictionary with counts e.g. {"created": X, "updated": Y, "failed": Z})

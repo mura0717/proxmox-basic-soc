@@ -2,61 +2,81 @@
 Zabbix Payload Builder Module
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
-class ZabbixPayloadBuilder:
+from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
+from proxmox_soc.states.base_state import StateResult
+
+
+class ZabbixPayloadBuilder(BasePayloadBuilder):
     """
     Transforms canonical asset data into Zabbix Host JSON-RPC payloads.
-    Pure logic: no API calls.
     """
+    
+    GROUP_MAPPING = {
+        "switch": "Network/Switches",
+        "router": "Network/Routers",
+        "firewall": "Network/Firewalls",
+        "server": "Servers",
+        "printer": "Printers",
+        "camera": "IoT/Cameras",
+        "desktop": "Workstations",
+        "laptop": "Workstations"
+    }
 
-    def build_host(self, asset: Dict[str, Any], group_id: str) -> Dict:
-        """Transforms canonical asset data into Zabbix Host Payload."""
-        data = asset.get("canonical_data", {})
-        payload = asset.get("snipe_payload", {})
+    def build(self, asset_data: Dict, state_result: StateResult) -> BuildResult:
+        """Build Zabbix host payload from canonical data."""
         
-        hostname = (payload.get("name") or data.get("host_name") or data.get("name") or "Unknown").strip()
-        ip = data.get("last_seen_ip")
+        hostname = (asset_data.get("name") or "Unknown").strip()
+        ip = asset_data.get("last_seen_ip", "")
         
-        # Technical Name (Host key): clean spaces
+        # Technical Name: clean spaces/slashes
         zabbix_host = hostname.replace(" ", "_").replace("/", "-")
         
-        return {
+        # Determine group
+        device_type = asset_data.get("device_type", "")
+        group_name = self.get_group_name(device_type)
+        
+        payload = {
             "host": zabbix_host,
-            "name": hostname, # Visible name
-            "groups": [{"groupid": group_id}],
+            "name": hostname,
+            "groups": [{"name": group_name}],  # Will be resolved to ID by dispatcher
             "interfaces": [{
-                "type": 1, "main": 1, "useip": 1,
-                "ip": ip, "dns": "", "port": "10050"
+                "type": 1,
+                "main": 1,
+                "useip": 1,
+                "ip": ip,
+                "dns": "",
+                "port": "10050"
             }],
-            "inventory_mode": 1, # Automatic
+            "inventory_mode": 1,
             "inventory": {
-                "asset_tag": data.get("asset_tag") or "",
-                "serialno_a": data.get("serial") or "",
-                "macaddress_a": data.get("mac_addresses") or "",
-                "vendor": data.get("manufacturer") or "",
-                "model": data.get("model") or "",
-                "notes": f"Snipe-IT ID: {asset.get('snipe_id')}"
+                "asset_tag": asset_data.get("asset_tag") or "",
+                "serialno_a": asset_data.get("serial") or "",
+                "macaddress_a": asset_data.get("mac_addresses") or "",
+                "vendor": asset_data.get("manufacturer") or "",
+                "model": asset_data.get("model") or "",
             },
             "tags": [
-                {"tag": "source", "value": data.get("_source", "hydra")},
-                {"tag": "device_type", "value": data.get("device_type", "unknown")}
+                {"tag": "source", "value": asset_data.get("_source", "hydra")},
+                {"tag": "device_type", "value": device_type or "unknown"}
             ]
         }
+        
+        return BuildResult(
+            payload=payload,
+            asset_id=state_result.asset_id,
+            action=state_result.action,
+            metadata={
+                "group_name": group_name,
+                "source": asset_data.get("_source")
+            }
+        )
 
     def get_group_name(self, device_type: str) -> str:
-        """Determines target host group name based on device type."""
+        """Determine target host group name based on device type."""
         dt = (device_type or "").lower()
-        mapping = {
-            "switch": "Network/Switches",
-            "router": "Network/Routers",
-            "firewall": "Network/Firewalls",
-            "server": "Servers",
-            "printer": "Printers",
-            "camera": "IoT/Cameras",
-            "desktop": "Workstations",
-            "laptop": "Workstations"
-        }
-        for key, group in mapping.items():
-            if key in dt: return group
+        for key, group in self.GROUP_MAPPING.items():
+            if key in dt:
+                return group
         return "Discovered hosts"
