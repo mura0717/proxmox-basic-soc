@@ -7,6 +7,7 @@ NMAP_SCAN_RANGES = [
     "192.168.1.0/24",    # Glostrup Main 
     "192.168.5.0/22",    # Glostrup Extended
     "192.168.200.0/24",  # Odense Main
+    "172.20.20.0/24"     # Guest Wifi
 ]
 
 """
@@ -112,7 +113,9 @@ STATIC_IP_MAP = {
     '192.168.1.247': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'APC Powerchute', 'manufacturer': 'APC', 'model': 'PowerChute', 'services': 'https', 'location': 'Glostrup', 'placement': ''},
     '192.168.2.15': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IntergrationPROD', 'manufacturer': 'Generic', 'model': 'Application Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.2.20': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IntergrationTEST', 'manufacturer': 'Generic', 'model': 'Application Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
-
+    #'192.168.4.11': {'device_type': 'Server', 'category': 'Containers', 'host_name': 'lxc-scan', 'manufacturer': 'Proxmox', 'model': 'Linux', 'services': '', 'location': 'Glostrup', 'placement': 'IT Department'},
+    #'192.168.200.221': {'device_type': 'Server', 'category': 'Containers', 'host_name': 'lxc-scan', 'manufacturer': 'Proxmox', 'model': 'Linux', 'services': '', 'location': 'Glostrup', 'placement': 'IT Department'},
+    
     # Storage Devices
     '192.168.1.185': {'device_type': 'Storage Device', 'category': 'Storage Devices', 'host_name': 'BackupNAS02 Synology RS815RP+', 'manufacturer': 'Synology', 'model': 'RS815RP+', 'services': '', 'location': 'Glostrup', 'placement': '3. floor X felt'},
     '192.168.1.226': {'device_type': 'Storage Device', 'category': 'Storage Devices', 'host_name': 'Synology NAS', 'manufacturer': 'Synology', 'model': 'NAS', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},

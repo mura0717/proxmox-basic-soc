@@ -97,6 +97,7 @@ class WazuhConfig:
     wazuh_api_user: str = os.getenv('WAZUH_API_USER')
     wazuh_api_pass: str = os.getenv('WAZUH_API_PASS')
     event_log: Path = Path(os.getenv('WAZUH_EVENT_LOG_PATH', './wazuh_events.json'))
+    state_file: Path = Path(os.getenv('WAZUH_STATE_FILE_PATH', './wazuh_state.json'))
     wazuh_api_url: str = field(init=False)
     wazuh_indexer_url: str = field(init=False)
     
