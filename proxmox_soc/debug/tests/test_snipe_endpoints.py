@@ -3,7 +3,7 @@
 Debug script to API responses
 """
 
-from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+from proxmox_soc.snipe_it.snipe_api.snipe_client import SnipeClient
 
 endpoints = [
     ('/api/v1/hardware', 'Assets'),
@@ -33,13 +33,14 @@ negative_results = []
 
 def check_endpoints():
     print("=== Snipe-IT Endpoint Check ===")
+    client = SnipeClient()
     
     # Test API connection
     print("1. Testing API connections...")
     for endpoint, name in endpoints:
         print(f"Checking {name} endpoint...")    
         try:
-            response = make_api_request("GET", endpoint)
+            response = client.make_api_request("GET", endpoint)
             if response and response.status_code == 200:
                 data = response.json()
                 info = "✓"

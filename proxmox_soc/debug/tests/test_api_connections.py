@@ -15,6 +15,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from proxmox_soc.config.hydra_settings import SNIPE, ZABBIX, WAZUH
 from proxmox_soc.snipe_it.snipe_api.snipe_client import SnipeClient
 from proxmox_soc.wazuh.wazuh_api.wazuh_client import WazuhClient
+from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "settings.py"
 
@@ -45,79 +46,24 @@ def test_zabbix():
     print("\n--- Testing Zabbix ---")
     print(f"Target URL: {ZABBIX.zabbix_url}")
     
-    # 1. Test Version (No Auth required usually for apiinfo.version)
     try:
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "apiinfo.version",
-            "params": [],
-            "id": 1
-        }
-        response = requests.post(
-            ZABBIX.zabbix_url,
-            json=payload,
-            verify=False,
-            timeout=10
-        )
-        if response.status_code == 200:
-            result = response.json()
-            if 'result' in result:
-                print_status("Zabbix Version", True, f"API Version {result['result']}")
-            else:
-                print_status("Zabbix Version", False, f"Unexpected response: {result}")
-        else:
-            print_status("Zabbix Version", False, f"HTTP {response.status_code}")
-            if response.status_code == 404:
-                print("    -> Hint: Zabbix URL might need '/zabbix' prefix (e.g., http://ip/zabbix/api_jsonrpc.php)")
-    except Exception as e:
-        print_status("Zabbix API", False, f"Connection Error: {e}")
-        return
-
-    # 2. Test Authentication
-    try:
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "user.login",
-            "params": {
-                "username": ZABBIX.zabbix_username,
-                "password": ZABBIX.zabbix_pass
-            },
-            "id": 2
-        }
+        # Initialize client (handles auth automatically)
+        client = ZabbixClient()
         
-        response = requests.post(
-            ZABBIX.zabbix_url,
-            json=payload,
-            verify=False,
-            timeout=10
-        )
-        
-        if response.status_code != 200:
-            print_status("Zabbix Auth", False, f"HTTP {response.status_code}")
-            return
-            
-        result = response.json()
-        
-        if 'result' in result:
-            auth_token = result['result']
+        if client.auth:
             print_status("Zabbix Auth", True, "Authentication Successful")
             
-            # Logout
-            logout_payload = {
-                "jsonrpc": "2.0",
-                "method": "user.logout",
-                "params": [],
-                "id": 3,
-                "auth": auth_token
-            }
-            requests.post(ZABBIX.zabbix_url, json=logout_payload, verify=False)
-            
-        elif 'error' in result:
-            error_msg = result['error'].get('data') or result['error'].get('message')
-            print_status("Zabbix Auth", False, f"Auth Failed: {error_msg}")
-            
+            # Check Version
+            try:
+                version = client.call("apiinfo.version", {}, require_auth=False)
+                print_status("Zabbix Version", True, f"API Version {version}")
+            except Exception as e:
+                print_status("Zabbix Version", False, f"Error fetching version: {e}")
+        else:
+            print_status("Zabbix Auth", False, "Authentication Failed (Check logs/credentials)")
+
     except Exception as e:
-        print_status("Zabbix Auth", False, f"Error: {e}")
+        print_status("Zabbix API", False, f"Connection Error: {e}")
 
 def test_wazuh():
     print("\n--- Testing Wazuh ---")

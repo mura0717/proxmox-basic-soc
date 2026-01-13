@@ -4,7 +4,6 @@ from typing import List, Dict
 
 from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
-from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
 
 class FieldsetService(CrudBaseService):
     """Service for managing fieldsets"""
@@ -15,8 +14,7 @@ class FieldsetService(CrudBaseService):
     
     def get_fields(self, fieldset_id: int) -> List[Dict]:
         """Get all fields in a fieldset"""
-        
-        response = make_api_request("GET", f"{self.endpoint}/{fieldset_id}/fields")
+        response = self.client.make_api_request("GET", f"{self.endpoint}/{fieldset_id}/fields")
         if response:
             return response.json().get("rows", [])
         return []
