@@ -13,7 +13,8 @@ from pathlib import Path
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from proxmox_soc.config.hydra_settings import SNIPE, ZABBIX, WAZUH
-from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
+from proxmox_soc.snipe_it.snipe_api.snipe_client import SnipeClient
+from proxmox_soc.wazuh.wazuh_api.wazuh_client import WazuhClient
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "settings.py"
 
@@ -28,9 +29,8 @@ def test_snipe():
     print(f"Target URL: {SNIPE.snipe_url}")
     try:
         # Test connectivity and auth by fetching current user info
-        # Using make_api_request ensures we test the exact logic used by the app
-        response = make_api_request("GET", "/api/v1/users/me", timeout=10)
-        
+        client = SnipeClient()
+        response = client.make_api_request("GET", "/api/v1/users/me", timeout=10)
         if response and response.status_code == 200:
             data = response.json()
             user = data.get('username', 'Unknown')
@@ -126,30 +126,21 @@ def test_wazuh():
     
     # 1. Wazuh API
     try:
-        # Wazuh API usually uses Basic Auth to get a JWT token
-        auth = (WAZUH.wazuh_api_user, WAZUH.wazuh_api_pass)
+        client = WazuhClient()
         
-        # Attempt to authenticate
-        response = requests.get(
-            f"{WAZUH.wazuh_api_url}/security/user/authenticate",
-            auth=auth,
-            verify=False,
-            timeout=10
-        )
-        
-        if response.status_code == 200:
-            token = response.json().get('data', {}).get('token')
+        if client.token:
             print_status("Wazuh API", True, "Authentication Successful")
             
             # Optional: Get Manager Info using the token
-            if token:
-                headers = {"Authorization": f"Bearer {token}"}
-                info_resp = requests.get(f"{WAZUH.wazuh_api_url}/manager/info", headers=headers, verify=False)
-                if info_resp.status_code == 200:
-                    ver = info_resp.json().get('data', {}).get('version')
+            try:
+                info_data = client.get("/manager/info")
+                ver = info_data.get('data', {}).get('version')
+                if ver:
                     print(f"    > Manager Version: {ver}")
+            except Exception as e:
+                print(f"    > Could not fetch manager info: {e}")
         else:
-            print_status("Wazuh API", False, f"HTTP {response.status_code} - {response.text[:100]}")
+            print_status("Wazuh API", False, "Authentication Failed (No Token)")
             
     except Exception as e:
         print_status("Wazuh API", False, f"Connection Error: {e}")

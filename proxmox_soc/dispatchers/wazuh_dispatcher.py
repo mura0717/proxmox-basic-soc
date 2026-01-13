@@ -10,7 +10,6 @@ from proxmox_soc.config.hydra_settings import WAZUH
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 from proxmox_soc.builders.base_builder import BuildResult
 
-
 class WazuhDispatcher(BaseDispatcher):
     """Dispatches events to Wazuh log file."""
     

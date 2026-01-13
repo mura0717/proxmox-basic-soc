@@ -35,7 +35,6 @@ class ZabbixDispatcher(BaseDispatcher):
                 item.payload['groups'] = [{"groupid": group_id}]
                 
                 if item.action == 'update':
-                    # Use the hostid we found in State
                     hostid = item.metadata.get('hostid')
                     if hostid:
                         update_payload = {

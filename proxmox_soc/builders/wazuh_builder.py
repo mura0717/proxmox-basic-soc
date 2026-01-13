@@ -14,7 +14,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
     Transforms canonical asset data into Wazuh Log Events.
     """
     
-    VLAN_MAPPING = {
+    NETWORK_MAPPING = {
         "192.168.1.": "Primary LAN",
         "192.168.2.": "DMZ",
         "192.168.200.": "Odense Office",
@@ -67,7 +67,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
     def _get_vlan(self, ip: str) -> Optional[str]:
         if not ip:
             return None
-        for prefix, vlan in self.VLAN_MAPPING.items():
+        for prefix, vlan in self.NETWORK_MAPPING.items():
             if ip.startswith(prefix):
                 return vlan
         if ip.startswith(self.EXTENDED_PREFIXES):
