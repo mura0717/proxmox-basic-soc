@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.scanners.intune_scanner import IntuneScanner
 from proxmox_soc.scanners.teams_scanner import TeamsScanner
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.debug.categorize_from_logs.ms365_categorize_from_logs import ms365_debug_categorization
 from proxmox_soc.config.mac_config import CTP18
@@ -137,7 +137,7 @@ class Microsoft365Aggregator:
             if not asset.get('mac_addresses'):
                 serial = asset.get('serial')
                 if serial and serial in static_mac_map:
-                    asset['mac_addresses'] = normalize_mac(static_mac_map[serial])
+                    asset['mac_addresses'] = normalize_mac_semicolon(static_mac_map[serial])
         
     def merge_data(self, intune_data: Optional[List[Dict]] = None, teams_data: Optional[List[Dict]] = None) -> List[Dict]:
         """

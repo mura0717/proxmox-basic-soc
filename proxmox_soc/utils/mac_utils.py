@@ -3,10 +3,11 @@
 import re
 from typing import Optional, Dict, Set, Union, Iterable
 
-def normalize_mac(mac: str) -> Optional[str]:
+def normalize_mac_semicolon(mac: str) -> Optional[str]:
     """
-    Normalize MAC address to consistent format (uppercase, colon-separated)
-    Handles various input formats: AA:BB:CC:DD:EE:FF, aa-bb-cc-dd-ee-ff, aabbccddeeff
+    Normalize a MAC address string.
+    Input formats: AA:BB:CC:DD:EE:FF, aa-bb-cc-dd-ee-ff, aabbccddeeff
+    Output format: AA:BB:CC:DD:EE:FF
     """
     if not mac:
         return None
@@ -20,6 +21,13 @@ def normalize_mac(mac: str) -> Optional[str]:
     
     # Format as XX:XX:XX:XX:XX:XX
     return ':'.join(clean[i:i+2] for i in range(0, 12, 2)).upper()
+
+def normalize_mac_no_semicolon(mac: str) -> str:
+    if not mac:
+        return ''
+    first_mac = mac.split('\n')[0].split(',')[0].strip() # Handle multiple MACs (take first)
+    normalized = normalize_mac_semicolon(first_mac)
+    return normalized.replace(':', '') if normalized else ''
 
 def combine_macs(mac_list: list) -> str:
     """
@@ -36,7 +44,7 @@ def combine_macs(mac_list: list) -> str:
     for mac in mac_list:
         if not mac:
             continue
-        norm_mac = normalize_mac(mac)
+        norm_mac = normalize_mac_semicolon(mac)
         if norm_mac and norm_mac not in seen:
             normalized.append(norm_mac)
             seen.add(norm_mac)
@@ -52,7 +60,7 @@ def macs_from_string(value: Optional[str]) -> Set[str]:
     if not value:
         return result
     for token in re.split(r'[\s,;]+', value.strip()):
-        nm = normalize_mac(token)
+        nm = normalize_mac_semicolon(token)
         if nm:
             result.add(nm)
     return result

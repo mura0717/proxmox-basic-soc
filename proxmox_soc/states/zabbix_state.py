@@ -8,7 +8,7 @@ from typing import Dict, Optional, List
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_no_semicolon
 
 class ZabbixStateManager(BaseStateManager):
     
@@ -65,7 +65,7 @@ class ZabbixStateManager(BaseStateManager):
                 for f in ['macaddress_a', 'macaddress_b']:
                     mac = inv.get(f)
                     if mac:
-                        self._index_by_mac[self._normalize_mac(mac)] = host
+                        self._index_by_mac[normalize_mac_no_semicolon(mac)] = host
                 
                 # Index by name
                 name = host.get('host', '').lower()
@@ -83,20 +83,16 @@ class ZabbixStateManager(BaseStateManager):
             print(f"  [Zabbix State] Load failed: {e}")
             self._cache_loaded = True
 
-    def _normalize_mac(self, mac: str) -> str:
-        if not mac:
-            return ''
-        # Handle multiple MACs (take first)
-        first_mac = mac.split('\n')[0].split(',')[0].strip()
-        normalized = normalize_mac(first_mac)
-        return normalized.replace(':', '') if normalized else ''
     
+    test_mac = "00:1A:2B:3C:4D:5E"
+    print(normalize_mac_no_semicolon(test_mac))
+        
     def generate_id(self, asset_data: Dict) -> Optional[str]:
         for field, prefix in self.IDENTITY_PRIORITY:
             value = asset_data.get(field)
             if value:
                 if field == 'mac_addresses':
-                    value = self._normalize_mac(value)
+                    value = normalize_mac_no_semicolon(value)
                 elif field == 'serial':
                     value = value.upper().strip()
                 else:
@@ -165,7 +161,7 @@ class ZabbixStateManager(BaseStateManager):
         # 3. By MAC
         mac = asset_data.get('mac_addresses')
         if mac:
-            norm = self._normalize_mac(mac)
+            norm = normalize_mac_no_semicolon(mac)
             if norm in self._index_by_mac:
                 if self.debug:
                     print(f"    ✓ Match by MAC: {norm}")
@@ -202,3 +198,4 @@ class ZabbixStateManager(BaseStateManager):
 
     def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
         pass
+

@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger 
 from proxmox_soc.config.ms365_service import Microsoft365Service 
 from proxmox_soc.debug.categorize_from_logs.intune_categorize_from_logs import intune_debug_categorization 
-from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac
+from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac_semicolon
 
 class IntuneScanner:
     """Microsoft Intune synchronization service"""
@@ -71,9 +71,9 @@ class IntuneScanner:
         """Combine all MAC addresses into a single field"""
         macs = []
         if asset.get('wiFiMacAddress'): 
-            macs.append(normalize_mac(asset['wiFiMacAddress']))
+            macs.append(normalize_mac_semicolon(asset['wiFiMacAddress']))
         if asset.get('ethernetMacAddress'): 
-            macs.append(normalize_mac(asset['ethernetMacAddress']))
+            macs.append(normalize_mac_semicolon(asset['ethernetMacAddress']))
         return combine_macs(macs)
     
     def normalize_asset(self, intune_asset: Dict) -> Dict:
@@ -136,8 +136,8 @@ class IntuneScanner:
             'user_display_name': intune_asset.get('userDisplayName'),
             
             # Network
-            'wifi_mac': normalize_mac(intune_asset.get('wiFiMacAddress')),
-            'ethernet_mac': normalize_mac(intune_asset.get('ethernetMacAddress')),
+            'wifi_mac': normalize_mac_semicolon(intune_asset.get('wiFiMacAddress')),
+            'ethernet_mac': normalize_mac_semicolon(intune_asset.get('ethernetMacAddress')),
             'mac_addresses': self._combine_mac_addresses(intune_asset),
             
             # Mobile specific

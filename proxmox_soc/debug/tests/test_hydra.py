@@ -225,7 +225,7 @@ def test_zabbix_state():
         
         print_result(
             "Generate ID works (MAC priority)",
-            result.asset_id == "zabbix:mac:11:22:33:44:55:66",
+            result.asset_id == "zabbix:mac:112233445566",
             f"ID: {result.asset_id}"
         )
         
