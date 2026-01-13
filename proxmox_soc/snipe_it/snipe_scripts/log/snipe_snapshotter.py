@@ -30,7 +30,7 @@ class SnipeSnapshotter:
             return None
        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"snipe_snapshot_{timestamp}.json"
+        filename = f"snipe_snapshot_{timestamp}.log"
         filepath = self.snapshot_dir / filename
         
         snapshot_data = {
@@ -54,7 +54,7 @@ class SnipeSnapshotter:
         cutoff_time = datetime.now() - timedelta(days=retention_days)
         deleted_count = 0
         
-        for snapshot_file in self.snapshot_dir.glob("snipe_snapshot_*.json"):
+        for snapshot_file in self.snapshot_dir.glob("snipe_snapshot_*.log"):
             file_mtime = datetime.fromtimestamp(snapshot_file.stat().st_mtime)
             if file_mtime < cutoff_time:
                 try:

@@ -3,95 +3,182 @@ Zabbix State Manager
 Handles host existence checks against Zabbix API.
 """
 
-from typing import Dict, Optional
+import os
+from typing import Dict, Optional, List
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
-from proxmox_soc.config.hydra_settings import ZABBIX
-
-# Assume you have or will create a Zabbix API client
-# from proxmox_soc.zabbix.zabbix_api import ZabbixAPI
-
+from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
+from proxmox_soc.utils.mac_utils import normalize_mac
 
 class ZabbixStateManager(BaseStateManager):
-    """
-    Manages host state against Zabbix.
     
-    Uses Zabbix API to check for existing hosts by:
-    - Hostname
-    - IP address
-    - MAC address (custom inventory field)
-    """
-    
-    IDENTITY_PRIORITY = ('mac_addresses', 'last_seen_ip', 'name')
+    IDENTITY_PRIORITY = [
+        ('serial', 'zabbix:serial'),
+        ('intune_device_id', 'zabbix:intune'),
+        ('azure_ad_id', 'zabbix:azure'),
+        ('mac_addresses', 'zabbix:mac'),
+    ]
     
     def __init__(self):
-        # self.api = ZabbixAPI(ZABBIX.url, ZABBIX.token)
-        self._cache: Dict[str, Dict] = {}
+        self._cache_loaded = False
+        self.debug = os.getenv('ZABBIX_STATE_DEBUG', '0') == '1'
+        self.api = None
+        
+        self._index_by_asset_key: Dict[str, Dict] = {}
+        self._index_by_mac: Dict[str, Dict] = {}
+        self._index_by_serial: Dict[str, Dict] = {}
+        self._index_by_name: Dict[str, Dict] = {}
+    
+    def _load_all_hosts(self):
+        if self._cache_loaded:
+            return
+
+        self.api = ZabbixClient()
+        if not self.api:
+            self._cache_loaded = True
+            return
+        
+        print("  [Zabbix State] Loading existing hosts...")
+        try:
+            hosts = self.api.call("host.get", {
+                "output": ["hostid", "host", "name"],
+                "selectInventory": ["asset_tag", "serialno_a", "macaddress_a", "macaddress_b"],
+                "selectInterfaces": ["ip"]
+            }) or []
+            
+            print(f"  [Zabbix State] Loaded {len(hosts)} existing hosts")
+            
+            for host in hosts:
+                inv = host.get('inventory') or {}
+                
+                # Index by asset_key
+                key = inv.get('asset_tag', '')
+                if key and key.startswith(('serial:', 'intune:', 'azure:', 'mac:')):
+                    self._index_by_asset_key[key] = host
+                
+                # Index by serial
+                serial = inv.get('serialno_a')
+                if serial:
+                    self._index_by_serial[serial.upper()] = host
+                
+                # Index by MAC
+                for f in ['macaddress_a', 'macaddress_b']:
+                    mac = inv.get(f)
+                    if mac:
+                        self._index_by_mac[self._normalize_mac(mac)] = host
+                
+                # Index by name
+                name = host.get('host', '').lower()
+                if name:
+                    self._index_by_name[name] = host
+            
+            if self.debug:
+                print(f"    Indexed: {len(self._index_by_asset_key)} keys, "
+                      f"{len(self._index_by_serial)} serials, "
+                      f"{len(self._index_by_mac)} MACs")
+                
+            self._cache_loaded = True
+            
+        except Exception as e:
+            print(f"  [Zabbix State] Load failed: {e}")
+            self._cache_loaded = True
+
+    def _normalize_mac(self, mac: str) -> str:
+        if not mac:
+            return ''
+        # Handle multiple MACs (take first)
+        first_mac = mac.split('\n')[0].split(',')[0].strip()
+        normalized = normalize_mac(first_mac)
+        return normalized.replace(':', '') if normalized else ''
     
     def generate_id(self, asset_data: Dict) -> Optional[str]:
-        """Generate Zabbix-specific ID."""
-        mac = asset_data.get('mac_addresses')
-        if mac:
-            return f"zabbix:mac:{mac}"
+        for field, prefix in self.IDENTITY_PRIORITY:
+            value = asset_data.get(field)
+            if value:
+                if field == 'mac_addresses':
+                    value = self._normalize_mac(value)
+                elif field == 'serial':
+                    value = value.upper().strip()
+                else:
+                    value = str(value).strip()
+                
+                if value:
+                    return f"{prefix}:{value}"
         
-        ip = asset_data.get('last_seen_ip')
-        if ip:
-            return f"zabbix:ip:{ip}"
-        
-        name = asset_data.get('name')
+        name = asset_data.get('name', '')
         if name and not name.lower().startswith('device-'):
-            return f"zabbix:name:{name}"
-        
+            return f"name:{name.lower()}"
+            
         return None
     
     def check(self, asset_data: Dict) -> StateResult:
-        """Check if host exists in Zabbix."""
-        asset_id = self.generate_id(asset_data)
+        self._load_all_hosts()
+        asset_key = self.generate_id(asset_data)
         
-        if not asset_id:
+        if not asset_key:
             return StateResult(
                 action='skip',
                 asset_id='',
                 existing=None,
-                reason='No suitable identifier for Zabbix'
+                reason='No suitable identifier'
             )
-        
-        existing = self._find_existing(asset_data)
+            
+        if not self._is_monitorable(asset_data):
+            return StateResult(
+                action='skip',
+                asset_id=asset_key,
+                existing=None,
+                reason='Not monitorable (endpoint or no IP)'
+            )
+            
+        existing = self._find_existing(asset_key, asset_data)
         
         if existing:
             return StateResult(
                 action='update',
-                asset_id=asset_id,
+                asset_id=asset_key,
                 existing=existing,
-                reason=f"Found Zabbix host ID: {existing.get('hostid')}"
+                reason=f"Found host {existing['hostid']}"
             )
-        
-        if self._is_monitorable(asset_data):
-            return StateResult(
-                action='create',
-                asset_id=asset_id,
-                existing=None,
-                reason='New monitorable host'
-            )
-        
+            
         return StateResult(
-            action='skip',
-            asset_id=asset_id,
+            action='create',
+            asset_id=asset_key,
             existing=None,
-            reason='Host not suitable for Zabbix monitoring'
+            reason='New infrastructure host'
         )
     
-    def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
-        """Cache result (Zabbix API handles persistence)."""
-        self._cache[asset_id] = {'action': action}
-    
-    def _find_existing(self, asset_data: Dict) -> Optional[Dict]:
-        """Query Zabbix for existing host."""
-        # Implement Zabbix API calls here
-        # Example:
-        # hosts = self.api.host.get(filter={'ip': asset_data.get('last_seen_ip')})
-        # return hosts[0] if hosts else None
-        return None  # Placeholder
+    def _find_existing(self, asset_key: str, asset_data: Dict) -> Optional[Dict]:
+        # 1. By asset_key (our stored key)
+        if asset_key in self._index_by_asset_key:
+            if self.debug:
+                print(f"    ✓ Match by asset_key: {asset_key}")
+            return self._index_by_asset_key[asset_key]
+        
+        # 2. By serial
+        serial = asset_data.get('serial')
+        if serial and serial.upper() in self._index_by_serial:
+            if self.debug:
+                print(f"    ✓ Match by serial: {serial}")
+            return self._index_by_serial[serial.upper()]
+        
+        # 3. By MAC
+        mac = asset_data.get('mac_addresses')
+        if mac:
+            norm = self._normalize_mac(mac)
+            if norm in self._index_by_mac:
+                if self.debug:
+                    print(f"    ✓ Match by MAC: {norm}")
+                return self._index_by_mac[norm]
+        
+        # 4. By hostname
+        name = asset_data.get('name', '').lower()
+        if name and name in self._index_by_name:
+            if self.debug:
+                print(f"    ✓ Match by name: {name}")
+            return self._index_by_name[name]
+        
+        return None
     
     def _is_monitorable(self, asset_data: Dict) -> bool:
         """Determine if asset should be monitored in Zabbix."""
@@ -101,7 +188,17 @@ class ZabbixStateManager(BaseStateManager):
         
         # Skip certain device types
         device_type = asset_data.get('device_type', '').lower()
-        if device_type in ('mobile', 'phone', 'tablet'):
+        if device_type in ('mobile phone', 'tablet', 'laptop', 'other assets', 'cloud resources', 'software licenses', 'monitors' ):
             return False
+        if device_type in ('server', 'network device', 'access point', 'switch', 'router', 'firewall', 'desktop'):
+            return True
         
-        return True
+        # Include Static IPs (Known Infrastructure)
+        from proxmox_soc.config.network_config import STATIC_IP_MAP
+        if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
+            return True
+        
+        return False
+
+    def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
+        pass

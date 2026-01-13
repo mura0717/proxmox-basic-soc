@@ -5,12 +5,12 @@ Handles asset existence checks against Snipe-IT API with caching.
 
 import os
 from typing import Dict, Optional, List
-from datetime import datetime, timedelta
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config.network_config import STATIC_IP_MAP
+from proxmox_soc.utils.mac_utils import normalize_mac
 
 
 class SnipeStateManager(BaseStateManager):
@@ -62,8 +62,11 @@ class SnipeStateManager(BaseStateManager):
                         mac = cf_data.get('value', '') if isinstance(cf_data, dict) else cf_data
                         if mac:
                             # Normalize MAC
-                            mac_normalized = mac.upper().replace(':', '').replace('-', '')
-                            self._index_by_mac[mac_normalized] = asset
+                            # Handle potential multiple MACs in one field
+                            for m in str(mac).replace(',', '\n').split('\n'):
+                                norm = normalize_mac(m)
+                                if norm:
+                                    self._index_by_mac[norm.replace(':', '')] = asset
                 
                 # Index by name
                 name = asset.get('name')
@@ -136,8 +139,11 @@ class SnipeStateManager(BaseStateManager):
         if asset_data.get('serial'):
             return f"serial:{asset_data['serial'].upper()}"
         if asset_data.get('mac_addresses'):
-            mac = asset_data['mac_addresses'].upper().replace(':', '').replace('-', '')
-            return f"mac:{mac}"
+            # Take first MAC for cache key
+            first_mac = str(asset_data['mac_addresses']).split('\n')[0].split(',')[0]
+            norm = normalize_mac(first_mac)
+            if norm:
+                return f"mac:{norm.replace(':', '')}"
         if asset_data.get('asset_tag'):
             return f"tag:{asset_data['asset_tag']}"
         return None
@@ -166,12 +172,10 @@ class SnipeStateManager(BaseStateManager):
         # 3. By MAC address
         mac = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
         if mac:
-            mac_normalized = mac.upper().replace(':', '').replace('-', '').replace('\n', '')
-            # Handle multi-MAC (take first)
-            if '\n' in mac or ',' in mac:
-                mac_normalized = mac_normalized.split('\n')[0].split(',')[0].strip()
+            first_mac = str(mac).split('\n')[0].split(',')[0].strip()
+            norm = normalize_mac(first_mac)
             
-            match = self._index_by_mac.get(mac_normalized)
+            match = self._index_by_mac.get(norm.replace(':', '')) if norm else None
             if match:
                 if self.debug:
                     print(f"    Match by MAC: {mac} -> ID {match['id']}")

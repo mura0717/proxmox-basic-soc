@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 from proxmox_soc.config.network_config import STATIC_IP_MAP
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
+from proxmox_soc.asset_engine.asset_categorizer import AssetCategorizer
 
 @dataclass
 class ResolvedAsset:
@@ -26,6 +27,7 @@ class AssetResolver:
             asset_data['_source'] = scan_source
             self._enrich_with_static_map(asset_data)
             self._cleanup_generic_name(asset_data)
+            self._apply_categorization(asset_data)
             
             if self.debug:
                 debug_logger.log_parsed_asset_data(scan_source, asset_data)
@@ -35,6 +37,11 @@ class AssetResolver:
         if self.debug:
             print(f"[Resolver] Resolved {len(resolved_assets)} assets from {scan_source}")
         return resolved_assets
+    
+    def _apply_categorization(self, asset_data: Dict) -> None:
+        """Run categorization to populate device_type, category, etc."""
+        categorization = AssetCategorizer.categorize(asset_data)
+        asset_data.update(categorization)
     
     def _enrich_with_static_map(self, asset_data: Dict) -> None:
         ip = asset_data.get('last_seen_ip')
