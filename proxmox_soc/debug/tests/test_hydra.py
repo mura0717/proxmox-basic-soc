@@ -363,7 +363,7 @@ def test_zabbix_builder():
         
         state_result = StateResult(
             action='create',
-            asset_id='zabbix:ip:192.168.1.100',
+            asset_id='mac:112233445566',
             existing=None,
             reason='New host'
         )

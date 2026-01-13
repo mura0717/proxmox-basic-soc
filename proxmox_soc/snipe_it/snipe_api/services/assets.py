@@ -1,6 +1,6 @@
 """CRUD service for Snipe-IT assets"""
 
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from proxmox_soc.snipe_it.snipe_api.services.crudbase import CrudBaseService
 from proxmox_soc.snipe_it.snipe_api.snipe_client import make_api_request
@@ -30,7 +30,7 @@ class AssetService(CrudBaseService):
             return response.json()
         return None
     
-    def get_all(self, limit: 10000, refresh_cache: bool = True) ->  Dict:
+    def get_all(self, limit: int = 10000, refresh_cache: bool = True) -> List[Dict]:
         """Get all assets, with optional cache refresh"""
         response = make_api_request("GET", f"{self.endpoint}?limit={limit}&refresh_cache={'true' if refresh_cache else 'false'}")
         if response:
