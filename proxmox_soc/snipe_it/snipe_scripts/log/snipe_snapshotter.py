@@ -2,74 +2,72 @@
 Captures a snapshot of current Snipe-IT assets.
 """
 
-import os
-import sys
 import json
-from typing import List, Dict, Optional
-from datetime import datetime
+from typing import Optional
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 
-class AssetSnapshotter:
+class SnipeSnapshotter:
 
     def __init__(self):
         self.asset_service = AssetService()
         self.snapshot_dir = BASE_DIR / "logs" / "snipe_snapshots"
         self.snapshot_dir.mkdir(parents=True, exist_ok=True)
-        os.makedirs(self.snapshot_dir, exist_ok=True)
 
-    def take_snapshot(self, filename: Optional[str] = None) -> str:
+    def take_snapshot(self) -> Optional[Path]:
         """
         Fetches all assets from Snipe-IT and saves them to a JSON file.
         """
         print("Taking snapshot of current Snipe-IT assets...")
-        assets = self.asset_service.get_all(limit=10000, refresh_cache=True)
-        
-        if not filename:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"snipeit_snapshot_{timestamp}.json"
-        
+        try:
+            assets = self.asset_service.get_all(limit=10000, refresh_cache=True)
+        except Exception as e:
+            print(f"Error fetching all assets: {e}")
+            return None
+       
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"snipe_snapshot_{timestamp}.json"
         filepath = self.snapshot_dir / filename
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(assets, f, indent=2, default=str)
         
-        print(f"Snapshot saved to: {filepath}")
+        snapshot_data = {
+            "metadata": {
+                "timestamp": datetime.now().isoformat(),
+                "count": len(assets)
+            },
+            "assets": assets
+        }
+        
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(snapshot_data, f, indent=2)
+        
+        print(f"[Snapshot] Saved {len(assets)} assets to {filepath}")
         return filepath
 
-    def load_snapshot(self, filename: str) -> List[Dict]:
+    def cleanup_old_snapshots(self, retention_days: int = 90):
         """
-        Loads assets from a previously saved snapshot file.
+        Deletes snapshots older than the specified retention period.
         """
-        filepath = os.path.join(self.snapshot_dir, filename)
-        if not os.path.exists(filepath):
-            print(f"Error: Snapshot file not found at {filepath}")
-            return []
+        cutoff_time = datetime.now() - timedelta(days=retention_days)
+        deleted_count = 0
         
-        print(f"Loading snapshot from: {filepath}")
-        with open(filepath, 'r', encoding='utf-8') as f:
-            assets = json.load(f)
+        for snapshot_file in self.snapshot_dir.glob("snipe_snapshot_*.json"):
+            file_mtime = datetime.fromtimestamp(snapshot_file.stat().st_mtime)
+            if file_mtime < cutoff_time:
+                try:
+                    snapshot_file.unlink()
+                    print(f"[Cleanup] Deleted old snapshot: {snapshot_file.name}")
+                    deleted_count += 1
+                except Exception as e:
+                    print(f"[Cleanup] Error deleting {snapshot_file.name}: {e}")
         
-        print(f"Loaded {len(assets)} assets from snapshot.")
-        return assets
+        if deleted_count > 0:
+            print(f"[Cleanup] Total deleted: {deleted_count}")
 
 if __name__ == "__main__":
-    snapshotter = AssetSnapshotter()
-    
-    # If no arguments are given, default to taking a snapshot for cron jobs.
-    if len(sys.argv) == 1:
-        snapshotter.take_snapshot()
-    else:
-        command = sys.argv[1]
-        if command == "take":
-            custom_filename = sys.argv[2] if len(sys.argv) > 2 else None
-            snapshotter.take_snapshot(filename=custom_filename)
-        elif command == "load":
-            if len(sys.argv) > 2:
-                snapshotter.load_snapshot(sys.argv[2])
-            else:
-                print("Error: Please provide a filename to load.")
-        else:
-            print(f"Unknown command: {command}")
+    snapshotter = SnipeSnapshotter()
+    snapshotter.take_snapshot()
+    snapshotter.cleanup_old_snapshots()

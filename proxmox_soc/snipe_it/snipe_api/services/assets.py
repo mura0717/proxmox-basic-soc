@@ -29,3 +29,10 @@ class AssetService(CrudBaseService):
         if response and response.json().get("id"):
             return response.json()
         return None
+    
+    def get_all(self, limit: 10000, refresh_cache: bool = True) ->  Dict:
+        """Get all assets, with optional cache refresh"""
+        response = make_api_request("GET", f"{self.endpoint}?limit={limit}&refresh_cache={'true' if refresh_cache else 'false'}")
+        if response:
+            return response.json().get("rows", []) if response else []
+        return []
