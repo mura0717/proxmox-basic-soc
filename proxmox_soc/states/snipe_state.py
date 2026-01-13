@@ -10,7 +10,7 @@ from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config.network_config import STATIC_IP_MAP
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 
 
 class SnipeStateManager(BaseStateManager):
@@ -64,7 +64,7 @@ class SnipeStateManager(BaseStateManager):
                             # Normalize MAC
                             # Handle potential multiple MACs in one field
                             for m in str(mac).replace(',', '\n').split('\n'):
-                                norm = normalize_mac(m)
+                                norm = normalize_mac_semicolon(m)
                                 if norm:
                                     self._index_by_mac[norm.replace(':', '')] = asset
                 
@@ -141,7 +141,7 @@ class SnipeStateManager(BaseStateManager):
         if asset_data.get('mac_addresses'):
             # Take first MAC for cache key
             first_mac = str(asset_data['mac_addresses']).split('\n')[0].split(',')[0]
-            norm = normalize_mac(first_mac)
+            norm = normalize_mac_semicolon(first_mac)
             if norm:
                 return f"mac:{norm.replace(':', '')}"
         if asset_data.get('asset_tag'):
@@ -173,7 +173,7 @@ class SnipeStateManager(BaseStateManager):
         mac = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
         if mac:
             first_mac = str(mac).split('\n')[0].split(',')[0].strip()
-            norm = normalize_mac(first_mac)
+            norm = normalize_mac_semicolon(first_mac)
             
             match = self._index_by_mac.get(norm.replace(':', '')) if norm else None
             if match:

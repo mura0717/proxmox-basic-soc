@@ -12,7 +12,7 @@ from typing import List, Dict, Optional
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.config.network_config import NMAP_SCAN_RANGES
 from proxmox_soc.config.nmap_profiles import NMAP_SCAN_PROFILES
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 from proxmox_soc.utils.sudo_utils import elevate_to_root
 
 DNS_SERVERS = os.getenv('NMAP_DNS_SERVERS', '').strip()
@@ -91,7 +91,7 @@ class NmapScanner:
         mac_addresses = []
         if 'mac' in nmap_host.get('addresses', {}):
             raw_mac = nmap_host['addresses']['mac']
-            normalized_mac = normalize_mac(raw_mac)
+            normalized_mac = normalize_mac_semicolon(raw_mac)
             if normalized_mac:
                 mac_addresses.append(normalized_mac)
                 asset['mac_addresses'] = normalized_mac

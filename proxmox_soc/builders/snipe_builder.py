@@ -19,7 +19,7 @@ from proxmox_soc.snipe_it.snipe_api.services.fields import FieldService
 from proxmox_soc.snipe_it.snipe_api.services.fieldsets import FieldsetService
 from proxmox_soc.asset_engine.asset_categorizer import AssetCategorizer
 from proxmox_soc.config.snipe_schema import CUSTOM_FIELDS, MODELS
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 from proxmox_soc.utils.text_utils import normalize_for_comparison
 
 
@@ -100,7 +100,7 @@ class SnipePayloadBuilder(BasePayloadBuilder):
             macs = asset_data['mac_addresses']
             first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
             if first_mac:
-                payload['mac_address'] = normalize_mac(first_mac.strip())
+                payload['mac_address'] = normalize_mac_semicolon(first_mac.strip())
         
         # Metadata (for reference, not actual API IDs)
         payload['_dry_run'] = True
@@ -284,7 +284,7 @@ class SnipePayloadBuilder(BasePayloadBuilder):
         if asset_data.get('mac_addresses'):
             macs = asset_data['mac_addresses']
             first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
-            if first_mac: payload['mac_address'] = normalize_mac(first_mac.strip())
+            if first_mac: payload['mac_address'] = normalize_mac_semicolon(first_mac.strip())
             
         if not is_update and 'asset_tag' not in payload:
             payload['asset_tag'] = self._generate_asset_tag(asset_data)

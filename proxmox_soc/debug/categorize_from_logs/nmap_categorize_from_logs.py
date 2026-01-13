@@ -11,7 +11,7 @@ from datetime import datetime
 
 from proxmox_soc.asset_engine.asset_categorizer import AssetCategorizer
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
-from proxmox_soc.utils.mac_utils import normalize_mac
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 
 class NmapDebugCategorization:
     """Test categorization logic for Nmap assets without needing live scans"""
@@ -117,7 +117,7 @@ class NmapDebugCategorization:
             'name': raw_asset.get('hostname'),
             'last_seen_ip': raw_asset.get('host'),
             'dns_hostname': raw_asset.get('hostname'),
-            'mac_addresses': normalize_mac(raw_asset.get('addresses', {}).get('mac', '')),
+            'mac_addresses': normalize_mac_semicolon(raw_asset.get('addresses', {}).get('mac', '')),
             'manufacturer': list(raw_asset.get('vendor', {}).values())[0] if raw_asset.get('vendor') else None,
             'os_platform': None,
             'nmap_services': [],

@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.debug.categorize_from_logs.teams_categorize_from_logs import teams_debug_categorization
-from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac
+from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac_semicolon
 
 class TeamsScanner:
     """Microsoft Teams synchronization service"""
@@ -101,7 +101,7 @@ class TeamsScanner:
             
             # Network
             'mac_addresses': combine_macs([
-                normalize_mac(mac.split(':', 1)[-1])
+                normalize_mac_semicolon(mac.split(':', 1)[-1])
                 for mac in hardware_details.get('macAddresses', [])
                 if mac
             ]),
