@@ -180,7 +180,7 @@ class ZabbixStateManager(BaseStateManager):
         
         # Skip certain device types
         device_type = asset_data.get('device_type', '').lower()
-        if device_type in ('mobile phone', 'tablet', 'laptop', 'other assets', 'cloud resources', 'software licenses', 'monitors' ):
+        if device_type in ('mobile phone', 'tablet', 'laptop', 'other assets', 'cloud resources', 'monitors' ):
             return False
         if device_type in ('server', 'network device', 'access point', 'switch', 'router', 'firewall', 'desktop'):
             return True
