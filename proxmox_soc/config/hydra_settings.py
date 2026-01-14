@@ -129,4 +129,4 @@ if HYDRA_SETTINGS_DEBUG:
     print(f"--- CONFIG LOADED ({mode} MODE) ---")
     print(f"SNIPE_URL: {SNIPE.snipe_url} " + f"SNIPE_API_TOKEN: {masked_key} " + f"VERIFY_SSL: {SNIPE.verify_ssl}")
     print(f"ZABBIX_URL: {ZABBIX.zabbix_url} " + f"ZABBIX_USER: {ZABBIX.zabbix_username} " + f"ZABBIX_PASS: {ZABBIX.zabbix_pass}")
-    print(f"WAZUH_API_URL: {WAZUH.wazuh_api_url} " + f"WAZUH_INDEXER_URL: {WAZUH.wazuh_indexer_url}" + f"WAZUH_API_USER: {WAZUH.wazuh_api_user} " + f"WAZUH_API_PASS: {WAZUH.wazuh_api_pass}")
+    print(f"WAZUH_API_URL: {WAZUH.wazuh_api_url} " + f"WAZUH_INDEXER_URL: {WAZUH.wazuh_indexer_url} " + f"WAZUH_API_USER: {WAZUH.wazuh_api_user} " + f"WAZUH_API_PASS: {WAZUH.wazuh_api_pass}")

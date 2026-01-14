@@ -2,6 +2,7 @@
 Zabbix Payload Builder Module
 """
 
+import os
 from typing import Dict
 
 from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
@@ -25,6 +26,9 @@ class ZabbixPayloadBuilder(BasePayloadBuilder):
         "desktop": "Workstations",
         "storage": "Storage Devices",
     }
+    
+    def __init__(self):
+        self.debug = os.getenv('ZABBIX_DISPATCHER_DEBUG', '0') == '1'
 
     def build(self, asset_data: Dict, state_result: StateResult) -> BuildResult:
         hostname = (asset_data.get("name") or "Unknown").strip()
@@ -70,6 +74,11 @@ class ZabbixPayloadBuilder(BasePayloadBuilder):
             ]
         }
         
+        if self.debug:
+                print(f"\n[Zabbix Builder] Built payload for asset_id={state_result.asset_id} action={state_result.action}")
+                print(f"  Host: {zabbix_host}, Group: {group_name}, IP: {ip}")
+                print(f"  Payload: {payload}\n")
+        
         return BuildResult(
             payload=payload,
             asset_id=state_result.asset_id,
@@ -77,8 +86,10 @@ class ZabbixPayloadBuilder(BasePayloadBuilder):
             metadata={
                 "group_name": group_name,
                 "hostid": state_result.existing['hostid'] if state_result.existing else None
-            }
-        )
+            }           
+        )     
+        
+           
 
     def _sanitize_hostname(self, name: str) -> str:
         clean = name.replace(" ", "_").replace("/", "-")

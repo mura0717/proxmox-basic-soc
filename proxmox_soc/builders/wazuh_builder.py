@@ -2,13 +2,13 @@
 Wazuh Payload Builder Module
 """
 
+import os
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
 from proxmox_soc.states.base_state import StateResult
 from proxmox_soc.wazuh.wazuh_api.wazuh_client import WazuhClient
-
 
 class WazuhPayloadBuilder(BasePayloadBuilder):
     """
@@ -27,6 +27,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
     _agent_cache: Optional[Dict[str, Dict]] = None
 
     def __init__(self):
+        self.debug = os.getenv('WAZUH_BUILDER_DEBUG', '0') == '1'
         self._load_agents()
 
     def _load_agents(self):
@@ -37,11 +38,14 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
         print("  [Wazuh Builder] Loading agents for correlation...")
         try:
             client = WazuhClient()
+            if client._authenticate() is None:
+                raise RuntimeError("Authentication failed.")
+            print("  [Wazuh Builder] Authenticated successfully.")
+            
             # Fetch all agents (adjust limit if you have >10k agents)
-            resp = client.get("/agents", params={"limit": 10000, "select": "id,name,ip,status,os"})
-            
-            agents = resp.get('data', {}).get('affected_items', [])
-            
+            response = client.get("/agents", params={"limit": 10000, "select": "id,name,ip,status,os.name,lastKeepAlive"})
+            agents = response.get('data', {}).get('affected_items', [])
+        
             # Index by IP for fast lookup
             WazuhPayloadBuilder._agent_cache = {}
             for agent in agents:
@@ -50,6 +54,13 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
                     WazuhPayloadBuilder._agent_cache[ip] = agent
             
             print(f"  [Wazuh Builder] Cached {len(WazuhPayloadBuilder._agent_cache)} agents")
+            
+            if self.debug:
+                print("  [Wazuh Builder] Agent Cache:")
+                for agent in WazuhPayloadBuilder._agent_cache.items():
+                    print(f"    {agent}")
+            
+    
                 
         except Exception as e:
             print(f"  [Wazuh Builder] ⚠️ Could not load agents (API might be down): {e}")

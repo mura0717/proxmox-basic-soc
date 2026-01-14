@@ -4,7 +4,7 @@ Shared Wazuh API Client.
 
 import requests
 import urllib3
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 from proxmox_soc.config.hydra_settings import WAZUH
 
 # Suppress insecure request warnings for self-signed certs
@@ -38,10 +38,12 @@ class WazuhClient:
                 self.token = response.json().get('data', {}).get('token')
             else:
                 print(f"[Wazuh Client] Auth failed: HTTP {response.status_code}")
-                
+            return response    
+        
         except Exception as e:
             print(f"[Wazuh Client] Authentication error: {e}")
             self.token = None
+            return None
 
     def get(self, endpoint: str, params: Dict = None) -> Dict:
         """Make a GET request to the API."""
@@ -79,5 +81,12 @@ class WazuhClient:
             **kwargs
         )
         
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(f"[Wazuh Client] Request failed: {e}")
+            # Try to print JSON error message if available, else text
+            print(f"[Wazuh Client] Server Response: {response.text}")
+            raise e
+            
         return response.json()

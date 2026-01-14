@@ -11,7 +11,7 @@ from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 from proxmox_soc.builders.base_builder import BuildResult
 
 
-class SnipeDispatcher(BaseDispatcher):  # Fixed class name
+class SnipeDispatcher(BaseDispatcher):
     """Dispatches assets to Snipe-IT API."""
     
     def __init__(self):
