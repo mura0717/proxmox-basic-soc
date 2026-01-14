@@ -460,12 +460,6 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
         },
-    "Software Licenses": {
-        "category_type": "license",
-        "use_default_eula": True,
-        "require_acceptance": True,
-        "checkin_email": False
-        },
     "Other Assets": {
         "category_type": "asset", 
         "use_default_eula": False,
