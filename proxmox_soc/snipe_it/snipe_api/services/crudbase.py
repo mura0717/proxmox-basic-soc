@@ -204,8 +204,7 @@ class CrudBaseService:
         Truncates all relevant Snipe-IT tables for a clean reset.
         WARNING: This is a destructive operation that deletes ALL data in these tables.
         """
-        db_manager = SnipeItDbConnection()
-        connection = None
+        
         all_tables = [
             'assets', 'models', 'manufacturers', 'categories', 'custom_fieldsets',
             'custom_fields', 'status_labels', 'locations', 'accessories',
@@ -218,10 +217,9 @@ class CrudBaseService:
         """
         Purges all soft-deleted records by calling the official Snipe-IT artisan command.
         """
-        snipe_it_path = os.getenv("SNIPE_IT_APP_PATH", "/var/www/snipe-it")
+        snipe_it_path = "/var/www/snipe-it"
         if not os.path.isdir(snipe_it_path):
             print(f"✗ ERROR: Snipe-IT path '{snipe_it_path}' not found. Cannot run purge command.")
-            print("  Please set SNIPE_IT_APP_PATH in your .env file if it's in a non-standard location.")
             return
 
         command = ['php', 'artisan', 'snipeit:purge', '--force']

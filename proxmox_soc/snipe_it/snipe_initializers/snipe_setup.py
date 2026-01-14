@@ -213,8 +213,8 @@ class SnipeITSetup:
         """Delete all custom fields"""
         print("\n--- Cleaning up Custom Fields ---")
         deleted = 0
-        for field_data in CUSTOM_FIELDS.values():
-            if self.field_service.delete_by_name(field_data["name"]):
+        for field in self.field_service.get_all(limit=1000, refresh_cache=True):
+            if self.field_service.delete(field['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} fields")
     
@@ -222,8 +222,8 @@ class SnipeITSetup:
         """Delete all fieldsets"""
         print("\n--- Cleaning up Fieldsets ---")
         deleted = 0
-        for fieldset_name in CUSTOM_FIELDSETS.keys():
-            if self.fieldset_service.delete_by_name(fieldset_name):
+        for fieldset in self.fieldset_service.get_all(limit=1000, refresh_cache=True):
+            if self.fieldset_service.delete(fieldset['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} fieldsets")
         
@@ -231,8 +231,8 @@ class SnipeITSetup:
         """Delete all manufacturers"""
         print("\n--- Cleaning up Manufacturers ---")
         deleted = 0
-        for manufacturer_data in MANUFACTURERS:
-            if self.manufacture_service.delete_by_name(manufacturer_data['name']):
+        for manufacturer in self.manufacture_service.get_all(limit=1000, refresh_cache=True):
+            if self.manufacture_service.delete(manufacturer['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} manufacturers")
     
@@ -240,8 +240,8 @@ class SnipeITSetup:
         """Delete all models"""
         print("\n--- Cleaning up Models ---")
         deleted = 0
-        for model_name in MODELS:
-            if self.model_service.delete_by_name(model_name):
+        for model in self.model_service.get_all(limit=1000, refresh_cache=True):
+            if self.model_service.delete(model['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} models")
     
@@ -249,8 +249,8 @@ class SnipeITSetup:
         """Delete all status labels"""
         print("\n--- Cleaning up Status Labels ---")
         deleted = 0
-        for label_name in STATUS_LABELS.keys():
-            if self.status_service.delete_by_name(label_name):
+        for label in self.status_service.get_all(limit=1000, refresh_cache=True):
+            if self.status_service.delete(label['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} status labels")
     
@@ -258,8 +258,8 @@ class SnipeITSetup:
         """Delete all categories"""
         print("\n--- Cleaning up Categories ---")
         deleted = 0
-        for category_name in CATEGORIES.keys():
-            if self.category_service.delete_by_name(category_name):
+        for category in self.category_service.get_all(limit=1000, refresh_cache=True):
+            if self.category_service.delete(category['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} categories")
     
@@ -267,8 +267,8 @@ class SnipeITSetup:
         """Delete all locations"""
         print("\n--- Cleaning up Locations ---")
         deleted = 0
-        for location_name in LOCATIONS:
-            if self.location_service.delete_by_name(location_name):
+        for location in self.location_service.get_all(limit=1000, refresh_cache=True):
+            if self.location_service.delete(location['id']):
                 deleted += 1
         print(f"✓ Deleted {deleted} locations")
         

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Master Reset Script for Snipe-IT Configuration
 
