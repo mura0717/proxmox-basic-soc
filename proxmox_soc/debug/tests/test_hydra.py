@@ -8,16 +8,12 @@ import os
 import sys
 from pathlib import Path
 from typing import Dict, List
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 sys.path.append(str(BASE_DIR))
-ENV_PATH = BASE_DIR / '.env'
 
-if ENV_PATH.exists():
-    load_dotenv(ENV_PATH)
-else:
-    load_dotenv()
+# Import settings to ensure .env is loaded automatically
+import proxmox_soc.config.hydra_settings
 
 from proxmox_soc.asset_engine.asset_resolver import AssetResolver, ResolvedAsset
 from proxmox_soc.states.snipe_state import SnipeStateManager

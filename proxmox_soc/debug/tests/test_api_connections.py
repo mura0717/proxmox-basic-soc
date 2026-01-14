@@ -5,6 +5,7 @@ Checks connections and authentication for Snipe-IT, Zabbix, and Wazuh (API & Ind
 """
 
 import os
+from urllib import response
 import urllib3
 from pathlib import Path
 
@@ -72,10 +73,11 @@ def test_wazuh():
     # 1. Wazuh API
     try:
         client = WazuhClient()
-        
-        if client.token:
-            print_status("Wazuh API", True, "Authentication Successful")
-            
+        token = client.token
+        response = client._authenticate()
+        if token:
+            print_status("Wazuh API", True, "Token Obtained - Authentication Successful")
+            print_status("Wazuh API", True, f"HTTP {response.status_code} - {response.text[:100]}")
             # Optional: Get Manager Info using the token
             try:
                 info_data = client.get("/manager/info")
@@ -85,7 +87,9 @@ def test_wazuh():
             except Exception as e:
                 print(f"    > Could not fetch manager info: {e}")
         else:
-            print_status("Wazuh API", False, "Authentication Failed (No Token)")
+            print_status("Wazuh API", False, "Authentication Failed")
+            print_status("Wazuh API", False, f"HTTP {response.status_code} - {response.text[:100]}")
+        
             
     except Exception as e:
         print_status("Wazuh API", False, f"Connection Error: {e}")
