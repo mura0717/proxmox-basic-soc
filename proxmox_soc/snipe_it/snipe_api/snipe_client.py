@@ -50,6 +50,16 @@ class SnipeClient:
                 
                 return response
 
+            except requests.exceptions.HTTPError as e:
+                # Only retry on 5xx Server Errors
+                if 500 <= e.response.status_code < 600:
+                    if attempt < max_retries:
+                        print(f"-> Server error ({e}). Retrying in 10s... (Attempt {attempt+1}/{max_retries})")
+                        time.sleep(10)
+                        continue
+                # Re-raise 4xx errors immediately (don't retry client errors)
+                raise e
+
             except requests.exceptions.RequestException as e:
                 if attempt < max_retries:
                     print(f"-> Network error ({e}). Retrying in 10s... (Attempt {attempt+1}/{max_retries})")

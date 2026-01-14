@@ -66,7 +66,8 @@ class SnipeConfig:
         if not host or not port:
             raise RuntimeError("Snipe host/port not configured (direct/proxy).")
             
-        self.snipe_url = f"http://{host}:{port}"
+        scheme = "https" if self.verify_ssl or port == 443 else "http"
+        self.snipe_url = f"{scheme}://{host}:{port}"
 
     @property
     def headers(self) -> Dict[str, str]:
