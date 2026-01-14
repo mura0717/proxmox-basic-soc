@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Test connecting to Microsoft365 (Intune, Teams, etc.) via API.
 """
@@ -39,12 +40,12 @@ class MS365APTConnectionTester:
         try:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
-            print("Successfully connected to MS365 API.")
+            print(" ✓ Successfully connected to MS365 API.")
             return True
         except requests.exceptions.RequestException as e:
             if 'response' in locals() and response is not None:
-                    print(f"MS365 API Error - Response Status Code: {response.status_code}")
-                    print(f"MS365 API Error - Response Body: {response.text}")
+                    print(f" ✗ MS365 API Error - Response Status Code: {response.status_code}")
+                    print(f" ✗ MS365 API Error - Response Body: {response.text}")
             return False
 
 if __name__ == "__main__":

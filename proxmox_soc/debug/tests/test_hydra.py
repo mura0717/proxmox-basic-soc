@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Dict, List
 from dotenv import load_dotenv
 
-# Setup path
 BASE_DIR = Path(__file__).resolve().parents[3]
 sys.path.append(str(BASE_DIR))
 ENV_PATH = BASE_DIR / '.env'
@@ -20,7 +19,6 @@ if ENV_PATH.exists():
 else:
     load_dotenv()
 
-# Import refactored components
 from proxmox_soc.asset_engine.asset_resolver import AssetResolver, ResolvedAsset
 from proxmox_soc.states.snipe_state import SnipeStateManager
 from proxmox_soc.states.wazuh_state import WazuhStateManager
@@ -33,7 +31,6 @@ from proxmox_soc.states.base_state import StateResult
 INTEGRATION_TESTS = os.getenv("HYDRA_INTEGRATION_TESTS", "0") == "1"
 SNIPE_AVAILABLE = bool(os.getenv("SNIPE_API_TOKEN"))
 
-
 def print_result(test_name: str, passed: bool, details: str = ""):
     symbol = "✓" if passed else "✗"
     color = "\033[92m" if passed else "\033[91m"
@@ -41,7 +38,6 @@ def print_result(test_name: str, passed: bool, details: str = ""):
     print(f"[{color}{symbol}{reset}] {test_name}")
     if details:
         print(f"    {details}")
-
 
 def get_mock_nmap_assets() -> List[Dict]:
     """Generate mock Nmap scan data"""
@@ -63,7 +59,6 @@ def get_mock_nmap_assets() -> List[Dict]:
         }
     ]
 
-
 def get_mock_ms365_assets() -> List[Dict]:
     """Generate mock MS365 data"""
     return [
@@ -80,7 +75,6 @@ def get_mock_ms365_assets() -> List[Dict]:
             "mac_addresses": "11:22:33:44:55:66",
         }
     ]
-
 
 def test_resolver():
     """Test AssetResolver"""
@@ -112,7 +106,6 @@ def test_resolver():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_snipe_state():
     """Test SnipeStateManager"""
@@ -148,7 +141,6 @@ def test_snipe_state():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_wazuh_state():
     """Test WazuhStateManager"""
@@ -199,7 +191,6 @@ def test_wazuh_state():
         traceback.print_exc()
         return False
 
-
 def test_zabbix_state():
     """Test ZabbixStateManager"""
     print("\n=== Testing ZabbixStateManager ===")
@@ -236,7 +227,6 @@ def test_zabbix_state():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_snipe_builder():
     """Test SnipePayloadBuilder"""
@@ -293,7 +283,6 @@ def test_snipe_builder():
         traceback.print_exc()
         return False
 
-
 def test_wazuh_builder():
     """Test WazuhPayloadBuilder"""
     print("\n=== Testing WazuhPayloadBuilder ===")
@@ -344,7 +333,6 @@ def test_wazuh_builder():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_zabbix_builder():
     """Test ZabbixPayloadBuilder"""
@@ -397,7 +385,6 @@ def test_zabbix_builder():
         traceback.print_exc()
         return False
 
-
 def test_full_pipeline():
     """Test complete pipeline with mock data"""
     print("\n=== Testing Full Pipeline (Dry Run) ===")
@@ -444,7 +431,6 @@ def test_full_pipeline():
         import traceback
         traceback.print_exc()
         return False
-
 
 def main():
     print("=" * 60)

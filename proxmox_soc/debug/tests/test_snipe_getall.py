@@ -1,6 +1,5 @@
-
+#!/usr/bin/env python3
 import json
-from datetime import datetime
 
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 

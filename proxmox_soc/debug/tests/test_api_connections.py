@@ -5,7 +5,6 @@ Checks connections and authentication for Snipe-IT, Zabbix, and Wazuh (API & Ind
 """
 
 import os
-import requests
 import urllib3
 from pathlib import Path
 
