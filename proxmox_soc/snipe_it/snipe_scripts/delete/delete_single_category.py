@@ -41,5 +41,5 @@ def delete_category(category_name: str):
         print(f"✗ Failed to delete category '{category_name}'. It might be protected if assets are still assigned to it.")
 
 if __name__ == "__main__":
-    TARGET_CATEGORY = "Workstations"
+    TARGET_CATEGORY = "Software Licenses"
     delete_category(TARGET_CATEGORY)
