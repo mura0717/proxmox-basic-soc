@@ -26,24 +26,24 @@ class WazuhClient:
     def _authenticate(self):
         """Obtain JWT token via Basic Auth."""
         try:
-            auth = (self.user, self.password)
             response = requests.get(
                 f"{self.base_url}/security/user/authenticate",
-                auth=auth,
+                auth=(self.user, self.password),
                 verify=False,
                 timeout=10
             )
             
             if response.status_code == 200:
                 self.token = response.json().get('data', {}).get('token')
+                return True
             else:
-                print(f"[Wazuh Client] Auth failed: HTTP {response.status_code}")
-            return response    
+                print(f"[Wazuh Client] Auth failed: HTTP {response.status_code}") 
+                return False
         
         except Exception as e:
             print(f"[Wazuh Client] Authentication error: {e}")
             self.token = None
-            return None
+            return False
 
     def get(self, endpoint: str, params: Dict = None) -> Dict:
         """Make a GET request to the API."""

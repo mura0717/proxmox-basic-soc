@@ -30,6 +30,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
         self.debug = os.getenv('WAZUH_BUILDER_DEBUG', '0') == '1'
         self._load_agents()
 
+
     def _load_agents(self):
         """Load Wazuh agents for correlation."""
         if WazuhPayloadBuilder._agent_cache is not None:
@@ -38,7 +39,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
         print("  [Wazuh Builder] Loading agents for correlation...")
         try:
             client = WazuhClient()
-            if client._authenticate() is None:
+            if not client._authenticate():
                 raise RuntimeError("Authentication failed.")
             print("  [Wazuh Builder] Authenticated successfully.")
             
@@ -59,12 +60,11 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
                 print("  [Wazuh Builder] Agent Cache:")
                 for agent in WazuhPayloadBuilder._agent_cache.items():
                     print(f"    {agent}")
-            
-    
                 
         except Exception as e:
             print(f"  [Wazuh Builder] ⚠️ Could not load agents (API might be down): {e}")
             WazuhPayloadBuilder._agent_cache = {}
+
 
     def build(self, asset_data: Dict, state_result: StateResult) -> BuildResult:
         """Build Wazuh log event from canonical data."""
@@ -116,6 +116,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
             action=state_result.action,
             metadata={"source": asset_data.get("_source")}
         )
+
 
     def _get_vlan(self, ip: str) -> Optional[str]:
         if not ip:

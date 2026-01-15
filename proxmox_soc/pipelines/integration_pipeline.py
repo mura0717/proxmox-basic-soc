@@ -96,6 +96,7 @@ class IntegrationPipeline:
         # Save state if applicable
         if hasattr(self.state, 'save'):
             self.state.save()
+            if self.debug: print(f"[{self.name}] State saved.")
         
         self._print_summary(results)
         

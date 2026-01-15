@@ -13,10 +13,10 @@ from proxmox_soc.utils.mac_utils import normalize_mac_no_semicolon
 class ZabbixStateManager(BaseStateManager):
     
     IDENTITY_PRIORITY = [
-        ('serial', 'zabbix:serial'),
-        ('intune_device_id', 'zabbix:intune'),
-        ('azure_ad_id', 'zabbix:azure'),
-        ('mac_addresses', 'zabbix:mac'),
+        ('serial', 'serial'),
+        ('intune_device_id', 'intune'),
+        ('azure_ad_id', 'azure'),
+        ('mac_addresses', 'mac'),
     ]
     
     def __init__(self):
