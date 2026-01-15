@@ -402,7 +402,7 @@ def test_full_pipeline():
             state_file = Path(tmpdir) / "wazuh_state.json"
             
             pipeline = IntegrationPipeline(
-                name='Wazuh-Test',
+                name='Wazuh',
                 state=WazuhStateManager(state_file),
                 builder=WazuhPayloadBuilder(),
                 dispatcher=None,  # We'll test with dry_run
