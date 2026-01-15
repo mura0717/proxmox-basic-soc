@@ -81,7 +81,8 @@ class HydraOrchestrator:
     def run_full_sync(
         self, 
         integrations: Optional[List[str]] = None,
-        sources: Optional[List[str]] = None
+        sources: Optional[List[str]] = None,
+        nmap_profile: str = 'discovery'
     ) -> Dict[str, PipelineResult]:
         """Run complete sync across data sources and integrations."""
         
@@ -98,12 +99,15 @@ class HydraOrchestrator:
         print("=" * 60)
         
         all_resolved = []
-        active_sources = sources or ['nmap', 'ms365']
+        active_sources = sources or ['all']
+        if 'all' in active_sources:
+            active_sources = ['nmap', 'ms365']
         raw_data = {}  # Store for dry-run output
         
         if 'nmap' in active_sources:
-            print("\n[NMAP] Scanning network...")
-            nmap_data = NmapScanner().collect_assets()
+            print(f"\n[NMAP] Scanning network (Profile: {nmap_profile})...")
+            # Assuming NmapScanner.collect_assets accepts a profile argument
+            nmap_data = NmapScanner().collect_assets(profile=nmap_profile)
             raw_data['nmap'] = nmap_data
             resolved = self.resolver.resolve('nmap', nmap_data)
             all_resolved.extend(resolved)
@@ -241,6 +245,18 @@ def parse_args():
     )
     
     parser.add_argument(
+        '--nmap',
+        metavar='PROFILE',
+        help='Run Nmap scan with specific profile (e.g., discovery, detailed). Implies --source nmap'
+    )
+    
+    parser.add_argument(
+        '--ms365',
+        action='store_true',
+        help='Run Microsoft 365 sync. Implies --source ms365'
+    )
+    
+    parser.add_argument(
         '--only', '-o',
         nargs='+',
         choices=['snipe', 'wazuh', 'zabbix'],
@@ -300,9 +316,15 @@ def main():
     if args.skip_zabbix:
         skip.append('zabbix')
     
-    # Determine sources
-    sources = None
-    if 'all' not in args.source:
+    # Determine sources and profile
+    sources = []
+    if args.nmap:
+        sources.append('nmap')
+    if args.ms365:
+        sources.append('ms365')
+    
+    # If no specific flags used, fall back to --source arg
+    if not sources:
         sources = args.source
     
     # Determine integrations
@@ -327,7 +349,8 @@ def main():
         
         orchestrator.run_full_sync(
             integrations=integrations,
-            sources=sources
+            sources=sources,
+            nmap_profile=args.nmap if args.nmap else 'discovery'
         )
         
         return 0

@@ -45,13 +45,13 @@ AZURE_CLIENT_SECRET=
 AZURE_DEBUG=0
 
 # Config Paths
-NGINX_CONF_FILE = 
-APACHE_CONF_FILE = 
+NGINX_CONF_FILE=
+APACHE_CONF_FILE=
 
-SNIPE_IT_ENV_FILE = 
-SNIPE_IT_DIR = 
+SNIPE_IT_ENV_FILE=
+SNIPE_IT_DIR=
 
-ENV_FILE_PATH = # Path to .env file that is used by various scripts
+ENV_FILE_PATH=
 
 # Proxy Configuration
 USE_PROXY=False
