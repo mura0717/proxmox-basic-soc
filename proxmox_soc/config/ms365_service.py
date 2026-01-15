@@ -22,7 +22,8 @@ if not AZURE_TENANT_ID or not AZURE_CLIENT_ID or not AZURE_CLIENT_SECRET:
     raise RuntimeError("Azure credentials not configured in environment.")
 
 if AZURE_DEBUG:
-    print(f"[DEBUG] AZURE_TENANT_ID: {AZURE_TENANT_ID} " + f"AZURE_CLIENT_ID: {AZURE_CLIENT_ID} " + f"AZURE_CLIENT_SECRET: {AZURE_CLIENT_SECRET}")
+    masked_secret = AZURE_CLIENT_SECRET[:5] + "..." if AZURE_CLIENT_SECRET else "None"
+    print(f"[DEBUG] AZURE_TENANT_ID: {AZURE_TENANT_ID} " + f"AZURE_CLIENT_ID: {AZURE_CLIENT_ID} " + f"AZURE_CLIENT_SECRET: {masked_secret}")
 
 import os
 import sys

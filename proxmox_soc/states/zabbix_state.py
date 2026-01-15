@@ -180,9 +180,9 @@ class ZabbixStateManager(BaseStateManager):
         
         # Skip certain device types
         device_type = asset_data.get('device_type', '').lower()
-        if device_type in ('mobile phone', 'tablet', 'laptop', 'other assets', 'cloud resources', 'monitors' ):
+        if device_type in ('mobile phone', 'tablet', 'laptop', 'other assets', 'cloud resources', 'monitors', 'desktop'):
             return False
-        if device_type in ('server', 'network device', 'access point', 'switch', 'router', 'firewall', 'desktop'):
+        if device_type in ('server', 'network device', 'access point', 'switch', 'router', 'firewall'):
             return True
         
         # Include Static IPs (Known Infrastructure)
