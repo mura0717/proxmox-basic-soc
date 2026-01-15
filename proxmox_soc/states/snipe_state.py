@@ -10,7 +10,7 @@ from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config.network_config import STATIC_IP_MAP
-from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon, get_primary_mac_address
 
 
 class SnipeStateManager(BaseStateManager):
@@ -140,10 +140,9 @@ class SnipeStateManager(BaseStateManager):
             return f"serial:{asset_data['serial'].upper()}"
         if asset_data.get('mac_addresses'):
             # Take first MAC for cache key
-            first_mac = str(asset_data['mac_addresses']).split('\n')[0].split(',')[0]
-            norm = normalize_mac_semicolon(first_mac)
-            if norm:
-                return f"mac:{norm.replace(':', '')}"
+            mac = get_primary_mac_address(asset_data['mac_addresses'])
+            if mac:
+                return f"mac:{mac.replace(':', '')}"
         if asset_data.get('asset_tag'):
             return f"tag:{asset_data['asset_tag']}"
         return None

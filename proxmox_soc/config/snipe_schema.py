@@ -492,6 +492,7 @@ MODELS = [
     {'name': 'Generic IoT Device', 'category': 'IoT Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Storage Device', 'category': 'Storage Devices', 'manufacturer': 'Generic'},
     {'name': 'Generic Virtual Machine', 'category': 'Virtual Machines', 'manufacturer': 'Generic'},
+    {'name': 'Generic Container', 'category': 'Containers', 'manufacturer': 'Generic'},
     {'name': 'Generic Cloud Resource', 'category': 'Cloud Resources', 'manufacturer': 'Generic'},    
     {'name': 'Generic Domain Controller', 'category': 'Servers', 'manufacturer': 'Generic'},
     {'name': 'Generic Database Server', 'category': 'Servers', 'manufacturer': 'Generic'},

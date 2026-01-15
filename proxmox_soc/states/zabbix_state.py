@@ -8,7 +8,7 @@ from typing import Dict, Optional
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
-from proxmox_soc.utils.mac_utils import normalize_mac_no_semicolon
+from proxmox_soc.utils.mac_utils import normalize_mac_no_semicolon, get_primary_mac_address
 
 class ZabbixStateManager(BaseStateManager):
     
@@ -88,7 +88,9 @@ class ZabbixStateManager(BaseStateManager):
             value = asset_data.get(field)
             if value:
                 if field == 'mac_addresses':
-                    value = normalize_mac_no_semicolon(value)
+                    # Use robust helper then strip colons
+                    mac = get_primary_mac_address(value)
+                    value = mac.replace(':', '') if mac else None
                 elif field == 'serial':
                     value = value.upper().strip()
                 else:
@@ -194,4 +196,3 @@ class ZabbixStateManager(BaseStateManager):
 
     def record(self, asset_id: str, asset_data: Dict, action: str) -> None:
         pass
-

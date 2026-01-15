@@ -39,7 +39,8 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
         print("  [Wazuh Builder] Loading agents for correlation...")
         try:
             client = WazuhClient()
-            if not client._authenticate():
+            # Optimize: Only re-authenticate if init failed (token is None)
+            if not client.token and not client._authenticate():
                 raise RuntimeError("Authentication failed.")
             print("  [Wazuh Builder] Authenticated successfully.")
             
@@ -73,6 +74,11 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
         if isinstance(ports, str):
             ports = [p.strip() for p in ports.split('\n') if p.strip()]
 
+        # Ensure MAC addresses are a list for better querying in Wazuh
+        macs = asset_data.get("mac_addresses", [])
+        if isinstance(macs, str):
+            macs = [m.strip() for m in macs.split('\n') if m.strip()]
+
         # Agent Correlation
         ip = asset_data.get("last_seen_ip")
         agent_info = self._agent_cache.get(ip) if ip and self._agent_cache else None
@@ -86,7 +92,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
             "asset": {
                 "name": asset_data.get("name"),
                 "ip": ip,
-                "mac": asset_data.get("mac_addresses"),
+                "mac": macs,
                 "serial": asset_data.get("serial"),
                 "asset_tag": asset_data.get("asset_tag"),
             },
