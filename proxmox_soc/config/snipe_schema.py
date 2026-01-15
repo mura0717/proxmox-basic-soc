@@ -454,6 +454,12 @@ CATEGORIES = {
         "require_acceptance": False,
         "checkin_email": False
         },
+    "Containers": {
+        "category_type": "asset", 
+        "use_default_eula": False,
+        "require_acceptance": False,
+        "checkin_email": False
+        },
     "Cloud Resources": {
         "category_type": "asset", 
         "use_default_eula": False,
