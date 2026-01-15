@@ -98,7 +98,12 @@ class SnipePayloadBuilder(BasePayloadBuilder):
         # MAC address
         if asset_data.get('mac_addresses'):
             macs = asset_data['mac_addresses']
-            first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
+            if isinstance(macs, list):
+                first_mac = macs[0] if macs else None
+            elif isinstance(macs, str):
+                first_mac = macs.split('\n')[0]
+            else:
+                first_mac = str(macs)
             if first_mac:
                 payload['mac_address'] = normalize_mac_semicolon(first_mac.strip())
         
@@ -190,7 +195,8 @@ class SnipePayloadBuilder(BasePayloadBuilder):
         model_map = {
             'server': 'Generic Server', 'camera': 'Generic Camera', 'desktop': 'Generic Desktop',
             'laptop': 'Generic Laptop', 'switch': 'Generic Switch', 'router': 'Generic Router',
-            'firewall': 'Generic Firewall', 'access point': 'Generic Access Point', 'printer': 'Generic Printer'
+            'firewall': 'Generic Firewall', 'access point': 'Generic Access Point', 'printer': 'Generic Printer',
+            'virtual machine': 'Generic Virtual Machine', 'container': 'Generic Container'
         }
         for key, name in model_map.items():
             if key in device_type: return name
@@ -283,7 +289,13 @@ class SnipePayloadBuilder(BasePayloadBuilder):
             
         if asset_data.get('mac_addresses'):
             macs = asset_data['mac_addresses']
-            first_mac = macs.split('\n')[0] if isinstance(macs, str) else macs
+            if isinstance(macs, list):
+                first_mac = macs[0] if macs else None
+            elif isinstance(macs, str):
+                first_mac = macs.split('\n')[0]
+            else:
+                first_mac = str(macs)
+                
             if first_mac: payload['mac_address'] = normalize_mac_semicolon(first_mac.strip())
             
         if not is_update and 'asset_tag' not in payload:

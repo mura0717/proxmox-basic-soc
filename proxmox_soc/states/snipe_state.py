@@ -10,7 +10,7 @@ from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.asset_engine.asset_finder import AssetFinder
 from proxmox_soc.snipe_it.snipe_api.services.assets import AssetService
 from proxmox_soc.config.network_config import STATIC_IP_MAP
-from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon, get_primary_mac_address
 
 
 class SnipeStateManager(BaseStateManager):
@@ -140,10 +140,9 @@ class SnipeStateManager(BaseStateManager):
             return f"serial:{asset_data['serial'].upper()}"
         if asset_data.get('mac_addresses'):
             # Take first MAC for cache key
-            first_mac = str(asset_data['mac_addresses']).split('\n')[0].split(',')[0]
-            norm = normalize_mac_semicolon(first_mac)
-            if norm:
-                return f"mac:{norm.replace(':', '')}"
+            mac = get_primary_mac_address(asset_data['mac_addresses'])
+            if mac:
+                return f"mac:{mac.replace(':', '')}"
         if asset_data.get('asset_tag'):
             return f"tag:{asset_data['asset_tag']}"
         return None
@@ -170,15 +169,13 @@ class SnipeStateManager(BaseStateManager):
                 return match
         
         # 3. By MAC address
-        mac = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
-        if mac:
-            first_mac = str(mac).split('\n')[0].split(',')[0].strip()
-            norm = normalize_mac_semicolon(first_mac)
-            
-            match = self._index_by_mac.get(norm.replace(':', '')) if norm else None
+        mac_val = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
+        if mac_val:
+            mac = get_primary_mac_address(mac_val)
+            match = self._index_by_mac.get(mac.replace(':', '')) if mac else None
             if match:
                 if self.debug:
-                    print(f"    Match by MAC: {mac} -> ID {match['id']}")
+                    print(f"    Match by MAC: {mac_val} -> ID {match['id']}")
                 return match
         
         # 4. By exact name match (for static IP devices)

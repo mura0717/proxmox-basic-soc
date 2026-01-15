@@ -7,6 +7,7 @@ from typing import Dict
 
 from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
 from proxmox_soc.states.base_state import StateResult
+from proxmox_soc.utils.mac_utils import normalize_mac_semicolon
 
 
 class ZabbixPayloadBuilder(BasePayloadBuilder):
@@ -38,10 +39,18 @@ class ZabbixPayloadBuilder(BasePayloadBuilder):
         zabbix_host = self._sanitize_hostname(hostname)
         group_name = self._get_group_name(device_type)
         
-        # Get first MAC
-        mac = asset_data.get("mac_addresses", "")
-        if '\n' in mac:
-            mac = mac.split('\n')[0]
+        # Robust MAC handling (Handle list or string)
+        raw_macs = asset_data.get("mac_addresses")
+        mac_list = []
+        if isinstance(raw_macs, list):
+            mac_list = raw_macs
+        elif isinstance(raw_macs, str) and raw_macs:
+            mac_list = [m.strip() for m in raw_macs.split('\n') if m.strip()]
+            
+        # Normalize and extract up to 2 MACs
+        valid_macs = [m for m in (normalize_mac_semicolon(str(x)) for x in mac_list) if m]
+        mac_a = valid_macs[0] if len(valid_macs) > 0 else ""
+        mac_b = valid_macs[1] if len(valid_macs) > 1 else ""
         
         payload = {
             "host": zabbix_host,
@@ -61,7 +70,8 @@ class ZabbixPayloadBuilder(BasePayloadBuilder):
                 "asset_tag": state_result.asset_id,
                 
                 "serialno_a": asset_data.get("serial") or "",
-                "macaddress_a": mac,
+                "macaddress_a": mac_a,
+                "macaddress_b": mac_b,
                 "vendor": asset_data.get("manufacturer") or "",
                 "model": asset_data.get("model") or "",
                 "os": asset_data.get("os_platform") or asset_data.get("nmap_os_guess") or "",

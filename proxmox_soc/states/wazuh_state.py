@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
+from proxmox_soc.utils.mac_utils import get_primary_mac_address
 
 
 class WazuhStateManager(BaseStateManager):
@@ -49,6 +50,11 @@ class WazuhStateManager(BaseStateManager):
         for field in self.IDENTITY_FIELDS:
             val = asset_data.get(field)
             if val:
+                if field == 'mac_addresses':
+                    mac = get_primary_mac_address(val)
+                    if mac:
+                        return f"{field}:{mac}"
+                    continue
                 return f"{field}:{str(val).strip()}"
         
         # Fallback: Use name if it's not generic

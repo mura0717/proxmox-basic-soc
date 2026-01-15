@@ -1,7 +1,7 @@
 """MAC address utilities for consistent handling across sources"""
 
 import re
-from typing import Optional, Dict, Set, Union, Iterable
+from typing import Optional, Dict, Set, Union, Iterable, List
 
 def normalize_mac_semicolon(mac: str) -> Optional[str]:
     """
@@ -95,3 +95,29 @@ def intersect_mac_sets(a: Set[str], b: Set[str]) -> Optional[str]:
     """
     inter = a & b
     return next(iter(inter)) if inter else None
+
+def get_primary_mac_address(value: Union[str, List[str], None]) -> Optional[str]:
+    """
+    Extracts the first valid MAC address from a string or list.
+    Returns format: AA:BB:CC:DD:EE:FF
+    """
+    if not value:
+        return None
+    
+    if isinstance(value, list):
+        for item in value:
+            # Recursive call to handle list of strings which might contain separators
+            mac = get_primary_mac_address(item)
+            if mac:
+                return mac
+        return None
+    
+    if isinstance(value, str):
+        # Split by common separators to find the first candidate
+        candidates = re.split(r'[\s,;\n]+', value)
+        for c in candidates:
+            norm = normalize_mac_semicolon(c)
+            if norm:
+                return norm
+                
+    return None
