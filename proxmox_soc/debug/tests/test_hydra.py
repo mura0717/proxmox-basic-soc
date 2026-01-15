@@ -212,7 +212,7 @@ def test_zabbix_state():
         
         print_result(
             "Generate ID works (MAC priority)",
-            result.asset_id == "zabbix:mac:112233445566",
+            result.asset_id == "mac:112233445566",
             f"ID: {result.asset_id}"
         )
         
@@ -402,7 +402,7 @@ def test_full_pipeline():
             state_file = Path(tmpdir) / "wazuh_state.json"
             
             pipeline = IntegrationPipeline(
-                name='Wazuh-Test',
+                name='Wazuh',
                 state=WazuhStateManager(state_file),
                 builder=WazuhPayloadBuilder(),
                 dispatcher=None,  # We'll test with dry_run

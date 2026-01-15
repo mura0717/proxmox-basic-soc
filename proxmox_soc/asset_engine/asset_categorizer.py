@@ -108,6 +108,15 @@ class AssetCategorizer:
            any(kw in device_name for kw in categorization_rules.VIRTUAL_MACHINE_RULES.get('hostname_keywords', [])):
             return 'Virtual Machine'
         return None
+    
+    @classmethod
+    def _categorize_container(cls, manufacturer: str, model: str, device_name: str) -> Optional[str]:
+        """Categorize a device as a Container."""
+        if (any(vendor in manufacturer for vendor in categorization_rules.CONTAINER_RULES['vendors']) and \
+           any(kw in model for kw in categorization_rules.CONTAINER_RULES['model_keywords'])) or \
+           any(kw in device_name for kw in categorization_rules.CONTAINER_RULES.get('hostname_keywords', [])):
+            return 'Container'
+        return None
 
     @classmethod
     def _categorize_server(cls, os_type: str, model: str, device_name: str) -> Optional[str]:
@@ -334,6 +343,7 @@ class AssetCategorizer:
         device_type = device_data.get('device_type')
         if not device_type:
             device_type = (
+                cls._categorize_container(manufacturer, model, device_name) or
                 cls._categorize_vm(manufacturer, model, device_name) or
                 cls._categorize_camera(manufacturer, model, device_name) or
                 cls._categorize_iot(model, manufacturer, os_type, device_name) or

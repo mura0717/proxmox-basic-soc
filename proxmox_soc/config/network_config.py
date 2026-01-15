@@ -82,20 +82,20 @@ STATIC_IP_MAP = {
     '192.168.1.43': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Printer C4510 (2)', 'manufacturer': 'Develop', 'model': 'ineo+ 4510', 'services': '', 'location': 'Glostrup', 'placement': 'Hallway - Foran Krogh'},
     '192.168.1.45': {'device_type': 'Printer', 'category': 'Printers', 'host_name': 'Printer ZD421 Test', 'manufacturer': 'Zebra', 'model': 'ZD421', 'services': '', 'location': 'Glostrup', 'placement': 'Test - will be moved to Odense'},
 
-    # Servers & Appliances
-    '192.168.1.170': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Vcenter01', 'manufacturer': 'VMware', 'model': 'vCenter Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    # Servers & Virtual Machines
+    '192.168.1.170': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'Vcenter01', 'manufacturer': 'VMware', 'model': 'vCenter Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.171': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 1', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.172': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 2', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.173': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx06', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.174': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx07', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.173': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'Esx06', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.174': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'Esx07', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.175': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'res 1 - MDL-Laptop7.Diabetes.local', 'manufacturer': 'NetApp', 'model': 'FAS Series', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.176': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'res 2 - ?', 'manufacturer': 'NetApp', 'model': 'FAS Series', 'services': 'NetApp', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.181': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'DC03', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.186': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Filesrvr04', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.196': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 3', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.197': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IMM 4', 'manufacturer': 'Lenovo', 'model': 'Integrated Management Module', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.198': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx04', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.199': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'Esx05', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.198': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'Esx04', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.199': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'Esx05', 'manufacturer': 'VMware', 'model': 'ESXi Hypervisor', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.222': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Visma01', 'manufacturer': 'Visma', 'model': 'Application Server', 'services': 'sql', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.228': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Consult05', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
     '192.168.1.229': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'DC02', 'manufacturer': 'Microsoft', 'model': 'Windows Server', 'services': '', 'location': 'Glostrup', 'placement': 'Server Room'},
@@ -110,11 +110,24 @@ STATIC_IP_MAP = {
     '192.168.1.242': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Fotostation01', 'manufacturer': 'FotoWare', 'model': 'FotoStation', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.244': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Visma05 (TEST)', 'manufacturer': 'Visma', 'model': 'Application Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.1.246': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'Backup02', 'manufacturer': 'Generic', 'model': 'Backup Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    '192.168.1.247': {'device_type': 'Server', 'category': 'Virtual Machines', 'host_name': 'APC Powerchute', 'manufacturer': 'APC', 'model': 'PowerChute', 'services': 'https', 'location': 'Glostrup', 'placement': ''},
+    '192.168.1.247': {'device_type': 'Virtual Machine', 'category': 'Virtual Machines', 'host_name': 'APC Powerchute', 'manufacturer': 'APC', 'model': 'PowerChute', 'services': 'https', 'location': 'Glostrup', 'placement': ''},
     '192.168.2.15': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IntergrationPROD', 'manufacturer': 'Generic', 'model': 'Application Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
     '192.168.2.20': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'IntergrationTEST', 'manufacturer': 'Generic', 'model': 'Application Server', 'services': '', 'location': 'Glostrup', 'placement': ''},
-    #'192.168.4.11': {'device_type': 'Server', 'category': 'Containers', 'host_name': 'lxc-scan', 'manufacturer': 'Proxmox', 'model': 'Linux', 'services': '', 'location': 'Glostrup', 'placement': 'IT Department'},
-    #'192.168.200.221': {'device_type': 'Server', 'category': 'Containers', 'host_name': 'lxc-scan', 'manufacturer': 'Proxmox', 'model': 'Linux', 'services': '', 'location': 'Glostrup', 'placement': 'IT Department'},
+    
+    # Proxmox Nodes (Hosts)
+    '192.168.1.161': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'HQ-SCAN', 'manufacturer': 'Lenovo', 'model': 'ThinkCentre M720q', 'services': 'Proxmox', 'location': 'Glostrup', 'placement': 'IT Department'},
+    '192.168.1.162': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'HQ-WAZUH', 'manufacturer': 'Lenovo', 'model': 'ThinkCentre M720q', 'services': 'Proxmox', 'location': 'Glostrup', 'placement': 'IT Department'},
+    '192.168.1.163': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'HQ-ZABBIX', 'manufacturer': 'Lenovo', 'model': 'ThinkCentre M720q', 'services': 'Proxmox', 'location': 'Glostrup', 'placement': 'IT Department'},
+    '192.168.1.164': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'HQ-SNIPE', 'manufacturer': 'Lenovo', 'model': 'ThinkCentre M720q', 'services': 'Proxmox', 'location': 'Glostrup', 'placement': 'IT Department'},
+    '192.168.1.165': {'device_type': 'Server', 'category': 'Servers', 'host_name': 'HQ-BACKUP', 'manufacturer': 'Lenovo', 'model': 'ThinkCentre M720q', 'services': 'Proxmox', 'location': 'Glostrup', 'placement': 'IT Department'},
+
+    # LXC Containers
+    '192.168.1.201': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-scan', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'Nmap', 'location': 'Glostrup', 'placement': 'HQ-SCAN'},
+    '192.168.1.191': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-revproxy', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'Nginx', 'location': 'Glostrup', 'placement': 'HQ-SCAN'},
+    '192.168.1.202': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-wazuh', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'Wazuh', 'location': 'Glostrup', 'placement': 'HQ-WAZUH'},
+    '192.168.1.203': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-zabbix', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'Zabbix', 'location': 'Glostrup', 'placement': 'HQ-ZABBIX'},
+    '192.168.1.204': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-snipe', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'Snipe-IT', 'location': 'Glostrup', 'placement': 'HQ-SNIPE'},
+    '192.168.1.205': {'device_type': 'Container', 'category': 'Containers', 'host_name': 'lxc-backup', 'manufacturer': 'Proxmox', 'model': 'LXC Container', 'services': 'PBS', 'location': 'Glostrup', 'placement': 'HQ-BACKUP'},
     
     # Storage Devices
     '192.168.1.185': {'device_type': 'Storage Device', 'category': 'Storage Devices', 'host_name': 'BackupNAS02 Synology RS815RP+', 'manufacturer': 'Synology', 'model': 'RS815RP+', 'services': '', 'location': 'Glostrup', 'placement': '3. floor X felt'},

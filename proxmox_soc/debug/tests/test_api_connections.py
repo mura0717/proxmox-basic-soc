@@ -73,11 +73,9 @@ def test_wazuh():
     # 1. Wazuh API
     try:
         client = WazuhClient()
-        token = client.token
-        response = client._authenticate()
-        if token:
+        # Authentication is handled in __init__
+        if client.token:
             print_status("Wazuh API", True, "Token Obtained - Authentication Successful")
-            print_status("Wazuh API", True, f"HTTP {response.status_code} - {response.text[:100]}")
             # Optional: Get Manager Info using the token
             try:
                 info_data = client.get("/manager/info")
@@ -88,7 +86,6 @@ def test_wazuh():
                 print(f"    > Could not fetch manager info: {e}")
         else:
             print_status("Wazuh API", False, "Authentication Failed")
-            print_status("Wazuh API", False, f"HTTP {response.status_code} - {response.text[:100]}")
         
             
     except Exception as e:

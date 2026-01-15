@@ -36,16 +36,22 @@ NETWORK_DEVICE_RULES = {
     }
 }
 
+SERVER_RULES = {
+    'os_keywords': ['windows server', 'esxi'],
+    'model_keywords': ['server'],
+    'hostname_keywords': ['zabbix', 'veeam', 'vcenter', 'esx', 'dc', 'filesrvr', 'terminal', 'consult']
+}
+
 VIRTUAL_MACHINE_RULES = {
     'vendors': ['vmware', 'virtualbox', 'qemu', 'microsoft corporation', 'proxmox', 'red hat', 'bochs'],
     'model_keywords': ['virtual machine', 'vm', 'kvm', 'hyper-v', 'virtualbox', 'vmware virtual platform','bochs', 'qemu'],
     'hostname_keywords': ['ubuntu', 'debian', 'centos', 'vm', 'vcenter', 'esx', 'hyperv', 'hyper-v', 'zabbix-proxy.diabetes.local']
 }
 
-SERVER_RULES = {
-    'os_keywords': ['windows server', 'esxi'],
-    'model_keywords': ['server'],
-    'hostname_keywords': ['zabbix', 'veeam', 'vcenter', 'esx', 'dc', 'filesrvr', 'terminal', 'consult']
+CONTAINER_RULES = {
+    'vendors': ['vmware', 'proxmox', 'docker', 'kubernetes', 'red hat'],
+    'model_keywords': ['container', 'lxc', 'docker', 'k8s', 'kubernetes'],
+    'hostname_keywords': ['lxc', 'container', 'docker', 'kubernetes', 'k8s']
 }
 
 IOS_RULES = {
@@ -132,6 +138,7 @@ CATEGORY_MAP = {
     'Tablet': 'Tablets',
     'Mobile Phone': 'Mobile Phones',
     'Virtual Machine': 'Virtual Machines',
+    'Container': 'Containers',
     'IoT Device': 'IoT Devices',
     # Map inferred models to existing categories
     'Windows Server': 'Servers',

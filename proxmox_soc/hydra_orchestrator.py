@@ -216,14 +216,14 @@ def parse_args():
         description='Hydra Asset Synchronization Pipeline',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  %(prog)s                              # Full sync, all sources and integrations
-  %(prog)s --dry-run                    # Test run, no changes made
-  %(prog)s --dry-run --source nmap      # Dry run with only nmap data
-  %(prog)s --skip-zabbix                # Skip Zabbix integration
-  %(prog)s --only snipe wazuh           # Only sync to Snipe-IT and Wazuh
-  %(prog)s --source ms365 --only snipe  # MS365 data to Snipe-IT only
-        """
+            Examples:
+            %(prog)s                              # Full sync, all sources and integrations
+            %(prog)s --dry-run                    # Test run, no changes made
+            %(prog)s --dry-run --source nmap      # Dry run with only nmap data
+            %(prog)s --skip-zabbix                # Skip Zabbix integration
+            %(prog)s --only snipe wazuh           # Only sync to Snipe-IT and Wazuh
+            %(prog)s --source ms365 --only snipe  # MS365 data to Snipe-IT only
+                    """
     )
     
     parser.add_argument(

@@ -41,12 +41,13 @@ class ZabbixClient:
             "id": self.req_id
         }
         
-        headers = {'Content-Type': 'application/json-rpc'}
-        if require_auth and self.auth:
-            headers['Authorization'] = f'Bearer {self.auth}'
+        if require_auth:
+            if not self.auth:
+                raise RuntimeError("Zabbix client not authenticated")
+            payload["auth"] = self.auth
 
+        headers = {"Content-Type": "application/json"}
         response = requests.post(self.url, json=payload, headers=headers, verify=False, timeout=30)
-        response.raise_for_status()
         
         data = response.json()
         if "error" in data:
