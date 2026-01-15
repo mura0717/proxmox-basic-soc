@@ -17,7 +17,23 @@ class ZabbixClient:
         self.password = ZABBIX.zabbix_pass
         self.req_id = 0
         self.auth: Optional[str] = None
+        self._use_header_auth = self._detect_auth_method()
         self._authenticate()
+        
+    def _detect_auth_method(self) -> bool:
+        """
+        Detect Zabbix version to determine auth method.
+        Returns True for Zabbix 7.0+ (header auth), False for older (body auth).
+        """
+        try:
+            result = self._rpc_call("apiinfo.version", {}, require_auth=False)
+            major_version = int(result.split('.')[0])
+            use_header = major_version >= 7
+            print(f"[Zabbix Client] Detected version {result}, using {'header' if use_header else 'body'} auth")
+            return use_header
+        except Exception:
+            # Default to header auth (modern) if version check fails
+            return True
 
     def _authenticate(self):
         """Authenticate and store token."""
@@ -41,12 +57,16 @@ class ZabbixClient:
             "id": self.req_id
         }
         
+        headers = {"Content-Type": "application/json"}
+        
         if require_auth:
             if not self.auth:
                 raise RuntimeError("Zabbix client not authenticated")
-            payload["auth"] = self.auth
+            if self._use_header_auth:
+                headers["Authorization"] = f"Bearer {self.auth}"
+            else:
+                payload["auth"] = self.auth
 
-        headers = {"Content-Type": "application/json"}
         response = requests.post(self.url, json=payload, headers=headers, verify=False, timeout=30)
         
         data = response.json()
