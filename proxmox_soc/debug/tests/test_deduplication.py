@@ -98,6 +98,9 @@ def test_snipe_deduplication():
             self._index_by_mac = {
                 "AABBCCDDEEFF": {"id": 500, "name": "Existing Asset"}
             }
+            self._index_by_serial = {}
+            self._index_by_asset_tag = {}
+            self._index_by_name = {}
             self._cache_loaded = True
             
     state = MockSnipeState()

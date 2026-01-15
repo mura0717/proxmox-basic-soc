@@ -169,15 +169,13 @@ class SnipeStateManager(BaseStateManager):
                 return match
         
         # 3. By MAC address
-        mac = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
-        if mac:
-            first_mac = str(mac).split('\n')[0].split(',')[0].strip()
-            norm = normalize_mac_semicolon(first_mac)
-            
-            match = self._index_by_mac.get(norm.replace(':', '')) if norm else None
+        mac_val = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
+        if mac_val:
+            mac = get_primary_mac_address(mac_val)
+            match = self._index_by_mac.get(mac.replace(':', '')) if mac else None
             if match:
                 if self.debug:
-                    print(f"    Match by MAC: {mac} -> ID {match['id']}")
+                    print(f"    Match by MAC: {mac_val} -> ID {match['id']}")
                 return match
         
         # 4. By exact name match (for static IP devices)

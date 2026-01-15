@@ -1,7 +1,7 @@
 """MAC address utilities for consistent handling across sources"""
 
 import re
-from typing import Optional, Dict, Set, Union, Iterable
+from typing import Optional, Dict, Set, Union, Iterable, List
 
 def normalize_mac_semicolon(mac: str) -> Optional[str]:
     """
