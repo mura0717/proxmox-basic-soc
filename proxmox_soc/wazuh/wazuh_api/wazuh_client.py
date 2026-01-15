@@ -23,7 +23,7 @@ class WazuhClient:
         self.token: Optional[str] = None
         self._authenticate()
 
-    def _authenticate(self):
+    def _authenticate(self) -> bool:
         """Obtain JWT token via Basic Auth."""
         try:
             response = requests.get(
