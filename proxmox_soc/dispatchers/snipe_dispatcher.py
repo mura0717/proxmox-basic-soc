@@ -38,15 +38,23 @@ class SnipeDispatcher(BaseDispatcher):
                     if resp.status_code == 200 and resp.json().get('status') == 'success':
                         new_id = resp.json()['payload']['id']
                         build_result.snipe_id = new_id  # Store for downstream use
+                        build_result.metadata['dispatch_ok'] = True
                         results["created"] += 1
                         if self.debug:
                             print(f"  ✓ Created: {name} (ID: {new_id})")
                     else:
+                        build_result.metadata["dispatch_ok"] = False
                         results["failed"] += 1
                         if self.debug:
                             print(f"  ✗ Create failed: {name} - {resp.text[:100]}")
                         
-                elif action == 'update' and build_result.snipe_id:
+                elif action == 'update':
+                    if not build_result.snipe_id:
+                        build_result.metadata['dispatch_ok'] = False
+                        results["failed"] += 1
+                        if self.debug:
+                            print(f"  ✗ Update skipped (missing snipe_id): {name}")
+                        continue
                     resp = requests.patch(
                         f"{SNIPE.snipe_url}/api/v1/hardware/{build_result.snipe_id}",
                         json=payload,
@@ -54,15 +62,18 @@ class SnipeDispatcher(BaseDispatcher):
                         verify=SNIPE.verify_ssl
                     )
                     if resp.status_code == 200:
+                        build_result.metadata['dispatch_ok'] = True
                         results["updated"] += 1
                         if self.debug:
                             print(f"  ✓ Updated: {name}")
                     else:
+                        build_result.metadata['dispatch_ok'] = False
                         results["failed"] += 1
                         if self.debug:
                             print(f"  ✗ Update failed: {name}")
             
             except Exception as e:
+                build_result.metadata['dispatch_ok'] = False
                 results["failed"] += 1
                 if self.debug:
                     print(f"  ✗ Error: {build_result.payload.get('name', 'Unknown')} - {e}")

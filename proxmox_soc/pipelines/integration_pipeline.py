@@ -12,7 +12,7 @@ from dataclasses import dataclass, asdict
 
 from proxmox_soc.asset_engine.asset_resolver import ResolvedAsset
 from proxmox_soc.states.base_state import BaseStateManager
-from proxmox_soc.builders.base_builder import BasePayloadBuilder, BuildResult
+from proxmox_soc.builders.base_builder import BasePayloadBuilder
 from proxmox_soc.dispatchers.base_dispatcher import BaseDispatcher
 
 
@@ -184,15 +184,19 @@ class IntegrationPipeline:
         
         results['created'] = dispatch_results.get('created', 0)
         results['updated'] = dispatch_results.get('updated', 0)
+        results['skipped'] += dispatch_results.get('skipped', 0)
         results['failed'] += dispatch_results.get('failed', 0)
         
         # Record state for successful dispatches
         for asset, state_result, build_result in to_dispatch:
-            self.state.record(
-                state_result.asset_id,
-                asset.canonical_data,
-                state_result.action
-            )
+            if build_result.metadata.get("dispatch_ok", False) is True:
+                self.state.record(
+                    state_result.asset_id,
+                    asset.canonical_data,
+                    state_result.action
+                )
+            elif self.debug:
+                print(f"  ⚠ Not recording state for failed dispatch: {asset.canonical_data.get('name')}")
     
     def _print_summary(self, results: Dict):
         """Print sync summary."""

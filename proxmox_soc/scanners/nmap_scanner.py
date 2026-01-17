@@ -143,7 +143,8 @@ class NmapScanner:
         else:
             print(f"Found {len(assets)} hosts")
             if debug_logger.nmap_debug:
-                debug_logger.log_parsed_asset_data('nmap', assets)
+                for asset in assets:
+                    debug_logger.log_parsed_asset_data('nmap', asset)
         
         return assets
 

@@ -224,7 +224,7 @@ class AssetCategorizer:
             raw_manufacturer = raw_manufacturer.get('name', '') or ''
         manufacturer = raw_manufacturer.lower()
     
-    # Handle model field - can be dict or string
+        # Handle model field - can be dict or string
         raw_model = intune_device.get('model') or ''
         if isinstance(raw_model, dict):
             raw_model = raw_model.get('name', '') or raw_model.get('model_number', '') or ''
@@ -314,7 +314,6 @@ class AssetCategorizer:
         # Hardware Normalization corrects for NIC vendors being misidentified as the manufacturer.
         norm_mfr, norm_model = cls._normalize_hardware_identity(str(raw_mfr), str(raw_model))
         
-        # Update device_data so AssetMatcher uses the clean values.
         if norm_mfr != raw_mfr:
             device_data['manufacturer'] = norm_mfr
         if norm_model != raw_model:
@@ -322,8 +321,8 @@ class AssetCategorizer:
         
         device_name = raw_name.lower()
         os_type = raw_os.lower()
-        model = raw_model.lower()
-        manufacturer = raw_mfr.lower()
+        model = norm_model.lower()
+        manufacturer = norm_mfr.lower()
         cloud_provider = cls._determine_cloud_provider(device_data)
         
         raw_serial = (device_data.get('serial') or '') # For easier search in logs

@@ -3,9 +3,10 @@ Main Orchestrator
 Coordinates scanners, resolver, and integration pipelines.
 """
 
-import argparse
+import os
 import sys
 import json
+import argparse
 from pathlib import Path
 from datetime import datetime
 from typing import List, Optional, Dict
@@ -13,6 +14,7 @@ from typing import List, Optional, Dict
 from proxmox_soc.scanners.nmap_scanner import NmapScanner
 from proxmox_soc.scanners.ms365_aggregator import Microsoft365Aggregator
 from proxmox_soc.asset_engine.asset_resolver import AssetResolver
+from proxmox_soc.asset_engine.asset_merger import AssetMerger
 
 from proxmox_soc.states.snipe_state import SnipeStateManager
 from proxmox_soc.states.wazuh_state import WazuhStateManager
@@ -28,6 +30,7 @@ from proxmox_soc.dispatchers.zabbix_dispatcher import ZabbixDispatcher
 
 from proxmox_soc.pipelines.integration_pipeline import IntegrationPipeline, PipelineResult
 from proxmox_soc.config.hydra_settings import WAZUH
+from proxmox_soc.utils.sudo_utils import elevate_to_root
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -78,12 +81,9 @@ class HydraOrchestrator:
             ),
         }
     
-    def run_full_sync(
-        self, 
-        integrations: Optional[List[str]] = None,
-        sources: Optional[List[str]] = None,
-        nmap_profile: str = 'discovery'
-    ) -> Dict[str, PipelineResult]:
+    def run_full_sync(self, integrations: Optional[List[str]] = None, sources: Optional[List[str]] = None,
+        nmap_profile: str = 'discovery') -> Dict[str, PipelineResult]:
+        
         """Run complete sync across data sources and integrations."""
         
         # Header
@@ -106,7 +106,13 @@ class HydraOrchestrator:
         
         if 'nmap' in active_sources:
             print(f"\n[NMAP] Scanning network (Profile: {nmap_profile})...")
-            # Assuming NmapScanner.collect_assets accepts a profile argument
+            if os.geteuid() != 0:
+                try:
+                    elevate_to_root()
+                except Exception as e:
+                    print(f"Failed to elevate to root: {e}")
+                    sys.exit(1)
+                
             nmap_data = NmapScanner().collect_assets(profile=nmap_profile)
             raw_data['nmap'] = nmap_data
             resolved = self.resolver.resolve('nmap', nmap_data)
@@ -123,7 +129,12 @@ class HydraOrchestrator:
         
         print(f"\nTotal resolved assets: {len(all_resolved)}")
         
-        if not all_resolved:
+        print("\nMerging assets from multiple sources...")
+        merged_assets = AssetMerger.merge_assets(all_resolved)
+        print(f"After merge: {len(merged_assets)} unique assets "
+              f"(reduced from {len(all_resolved)})")
+        
+        if not merged_assets:
             print("\nNo assets found. Nothing to process.")
             return {}
         
@@ -144,7 +155,7 @@ class HydraOrchestrator:
         results = {}
         for name in active_integrations:
             if name in self.pipelines:
-                results[name] = self.pipelines[name].process(all_resolved)
+                results[name] = self.pipelines[name].process(merged_assets)
         
         # Phase 3: Summary
         self._print_final_summary(results, raw_data if self.dry_run else None)

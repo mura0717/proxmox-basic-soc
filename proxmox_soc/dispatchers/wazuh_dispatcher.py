@@ -27,7 +27,7 @@ class WazuhDispatcher(BaseDispatcher):
             for build_result in build_results:
                 try:
                     f.write(json.dumps(build_result.payload) + "\n")
-                    
+                    build_result.metadata['dispatch_ok'] = True
                     if build_result.action == 'create':
                         results["created"] += 1
                     else:
@@ -39,6 +39,7 @@ class WazuhDispatcher(BaseDispatcher):
                         
                 except Exception as e:
                     results["failed"] += 1
+                    build_result.metadata["dispatch_ok"] = False
                     if self.debug:
                         print(f"  ✗ Failed to write event: {e}")
 

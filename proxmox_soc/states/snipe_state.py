@@ -56,17 +56,28 @@ class SnipeStateManager(BaseStateManager):
                 if tag:
                     self._index_by_asset_tag[tag] = asset
                 
+                standard_mac = asset.get('mac_address')
+                if standard_mac:
+                    norm = normalize_mac_semicolon(standard_mac)
+                    if norm:
+                        mac_key = norm.replace(':', '').upper()
+                        if mac_key not in self._index_by_mac:
+                            self._index_by_mac[mac_key] = asset
+                
                 # Index by MAC (from custom fields)
                 for cf_name, cf_data in asset.get('custom_fields', {}).items():
                     if 'mac' in cf_name.lower():
                         mac = cf_data.get('value', '') if isinstance(cf_data, dict) else cf_data
                         if mac:
-                            # Normalize MAC
-                            # Handle potential multiple MACs in one field
-                            for m in str(mac).replace(',', '\n').split('\n'):
+                            for m in str(mac).replace(',', '\n').replace(';', '\n').split('\n'):
+                                m = m.strip()
+                                if not m:
+                                    continue
                                 norm = normalize_mac_semicolon(m)
                                 if norm:
-                                    self._index_by_mac[norm.replace(':', '')] = asset
+                                    mac_key = norm.replace(':', '').upper()
+                                    if mac_key not in self._index_by_mac:
+                                        self._index_by_mac[mac_key] = asset
                 
                 # Index by name
                 name = asset.get('name')
@@ -172,7 +183,9 @@ class SnipeStateManager(BaseStateManager):
         mac_val = asset_data.get('mac_addresses') or asset_data.get('wifi_mac') or asset_data.get('ethernet_mac')
         if mac_val:
             mac = get_primary_mac_address(mac_val)
-            match = self._index_by_mac.get(mac.replace(':', '')) if mac else None
+            if mac:
+                mac_key = mac.replace(':', '').upper()  # ← Ensure uppercase
+                match = self._index_by_mac.get(mac_key)
             if match:
                 if self.debug:
                     print(f"    Match by MAC: {mac_val} -> ID {match['id']}")

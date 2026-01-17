@@ -117,12 +117,38 @@ class Microsoft365Aggregator:
                 merged_assets.append(teams_asset)
     
     def _add_unmatched_intune_assets(self, merged_assets: List[Dict], intune_data: List[Dict]):
-        """Adds Intune assets that did not have a serial number."""
+        """
+        Adds Intune assets that did not have a serial number, ensuring no duplicates 
+        based on intune_device_id.
+        """
         if debug_logger.ms365_debug:
             print("Processing unmatched Intune assets (without serial numbers)...")
+            
+        # 1. Collect IDs of assets we have already processed (those with serials)
+        seen_intune_ids = {
+            a.get("intune_device_id") 
+            for a in merged_assets 
+            if a.get("intune_device_id")
+        }
+
         for intune_asset in intune_data:
-            if not intune_asset.get('serial'):
-                merged_assets.append(intune_asset)
+            # Skip if it has a serial (already handled in _merge_intune_with_teams)
+            if intune_asset.get("serial"):
+                continue
+                
+            # Check for ID duplication (e.g., same device, missing serial in this record)
+            iid = intune_asset.get("intune_device_id")
+            if iid and iid in seen_intune_ids:
+                if debug_logger.ms365_debug:
+                    print(f"  ⊘ Skipping duplicate Intune ID (no serial): {iid}")
+                continue
+
+            # Add unique asset
+            merged_assets.append(intune_asset)
+            
+            # Record ID to prevent duplicates within this loop itself
+            if iid:
+                seen_intune_ids.add(iid)
 
     def _enrich_assets_with_static_macs(self, merged_assets: List[Dict]):
         """Adds MAC addresses from a static MAC address list for missing assets."""

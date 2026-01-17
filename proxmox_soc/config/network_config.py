@@ -11,7 +11,7 @@ NMAP_SCAN_RANGES = [
 ]
 
 """
-DHCP Scope for both Glsotrup and Odense
+DHCP Scope for both Glostrup and Odense
 """
 DHCP_SCOPES = [
     {

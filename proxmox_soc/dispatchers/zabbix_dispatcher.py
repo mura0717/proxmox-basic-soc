@@ -40,7 +40,7 @@ class ZabbixDispatcher(BaseDispatcher):
                     continue
                 
                 # 2. Validation: Host Group
-                group_name = item.metadata.get('group_name')
+                group_name = item.metadata.get('group_name') or "Discovered Hosts"
                 group_id = self._get_or_create_group(group_name)
                 
                 if not group_id:
@@ -91,7 +91,8 @@ class ZabbixDispatcher(BaseDispatcher):
                         except Exception as e:
                             if self.debug:
                                 print(f"    ⚠️ Could not update interface IP: {e}")
-
+                    
+                    item.metadata['dispatch_ok'] = True
                     results['updated'] += 1
                     if self.debug:
                         print(f"  ✓ Updated: {item.payload.get('name')} (ID: {hostid})")
@@ -99,6 +100,7 @@ class ZabbixDispatcher(BaseDispatcher):
                 # 4. Action: Create
                 else: 
                     result = self.client.call("host.create", item.payload)
+                    item.metadata['dispatch_ok'] = True
                     results['created'] += 1
                     
                     if self.debug:
@@ -106,6 +108,7 @@ class ZabbixDispatcher(BaseDispatcher):
                         print(f"  ✓ Created: {item.payload.get('name')} (ID: {new_id})")
                         
             except Exception as e:
+                item.metadata['dispatch_ok'] = False
                 results['failed'] += 1
                 if self.debug:
                     print(f"  ✗ Error: {item.payload.get('name', 'Unknown')} - {e}")

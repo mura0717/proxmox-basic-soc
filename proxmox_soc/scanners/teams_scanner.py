@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 from proxmox_soc.debug.tools.asset_debug_logger import debug_logger
 from proxmox_soc.config.ms365_service import Microsoft365Service
 from proxmox_soc.debug.categorize_from_logs.teams_categorize_from_logs import teams_debug_categorization
-from proxmox_soc.utils.mac_utils import combine_macs, normalize_mac_semicolon
+from proxmox_soc.utils.mac_utils import combine_macs, macs_from_string
 
 class TeamsScanner:
     """Microsoft Teams synchronization service"""
@@ -75,6 +75,11 @@ class TeamsScanner:
         last_modified_by_user = (teams_asset.get('lastModifiedBy') or {}).get('user', {})
         serial_raw = hardware_details.get("serialNumber") or ""
         serial = serial_raw.upper() if serial_raw else None
+        all_macs = []
+        for raw_mac in (hardware_details.get('macAddresses') or []):
+            # macs_from_string handles prefixed strings, plain MACs, any separator
+            extracted = macs_from_string(str(raw_mac))
+            all_macs.extend(extracted)
         
         # Map Teams fields to Snipe-IT custom fields
         transformed = {
@@ -91,7 +96,7 @@ class TeamsScanner:
             
             # Identity
             'asset_tag': teams_asset.get('companyAssetTag'),
-            'name': current_user.get('displayName'),
+            'name': teams_asset.get('displayName') or teams_asset.get('hostname') or current_user.get('displayName'),
             'serial': serial,
             'notes': teams_asset.get('notes'),
             
@@ -100,11 +105,7 @@ class TeamsScanner:
             'model': hardware_details.get('model'),
             
             # Network
-            'mac_addresses': combine_macs([
-                normalize_mac_semicolon(mac.split(':', 1)[-1])
-                for mac in hardware_details.get('macAddresses', [])
-                if mac
-            ]),
+            'mac_addresses': combine_macs(all_macs),
             
             # Data Hygiene
             'last_update_source': 'teams',
