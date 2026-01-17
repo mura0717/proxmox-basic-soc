@@ -85,7 +85,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
 
         event = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "event_type": "hydra_asset_scan",
+            "hydra_event_type": "hydra_asset_scan",
             "event_action": state_result.action,
             "wazuh_id": state_result.asset_id,
             "source": asset_data.get("_source"),
