@@ -113,7 +113,7 @@ class WazuhPayloadBuilder(BasePayloadBuilder):
                 "id": agent_info.get('id') if agent_info else None,
                 "status": agent_info.get('status') if agent_info else "not_found",
                 "name": agent_info.get('name') if agent_info else None
-            } if agent_info else None
+            }
         }
         
         return BuildResult(
