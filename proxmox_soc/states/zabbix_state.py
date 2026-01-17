@@ -8,6 +8,7 @@ from typing import Dict, Optional
 
 from proxmox_soc.states.base_state import BaseStateManager, StateResult
 from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
+from proxmox_soc.config.network_config import STATIC_IP_MAP
 from proxmox_soc.utils.mac_utils import normalize_mac_no_semicolon, get_primary_mac_address
 
 class ZabbixStateManager(BaseStateManager):
@@ -188,7 +189,6 @@ class ZabbixStateManager(BaseStateManager):
             return True
         
         # Include Static IPs (Known Infrastructure)
-        from proxmox_soc.config.network_config import STATIC_IP_MAP
         if asset_data.get('last_seen_ip') in STATIC_IP_MAP:
             return True
         

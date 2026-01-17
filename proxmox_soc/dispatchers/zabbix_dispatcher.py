@@ -110,8 +110,9 @@ class ZabbixDispatcher(BaseDispatcher):
                 if self.debug:
                     print(f"  ✗ Error: {item.payload.get('name', 'Unknown')} - {e}")
                     
-        if self.debug:
-            print(f"  LOG: {json.dumps(build_results.payload)[:100]}...")
+        if self.debug and build_results:
+            last_payload = build_results[-1].payload if build_results else {}
+            print(f"  LOG (last): {json.dumps(last_payload, default=str)[:100]}...")
                     
         print(f"[ZABBIX] Done: {results['created']} created, {results['updated']} updated, "
               f"{results['skipped']} skipped, {results['failed']} failed")

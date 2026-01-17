@@ -30,7 +30,7 @@ from proxmox_soc.pipelines.integration_pipeline import IntegrationPipeline, Pipe
 from proxmox_soc.config.hydra_settings import WAZUH
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parents[2]
 DRY_RUN_DIR = BASE_DIR / "logs" / "dry_runs"
 
 
