@@ -3,6 +3,7 @@ Zabbix Dispatcher Module
 """
 
 import os
+import json
 from typing import List, Dict
 
 from proxmox_soc.zabbix.zabbix_api.zabbix_client import ZabbixClient
@@ -30,7 +31,6 @@ class ZabbixDispatcher(BaseDispatcher):
         for item in build_results:
             try:
                 # 1. Validation: Skip if no IP
-                # We need to extract this early for both creation and the update logic below
                 new_ip = item.payload.get('interfaces', [{}])[0].get('ip')
                 
                 if not new_ip:
@@ -109,7 +109,10 @@ class ZabbixDispatcher(BaseDispatcher):
                 results['failed'] += 1
                 if self.debug:
                     print(f"  ✗ Error: {item.payload.get('name', 'Unknown')} - {e}")
-
+                    
+        if self.debug:
+            print(f"  LOG: {json.dumps(build_results.payload)[:100]}...")
+                    
         print(f"[ZABBIX] Done: {results['created']} created, {results['updated']} updated, "
               f"{results['skipped']} skipped, {results['failed']} failed")
         return results
