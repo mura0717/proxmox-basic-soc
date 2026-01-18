@@ -158,10 +158,11 @@ class ZabbixStateManager(BaseStateManager):
             return self._index_by_serial[serial.upper()]
         
         # 3. By MAC
-        mac = asset_data.get('mac_addresses')
-        if mac:
-            norm = normalize_mac_no_semicolon(mac)
-            if norm in self._index_by_mac:
+        mac_val = asset_data.get("mac_addresses")
+        if mac_val:
+            mac = get_primary_mac_address(mac_val)
+            norm = mac.replace(":", "") if mac else ""
+            if norm and norm in self._index_by_mac:
                 if self.debug:
                     print(f"    ✓ Match by MAC: {norm}")
                 return self._index_by_mac[norm]

@@ -237,12 +237,21 @@ class SnipePayloadBuilder(BasePayloadBuilder):
         """Merge new scan data with existing asset data."""
         merged = self._flatten_existing_asset(existing)
         
-        priority_fields = {
+        sources = new_data.get("_sources") or [scan_type]
+        sources = [s for s in sources if s]
+
+        priority_map = {
             'nmap': ['last_seen_ip', 'nmap_last_scan', 'nmap_open_ports', 
                      'nmap_services', 'nmap_os_guess', 'open_ports_hash'],
             'microsoft365': ['intune_last_sync', 'intune_compliance', 
                             'primary_user_upn', 'primary_user_email'],
-        }.get(scan_type, [])
+            'intune': ['intune_last_sync', 'intune_compliance', 
+                            'primary_user_upn', 'primary_user_email'],
+        }
+
+        priority_fields = set()
+        for s in sources:
+            priority_fields.update(priority_map.get(s, []))
         
         for key, value in new_data.items():
             if value in (None, '', []):

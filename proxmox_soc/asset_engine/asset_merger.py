@@ -87,13 +87,13 @@ class AssetMerger:
             keys.add(f"serial:{data['serial'].strip().upper()}")
         
         if data.get('intune_device_id'):
-            keys.add(f"intune:{data['intune_device_id']}")
+            keys.add(f"intune:{str(data['intune_device_id']).strip().lower()}")
         
         if data.get('azure_ad_id'):
-            keys.add(f"azure:{data['azure_ad_id']}")
+            keys.add(f"azure:{str(data['azure_ad_id']).strip().lower()}")
         
         if data.get('teams_device_id'):
-            keys.add(f"teams:{data['teams_device_id']}")
+            keys.add(f"teams:{str(data['teams_device_id']).strip().lower()}")
         
         # MAC addresses (can have multiple)
         mac_sources = ['mac_addresses', 'wifi_mac', 'ethernet_mac']
@@ -119,15 +119,19 @@ class AssetMerger:
         if len(group) == 1:
             return group[0]
         
+        def _get_asset_source(a: ResolvedAsset) -> str:
+            return (a.canonical_data.get("_source") or a.source or "unknown")
+        
         # Sort by source priority (ascending, so highest priority processed last)
-        group.sort(key=lambda x: cls.SOURCE_PRIORITY.get(x.source, 1))
+        group.sort(key=lambda x: cls.SOURCE_PRIORITY.get(_get_asset_source(x), 1))
         
         # Start with lowest priority, overlay higher priority data
         merged_data: Dict = {}
         sources: Set[str] = set()
         
         for asset in group:
-            sources.add(asset.source)
+            src = _get_asset_source(asset)
+            sources.add(src)
             
             for key, value in asset.canonical_data.items():
                 if value in (None, '', [], {}, 'Unknown'):
