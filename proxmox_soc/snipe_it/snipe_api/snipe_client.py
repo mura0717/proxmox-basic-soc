@@ -17,7 +17,7 @@ class SnipeClient:
     Client for interacting with the Snipe-IT API.
     """
     
-    def make_api_request(self, method, endpoint, max_retries=3, **kwargs):
+    def make_api_request(self, method, endpoint, max_retries=3, timeout=30, **kwargs):
         """
         Make API request with retry logic
         Args:
@@ -31,7 +31,7 @@ class SnipeClient:
         
         for attempt in range(max_retries+1): # +1 to include initial attempt
             try:
-                response = requests.request(method, url, headers=SNIPE.headers, verify=SNIPE.verify_ssl, **kwargs)
+                response = requests.request(method, url, headers=SNIPE.headers, verify=SNIPE.verify_ssl, timeout=timeout, **kwargs)
                 if response.status_code == 429:
                     if attempt < max_retries:
                         try:

@@ -25,23 +25,21 @@ class AssetMerger:
     def merge_assets(cls, assets: List[ResolvedAsset]) -> List[ResolvedAsset]:
         """
         Merges assets based on shared identifiers using Union-Find approach.
-        
-        Key priority: serial > intune_device_id > azure_ad_id > MACs > hostname
-        
-        Returns deduplicated list where assets sharing any identifier are merged.
         """
         if not assets:
             return []
         
-        # 1. Build index: Map every identifier to list of asset indices
+        # 1. Pre-compute keys for all assets (do this ONCE)
+        keys_cache = [cls._extract_keys(asset.canonical_data) for asset in assets]
+        
+        # 2. Build index: Map every identifier to list of asset indices
         index_map: Dict[str, List[int]] = defaultdict(list)
         
-        for idx, asset in enumerate(assets):
-            keys = cls._extract_keys(asset.canonical_data)
+        for idx, keys in enumerate(keys_cache):
             for key in keys:
                 index_map[key].append(idx)
         
-        # 2. Find connected components using DFS
+        # 3. Find connected components using DFS
         visited: Set[int] = set()
         groups: List[Set[int]] = []
         
@@ -49,7 +47,7 @@ class AssetMerger:
             if i in visited:
                 continue
             
-            # Start new group with BFS/DFS
+            # Start new group with DFS
             group: Set[int] = set()
             stack = [i]
             
@@ -62,9 +60,7 @@ class AssetMerger:
                 group.add(curr)
                 
                 # Find all assets sharing any key with current asset
-                keys_cache = [cls._extract_keys(a.canonical_data) for a in assets]
-                
-                curr_keys = keys_cache[curr]
+                curr_keys = keys_cache[curr]  # ← Use pre-computed cache
                 for key in curr_keys:
                     for neighbor_idx in index_map[key]:
                         if neighbor_idx not in visited:
@@ -72,7 +68,7 @@ class AssetMerger:
             
             groups.append(group)
         
-        # 3. Merge each group into single asset
+        # 4. Merge each group into single asset
         merged_results = []
         for group_indices in groups:
             group_assets = [assets[i] for i in group_indices]

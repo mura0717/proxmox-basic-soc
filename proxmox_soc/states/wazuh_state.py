@@ -55,6 +55,8 @@ class WazuhStateManager(BaseStateManager):
                     if mac:
                         return f"{field}:{mac}"
                     continue
+                if field == 'serial':
+                    return f"serial:{str(val).strip().upper()}"
                 return f"{field}:{str(val).strip()}"
         
         # Fallback: Use name if it's not generic
@@ -131,17 +133,21 @@ class WazuhStateManager(BaseStateManager):
             if search_azure_id and stored_id == f"azure_ad_id:{search_azure_id}":
                 return stored_id
             
-            # Also check stored metadata (if we store identifiers in the state)
+            # Cross-check stored metadata
             stored_serial = str(stored_data.get('serial') or '').strip().upper()
-            stored_mac = stored_data.get('mac')
-            
             if search_serial and stored_serial and search_serial == stored_serial:
                 return stored_id
+                
+            stored_mac = stored_data.get('mac')
             if search_mac and stored_mac and search_mac == stored_mac:
                 return stored_id
             
             stored_intune = stored_data.get('intune_device_id')
-            if search_intune_id and stored_intune and str(search_intune_id) == str(stored_intune):
+            if search_intune_id and stored_intune and str(search_intune_id).strip() == str(stored_intune).strip():
+                return stored_id
+
+            stored_azure = stored_data.get('azure_ad_id')
+            if search_azure_id and stored_azure and str(search_azure_id).strip() == str(stored_azure).strip():
                 return stored_id
         
         return None
@@ -150,13 +156,16 @@ class WazuhStateManager(BaseStateManager):
         """Record that an action was taken - now stores additional identifiers for cross-reference."""
         mac = get_primary_mac_address(asset_data.get('mac_addresses'))
         
+        # Normalization Fix 2.2: Store serial as upper case
+        serial = asset_data['serial'].strip().upper() if asset_data.get('serial') else None
+        
         self._state[asset_id] = {
             'last_seen': datetime.now(timezone.utc).isoformat(),
             'data_hash': self._compute_hash(asset_data),
             'last_action': action,
             'name': asset_data.get('name'),
             # Store additional identifiers for cross-reference
-            'serial': asset_data.get('serial', '').strip() if asset_data.get('serial') else None,
+            'serial': serial,
             'mac': mac,
             'intune_device_id': asset_data.get('intune_device_id'),
             'azure_ad_id': asset_data.get('azure_ad_id'),

@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 from proxmox_soc.asset_engine.asset_resolver import ResolvedAsset
 from proxmox_soc.states.base_state import BaseStateManager

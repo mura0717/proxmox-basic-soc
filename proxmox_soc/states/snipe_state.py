@@ -184,12 +184,12 @@ class SnipeStateManager(BaseStateManager):
         if mac_val:
             mac = get_primary_mac_address(mac_val)
             if mac:
-                mac_key = mac.replace(':', '').upper()  # ← Ensure uppercase
+                mac_key = mac.replace(':', '').upper() 
                 match = self._index_by_mac.get(mac_key)
-            if match:
-                if self.debug:
-                    print(f"    Match by MAC: {mac_val} -> ID {match['id']}")
-                return match
+                if match:
+                    if self.debug:
+                        print(f"    Match by MAC: {mac_val} -> ID {match['id']}")
+                    return match
         
         # 4. By exact name match (for static IP devices)
         name = asset_data.get('name')

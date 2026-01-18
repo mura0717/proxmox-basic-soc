@@ -33,8 +33,8 @@ from proxmox_soc.config.hydra_settings import WAZUH
 from proxmox_soc.utils.sudo_utils import elevate_to_root
 
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-DRY_RUN_DIR = BASE_DIR / "logs" / "dry_runs"
+BASE_DIR = Path(__file__).resolve().parents[1]
+DRY_RUN_DIR = BASE_DIR / "proxmox_soc" / "logs" / "dry_runs"
 
 
 class HydraOrchestrator:

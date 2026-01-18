@@ -169,14 +169,18 @@ class Microsoft365Aggregator:
         """
         Merges Intune and Teams data. If data lists are not provided, fetches them from the scanners.
         """
+        raw_intune_data = raw_teams_data = None
+
         # Fetch data from scanners if not provided
-        if intune_data is None or teams_data is None:
+        if intune_data is None:
             raw_intune_data, intune_data = self.intune_sync.get_transformed_assets()
+        
+        if teams_data is None:
             raw_teams_data, teams_data = self.teams_sync.get_transformed_assets()
             
-            if debug_logger.ms365_debug:
-                combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
-                debug_logger.log_raw_host_data('ms365', 'raw-unmerged-data', combined_raw_data)
+        if debug_logger.ms365_debug and (raw_intune_data or raw_teams_data):
+            combined_raw_data = {'intune_assets': raw_intune_data, 'teams_assets': raw_teams_data}
+            debug_logger.log_raw_host_data('ms365', 'raw-unmerged-data', combined_raw_data)
         
         # Prepare dictionaries keyed by serial number for merging
         intune_assets_by_serial, teams_assets_by_serial = self._prepare_asset_dictionaries(intune_data, teams_data) # This can be simplified now

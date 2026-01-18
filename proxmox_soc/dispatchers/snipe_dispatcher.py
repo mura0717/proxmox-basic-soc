@@ -33,9 +33,10 @@ class SnipeDispatcher(BaseDispatcher):
                         f"{SNIPE.snipe_url}/api/v1/hardware",
                         json=payload,
                         headers=SNIPE.headers,
-                        verify=SNIPE.verify_ssl
+                        verify=SNIPE.verify_ssl,
+                        timeout=30
                     )
-                    if resp.status_code == 200 and resp.json().get('status') == 'success':
+                    if resp.status_code in (200, 201) and resp.json().get('status') == 'success':
                         new_id = resp.json()['payload']['id']
                         build_result.snipe_id = new_id  # Store for downstream use
                         build_result.metadata['dispatch_ok'] = True
@@ -59,9 +60,10 @@ class SnipeDispatcher(BaseDispatcher):
                         f"{SNIPE.snipe_url}/api/v1/hardware/{build_result.snipe_id}",
                         json=payload,
                         headers=SNIPE.headers,
-                        verify=SNIPE.verify_ssl
+                        verify=SNIPE.verify_ssl,
+                        timeout=30
                     )
-                    if resp.status_code == 200:
+                    if resp.status_code in (200, 201) and resp.json().get('status') == 'success':
                         build_result.metadata['dispatch_ok'] = True
                         results["updated"] += 1
                         if self.debug:
